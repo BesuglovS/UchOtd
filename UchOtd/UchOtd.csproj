@@ -1,0 +1,329 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{651F5E21-8060-487A-8972-B19C4CCC8FDC}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>UchOtd</RootNamespace>
+    <AssemblyName>UchOtd</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>false</Install>
+    <InstallFrom>Unc</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>\\uch-otd-disp\UchOtd\UchOtd-Publish\</InstallUrl>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>90688C30C1297FE4664A967B4FD7A2ACE7EFDBBB</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>UchOtd_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>
+    </TargetZone>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.0.1\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.0.1\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.IWshRuntimeLibrary">
+      <HintPath>.\Interop.IWshRuntimeLibrary.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\BuildingLessonsData.cs" />
+    <Compile Include="Core\LayoutSupport.cs" />
+    <Compile Include="Core\StudentDetailsMode.cs" />
+    <Compile Include="Core\Utilities.cs" />
+    <Compile Include="Forms\BuildingLessons.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BuildingLessons.Designer.cs">
+      <DependentUpon>BuildingLessons.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Notes\Notes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Notes\Notes.Designer.cs">
+      <DependentUpon>Notes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Phones.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Phones.Designer.cs">
+      <DependentUpon>Phones.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\StudentList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\StudentList.Designer.cs">
+      <DependentUpon>StudentList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\StudentProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\StudentProperties.Designer.cs">
+      <DependentUpon>StudentProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TeacherSchedule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TeacherSchedule.Designer.cs">
+      <DependentUpon>TeacherSchedule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HotKeyManager.cs" />
+    <Compile Include="NUDS\Core\Constants.cs" />
+    <Compile Include="NUDS\Core\FormatMainView.cs" />
+    <Compile Include="NUDS\Core\Utilities.cs" />
+    <Compile Include="NUDS\Forms\Changes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NUDS\Forms\Changes.Designer.cs">
+      <DependentUpon>Changes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NUDS\ScheduleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NUDS\ScheduleForm.Designer.cs">
+      <DependentUpon>ScheduleForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NUDS\View\DailyScheduleGroupLessonView.cs" />
+    <Compile Include="NUDS\View\lleView.cs" />
+    <Compile Include="NUDS\View\TeacherScheduleTimeView.cs" />
+    <Compile Include="StartupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StartupForm.Designer.cs">
+      <DependentUpon>StartupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\NoteView.cs" />
+    <Compile Include="Views\StudentListView.cs" />
+    <EmbeddedResource Include="Forms\BuildingLessons.resx">
+      <DependentUpon>BuildingLessons.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Notes\Notes.resx">
+      <DependentUpon>Notes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Phones.resx">
+      <DependentUpon>Phones.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\StudentList.resx">
+      <DependentUpon>StudentList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\StudentProperties.resx">
+      <DependentUpon>StudentProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TeacherSchedule.resx">
+      <DependentUpon>TeacherSchedule.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NUDS\Forms\Changes.resx">
+      <DependentUpon>Changes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NUDS\ScheduleForm.resx">
+      <DependentUpon>ScheduleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StartupForm.resx">
+      <DependentUpon>StartupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="UchOtd_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Schedule\Schedule.Constants\Schedule.Constants.csproj">
+      <Project>{f4769d95-8167-49b2-9ad5-5e8d066df64a}</Project>
+      <Name>Schedule.Constants</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Schedule\Schedule.DomainClasses\Schedule.DomainClasses.csproj">
+      <Project>{04c588a6-087c-4d73-966c-6402e717545c}</Project>
+      <Name>Schedule.DomainClasses</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Schedule\Schedule.Repository\Schedule.Repositories.csproj">
+      <Project>{8b084795-2d5d-4185-abf7-0719a3d709c3}</Project>
+      <Name>Schedule.Repositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UchOtd.DomainClasses\UchOtd.DomainClasses.csproj">
+      <Project>{66693e97-a8ae-43a2-bb6c-71971ce7cd36}</Project>
+      <Name>UchOtd.DomainClasses</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UchOtd.Repositories\UchOtd.Repositories.csproj">
+      <Project>{f03f9978-9ca3-4a0c-bf83-72639e2d076c}</Project>
+      <Name>UchOtd.Repositories</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\diff.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\settings.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\diff.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NULogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NULogo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\diff.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\a-green-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\green_add_plus_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\minus_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\teacher1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\window_new.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\732691.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\teacher1.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\window_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\people.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\notes.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Remove-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\phone.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\people.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
