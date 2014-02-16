@@ -81,17 +81,21 @@
       <HintPath>.\Interop.IWshRuntimeLibrary.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Schedule.Constants">
-      <HintPath>..\..\Schedule\Schedule.Constants\bin\Debug\Schedule.Constants.dll</HintPath>
+    <Reference Include="Schedule.Constants, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Schedule.Constants.dll</HintPath>
     </Reference>
-    <Reference Include="Schedule.DataLayer">
-      <HintPath>..\..\Schedule\Schedule.DataLayer\bin\Debug\Schedule.DataLayer.dll</HintPath>
+    <Reference Include="Schedule.DataLayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Schedule.DataLayer.dll</HintPath>
     </Reference>
-    <Reference Include="Schedule.DomainClasses">
-      <HintPath>..\..\Schedule\Schedule.DomainClasses\bin\Debug\Schedule.DomainClasses.dll</HintPath>
+    <Reference Include="Schedule.DomainClasses, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Schedule.DomainClasses.dll</HintPath>
     </Reference>
-    <Reference Include="Schedule.Repository">
-      <HintPath>..\..\Schedule\Schedule.Repository\bin\Debug\Schedule.Repository.dll</HintPath>
+    <Reference Include="Schedule.Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Schedule.Repository.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
