@@ -34,6 +34,7 @@
             this.teacherList = new System.Windows.Forms.ComboBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.scheduleView = new System.Windows.Forms.DataGridView();
+            this.refresh = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scheduleView)).BeginInit();
@@ -41,6 +42,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.refresh);
             this.controlsPanel.Controls.Add(this.currentWeek);
             this.controlsPanel.Controls.Add(this.teacherList);
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
@@ -95,6 +97,16 @@
             this.scheduleView.TabStop = false;
             this.scheduleView.SelectionChanged += new System.EventHandler(this.ScheduleViewSelectionChanged);
             // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(588, 12);
+            this.refresh.Name = "refresh";
+            this.refresh.Size = new System.Drawing.Size(85, 23);
+            this.refresh.TabIndex = 2;
+            this.refresh.Text = "Обновить";
+            this.refresh.UseVisualStyleBackColor = true;
+            this.refresh.Click += new System.EventHandler(this.refresh_Click);
+            // 
             // TeacherSchedule
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -123,5 +135,6 @@
         private System.Windows.Forms.ComboBox teacherList;
         private System.Windows.Forms.Panel viewPanel;
         private System.Windows.Forms.DataGridView scheduleView;
+        private System.Windows.Forms.Button refresh;
     }
 }

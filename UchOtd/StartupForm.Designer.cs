@@ -39,9 +39,11 @@
             this.расписаниеПреподавателяToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.занятостьАудиторийAltAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.измененияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.trayIconMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,10 +58,12 @@
             this.расписаниеПреподавателяToolStripMenuItem,
             this.занятостьАудиторийAltAToolStripMenuItem,
             this.измененияToolStripMenuItem,
+            this.toolStripMenuItem3,
+            this.openDBToolStripMenuItem,
             this.toolStripMenuItem1,
             this.выходToolStripMenuItem});
             this.trayIconMenu.Name = "trayIconMenu";
-            this.trayIconMenu.Size = new System.Drawing.Size(266, 214);
+            this.trayIconMenu.Size = new System.Drawing.Size(266, 242);
             // 
             // контингентToolStripMenuItem
             // 
@@ -122,11 +126,6 @@
             this.измененияToolStripMenuItem.Text = "Изменения расписания (Alt+C)";
             this.измененияToolStripMenuItem.Click += new System.EventHandler(this.ИзмененияToolStripMenuItemClick);
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(262, 6);
-            // 
             // выходToolStripMenuItem
             // 
             this.выходToolStripMenuItem.Image = global::UchOtd.Properties.Resources.exit;
@@ -135,11 +134,29 @@
             this.выходToolStripMenuItem.Text = "Выход";
             this.выходToolStripMenuItem.Click += new System.EventHandler(this.ВыходToolStripMenuItemClick);
             // 
+            // openDBToolStripMenuItem
+            // 
+            this.openDBToolStripMenuItem.Image = global::UchOtd.Properties.Resources.ODBCKit;
+            this.openDBToolStripMenuItem.Name = "openDBToolStripMenuItem";
+            this.openDBToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
+            this.openDBToolStripMenuItem.Text = "Сменить базу данных";
+            this.openDBToolStripMenuItem.Click += new System.EventHandler(this.openDBToolStripMenuItem_Click);
+            // 
             // trayIcon
             // 
             this.trayIcon.ContextMenuStrip = this.trayIconMenu;
             this.trayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("trayIcon.Icon")));
             this.trayIcon.Text = "Учебный отдел";
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(262, 6);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(262, 6);
             // 
             // StartupForm
             // 
@@ -159,7 +176,6 @@
         private System.Windows.Forms.ToolStripMenuItem измененияToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem расписаниеПреподавателяToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem показатьОкноToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem выходToolStripMenuItem;
         private System.Windows.Forms.NotifyIcon trayIcon;
         private System.Windows.Forms.ToolStripMenuItem контингентToolStripMenuItem;
@@ -167,6 +183,9 @@
         private System.Windows.Forms.ToolStripMenuItem заметкиToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem телефоныToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openDBToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
     }
 }
 

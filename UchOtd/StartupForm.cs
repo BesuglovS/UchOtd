@@ -6,13 +6,15 @@ using UchOtd.NUDS;
 using UchOtd.NUDS.Forms;
 using UchOtd.Forms.Notes;
 using UchOtd.Repositories;
+using System.IO;
+using UchOtd.Core;
 
 namespace UchOtd
 {
     public partial class StartupForm : Form
     {
-        readonly ScheduleRepository _repo = new ScheduleRepository();
-        readonly UchOtdRepository _UOrepo = new UchOtdRepository(); 
+        public readonly ScheduleRepository _repo = new ScheduleRepository();
+        public readonly UchOtdRepository _UOrepo = new UchOtdRepository(); 
 
         bool _studentListFormOpened;
         public StudentList StudentListForm;
@@ -40,8 +42,7 @@ namespace UchOtd
             InitializeComponent();
 
             // Peek EF Database connection
-            var r = new ScheduleRepository();
-            r.GetAllFaculties();
+            _repo.GetAllFaculties();
 
             // Контингент - Alt-S
             HotKeyManager.RegisterHotKey(Keys.S, KeyModifiers.Alt);
@@ -60,7 +61,17 @@ namespace UchOtd
 
             HotKeyManager.HotKeyPressed += ManageHotKeys;
 
+            if (File.Exists("Initial Database connection string.txt"))
+            {
+                var sr = new StreamReader("Initial Database connection string.txt");
+                var connectionString = sr.ReadLine();
+                sr.Close();
 
+                _repo.ConnectionString = connectionString;
+            }
+
+            RefreshDbOrConnectionName();
+            
             _studentListFormOpened = false;
             _scheduleFormOpened = false;
             _teacherScheduleFormOpened = false;
@@ -69,6 +80,18 @@ namespace UchOtd
             _PhonesFormOpened = false;
 
             trayIcon.Visible = true;
+        }
+
+        private void RefreshDbOrConnectionName()
+        {
+            if (_repo != null)
+            {
+                openDBToolStripMenuItem.Text = "Сменить базу данных (" + Utilities.ExtractDBOrConnectionName(_repo.ConnectionString) + ")";
+            }
+            else
+            {
+                openDBToolStripMenuItem.Text = "Открыть базу данных";
+            }
         }
 
         private void ManageHotKeys(object sender, HotKeyEventArgs e)
@@ -257,6 +280,14 @@ namespace UchOtd
         private void контингентToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowStudentListForm();
+        }
+
+        private void openDBToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var openDBForm = new OpenDB(this);
+            openDBForm.ShowDialog();
+
+            RefreshDbOrConnectionName();
         }        
     }
 }

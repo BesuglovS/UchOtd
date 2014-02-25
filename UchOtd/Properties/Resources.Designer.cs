@@ -150,6 +150,16 @@ namespace UchOtd.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ODBCKit {
+            get {
+                object obj = ResourceManager.GetObject("ODBCKit", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  (.
         /// </summary>
         internal static string OpenParenthesis {

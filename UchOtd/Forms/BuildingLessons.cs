@@ -250,7 +250,7 @@ namespace UchOtd.Forms
                 case 2:
                     var result = new List<Auditorium>();
                     var a3 = list
-                        .Where(a => a.Name.Substring(5, 1) == "3")
+                        .Where(a => a.Name.Length>= 6 && a.Name.Substring(5, 1) == "3")
                         .OrderBy(a => a.Name)
                         .ToList();
                     foreach (var a in a3)
@@ -284,7 +284,7 @@ namespace UchOtd.Forms
                 return 3;
             }
 
-            if (Char.IsDigit(auditoriumName[5]) || auditoriumName == "Ауд. ШКОЛА")
+            if (((auditoriumName.Length >= 6) && (Char.IsDigit(auditoriumName[5]) || auditoriumName == "Ауд. ШКОЛА")) || (auditoriumName == "Ауд. "))
             {
                 return 2;
             }

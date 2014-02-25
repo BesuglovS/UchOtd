@@ -35,5 +35,24 @@ namespace UchOtd.Core
                 return false;
             }
         }
+
+        internal static string ExtractDBOrConnectionName(string connectionString)
+        {
+            if (connectionString.StartsWith("Name="))
+            {
+                return connectionString.Substring(5);
+            }
+            else
+            {
+                int startIndex = connectionString.IndexOf("Database=") + 9;
+                int endIndex = -1;
+                if (startIndex != 0)
+                {
+                    endIndex = connectionString.IndexOf(';', startIndex);
+                }
+
+                return connectionString.Substring(startIndex, endIndex - startIndex);
+            }
+        }
     }
 }

@@ -302,5 +302,10 @@ namespace UchOtd.Forms
                 Close();
             }
         }
+
+        private void refresh_Click(object sender, EventArgs e)
+        {
+            UpdateTeacherSchedule();
+        }
     }
 }
