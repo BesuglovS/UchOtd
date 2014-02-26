@@ -105,7 +105,7 @@ namespace UchOtd.Forms
 
                 data.rings = lessons
                     .Select(l => l.Ring)
-                    .Concat(evtsRings)                    
+                    .Concat(evtsRings)
                     .OrderBy(r => r.Time.TimeOfDay)
                     .ToList()
                     .DistinctBy(r => r.RingId)
@@ -121,7 +121,7 @@ namespace UchOtd.Forms
                     .ToList();
 
                 var totalAuds = auditoriums
-                    .Concat(evtsAuditoriums)                    
+                    .Concat(evtsAuditoriums)
                     .ToList();
 
                 totalAuds = totalAuds
@@ -250,7 +250,7 @@ namespace UchOtd.Forms
                 case 2:
                     var result = new List<Auditorium>();
                     var a3 = list
-                        .Where(a => a.Name.Length>= 6 && a.Name.Substring(5, 1) == "3")
+                        .Where(a => a.Name.Length >= 6 && a.Name.Substring(5, 1) == "3")
                         .OrderBy(a => a.Name)
                         .ToList();
                     foreach (var a in a3)
@@ -259,7 +259,7 @@ namespace UchOtd.Forms
                         list.Remove(a);
                     }
                     var a1 = list
-                        .Where(a => a.Name.Substring(5, 1) == "1")
+                        .Where(a => a.Name.Length >= 6 && a.Name.Substring(5, 1) == "1")
                         .OrderBy(a => a.Name)
                         .ToList();
                     foreach (var a in a1)
