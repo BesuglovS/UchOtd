@@ -87,7 +87,7 @@ namespace UchOtd.Forms
                 return;
             }
 
-            foreach (var time in lessonsGrouped.OrderBy(lg => lg.Key))
+            foreach (var time in lessonsGrouped.OrderBy(lg => lg.Key.TimeOfDay))
             {
                 var tstv = new TeacherScheduleTimeView { Time = time.Key.ToString("H:mm") };
 
