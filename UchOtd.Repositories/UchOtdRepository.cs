@@ -13,22 +13,30 @@ namespace UchOtd.Repositories
 {
     public class UchOtdRepository : IDisposable
     {
-        private readonly UchOtdContext _context = new UchOtdContext();
+        public string ConnectionString { get; set; }
 
-        public UchOtdRepository()
+        public UchOtdRepository(string connectionString = "Name=UchOtdConnection")
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<UchOtdContext, Configuration>());
+
+            ConnectionString = connectionString;
         }
 
         public void SaveChanges()
         {
-            _context.SaveChanges();
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                context.SaveChanges();
+            }
         }
 
         public void RecreateDB()
         {
-            _context.Database.Delete();
-            _context.Database.CreateIfNotExists();
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                context.Database.Delete();
+                context.Database.CreateIfNotExists();
+            }
         }
 
         public void DebugLog(string message)
@@ -41,7 +49,7 @@ namespace UchOtd.Repositories
         #region IDisposable
         private void Dispose(bool b)
         {
-            _context.Dispose();
+            Dispose(true);
         }
 
         public void Dispose()
@@ -53,196 +61,258 @@ namespace UchOtd.Repositories
         #region NotesPepository
         public List<Note> GetAllNotes()
         {
-            return _context.Notes.ToList();
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                return context.Notes.ToList();
+            }
         }
 
         public bool ContainsNote(Note note)
         {
-            if (_context.Notes.FirstOrDefault(n => 
-                    n.Moment == note.Moment && 
-                    n.TargetComputer == note.TargetComputer &&
-                    n.Text == note.Text) != null)
+            using (var context = new UchOtdContext(ConnectionString))
             {
-                return true;
-            }
-            else
-            {
-                return false;
+                if (context.Notes.FirstOrDefault(n =>
+                        n.Moment == note.Moment &&
+                        n.TargetComputer == note.TargetComputer &&
+                        n.Text == note.Text) != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
         public bool ContainsNote(DateTime Moment, string TargetComputer, string Text)
         {
-            if (_context.Notes.FirstOrDefault(n =>
-                    n.Moment == Moment &&
-                    n.TargetComputer == TargetComputer &&
-                    n.Text == Text) != null)
+            using (var context = new UchOtdContext(ConnectionString))
             {
-                return true;
-            }
-            else
-            {
-                return false;
+                if (context.Notes.FirstOrDefault(n =>
+                        n.Moment == Moment &&
+                        n.TargetComputer == TargetComputer &&
+                        n.Text == Text) != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
         public bool ContainsNote(string noteView)
         {
-            DateTime Moment;
-            var parts = noteView.Split('@');
-            if (parts.Length != 3)
+            using (var context = new UchOtdContext(ConnectionString))
             {
-                return false;
-            }
+                DateTime Moment;
+                var parts = noteView.Split('@');
+                if (parts.Length != 3)
+                {
+                    return false;
+                }
 
-            if (parts[0] != "")
-            {
-                Moment = DateTime.ParseExact(parts[0], "dd.MM.yyyy H:mm:ss", CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                Moment = new DateTime(1970, 1, 1);
-            }
-            var Text = parts[1];
-            var TargetComputer = parts[2];
+                if (parts[0] != "")
+                {
+                    Moment = DateTime.ParseExact(parts[0], "dd.MM.yyyy H:mm:ss", CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    Moment = new DateTime(1970, 1, 1);
+                }
+                var Text = parts[1];
+                var TargetComputer = parts[2];
 
-            var notes = _context.Notes.ToList();
+                var notes = context.Notes.ToList();
 
-            if (_context.Notes.FirstOrDefault(n =>
-                    n.Moment.Equals(Moment) &&
-                    n.TargetComputer == TargetComputer &&
-                    n.Text == Text) != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
+                if (context.Notes.FirstOrDefault(n =>
+                        n.Moment.Equals(Moment) &&
+                        n.TargetComputer == TargetComputer &&
+                        n.Text == Text) != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }        
 
         public List<Note> GetFiltredNotes(Func<Note, bool> condition)
         {
-            return _context.Notes.ToList().Where(condition).ToList();
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                return context.Notes.ToList().Where(condition).ToList();
+            }
         }
 
         public Note GetFirstFiltredNote(Func<Note, bool> condition)
         {
-            return _context.Notes.ToList().FirstOrDefault(condition);
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                return context.Notes.ToList().FirstOrDefault(condition);
+            }
         }
 
         public Note GetNote(int noteId)
         {
-            return _context.Notes.FirstOrDefault(n => n.NoteId == noteId);
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                return context.Notes.FirstOrDefault(n => n.NoteId == noteId);
+            }
         }
 
         public Note FindNote(string text)
         {
-            return _context.Notes.FirstOrDefault(n => n.Text == text);
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                return context.Notes.FirstOrDefault(n => n.Text == text);
+            }
         }
 
         public void AddNote(Note note)
         {
-            note.NoteId = 0;
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                note.NoteId = 0;
 
-            _context.Notes.Add(note);
-            _context.SaveChanges();
+                context.Notes.Add(note);
+                context.SaveChanges();
+            }
         }
 
         public void UpdateNote(Note note)
         {
-            var curNote = GetNote(note.NoteId);
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                var curNote = GetNote(note.NoteId);
 
-            curNote.Text = note.Text;
-            curNote.Moment = note.Moment;
-            curNote.TargetComputer = note.TargetComputer;            
+                curNote.Text = note.Text;
+                curNote.Moment = note.Moment;
+                curNote.TargetComputer = note.TargetComputer;
 
-            _context.SaveChanges();
+                context.SaveChanges();
+            }
         }
 
         public void RemoveNote(int noteId)
         {
-            var note = GetNote(noteId);
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                var note = GetNote(noteId);
 
-            _context.Notes.Remove(note);
-            _context.SaveChanges();
+                context.Notes.Remove(note);
+                context.SaveChanges();
+            }
         }
 
         public void AddNotesRange(IEnumerable<Note> noteList)
         {
-            foreach (var note in noteList)
+            using (var context = new UchOtdContext(ConnectionString))
             {
-                note.NoteId = 0;
-                _context.Notes.Add(note);
-            }
+                foreach (var note in noteList)
+                {
+                    note.NoteId = 0;
+                    context.Notes.Add(note);
+                }
 
-            _context.SaveChanges();
+                context.SaveChanges();
+            }
         }        
         #endregion
         
         #region PhonesPepository
         public List<Phone> GetAllPhones()
         {
-            return _context.Phones.ToList();
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                return context.Phones.ToList();
+            }
         }
 
         public List<Phone> GetFiltredPhones(Func<Phone, bool> condition)
         {
-            return _context.Phones.ToList().Where(condition).ToList();
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                return context.Phones.ToList().Where(condition).ToList();
+            }
         }
 
         public Phone GetFirstFiltredPhone(Func<Phone, bool> condition)
         {
-            return _context.Phones.ToList().FirstOrDefault(condition);
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                return context.Phones.ToList().FirstOrDefault(condition);
+            }
         }
 
         public Phone GetPhone(int phoneId)
         {
-            return _context.Phones.FirstOrDefault(p => p.PhoneId == phoneId);
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                return context.Phones.FirstOrDefault(p => p.PhoneId == phoneId);
+            }
         }
 
         public Phone FindPhone(string name)
         {
-            return _context.Phones.FirstOrDefault(p => p.Name == name);
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                return context.Phones.FirstOrDefault(p => p.Name == name);
+            }
         }
 
         public void AddPhone(Phone phone)
         {
-            phone.PhoneId = 0;
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                phone.PhoneId = 0;
 
-            _context.Phones.Add(phone);
-            _context.SaveChanges();
+                context.Phones.Add(phone);
+                context.SaveChanges();
+            }
         }
 
         public void UpdatePhone(Phone phone)
         {
-            var curPhone = GetPhone(phone.PhoneId);
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                var curPhone = GetPhone(phone.PhoneId);
 
-            curPhone.Name = phone.Name;
-            curPhone.Number = phone.Number;
+                curPhone.Name = phone.Name;
+                curPhone.Number = phone.Number;
 
-            _context.SaveChanges();
+                context.SaveChanges();
+            }
         }
 
         public void RemovePhone(int phoneId)
         {
-            var phone = GetPhone(phoneId);
+            using (var context = new UchOtdContext(ConnectionString))
+            {
+                var phone = GetPhone(phoneId);
 
-            _context.Phones.Remove(phone);
-            _context.SaveChanges();
+                context.Phones.Remove(phone);
+                context.SaveChanges();
+            }
         }
 
         public void AddPhonesRange(IEnumerable<Phone> phoneList)
         {
-            foreach (var phone in phoneList)
+            using (var context = new UchOtdContext(ConnectionString))
             {
-                phone.PhoneId = 0;
-                _context.Phones.Add(phone);
-            }
+                foreach (var phone in phoneList)
+                {
+                    phone.PhoneId = 0;
+                    context.Phones.Add(phone);
+                }
 
-            _context.SaveChanges();
+                context.SaveChanges();
+            }
         }
-        #endregion
-    
+        #endregion    
     }    
 }

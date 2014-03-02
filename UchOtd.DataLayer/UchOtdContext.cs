@@ -9,6 +9,10 @@ namespace UchOtd
             : base("Name=UchOtdConnection")
         {
         }
+        public UchOtdContext(string connectionString)
+            : base(connectionString)
+        {
+        }
 
         public DbSet<Note> Notes { get; set; }
         public DbSet<Phone> Phones { get; set; }
