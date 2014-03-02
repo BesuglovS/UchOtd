@@ -8,13 +8,14 @@ using UchOtd.Forms.Notes;
 using UchOtd.Repositories;
 using System.IO;
 using UchOtd.Core;
+using Schedule;
 
 namespace UchOtd
 {
     public partial class StartupForm : Form
     {
-        public readonly ScheduleRepository _repo = new ScheduleRepository();
-        public readonly UchOtdRepository _UOrepo = new UchOtdRepository(); 
+        public readonly ScheduleRepository _repo;
+        public readonly UchOtdRepository _UOrepo; 
 
         bool _studentListFormOpened;
         public StudentList StudentListForm;
@@ -37,17 +38,20 @@ namespace UchOtd
         bool _PhonesFormOpened;
         public Phones PhonesForm;
 
+        bool _MainEditFormOpened;
+        public MainEditForm EditForm;
+
         public StartupForm()
         {
             InitializeComponent();
 
-            // Peek EF Database connection
-            _repo.GetAllFaculties();
+            _repo = new ScheduleRepository("data source=tcp:127.0.0.1,1433;Database=ScheduleDB;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+            _UOrepo = new UchOtdRepository("data source=tcp:127.0.0.1,1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
 
             // Контингент - Alt-S
             HotKeyManager.RegisterHotKey(Keys.S, KeyModifiers.Alt);
-            // Расписание - Alt-R
-            HotKeyManager.RegisterHotKey(Keys.R, KeyModifiers.Alt);
+            // Просмотр расписания - Alt-V
+            HotKeyManager.RegisterHotKey(Keys.V, KeyModifiers.Alt);
             // Расписание преподавателя - Alt-T
             HotKeyManager.RegisterHotKey(Keys.T, KeyModifiers.Alt);
             // Изменения расписание - Alt-C
@@ -58,6 +62,8 @@ namespace UchOtd
             HotKeyManager.RegisterHotKey(Keys.N, KeyModifiers.Alt);
             // Телефоны - Alt-P
             HotKeyManager.RegisterHotKey(Keys.P, KeyModifiers.Alt);
+            // Редакторование расписания - Alt-R
+            HotKeyManager.RegisterHotKey(Keys.R, KeyModifiers.Alt);
 
             HotKeyManager.HotKeyPressed += ManageHotKeys;
 
@@ -78,6 +84,7 @@ namespace UchOtd
             _buildingFormOpened = false;
             _NotesFormOpened = false;
             _PhonesFormOpened = false;
+            _MainEditFormOpened = false;
 
             trayIcon.Visible = true;
         }
@@ -126,7 +133,26 @@ namespace UchOtd
                 {
                     ShowPhonesForm();
                 }
+                if (e.Key == Keys.R)
+                {
+                    ShowEditScheduleForm();
+                }
             }
+        }
+
+        private void ShowEditScheduleForm()
+        {
+            if (_MainEditFormOpened)
+            {
+                EditForm.Activate();
+                EditForm.Focus();
+                return;
+            }
+
+            EditForm = new MainEditForm(_repo);
+            _MainEditFormOpened = true;
+            EditForm.Show();
+            _MainEditFormOpened = false;
         }
 
         private void ShowPhonesForm()
@@ -288,6 +314,11 @@ namespace UchOtd
             openDBForm.ShowDialog();
 
             RefreshDbOrConnectionName();
-        }        
+        }
+
+        private void EditScheduleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowEditScheduleForm();
+        }                
     }
 }

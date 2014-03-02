@@ -39,11 +39,13 @@
             this.расписаниеПреподавателяToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.занятостьАудиторийAltAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.измененияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            this.openDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+            this.EditScheduleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.trayIconMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,6 +55,8 @@
             this.контингентToolStripMenuItem,
             this.заметкиToolStripMenuItem,
             this.телефоныToolStripMenuItem,
+            this.toolStripMenuItem4,
+            this.EditScheduleToolStripMenuItem,
             this.toolStripMenuItem2,
             this.показатьОкноToolStripMenuItem,
             this.расписаниеПреподавателяToolStripMenuItem,
@@ -63,7 +67,7 @@
             this.toolStripMenuItem1,
             this.выходToolStripMenuItem});
             this.trayIconMenu.Name = "trayIconMenu";
-            this.trayIconMenu.Size = new System.Drawing.Size(266, 242);
+            this.trayIconMenu.Size = new System.Drawing.Size(266, 270);
             // 
             // контингентToolStripMenuItem
             // 
@@ -99,7 +103,7 @@
             this.показатьОкноToolStripMenuItem.Image = global::UchOtd.Properties.Resources.showWindow;
             this.показатьОкноToolStripMenuItem.Name = "показатьОкноToolStripMenuItem";
             this.показатьОкноToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
-            this.показатьОкноToolStripMenuItem.Text = "Расписание (Alt+R)";
+            this.показатьОкноToolStripMenuItem.Text = "Просмотр расписания (Alt+V)";
             this.показатьОкноToolStripMenuItem.Click += new System.EventHandler(this.ПоказатьОкноToolStripMenuItemClick);
             // 
             // расписаниеПреподавателяToolStripMenuItem
@@ -126,13 +130,10 @@
             this.измененияToolStripMenuItem.Text = "Изменения расписания (Alt+C)";
             this.измененияToolStripMenuItem.Click += new System.EventHandler(this.ИзмененияToolStripMenuItemClick);
             // 
-            // выходToolStripMenuItem
+            // toolStripMenuItem3
             // 
-            this.выходToolStripMenuItem.Image = global::UchOtd.Properties.Resources.exit;
-            this.выходToolStripMenuItem.Name = "выходToolStripMenuItem";
-            this.выходToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
-            this.выходToolStripMenuItem.Text = "Выход";
-            this.выходToolStripMenuItem.Click += new System.EventHandler(this.ВыходToolStripMenuItemClick);
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(262, 6);
             // 
             // openDBToolStripMenuItem
             // 
@@ -142,21 +143,36 @@
             this.openDBToolStripMenuItem.Text = "Сменить базу данных";
             this.openDBToolStripMenuItem.Click += new System.EventHandler(this.openDBToolStripMenuItem_Click);
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(262, 6);
+            // 
+            // выходToolStripMenuItem
+            // 
+            this.выходToolStripMenuItem.Image = global::UchOtd.Properties.Resources.exit;
+            this.выходToolStripMenuItem.Name = "выходToolStripMenuItem";
+            this.выходToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
+            this.выходToolStripMenuItem.Text = "Выход";
+            this.выходToolStripMenuItem.Click += new System.EventHandler(this.ВыходToolStripMenuItemClick);
+            // 
             // trayIcon
             // 
             this.trayIcon.ContextMenuStrip = this.trayIconMenu;
             this.trayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("trayIcon.Icon")));
             this.trayIcon.Text = "Учебный отдел";
             // 
-            // toolStripMenuItem3
+            // toolStripMenuItem4
             // 
-            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(262, 6);
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(262, 6);
             // 
-            // toolStripMenuItem1
+            // EditScheduleToolStripMenuItem
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(262, 6);
+            this.EditScheduleToolStripMenuItem.Name = "EditScheduleToolStripMenuItem";
+            this.EditScheduleToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
+            this.EditScheduleToolStripMenuItem.Text = "Редактор расписания (Alt+R)";
+            this.EditScheduleToolStripMenuItem.Click += new System.EventHandler(this.EditScheduleToolStripMenuItem_Click);
             // 
             // StartupForm
             // 
@@ -186,6 +202,8 @@
         private System.Windows.Forms.ToolStripMenuItem openDBToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem EditScheduleToolStripMenuItem;
     }
 }
 
