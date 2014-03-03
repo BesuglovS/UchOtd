@@ -512,7 +512,7 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // MainForm
+            // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -520,7 +520,8 @@
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "MainForm";
+            this.Name = "MainEditForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Расписание";
             this.Load += new System.EventHandler(this.MainFormLoad);
             this.ResizeEnd += new System.EventHandler(this.MainForm_ResizeEnd);

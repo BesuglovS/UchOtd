@@ -34,6 +34,8 @@
             this.контингентToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.заметкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.телефоныToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+            this.EditScheduleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.показатьОкноToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.расписаниеПреподавателяToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,8 +46,6 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
-            this.EditScheduleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.trayIconMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -92,6 +92,19 @@
             this.телефоныToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.телефоныToolStripMenuItem.Text = "Телефоны (Alt+P)";
             this.телефоныToolStripMenuItem.Click += new System.EventHandler(this.телефоныToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(262, 6);
+            // 
+            // EditScheduleToolStripMenuItem
+            // 
+            this.EditScheduleToolStripMenuItem.Image = global::UchOtd.Properties.Resources.Edit;
+            this.EditScheduleToolStripMenuItem.Name = "EditScheduleToolStripMenuItem";
+            this.EditScheduleToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
+            this.EditScheduleToolStripMenuItem.Text = "Редактор расписания (Alt+R)";
+            this.EditScheduleToolStripMenuItem.Click += new System.EventHandler(this.EditScheduleToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -161,18 +174,6 @@
             this.trayIcon.ContextMenuStrip = this.trayIconMenu;
             this.trayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("trayIcon.Icon")));
             this.trayIcon.Text = "Учебный отдел";
-            // 
-            // toolStripMenuItem4
-            // 
-            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(262, 6);
-            // 
-            // EditScheduleToolStripMenuItem
-            // 
-            this.EditScheduleToolStripMenuItem.Name = "EditScheduleToolStripMenuItem";
-            this.EditScheduleToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
-            this.EditScheduleToolStripMenuItem.Text = "Редактор расписания (Alt+R)";
-            this.EditScheduleToolStripMenuItem.Click += new System.EventHandler(this.EditScheduleToolStripMenuItem_Click);
             // 
             // StartupForm
             // 

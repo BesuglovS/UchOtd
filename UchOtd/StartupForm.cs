@@ -9,13 +9,16 @@ using UchOtd.Repositories;
 using System.IO;
 using UchOtd.Core;
 using Schedule;
+using System.Net.NetworkInformation;
+using System.Text;
+using System.Collections.Generic;
 
 namespace UchOtd
 {
     public partial class StartupForm : Form
     {
-        public readonly ScheduleRepository _repo;
-        public readonly UchOtdRepository _UOrepo; 
+        public ScheduleRepository _repo;
+        public UchOtdRepository _UOrepo; 
 
         bool _studentListFormOpened;
         public StudentList StudentListForm;
@@ -45,8 +48,7 @@ namespace UchOtd
         {
             InitializeComponent();
 
-            _repo = new ScheduleRepository("data source=tcp:127.0.0.1,1433;Database=ScheduleDB;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
-            _UOrepo = new UchOtdRepository("data source=tcp:127.0.0.1,1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+            InitRepositories();
 
             // Контингент - Alt-S
             HotKeyManager.RegisterHotKey(Keys.S, KeyModifiers.Alt);
@@ -89,6 +91,66 @@ namespace UchOtd
             trayIcon.Visible = true;
         }
 
+        private void InitRepositories()
+        {
+            var ServerList = new List<string>() { 
+                "127.0.0.1", 
+                "10.13.3.1"
+            };
+
+            bool successPing = false;
+            int connectionIndex = 0;
+            do
+            {
+                var serverName = ServerList[connectionIndex];
+                if (PingServerExistence(serverName))
+                {
+                    successPing = true;
+
+                    _repo = new ScheduleRepository("data source=tcp:" + serverName + ",1433;Database=ScheduleDB;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+                    _UOrepo = new UchOtdRepository("data source=tcp:" + serverName + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+                }
+            } while (successPing || connectionIndex == ServerList.Count);
+
+            if (!successPing)
+            {
+                MessageBox.Show("Не удалось подключится к базе данных.");
+            }
+        }
+
+        private static bool PingServerExistence(string server)
+        {
+            Ping pingSender = new Ping();
+            PingOptions options = new PingOptions();
+
+            // Use the default Ttl value which is 128, 
+            // but change the fragmentation behavior.
+            options.DontFragment = true;
+
+            // Create a buffer of 32 bytes of data to be transmitted. 
+            string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+            byte[] buffer = Encoding.ASCII.GetBytes(data);
+            int timeout = 120;
+            PingReply reply = null;
+            try
+            {
+                reply = pingSender.Send(server, timeout, buffer, options);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }            
+
+            if ((reply != null) && (reply.Status == IPStatus.Success))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private void RefreshDbOrConnectionName()
         {
             if (_repo != null)
@@ -109,7 +171,7 @@ namespace UchOtd
                 {
                     ShowStudentListForm();
                 }
-                if (e.Key == Keys.R)
+                if (e.Key == Keys.V)
                 {
                     ShowScheduleForm();
                 }
