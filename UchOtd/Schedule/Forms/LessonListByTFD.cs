@@ -62,15 +62,23 @@ namespace Schedule.Forms
                 DataGridViewContentAlignment.MiddleCenter;
 
             view.Columns["LessonId"].Visible = false;
-
-            view.Columns["CalendarDate"].HeaderText = "Дата";
-            view.Columns["CalendarDate"].Width = (int)Math.Round(view.Width * 0.3);
-
-            view.Columns["RingTime"].HeaderText = "Время";
-            view.Columns["RingTime"].Width = (int)Math.Round(view.Width * 0.3);
-
+            view.Columns["CalendarDate"].HeaderText = "Дата";            
+            view.Columns["RingTime"].HeaderText = "Время";            
             view.Columns["AuditoriumName"].HeaderText = "Аудитория";
-            view.Columns["AuditoriumName"].Width = (int)Math.Round(view.Width * 0.3);
+
+            DivideViewInThreeColumns();
+        }
+
+        private void DivideViewInThreeColumns()
+        {
+            view.Columns["CalendarDate"].Width = (int)Math.Round(view.Width * 0.32);
+            view.Columns["RingTime"].Width = (int)Math.Round(view.Width * 0.32);
+            view.Columns["AuditoriumName"].Width = (int)Math.Round(view.Width * 0.32);
+        }
+
+        private void LessonListByTFD_ResizeEnd(object sender, EventArgs e)
+        {
+            DivideViewInThreeColumns();
         }
     }
 }

@@ -362,6 +362,15 @@
     <EmbeddedResource Include="NUDS\ScheduleForm.resx">
       <DependentUpon>ScheduleForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\DBLists\DisciplineList.resx">
+      <DependentUpon>DisciplineList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\LessonListByTFD.resx">
+      <DependentUpon>LessonListByTFD.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\teacherHours.resx">
+      <DependentUpon>teacherHours.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Schedule\MainEditForm.resx">
       <DependentUpon>MainEditForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -505,6 +514,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Book.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

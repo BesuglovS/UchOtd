@@ -8,7 +8,7 @@ namespace UchOtd
     public enum KeyModifiers
     {
         Alt = 1,
-        Control = 2,
+        Control = 2,        
         Shift = 4,
         Windows = 8,
         NoRepeat = 0x4000
@@ -26,7 +26,7 @@ namespace UchOtd
         public static event EventHandler<HotKeyEventArgs> HotKeyPressed;
         private static MessageWindow _wnd = new MessageWindow();
 
-        public static int RegisterHotKey(Keys key, KeyModifiers modifiers)
+        public static int RegisterHotKey(Keys key, uint modifiers)
         {
             int id = System.Threading.Interlocked.Increment(ref _id);
             RegisterHotKey(_wnd.Handle, id, (uint)modifiers, (uint)key);

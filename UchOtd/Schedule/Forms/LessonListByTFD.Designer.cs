@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
-            this.viewPanel = new System.Windows.Forms.Panel();
             this.tfdBox = new System.Windows.Forms.ComboBox();
+            this.viewPanel = new System.Windows.Forms.Panel();
             this.view = new System.Windows.Forms.DataGridView();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -46,15 +46,6 @@
             this.controlsPanel.Size = new System.Drawing.Size(673, 60);
             this.controlsPanel.TabIndex = 0;
             // 
-            // viewPanel
-            // 
-            this.viewPanel.Controls.Add(this.view);
-            this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 60);
-            this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(673, 520);
-            this.viewPanel.TabIndex = 1;
-            // 
             // tfdBox
             // 
             this.tfdBox.FormattingEnabled = true;
@@ -63,6 +54,15 @@
             this.tfdBox.Size = new System.Drawing.Size(649, 21);
             this.tfdBox.TabIndex = 0;
             this.tfdBox.SelectedIndexChanged += new System.EventHandler(this.tfdBox_SelectedIndexChanged);
+            // 
+            // viewPanel
+            // 
+            this.viewPanel.Controls.Add(this.view);
+            this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.viewPanel.Location = new System.Drawing.Point(0, 60);
+            this.viewPanel.Name = "viewPanel";
+            this.viewPanel.Size = new System.Drawing.Size(673, 520);
+            this.viewPanel.TabIndex = 1;
             // 
             // view
             // 
@@ -87,6 +87,7 @@
             this.Name = "LessonListByTFD";
             this.Text = "Список пар по TFD";
             this.Load += new System.EventHandler(this.LessonListByTFD_Load);
+            this.ResizeEnd += new System.EventHandler(this.LessonListByTFD_ResizeEnd);
             this.controlsPanel.ResumeLayout(false);
             this.viewPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.view)).EndInit();

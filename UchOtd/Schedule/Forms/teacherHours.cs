@@ -70,5 +70,50 @@ namespace Schedule.Forms
             view.Columns["Attestation"].HeaderText = "Форма отчётности";
             view.Columns["Attestation"].Width = 80;
         }
+
+        private void DiscipineListView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            
+        }
+
+        private Color PickPercentColor(int PlanHours, int ScheduleHours)
+        {
+            if (ScheduleHours > PlanHours + 1)
+            {
+                return Color.FromArgb(255, 0, 255);
+            }
+
+            if (ScheduleHours == PlanHours + 1)
+            {
+                return Color.FromArgb(200, 255, 0);
+            }
+
+            if (ScheduleHours == PlanHours)
+            {
+                return Color.FromArgb(0, 255, 0);
+            }
+
+            if (ScheduleHours >= PlanHours * 0.9)
+            {
+                return Color.FromArgb(255, 255, 0);
+            }
+
+            if (ScheduleHours >= PlanHours * 0.5)
+            {
+                return Color.FromArgb(255, 128, 0);
+            }
+
+            return Color.FromArgb(255, 0, 0);
+        }
+
+        private void view_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == 5)
+            {
+                var discView = ((List<TeacherForDisciplineView>)view.DataSource)[e.RowIndex];
+
+                e.CellStyle.BackColor = PickPercentColor(discView.PlanHours, discView.ScheduleHours);
+            }
+        }
     }
 }

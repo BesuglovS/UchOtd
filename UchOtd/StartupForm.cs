@@ -12,6 +12,7 @@ using Schedule;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Collections.Generic;
+using Schedule.Forms;
 
 namespace UchOtd
 {
@@ -44,6 +45,15 @@ namespace UchOtd
         bool _MainEditFormOpened;
         public MainEditForm EditForm;
 
+        bool _LessonsTFDFormOpened;
+        public LessonListByTFD LessonsByTFD;
+
+        bool _teacherLessonsFormOpened;
+        public LessonListByTeacher teacherLessons;
+
+        bool _teacherHoursFormOpened;
+        public teacherHours teacherDiciplines;
+
         public StartupForm()
         {
             InitializeComponent();
@@ -51,21 +61,27 @@ namespace UchOtd
             InitRepositories();
 
             // Контингент - Alt-S
-            HotKeyManager.RegisterHotKey(Keys.S, KeyModifiers.Alt);
+            HotKeyManager.RegisterHotKey(Keys.S, (uint)KeyModifiers.Alt);
             // Просмотр расписания - Alt-V
-            HotKeyManager.RegisterHotKey(Keys.V, KeyModifiers.Alt);
+            HotKeyManager.RegisterHotKey(Keys.V, (uint)KeyModifiers.Alt);
             // Расписание преподавателя - Alt-T
-            HotKeyManager.RegisterHotKey(Keys.T, KeyModifiers.Alt);
+            HotKeyManager.RegisterHotKey(Keys.T, (uint)KeyModifiers.Alt);
             // Изменения расписание - Alt-C
-            HotKeyManager.RegisterHotKey(Keys.C, KeyModifiers.Alt);
+            HotKeyManager.RegisterHotKey(Keys.C, (uint)KeyModifiers.Alt);
             // Занятость аудиторий - Alt-A
-            HotKeyManager.RegisterHotKey(Keys.A, KeyModifiers.Alt);
+            HotKeyManager.RegisterHotKey(Keys.A, (uint)KeyModifiers.Alt);
             // Заметки - Alt-N
-            HotKeyManager.RegisterHotKey(Keys.N, KeyModifiers.Alt);
+            HotKeyManager.RegisterHotKey(Keys.N, (uint)KeyModifiers.Alt);
             // Телефоны - Alt-P
-            HotKeyManager.RegisterHotKey(Keys.P, KeyModifiers.Alt);
+            HotKeyManager.RegisterHotKey(Keys.P, (uint)KeyModifiers.Alt);
             // Редакторование расписания - Alt-R
-            HotKeyManager.RegisterHotKey(Keys.R, KeyModifiers.Alt);
+            HotKeyManager.RegisterHotKey(Keys.R, (uint)KeyModifiers.Alt);
+            // Список пар по TFD - Alt-L
+            HotKeyManager.RegisterHotKey(Keys.L, (uint)KeyModifiers.Alt);
+            // Список пар преподавателя - Alt-Shift-T
+            HotKeyManager.RegisterHotKey(Keys.T, (uint)(KeyModifiers.Alt | KeyModifiers.Shift));
+            // Список пар преподавателя - Ctrl-Shift-T
+            HotKeyManager.RegisterHotKey(Keys.T, (uint)(KeyModifiers.Control | KeyModifiers.Shift));
 
             HotKeyManager.HotKeyPressed += ManageHotKeys;
 
@@ -87,6 +103,9 @@ namespace UchOtd
             _NotesFormOpened = false;
             _PhonesFormOpened = false;
             _MainEditFormOpened = false;
+            _LessonsTFDFormOpened = false;
+            _teacherLessonsFormOpened = false;
+            _teacherHoursFormOpened = false;
 
             trayIcon.Visible = true;
         }
@@ -136,7 +155,7 @@ namespace UchOtd
             {
                 reply = pingSender.Send(server, timeout, buffer, options);
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }            
@@ -198,6 +217,26 @@ namespace UchOtd
                 if (e.Key == Keys.R)
                 {
                     ShowEditScheduleForm();
+                }
+                if (e.Key == Keys.L)
+                {
+                    ShowLessonListByTFD();
+                }
+            }
+
+            if (e.Modifiers == (KeyModifiers.Alt | KeyModifiers.Shift))
+            {
+                if (e.Key == Keys.T)
+                {
+                    ShowTeacherLessons();
+                }
+            }
+
+            if (e.Modifiers == (KeyModifiers.Control | KeyModifiers.Shift))
+            {
+                if (e.Key == Keys.T)
+                {
+                    ShowTeacherHours();
                 }
             }
         }
@@ -381,6 +420,67 @@ namespace UchOtd
         private void EditScheduleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowEditScheduleForm();
+        }
+
+        private void списокПарПоДисциплинеAltLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowLessonListByTFD();
+        }
+
+        private void ShowLessonListByTFD()
+        {            
+            if (_LessonsTFDFormOpened)
+            {
+                LessonsByTFD.Activate();
+                LessonsByTFD.Focus();
+                return;
+            }
+
+            LessonsByTFD = new LessonListByTFD(_repo);
+            _LessonsTFDFormOpened = true;
+            LessonsByTFD.Show();
+            _LessonsTFDFormOpened = false;
+            
+        }
+
+        private void часыПоПреподавателюAltShiftTToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowTeacherLessons();
+        }
+
+        private void ShowTeacherLessons()
+        {
+            if (_teacherLessonsFormOpened)
+            {
+                teacherLessons.Activate();
+                teacherLessons.Focus();
+                return;
+            }
+
+            teacherLessons = new LessonListByTeacher(_repo);
+            _teacherLessonsFormOpened = true;
+            teacherLessons.Show();
+            _teacherLessonsFormOpened = false;            
+        }
+
+        private void списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ShowTeacherHours();
+        }
+
+        private void ShowTeacherHours()
+        {
+            if (_teacherHoursFormOpened)
+            {
+                teacherDiciplines.Activate();
+                teacherDiciplines.Focus();
+                return;
+            }
+
+            teacherDiciplines = new teacherHours(_repo);
+            _teacherHoursFormOpened = true;
+            teacherDiciplines.Show();
+            _teacherHoursFormOpened = false;
         }                
     }
 }

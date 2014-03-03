@@ -124,11 +124,11 @@
   <data name="AuditoriumChanged" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\a-green-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="TeacherSchedule_FormatView_Time" xml:space="preserve">
-    <value>Время</value>
-  </data>
   <data name="OpenParenthesis" xml:space="preserve">
     <value> (</value>
+  </data>
+  <data name="LessonRemoved" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\minus_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="LessonAdded" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\green_add_plus_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -145,6 +145,9 @@
   <data name="diff" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\diff.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Edit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="people" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\people.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -160,8 +163,8 @@
   <data name="peopleIco" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\people.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="LessonRemoved" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\minus_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="TeacherSchedule_FormatView_Time" xml:space="preserve">
+    <value>Время</value>
   </data>
   <data name="CloseParenthesis" xml:space="preserve">
     <value>)</value>
@@ -175,7 +178,7 @@
   <data name="phone" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\phone.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Edit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Book" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Book.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
