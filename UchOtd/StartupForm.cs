@@ -110,7 +110,7 @@ namespace UchOtd
                     _repo = new ScheduleRepository("data source=tcp:" + serverName + ",1433;Database=ScheduleDB;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
                     _UOrepo = new UchOtdRepository("data source=tcp:" + serverName + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
                 }
-            } while (successPing || connectionIndex == ServerList.Count);
+            } while (!successPing && connectionIndex != ServerList.Count);
 
             if (!successPing)
             {
