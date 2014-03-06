@@ -20,6 +20,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using Tuple = System.Tuple;
 using System.Threading;
 using System.Threading.Tasks;
+using UchOtd.Schedule.Core;
 
 namespace Schedule
 {
@@ -1143,6 +1144,18 @@ namespace Schedule
             disciplineForm.Left = width / 2;
             disciplineForm.Width = width / 2;
             disciplineForm.Height = (int) Math.Round(height * 0.42);
+        }
+
+        private void CreatePDF_Click(object sender, EventArgs e)
+        {
+            var facultyId = (int)FacultyList.SelectedValue;
+            var facultyName = _repo.GetFaculty(facultyId).Name;
+            var ruDOW = DOWList.SelectedIndex + 1;
+
+            var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, ruDOW);
+            PDFExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.pdf", DOWList.Text, _repo, false, false, false);
+
+            var eprst = 999;
         }
     }
 }

@@ -72,6 +72,7 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
+            this.CreatePDF = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -80,6 +81,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.CreatePDF);
             this.controlsPanel.Controls.Add(this.setLayout2);
             this.controlsPanel.Controls.Add(this.setLayout);
             this.controlsPanel.Controls.Add(this.altWordExport);
@@ -137,9 +139,9 @@
             // 
             // altWordExport
             // 
-            this.altWordExport.Location = new System.Drawing.Point(614, 86);
+            this.altWordExport.Location = new System.Drawing.Point(761, 86);
             this.altWordExport.Name = "altWordExport";
-            this.altWordExport.Size = new System.Drawing.Size(232, 22);
+            this.altWordExport.Size = new System.Drawing.Size(85, 22);
             this.altWordExport.TabIndex = 26;
             this.altWordExport.Text = "Word2";
             this.altWordExport.UseVisualStyleBackColor = true;
@@ -512,6 +514,16 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
+            // CreatePDF
+            // 
+            this.CreatePDF.Location = new System.Drawing.Point(615, 84);
+            this.CreatePDF.Name = "CreatePDF";
+            this.CreatePDF.Size = new System.Drawing.Size(140, 24);
+            this.CreatePDF.TabIndex = 29;
+            this.CreatePDF.Text = "PDF";
+            this.CreatePDF.UseVisualStyleBackColor = true;
+            this.CreatePDF.Click += new System.EventHandler(this.CreatePDF_Click);
+            // 
             // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -581,6 +593,7 @@
         private System.Windows.Forms.Button altWordExport;
         private System.Windows.Forms.Button setLayout;
         private System.Windows.Forms.Button setLayout2;
+        private System.Windows.Forms.Button CreatePDF;
     }
 }
 
