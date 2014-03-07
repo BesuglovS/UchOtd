@@ -30,9 +30,10 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.AllInPDF = new System.Windows.Forms.Button();
+            this.CreatePDF = new System.Windows.Forms.Button();
             this.setLayout2 = new System.Windows.Forms.Button();
             this.setLayout = new System.Windows.Forms.Button();
-            this.altWordExport = new System.Windows.Forms.Button();
             this.LessonListByTeacher = new System.Windows.Forms.Button();
             this.LessonListByTFD = new System.Windows.Forms.Button();
             this.excelExport = new System.Windows.Forms.Button();
@@ -44,9 +45,6 @@
             this.teachersHours = new System.Windows.Forms.Button();
             this.ManyGroups = new System.Windows.Forms.Button();
             this.ActiveLessonsCount = new System.Windows.Forms.Button();
-            this.ExportWholeWord = new System.Windows.Forms.Button();
-            this.Print = new System.Windows.Forms.Button();
-            this.WordIt = new System.Windows.Forms.Button();
             this.DOWList = new System.Windows.Forms.ComboBox();
             this.FacultyList = new System.Windows.Forms.ComboBox();
             this.auditoriumKaput = new System.Windows.Forms.Button();
@@ -72,7 +70,6 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.CreatePDF = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -81,10 +78,10 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.AllInPDF);
             this.controlsPanel.Controls.Add(this.CreatePDF);
             this.controlsPanel.Controls.Add(this.setLayout2);
             this.controlsPanel.Controls.Add(this.setLayout);
-            this.controlsPanel.Controls.Add(this.altWordExport);
             this.controlsPanel.Controls.Add(this.LessonListByTeacher);
             this.controlsPanel.Controls.Add(this.LessonListByTFD);
             this.controlsPanel.Controls.Add(this.excelExport);
@@ -96,9 +93,6 @@
             this.controlsPanel.Controls.Add(this.teachersHours);
             this.controlsPanel.Controls.Add(this.ManyGroups);
             this.controlsPanel.Controls.Add(this.ActiveLessonsCount);
-            this.controlsPanel.Controls.Add(this.ExportWholeWord);
-            this.controlsPanel.Controls.Add(this.Print);
-            this.controlsPanel.Controls.Add(this.WordIt);
             this.controlsPanel.Controls.Add(this.DOWList);
             this.controlsPanel.Controls.Add(this.FacultyList);
             this.controlsPanel.Controls.Add(this.auditoriumKaput);
@@ -116,6 +110,26 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(862, 149);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // AllInPDF
+            // 
+            this.AllInPDF.Location = new System.Drawing.Point(661, 84);
+            this.AllInPDF.Name = "AllInPDF";
+            this.AllInPDF.Size = new System.Drawing.Size(94, 23);
+            this.AllInPDF.TabIndex = 30;
+            this.AllInPDF.Text = "Всё в PDF";
+            this.AllInPDF.UseVisualStyleBackColor = true;
+            this.AllInPDF.Click += new System.EventHandler(this.AllInPDF_Click);
+            // 
+            // CreatePDF
+            // 
+            this.CreatePDF.Location = new System.Drawing.Point(615, 84);
+            this.CreatePDF.Name = "CreatePDF";
+            this.CreatePDF.Size = new System.Drawing.Size(40, 24);
+            this.CreatePDF.TabIndex = 29;
+            this.CreatePDF.Text = "PDF";
+            this.CreatePDF.UseVisualStyleBackColor = true;
+            this.CreatePDF.Click += new System.EventHandler(this.CreatePDF_Click);
             // 
             // setLayout2
             // 
@@ -136,16 +150,6 @@
             this.setLayout.Text = "L1";
             this.setLayout.UseVisualStyleBackColor = true;
             this.setLayout.Click += new System.EventHandler(this.setLayout_Click);
-            // 
-            // altWordExport
-            // 
-            this.altWordExport.Location = new System.Drawing.Point(761, 86);
-            this.altWordExport.Name = "altWordExport";
-            this.altWordExport.Size = new System.Drawing.Size(85, 22);
-            this.altWordExport.TabIndex = 26;
-            this.altWordExport.Text = "Word2";
-            this.altWordExport.UseVisualStyleBackColor = true;
-            this.altWordExport.Click += new System.EventHandler(this.altWordExport_Click);
             // 
             // LessonListByTeacher
             // 
@@ -257,36 +261,6 @@
             this.ActiveLessonsCount.Text = "Пар в расписании";
             this.ActiveLessonsCount.UseVisualStyleBackColor = true;
             this.ActiveLessonsCount.Click += new System.EventHandler(this.ActiveLessonsCount_Click);
-            // 
-            // ExportWholeWord
-            // 
-            this.ExportWholeWord.Location = new System.Drawing.Point(130, 56);
-            this.ExportWholeWord.Name = "ExportWholeWord";
-            this.ExportWholeWord.Size = new System.Drawing.Size(135, 23);
-            this.ExportWholeWord.TabIndex = 14;
-            this.ExportWholeWord.Text = "Всё расписание в Word";
-            this.ExportWholeWord.UseVisualStyleBackColor = true;
-            this.ExportWholeWord.Click += new System.EventHandler(this.ExportWholeWord_Click);
-            // 
-            // Print
-            // 
-            this.Print.Image = global::UchOtd.Properties.Resources.print;
-            this.Print.Location = new System.Drawing.Point(812, 51);
-            this.Print.Name = "Print";
-            this.Print.Size = new System.Drawing.Size(34, 33);
-            this.Print.TabIndex = 13;
-            this.Print.UseVisualStyleBackColor = true;
-            this.Print.Click += new System.EventHandler(this.Print_Click);
-            // 
-            // WordIt
-            // 
-            this.WordIt.Location = new System.Drawing.Point(761, 55);
-            this.WordIt.Name = "WordIt";
-            this.WordIt.Size = new System.Drawing.Size(45, 23);
-            this.WordIt.TabIndex = 12;
-            this.WordIt.Text = "Word";
-            this.WordIt.UseVisualStyleBackColor = true;
-            this.WordIt.Click += new System.EventHandler(this.WordItClick);
             // 
             // DOWList
             // 
@@ -514,16 +488,6 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // CreatePDF
-            // 
-            this.CreatePDF.Location = new System.Drawing.Point(615, 84);
-            this.CreatePDF.Name = "CreatePDF";
-            this.CreatePDF.Size = new System.Drawing.Size(140, 24);
-            this.CreatePDF.TabIndex = 29;
-            this.CreatePDF.Text = "PDF";
-            this.CreatePDF.UseVisualStyleBackColor = true;
-            this.CreatePDF.Click += new System.EventHandler(this.CreatePDF_Click);
-            // 
             // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -574,10 +538,7 @@
         private System.Windows.Forms.Button auditoriumKaput;
         private System.Windows.Forms.ToolStripMenuItem факультетыгруппыToolStripMenuItem;
         private System.Windows.Forms.ComboBox FacultyList;
-        private System.Windows.Forms.Button WordIt;
         private System.Windows.Forms.ComboBox DOWList;
-        private System.Windows.Forms.Button Print;
-        private System.Windows.Forms.Button ExportWholeWord;
         private System.Windows.Forms.Button ActiveLessonsCount;
         private System.Windows.Forms.Button ManyGroups;
         private System.Windows.Forms.ToolStripMenuItem занятостьАудиторийToolStripMenuItem;
@@ -590,10 +551,10 @@
         private System.Windows.Forms.Button excelExport;
         private System.Windows.Forms.Button LessonListByTFD;
         private System.Windows.Forms.Button LessonListByTeacher;
-        private System.Windows.Forms.Button altWordExport;
         private System.Windows.Forms.Button setLayout;
         private System.Windows.Forms.Button setLayout2;
         private System.Windows.Forms.Button CreatePDF;
+        private System.Windows.Forms.Button AllInPDF;
     }
 }
 

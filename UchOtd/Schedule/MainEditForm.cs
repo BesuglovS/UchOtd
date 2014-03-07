@@ -12,11 +12,7 @@ using Schedule.wnu.MySQLViews;
 using System.Globalization;
 using Schedule.Core;
 using System.IO;
-using Application = Microsoft.Office.Interop.Word.Application;
 using Schedule.Forms;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Tuple = System.Tuple;
 using System.Threading;
 using System.Threading.Tasks;
@@ -839,33 +835,6 @@ namespace Schedule
             facultyListForm.Show();
         }
 
-        private void WordItClick(object sender, EventArgs e)
-        {
-            var facultyId = (int) FacultyList.SelectedValue;
-            var facultyName = _repo.GetFaculty(facultyId).Name;
-            var ruDOW = DOWList.SelectedIndex + 1;
-
-            var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, ruDOW);
-            WordExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.docx", DOWList.Text, _repo, false, false, false);
-
-            var eprst = 999;
-        }
-
-        private void Print_Click(object sender, EventArgs e)
-        {
-            var facultyId = (int)FacultyList.SelectedValue;
-            var facultyName = _repo.GetFaculty(facultyId).Name;
-            var ruDOW = DOWList.SelectedIndex + 1;
-
-            var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, ruDOW);
-            WordExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.docx", DOWList.Text, _repo, false, true, true);
-        }
-
-        private void ExportWholeWord_Click(object sender, EventArgs e)
-        {
-            WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false);
-        }
-
         private void ActiveLessonsCount_Click(object sender, EventArgs e)
         {
             var allDiscLessonCount = _repo.GetAllDisciplines().Select(d => d.AuditoriumHours).Sum() / 2;
@@ -1054,18 +1023,7 @@ namespace Schedule
 
         private void excelExport_Click(object sender, EventArgs e)
         {
-            SpreadsheetDocument spreadsheet;
-            Worksheet worksheet;
-            
-            spreadsheet = Excel.CreateWorkbook("ScheduleExport.xlsx");
-            if (spreadsheet == null)
-            {
-                return;
-            }
-
-            Excel.AddBasicStyles(spreadsheet);
-            Excel.AddWorksheet(spreadsheet, "Расписание");
-            worksheet = spreadsheet.WorkbookPart.WorksheetParts.First().Worksheet;
+            var sr = new StreamWriter("ExcelData.txt");
 
             var lessons = _repo
                 .GetAllActiveLessons()
@@ -1076,18 +1034,18 @@ namespace Schedule
 
             for (int i = 0; i < lessons.Count; i++)
             {
-                Excel.SetCellValue(spreadsheet, worksheet, 1, (uint)(i + 1), lessons[i].Calendar.Date.Date, 4, true);
-                Excel.SetCellValue(spreadsheet, worksheet, 2, (uint)(i + 1), lessons[i].Ring.Time, 5, true);
-                Excel.SetCellValue(spreadsheet, worksheet, 3, (uint)(i + 1), lessons[i].TeacherForDiscipline.Discipline.Name, false, false);
-                Excel.SetCellValue(spreadsheet, worksheet, 4, (uint)(i + 1), lessons[i].TeacherForDiscipline.Teacher.FIO, false, false);
-                Excel.SetCellValue(spreadsheet, worksheet, 5, (uint)(i + 1), lessons[i].TeacherForDiscipline.Discipline.StudentGroup.Name, false, false);
-                Excel.SetCellValue(spreadsheet, worksheet, 6, (uint)(i + 1), lessons[i].Auditorium.Name, false, false);
+                sr.WriteLine(
+                    lessons[i].Calendar.Date.Date.ToString("dd.MM.yyyy") + '\t' + 
+                    lessons[i].Ring.Time + '\t' + 
+                    lessons[i].TeacherForDiscipline.Discipline.Name + '\t' + 
+                    lessons[i].TeacherForDiscipline.Teacher.FIO + '\t' +
+                    lessons[i].TeacherForDiscipline.Discipline.StudentGroup.Name + '\t' + 
+                    lessons[i].Auditorium.Name);
             }
 
-            worksheet.Save();
-            spreadsheet.Close();
+            sr.Close();
 
-            System.Diagnostics.Process.Start("ScheduleExport.xlsx");            
+            System.Diagnostics.Process.Start("ExcelData.txt");            
         }
 
         private void LessonListByTFD_Click(object sender, EventArgs e)
@@ -1101,19 +1059,7 @@ namespace Schedule
             var lessonListByTeacherForm = new LessonListByTeacher(_repo);
             lessonListByTeacherForm.Show();
         }
-
-        private void altWordExport_Click(object sender, EventArgs e)
-        {
-            var facultyId = (int)FacultyList.SelectedValue;
-            var facultyName = _repo.GetFaculty(facultyId).Name;
-            var ruDOW = DOWList.SelectedIndex + 1;
-
-            var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, ruDOW);
-            NewWordExport.AltExportSchedulePage(facultyDOWLessons, facultyName, "NewExport.docx", DOWList.Text, _repo, false, false, false);
-
-            var eprst = 999;
-        }
-
+        
         private void setLayout_Click(object sender, EventArgs e)
         {
             var width = Screen.PrimaryScreen.WorkingArea.Width;
@@ -1156,6 +1102,11 @@ namespace Schedule
             PDFExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.pdf", DOWList.Text, _repo, false, false, false);
 
             var eprst = 999;
+        }
+
+        private void AllInPDF_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
