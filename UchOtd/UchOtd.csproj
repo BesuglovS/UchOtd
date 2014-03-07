@@ -319,6 +319,7 @@
     <Compile Include="Schedule\wnu\MySQLViews\MySQLAuditoriumEvent.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLCalendar.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLDiscipline.cs" />
+    <Compile Include="Schedule\wnu\MySQLViews\MySQLGroupsInFaculty.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLLesson.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLLessonLogEvent.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLRing.cs" />

@@ -17,6 +17,7 @@ using Tuple = System.Tuple;
 using System.Threading;
 using System.Threading.Tasks;
 using UchOtd.Schedule.Core;
+using UchOtd.Schedule.wnu.MySQLViews;
 
 namespace Schedule
 {
@@ -668,7 +669,7 @@ namespace Schedule
         private void LoadToSiteClick(object sender, EventArgs e)
         {
             var jsonSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-
+            
             var auditoriums = _repo.GetAllAuditoriums();
             var wud = new WnuUploadData { tableSelector = "auditoriums", data = jsonSerializer.Serialize(auditoriums) };
             string json = jsonSerializer.Serialize(wud);
@@ -741,6 +742,17 @@ namespace Schedule
             var auditoriumEvents = _repo.GetAllAuditoriumEvents();
             var mySqlauditoriumEvents = MySQLAuditoriumEvent.FromAuditoriumEventList(auditoriumEvents);
             wud = new WnuUploadData { tableSelector = "auditoriumEvents", data = jsonSerializer.Serialize(mySqlauditoriumEvents) };
+            json = jsonSerializer.Serialize(wud);
+            WnuUpload.UploadTableData(json);
+            
+            var faculties = _repo.GetAllFaculties();
+            wud = new WnuUploadData { tableSelector = "faculties", data = jsonSerializer.Serialize(faculties) };
+            json = jsonSerializer.Serialize(wud);
+            WnuUpload.UploadTableData(json);
+
+            var gifs = _repo.GetAllGroupsInFaculty();
+            var mySqlgifs = MySQLGroupsInFaculty.FromGroupsInFacultyList(gifs);
+            wud = new WnuUploadData { tableSelector = "GroupsInFaculties", data = jsonSerializer.Serialize(mySqlgifs) };
             json = jsonSerializer.Serialize(wud);
             WnuUpload.UploadTableData(json);
         }
