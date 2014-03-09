@@ -167,29 +167,7 @@ namespace UchOtd.Schedule.Core
             {
                 return "второго семестра " + (ssYear-1) + " – " + ssYear + " учебного года";
             }
-        }
-
-        public static int LCM(int a, int b)
-        {
-            int num1, num2;
-            if (a > b)
-            {
-                num1 = a; num2 = b;
-            }
-            else
-            {
-                num1 = b; num2 = a;
-            }
-
-            for (int i = 1; i <= num2; i++)
-            {
-                if ((num1 * i) % num2 == 0)
-                {
-                    return i * num1;
-                }
-            }
-            return num2;
-        }
+        }        
 
         private static void PutScheduleTable(ScheduleRepository repo, Section section, string facultyName, string dow,
             Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> schedule,
@@ -281,23 +259,8 @@ namespace UchOtd.Schedule.Core
             var timeRowIndex = 2;
             foreach (var time in timeList.OrderBy(t => int.Parse(t.Split(':')[0]) * 60 + int.Parse(t.Split(':')[1])))
             {
-                var rowLCM = 1;                
-                foreach (var group in schedule)
-                {
-                    if (group.Value.ContainsKey(time))
-                    {
-                        rowLCM = LCM(rowLCM, group.Value[time].Count);                        
-                    }
-                }
-
-                var timeRows = new List<Row>();
-                for (int i = 0; i < rowLCM; i++)
-                {
-                    Row timeRow = table.AddRow();
-                    timeRows.Add(timeRow);
-                    timeRow.VerticalAlignment = VerticalAlignment.Center;
-                }
-                
+                var timeRow = table.AddRow();
+                timeRow.VerticalAlignment = VerticalAlignment.Center;
 
                 var Hour = int.Parse(time.Substring(0, 2));
                 var Minute = int.Parse(time.Substring(3, 2));
@@ -313,12 +276,9 @@ namespace UchOtd.Schedule.Core
 
                 timeRowIndexList.Add(timeRowIndex);
 
-                timeRows[0].Cells[0].Format.Alignment = ParagraphAlignment.Center;
-                timeRows[0].Cells[0].AddParagraph(time + " - " + Hour.ToString("D2") + ":" + Minute.ToString("D2"));
-                if (rowLCM != 1)
-                {
-                    timeRows[0].Cells[0].MergeDown = rowLCM - 1;
-                }
+                timeRow.Cells[0].Format.Alignment = ParagraphAlignment.Center;
+                timeRow.Cells[0].AddParagraph(time + " - " + Hour.ToString("D2") + ":" + Minute.ToString("D2"));
+                
 
                 var columnGroupIndex = 1;
                 foreach (var group in schedule)
@@ -327,8 +287,11 @@ namespace UchOtd.Schedule.Core
                     {
                         var eventCount = group.Value[time].Count;
 
-                        var tfdIndex = 0;                        
-                        var tfdMultiplier = rowLCM / group.Value[time].Count;
+                        var cellTable = timeRow.Cells[columnGroupIndex].Elements.AddTable();
+                        cellTable.AddColumn(table.Columns[columnGroupIndex].Width.Centimeter + "cm");
+                        cellTable.Borders.Width = 0;
+
+                        var tfdIndex = 0;                                                
                         foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CalculateWeekNumber(l.Calendar.Date)).Min()))
                         {
                             var cellText = "";
@@ -373,24 +336,16 @@ namespace UchOtd.Schedule.Core
                                 }
                             }
 
-                            timeRows[tfdIndex * tfdMultiplier].Cells[columnGroupIndex].Format.Alignment = ParagraphAlignment.Left;
-                            timeRows[tfdIndex * tfdMultiplier].Cells[columnGroupIndex].Format.Font.Size = ScheduleFontsize;
-                            timeRows[tfdIndex * tfdMultiplier].Cells[columnGroupIndex].AddParagraph(cellText);
-                            if (tfdMultiplier != 1)
-                            {
-                                timeRows[tfdIndex * tfdMultiplier].Cells[columnGroupIndex].MergeDown = tfdMultiplier - 1;
-                            }
+                            Row cellTableRow = cellTable.AddRow();
+
+                            cellTableRow.Cells[0].Format.Alignment = ParagraphAlignment.Left;
+                            cellTableRow.Cells[0].Format.Font.Size = ScheduleFontsize;
+                            cellTableRow.Cells[0].AddParagraph(cellText);
 
                             tfdIndex++;
                         }
                     }
-                    else
-                    {
-                        if (rowLCM != 1)
-                        {
-                            timeRows[0].Cells[columnGroupIndex].MergeDown = rowLCM - 1;
-                        }
-                    }
+                    
 
                     columnGroupIndex++;
                 }
