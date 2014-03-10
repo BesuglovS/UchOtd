@@ -74,8 +74,6 @@ namespace UchOtd.NUDS
 
         private void UpdateDailySchedule()
         {
-            localRepo = new ScheduleRepository();
-
             if (groupList.SelectedValue is StudentGroup)
             {
                 return;
@@ -89,7 +87,7 @@ namespace UchOtd.NUDS
 
             var formViewTask = Task<List<DailyScheduleGroupLessonView>>.Factory.StartNew(groupId =>
                 {
-                    var lList = Utilities.GetDailySchedule(localRepo, (int)groupId, datePicker.Value);
+                    var lList = Utilities.GetDailySchedule(_repo, (int)groupId, datePicker.Value);
                     return DailyScheduleGroupLessonView.FromLessonsList(lList, (int)groupId);
                 },
                 groupList.SelectedValue

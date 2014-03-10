@@ -12,7 +12,7 @@ namespace Schedule.Forms
 {
     public partial class MultipleView : Form
     {
-        ScheduleRepository _repo = new ScheduleRepository();
+        ScheduleRepository _repo;
 
         public MultipleView(ScheduleRepository repo)
         {

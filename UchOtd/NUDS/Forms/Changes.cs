@@ -15,7 +15,7 @@ namespace UchOtd.NUDS.Forms
 {
     public partial class Changes : Form
     {
-        readonly ScheduleRepository _repo = new ScheduleRepository();
+        readonly ScheduleRepository _repo;
         private int _groupId;
         private readonly int _initialGroupId;
         private int _calendarId = -1;        
@@ -62,14 +62,12 @@ namespace UchOtd.NUDS.Forms
 
         private List<lleView> GetGroupChanges(int groupId, int calendarId)
         {
-            var localRepo = new ScheduleRepository();
-
-            var studentIds = localRepo
+            var studentIds = _repo
                 .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
                 .Select(stig => stig.Student.StudentId)
                 .ToList();
 
-            var groupIds = localRepo
+            var groupIds = _repo
                 .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
                 .Select(stig => stig.StudentGroup.StudentGroupId)
                 .Distinct()
@@ -79,7 +77,7 @@ namespace UchOtd.NUDS.Forms
 
             if (calendarId == -1)
             {
-                evts = localRepo
+                evts = _repo
                     .GetFiltredLessonLogEvents(
                         et =>
                         ((et.OldLesson != null) &&
@@ -91,7 +89,7 @@ namespace UchOtd.NUDS.Forms
             }
             else
             {
-                evts = localRepo
+                evts = _repo
                 .GetFiltredLessonLogEvents(
                     et => ((et.OldLesson != null) && et.OldLesson.Calendar.CalendarId == calendarId &&
                                   groupIds.Contains(et.OldLesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId)) ||
@@ -277,9 +275,8 @@ namespace UchOtd.NUDS.Forms
         private void DatePickerValueChanged(object sender, EventArgs e)
         {
             var loadingEvents = Task.Factory.StartNew(() =>
-            {
-                var local = new ScheduleRepository();
-                var calendar = local.GetFirstFiltredCalendar(c => c.Date.Date == datePicker.Value.Date);
+            {   
+                var calendar = _repo.GetFirstFiltredCalendar(c => c.Date.Date == datePicker.Value.Date);
                 if (calendar != null)
                 {
                     _calendarId = calendar.CalendarId;
