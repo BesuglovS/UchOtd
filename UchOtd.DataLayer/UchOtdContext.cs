@@ -6,7 +6,7 @@ namespace UchOtd
     public class UchOtdContext : DbContext
     {
         public UchOtdContext()
-            : base("Name=UchOtdConnection")
+            : base()
         {
         }
         public UchOtdContext(string connectionString)
