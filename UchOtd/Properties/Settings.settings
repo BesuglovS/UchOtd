@@ -8,5 +8,11 @@
     <Setting Name="DBPassword" Type="System.String" Scope="User">
       <Value Profile="(Default)">ghjuhfvvf</Value>
     </Setting>
+    <Setting Name="wnuUserName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">eduxxi</Value>
+    </Setting>
+    <Setting Name="wnuPassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Ueuk,tp58Xfnf</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

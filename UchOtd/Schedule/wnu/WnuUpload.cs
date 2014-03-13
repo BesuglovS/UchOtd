@@ -7,13 +7,37 @@ namespace Schedule.wnu
 {
     public static class WnuUpload
     {
-        public static string UploadPath = "http://wiki.nayanova.edu/_php/includes/";
+        public static string UploadHttpPath = "http://wiki.nayanova.edu/_php/includes/";
+        public static string UploadFtpPath = "ftp://wiki.nayanova.edu/";
         //public static string UploadPath = "http://localhost/phpstorm/wnu/_php/includes/";
+
+        public static void UploadFile(string sourcefile, string destfile)
+        {
+            // Get the object used to communicate with the server.
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(UploadFtpPath + destfile);
+            request.UseBinary = true;
+            request.Method = WebRequestMethods.Ftp.UploadFile;
+
+            // This example assumes the FTP site uses anonymous logon.
+            request.Credentials = new NetworkCredential(UchOtd.Properties.Settings.Default.wnuUserName, UchOtd.Properties.Settings.Default.wnuPassword);
+
+            byte[] b = File.ReadAllBytes(sourcefile);
+
+            request.ContentLength = b.Length;
+            using (Stream s = request.GetRequestStream())
+            {
+                s.Write(b, 0, b.Length);
+            }
+
+            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+            response.Close();
+        }
 
         public static string UploadTableData(string postData)
         {
             // Create a request using a URL that can receive a post. 
-            WebRequest request = WebRequest.Create(UploadPath + "import.php");
+            WebRequest request = WebRequest.Create(UploadHttpPath + "import.php");
 
             // Set the Method property of the request to POST.
             request.Method = "POST";

@@ -70,6 +70,8 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
+            this.BackupAndUpload = new System.Windows.Forms.Button();
+            this.DownloadAndRestore = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -78,6 +80,8 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.DownloadAndRestore);
+            this.controlsPanel.Controls.Add(this.BackupAndUpload);
             this.controlsPanel.Controls.Add(this.AllInPDF);
             this.controlsPanel.Controls.Add(this.CreatePDF);
             this.controlsPanel.Controls.Add(this.setLayout2);
@@ -108,7 +112,7 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(862, 149);
+            this.controlsPanel.Size = new System.Drawing.Size(876, 149);
             this.controlsPanel.TabIndex = 0;
             // 
             // AllInPDF
@@ -195,7 +199,7 @@
             // 
             this.scheduleHours.Location = new System.Drawing.Point(654, 113);
             this.scheduleHours.Name = "scheduleHours";
-            this.scheduleHours.Size = new System.Drawing.Size(192, 23);
+            this.scheduleHours.Size = new System.Drawing.Size(210, 23);
             this.scheduleHours.TabIndex = 21;
             this.scheduleHours.Text = "Динамика часов в семестре";
             this.scheduleHours.UseVisualStyleBackColor = true;
@@ -343,7 +347,7 @@
             // 
             this.BigRedButton.Location = new System.Drawing.Point(744, 26);
             this.BigRedButton.Name = "BigRedButton";
-            this.BigRedButton.Size = new System.Drawing.Size(102, 23);
+            this.BigRedButton.Size = new System.Drawing.Size(120, 23);
             this.BigRedButton.TabIndex = 3;
             this.BigRedButton.Text = "Big red button";
             this.BigRedButton.UseVisualStyleBackColor = true;
@@ -373,7 +377,7 @@
             this.справочникиToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(862, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(876, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -470,7 +474,7 @@
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 149);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(862, 440);
+            this.viewPanel.Size = new System.Drawing.Size(876, 440);
             this.viewPanel.TabIndex = 1;
             // 
             // ScheduleView
@@ -484,15 +488,35 @@
             this.ScheduleView.Name = "ScheduleView";
             this.ScheduleView.ReadOnly = true;
             this.ScheduleView.RowHeadersVisible = false;
-            this.ScheduleView.Size = new System.Drawing.Size(862, 440);
+            this.ScheduleView.Size = new System.Drawing.Size(876, 440);
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
+            // 
+            // BackupAndUpload
+            // 
+            this.BackupAndUpload.Location = new System.Drawing.Point(761, 55);
+            this.BackupAndUpload.Name = "BackupAndUpload";
+            this.BackupAndUpload.Size = new System.Drawing.Size(103, 23);
+            this.BackupAndUpload.TabIndex = 31;
+            this.BackupAndUpload.Text = "BackupUpload";
+            this.BackupAndUpload.UseVisualStyleBackColor = true;
+            this.BackupAndUpload.Click += new System.EventHandler(this.BackupAndUpload_Click);
+            // 
+            // DownloadAndRestore
+            // 
+            this.DownloadAndRestore.Location = new System.Drawing.Point(761, 84);
+            this.DownloadAndRestore.Name = "DownloadAndRestore";
+            this.DownloadAndRestore.Size = new System.Drawing.Size(103, 23);
+            this.DownloadAndRestore.TabIndex = 32;
+            this.DownloadAndRestore.Text = "DownloadRestore";
+            this.DownloadAndRestore.UseVisualStyleBackColor = true;
+            this.DownloadAndRestore.Click += new System.EventHandler(this.DownloadAndRestore_Click);
             // 
             // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(862, 589);
+            this.ClientSize = new System.Drawing.Size(876, 589);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.MainMenuStrip = this.menuStrip1;
@@ -555,6 +579,8 @@
         private System.Windows.Forms.Button setLayout2;
         private System.Windows.Forms.Button CreatePDF;
         private System.Windows.Forms.Button AllInPDF;
+        private System.Windows.Forms.Button DownloadAndRestore;
+        private System.Windows.Forms.Button BackupAndUpload;
     }
 }
 

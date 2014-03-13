@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UchOtd.Schedule.Core;
 using UchOtd.Schedule.wnu.MySQLViews;
+using System.Net;
 
 namespace Schedule
 {
@@ -1119,6 +1120,19 @@ namespace Schedule
         private void AllInPDF_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void BackupAndUpload_Click(object sender, EventArgs e)
+        {
+            _repo.BackupDB(Application.StartupPath + "\\ScheduleDB.bak");
+            WnuUpload.UploadFile(Application.StartupPath + "\\ScheduleDB.bak", "httpdocs/upload/DB-Backup/ScheduleDB.bak");
+        }
+
+        private void DownloadAndRestore_Click(object sender, EventArgs e)
+        {
+            var wc = new WebClient();
+            wc.DownloadFile("http://wiki.nayanova.edu/upload/DB-Backup/ScheduleDB.bak", Application.StartupPath + "\\ScheduleDB.bak");
+            _repo.RestoreDB(Application.StartupPath + "\\ScheduleDB.bak");
         }
     }
 }
