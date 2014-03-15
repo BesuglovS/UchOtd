@@ -119,11 +119,14 @@ namespace Schedule.Forms.DBLists.Lessons
                          l.Ring.RingId == ring.RingId &&
                          l.IsActive);
 
-            
+
             if (groupsLessons.Count != 0)
-            {
-                MessageBox.Show("У студентов группы есть занятия.");
-                return;
+            {                
+                DialogResult OutOfMind = MessageBox.Show("У студентов группы есть занятия. Всё равно добавить?", "ЕГГОГ", MessageBoxButtons.YesNo);
+                if (OutOfMind == System.Windows.Forms.DialogResult.No)
+                {
+                    return;
+                }
             }
             
                         
