@@ -25,15 +25,77 @@ namespace Schedule.Forms
 
         private void AllChanges_Load(object sender, EventArgs e)
         {
+            var tfds = repo
+                .GetAllTeacherForDiscipline()
+                .OrderBy(tfd => tfd.Teacher.FIO)
+                .ThenBy(tfd => tfd.Discipline.Name)
+                .ToList();
+            var tfdsView = tfdView.tfdsToView(tfds);
+
+            tfdFilter.DisplayMember = "tfdSummary";
+            tfdFilter.ValueMember = "TeacherForDisciplineId";
+            tfdFilter.DataSource = tfdsView;
+
+            var teachers = repo
+                .GetAllTeachers()
+                .OrderBy(t => t.FIO)
+                .ToList();
+
+            teacherFilter.DisplayMember = "FIO";
+            teacherFilter.ValueMember = "TeacherId";
+            teacherFilter.DataSource = teachers;
+            
+            //RefreshView();
+        }
+
+        private void RefreshView()
+        {
             var changes = repo
                 .GetAllLessonLogEvents()
-                .OrderByDescending(lle => lle.DateTime)                
+                .OrderByDescending(lle => lle.DateTime)
                 .ToList();
+
+            if (tfdFiltering.Checked)
+            {
+                changes = changes.Where(evt => 
+                    ((evt.OldLesson != null) && 
+                     (evt.OldLesson.TeacherForDiscipline.TeacherForDisciplineId == (int)tfdFilter.SelectedValue)) ||
+                    ((evt.NewLesson != null) &&
+                     (evt.NewLesson.TeacherForDiscipline.TeacherForDisciplineId == (int)tfdFilter.SelectedValue))).ToList();
+            }
+
+            if (teacherFiltering.Checked)
+            {
+                changes = changes.Where(evt =>
+                    ((evt.OldLesson != null) &&
+                     (evt.OldLesson.TeacherForDiscipline.Teacher.TeacherId == (int)teacherFilter.SelectedValue)) ||
+                    ((evt.NewLesson != null) &&
+                     (evt.NewLesson.TeacherForDiscipline.Teacher.TeacherId == (int)teacherFilter.SelectedValue))).ToList();
+            }
+
+            if (lessonDateFiltering.Checked)
+            {
+                changes = changes.Where(evt =>
+                    ((evt.OldLesson != null) &&
+                     (evt.OldLesson.Calendar.Date.Date == lessonDateFilter.Value.Date)) ||
+                    ((evt.NewLesson != null) &&
+                     (evt.NewLesson.Calendar.Date.Date == lessonDateFilter.Value.Date))).ToList();
+            }
+
+            if (eventDateFiltering.Checked)
+            {
+                changes = changes.Where(evt => evt.DateTime.Date == eventDateFilter.Value.Date).ToList();
+            }
 
             var changesView = LessonLogEventView.FromEventList(changes);
 
             view.DataSource = changesView;
-            
+
+            FormatChangesView();
+        }
+
+        private void FormatChangesView()
+        {
             view.Columns["LessonLogEventId"].HeaderText = "Id";
             view.Columns["LessonLogEventId"].Width = 50;
 
@@ -54,6 +116,11 @@ namespace Schedule.Forms
 
             view.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             view.AutoResizeRows(DataGridViewAutoSizeRowsMode.AllCells);
+        }
+
+        private void Refresh_Click(object sender, EventArgs e)
+        {
+            RefreshView();
         }
     }
 }

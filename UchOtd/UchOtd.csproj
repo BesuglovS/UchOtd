@@ -365,6 +365,9 @@
     <EmbeddedResource Include="NUDS\ScheduleForm.resx">
       <DependentUpon>ScheduleForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\AllChanges.resx">
+      <DependentUpon>AllChanges.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\DBLists\DisciplineList.resx">
       <DependentUpon>DisciplineList.cs</DependentUpon>
     </EmbeddedResource>

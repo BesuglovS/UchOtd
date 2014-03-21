@@ -38,6 +38,7 @@
             this.viewPanel = new System.Windows.Forms.Panel();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.changesView = new System.Windows.Forms.DataGridView();
+            this.Refresh = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.changesView)).BeginInit();
@@ -45,6 +46,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.Refresh);
             this.controlsPanel.Controls.Add(this.datePicker);
             this.controlsPanel.Controls.Add(this.allChanges);
             this.controlsPanel.Controls.Add(this.todaysChanges);
@@ -54,7 +56,7 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(444, 72);
+            this.controlsPanel.Size = new System.Drawing.Size(518, 72);
             this.controlsPanel.TabIndex = 2;
             // 
             // datePicker
@@ -123,7 +125,7 @@
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 72);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(444, 343);
+            this.viewPanel.Size = new System.Drawing.Size(518, 343);
             this.viewPanel.TabIndex = 4;
             // 
             // loadingLabel
@@ -148,16 +150,25 @@
             this.changesView.Name = "changesView";
             this.changesView.ReadOnly = true;
             this.changesView.RowHeadersVisible = false;
-            this.changesView.Size = new System.Drawing.Size(444, 343);
+            this.changesView.Size = new System.Drawing.Size(518, 343);
             this.changesView.TabIndex = 0;
             this.changesView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.ChangesViewCellFormatting);
             this.changesView.SelectionChanged += new System.EventHandler(this.ChangesViewSelectionChanged);
+            // 
+            // Refresh
+            // 
+            this.Refresh.Location = new System.Drawing.Point(441, 12);
+            this.Refresh.Name = "Refresh";
+            this.Refresh.Size = new System.Drawing.Size(67, 49);
+            this.Refresh.TabIndex = 9;
+            this.Refresh.Text = "Обновить";
+            this.Refresh.UseVisualStyleBackColor = true;
             // 
             // Changes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(444, 415);
+            this.ClientSize = new System.Drawing.Size(518, 415);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.Name = "Changes";
@@ -185,5 +196,6 @@
         private System.Windows.Forms.Panel viewPanel;
         private System.Windows.Forms.DataGridView changesView;
         private System.Windows.Forms.Label loadingLabel;
+        private System.Windows.Forms.Button Refresh;
     }
 }
