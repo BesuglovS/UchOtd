@@ -30,6 +30,8 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.DownloadAndRestore = new System.Windows.Forms.Button();
+            this.BackupAndUpload = new System.Windows.Forms.Button();
             this.AllInPDF = new System.Windows.Forms.Button();
             this.CreatePDF = new System.Windows.Forms.Button();
             this.setLayout2 = new System.Windows.Forms.Button();
@@ -70,8 +72,7 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.BackupAndUpload = new System.Windows.Forms.Button();
-            this.DownloadAndRestore = new System.Windows.Forms.Button();
+            this.WholeScheduleDatesExport = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -80,6 +81,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.WholeScheduleDatesExport);
             this.controlsPanel.Controls.Add(this.DownloadAndRestore);
             this.controlsPanel.Controls.Add(this.BackupAndUpload);
             this.controlsPanel.Controls.Add(this.AllInPDF);
@@ -114,6 +116,26 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(876, 149);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // DownloadAndRestore
+            // 
+            this.DownloadAndRestore.Location = new System.Drawing.Point(761, 84);
+            this.DownloadAndRestore.Name = "DownloadAndRestore";
+            this.DownloadAndRestore.Size = new System.Drawing.Size(103, 23);
+            this.DownloadAndRestore.TabIndex = 32;
+            this.DownloadAndRestore.Text = "DownloadRestore";
+            this.DownloadAndRestore.UseVisualStyleBackColor = true;
+            this.DownloadAndRestore.Click += new System.EventHandler(this.DownloadAndRestore_Click);
+            // 
+            // BackupAndUpload
+            // 
+            this.BackupAndUpload.Location = new System.Drawing.Point(761, 55);
+            this.BackupAndUpload.Name = "BackupAndUpload";
+            this.BackupAndUpload.Size = new System.Drawing.Size(103, 23);
+            this.BackupAndUpload.TabIndex = 31;
+            this.BackupAndUpload.Text = "BackupUpload";
+            this.BackupAndUpload.UseVisualStyleBackColor = true;
+            this.BackupAndUpload.Click += new System.EventHandler(this.BackupAndUpload_Click);
             // 
             // AllInPDF
             // 
@@ -492,25 +514,15 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // BackupAndUpload
+            // WholeScheduleDatesExport
             // 
-            this.BackupAndUpload.Location = new System.Drawing.Point(761, 55);
-            this.BackupAndUpload.Name = "BackupAndUpload";
-            this.BackupAndUpload.Size = new System.Drawing.Size(103, 23);
-            this.BackupAndUpload.TabIndex = 31;
-            this.BackupAndUpload.Text = "BackupUpload";
-            this.BackupAndUpload.UseVisualStyleBackColor = true;
-            this.BackupAndUpload.Click += new System.EventHandler(this.BackupAndUpload_Click);
-            // 
-            // DownloadAndRestore
-            // 
-            this.DownloadAndRestore.Location = new System.Drawing.Point(761, 84);
-            this.DownloadAndRestore.Name = "DownloadAndRestore";
-            this.DownloadAndRestore.Size = new System.Drawing.Size(103, 23);
-            this.DownloadAndRestore.TabIndex = 32;
-            this.DownloadAndRestore.Text = "DownloadRestore";
-            this.DownloadAndRestore.UseVisualStyleBackColor = true;
-            this.DownloadAndRestore.Click += new System.EventHandler(this.DownloadAndRestore_Click);
+            this.WholeScheduleDatesExport.Location = new System.Drawing.Point(130, 56);
+            this.WholeScheduleDatesExport.Name = "WholeScheduleDatesExport";
+            this.WholeScheduleDatesExport.Size = new System.Drawing.Size(135, 23);
+            this.WholeScheduleDatesExport.TabIndex = 33;
+            this.WholeScheduleDatesExport.Text = "Все даты расписания";
+            this.WholeScheduleDatesExport.UseVisualStyleBackColor = true;
+            this.WholeScheduleDatesExport.Click += new System.EventHandler(this.WholeScheduleDatesExport_Click);
             // 
             // MainEditForm
             // 
@@ -581,6 +593,7 @@
         private System.Windows.Forms.Button AllInPDF;
         private System.Windows.Forms.Button DownloadAndRestore;
         private System.Windows.Forms.Button BackupAndUpload;
+        private System.Windows.Forms.Button WholeScheduleDatesExport;
     }
 }
 

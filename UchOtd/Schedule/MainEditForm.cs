@@ -14,11 +14,10 @@ using Schedule.Core;
 using System.IO;
 using Schedule.Forms;
 using Tuple = System.Tuple;
-using System.Threading;
-using System.Threading.Tasks;
 using UchOtd.Schedule.Core;
 using UchOtd.Schedule.wnu.MySQLViews;
 using System.Net;
+using System.Text;
 
 namespace Schedule
 {
@@ -1133,6 +1132,75 @@ namespace Schedule
             var wc = new WebClient();
             wc.DownloadFile("http://wiki.nayanova.edu/upload/DB-Backup/ScheduleDB.bak", Application.StartupPath + "\\ScheduleDB.bak");
             _repo.RestoreDB(Application.StartupPath + "\\ScheduleDB.bak");
+        }
+
+        private void WholeScheduleDatesExport_Click(object sender, EventArgs e)
+        {
+            ExportWholeScheduleDates("ScheduleDates.txt");
+        }
+
+        private void ExportWholeScheduleDates(string filename)
+        {
+            var groups = _repo
+                .GetFiltredStudentGroups(sg => !(sg.Name.Contains("-") || sg.Name.Contains("+") || sg.Name.Contains("I") || sg.Name.Length == 1 || sg.Name.Contains("(Н)")))
+                .ToList();
+
+            foreach (var group in groups)
+            {
+                var sw = new StreamWriter(filename, true);
+                sw.WriteLine(group.Name);
+                sw.Close();
+
+
+                var studentIds = _repo
+                    .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
+                    .Select(sig => sig.Student.StudentId)
+                    .ToList();
+
+                var groupIds = _repo
+                    .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                    .Select(sig => sig.StudentGroup.StudentGroupId)
+                    .Distinct()
+                    .ToList();
+
+                var tfds = _repo
+                    .GetFiltredTeacherForDiscipline(tfd => groupIds.Contains(tfd.Discipline.StudentGroup.StudentGroupId))
+                    .ToList();
+
+                foreach (var tfd in tfds)
+                {
+                    var lessons = _repo.GetFiltredLessons(l =>
+                        l.IsActive &&
+                        l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
+                        .OrderBy(l => l.Calendar.Date.Date)
+                        .ToList();
+
+                    if (lessons.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    StringBuilder discipline = new StringBuilder();
+
+                    discipline.Append(tfd.Discipline.StudentGroup.Name + '\t');
+                    discipline.Append(tfd.Discipline.Name + '\t');
+                    discipline.Append(tfd.Teacher.FIO + '\t');
+
+                    foreach (var lesson in lessons)
+                    {
+                        discipline.Append(lesson.Calendar.Date.ToString("dd.MM.yyyy") + '\t');
+                    }
+
+                    sw = new StreamWriter(filename, true);
+                    sw.WriteLine(discipline);
+                    sw.Close();
+                }
+
+                sw = new StreamWriter(filename, true);
+                sw.WriteLine();
+                sw.Close();
+                
+            }
         }
     }
 }
