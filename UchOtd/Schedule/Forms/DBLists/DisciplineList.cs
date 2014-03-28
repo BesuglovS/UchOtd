@@ -214,25 +214,6 @@ namespace Schedule.Forms.DBLists
             }
         }
 
-        private void RemoveWithTFDClick(object sender, EventArgs e)
-        {
-            if (DiscipineListView.SelectedCells.Count > 0)
-            {
-                var discView = ((List<DisciplineView>)DiscipineListView.DataSource)[DiscipineListView.SelectedCells[0].RowIndex];
-
-                var disciplineTFDs = _repo.GetFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discView.DisciplineId);
-
-                foreach (var tfd in disciplineTFDs)
-                {
-                    _repo.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
-                }
-
-                _repo.RemoveDiscipline(discView.DisciplineId);
-
-                RefreshView();
-            }
-        }
-
         private void PasteClick(object sender, EventArgs e)
         {
             DisciplineName.Text = Clipboard.GetText();
@@ -318,6 +299,47 @@ namespace Schedule.Forms.DBLists
             }
 
             return Color.FromArgb(255, 0, 0);
+        }
+
+        private void CompletelyDelete_Click(object sender, EventArgs e)
+        {
+            if (DiscipineListView.SelectedCells.Count > 0)
+            {
+                var discView = ((List<DisciplineView>)DiscipineListView.DataSource)[DiscipineListView.SelectedCells[0].RowIndex];
+                
+                var tfd = _repo.GetFirstFiltredTeacherForDiscipline(tefd => tefd.Discipline.DisciplineId == discView.DisciplineId);
+
+                if (tfd == null)
+                {
+                    MessageBox.Show("Дисциплина не назначена преподавателю.");
+                    return;
+                }
+
+                var lessonIds = _repo
+                    .GetFiltredLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
+                    .Select(l => l.LessonId);
+
+                var logEventIds = _repo.GetFiltredLessonLogEvents(lle =>
+                    ((lle.OldLesson != null) && (lessonIds.Contains(lle.OldLesson.LessonId))) ||
+                    ((lle.NewLesson != null) && (lessonIds.Contains(lle.NewLesson.LessonId))))
+                    .Select(lle => lle.LessonLogEventId);
+
+                foreach (var lleId in logEventIds)
+                {
+                    _repo.RemoveLessonLogEvent(lleId);
+                }
+
+                foreach (var lessonId in lessonIds)
+                {
+                    _repo.RemoveLessonWOLog(lessonId);
+                }
+
+                _repo.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
+
+                _repo.RemoveDiscipline(discView.DisciplineId);
+
+                RefreshView();
+            }
         }
     }
 }

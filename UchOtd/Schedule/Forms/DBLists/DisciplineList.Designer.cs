@@ -30,7 +30,6 @@
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
             this.Paste = new System.Windows.Forms.Button();
-            this.removeWithTFD = new System.Windows.Forms.Button();
             this.Attestation = new System.Windows.Forms.ComboBox();
             this.Group = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -58,6 +57,7 @@
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.showAll = new System.Windows.Forms.Button();
             this.filter = new System.Windows.Forms.TextBox();
+            this.CompletelyDelete = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -67,8 +67,8 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.CompletelyDelete);
             this.controlsPanel.Controls.Add(this.Paste);
-            this.controlsPanel.Controls.Add(this.removeWithTFD);
             this.controlsPanel.Controls.Add(this.Attestation);
             this.controlsPanel.Controls.Add(this.Group);
             this.controlsPanel.Controls.Add(this.label6);
@@ -99,16 +99,6 @@
             this.Paste.Text = "*";
             this.Paste.UseVisualStyleBackColor = true;
             this.Paste.Click += new System.EventHandler(this.PasteClick);
-            // 
-            // removeWithTFD
-            // 
-            this.removeWithTFD.Location = new System.Drawing.Point(9, 334);
-            this.removeWithTFD.Name = "removeWithTFD";
-            this.removeWithTFD.Size = new System.Drawing.Size(194, 43);
-            this.removeWithTFD.TabIndex = 42;
-            this.removeWithTFD.Text = "Удалить с назначением преподавателю";
-            this.removeWithTFD.UseVisualStyleBackColor = true;
-            this.removeWithTFD.Click += new System.EventHandler(this.RemoveWithTFDClick);
             // 
             // Attestation
             // 
@@ -367,6 +357,16 @@
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
             // 
+            // CompletelyDelete
+            // 
+            this.CompletelyDelete.Location = new System.Drawing.Point(8, 334);
+            this.CompletelyDelete.Name = "CompletelyDelete";
+            this.CompletelyDelete.Size = new System.Drawing.Size(195, 57);
+            this.CompletelyDelete.TabIndex = 102;
+            this.CompletelyDelete.Text = "Совсем удалить";
+            this.CompletelyDelete.UseVisualStyleBackColor = true;
+            this.CompletelyDelete.Click += new System.EventHandler(this.CompletelyDelete_Click);
+            // 
             // DisciplineList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -391,7 +391,6 @@
         #endregion
 
         private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.Button removeWithTFD;
         private System.Windows.Forms.ComboBox Attestation;
         private System.Windows.Forms.ComboBox Group;
         private System.Windows.Forms.Label label6;
@@ -420,5 +419,6 @@
         private System.Windows.Forms.CheckBox groupnameFilter;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button CompletelyDelete;
     }
 }
