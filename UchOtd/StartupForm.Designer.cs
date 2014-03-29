@@ -38,7 +38,9 @@
             this.EditScheduleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.показатьОкноToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.расписаниеНаДеньToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.расписаниеПреподавателяToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.расписаниеПреподавателяAltTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.часыПоПреподавателюAltShiftTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.списокПарПоДисциплинеAltLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,7 +51,6 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.расписаниеПреподавателяAltTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.trayIconMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,6 +64,7 @@
             this.EditScheduleToolStripMenuItem,
             this.toolStripMenuItem2,
             this.показатьОкноToolStripMenuItem,
+            this.расписаниеНаДеньToolStripMenuItem,
             this.расписаниеПреподавателяToolStripMenuItem,
             this.списокПарПоДисциплинеAltLToolStripMenuItem,
             this.занятостьАудиторийAltAToolStripMenuItem,
@@ -124,6 +126,14 @@
             this.показатьОкноToolStripMenuItem.Text = "Просмотр расписания (Alt+V)";
             this.показатьОкноToolStripMenuItem.Click += new System.EventHandler(this.ПоказатьОкноToolStripMenuItemClick);
             // 
+            // расписаниеНаДеньToolStripMenuItem
+            // 
+            this.расписаниеНаДеньToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("расписаниеНаДеньToolStripMenuItem.Image")));
+            this.расписаниеНаДеньToolStripMenuItem.Name = "расписаниеНаДеньToolStripMenuItem";
+            this.расписаниеНаДеньToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
+            this.расписаниеНаДеньToolStripMenuItem.Text = "Расписание на день";
+            this.расписаниеНаДеньToolStripMenuItem.Click += new System.EventHandler(this.расписаниеНаДеньToolStripMenuItem_Click);
+            // 
             // расписаниеПреподавателяToolStripMenuItem
             // 
             this.расписаниеПреподавателяToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -134,6 +144,14 @@
             this.расписаниеПреподавателяToolStripMenuItem.Name = "расписаниеПреподавателяToolStripMenuItem";
             this.расписаниеПреподавателяToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.расписаниеПреподавателяToolStripMenuItem.Text = "Данные по преподавателю";
+            // 
+            // расписаниеПреподавателяAltTToolStripMenuItem
+            // 
+            this.расписаниеПреподавателяAltTToolStripMenuItem.Image = global::UchOtd.Properties.Resources.teacher;
+            this.расписаниеПреподавателяAltTToolStripMenuItem.Name = "расписаниеПреподавателяAltTToolStripMenuItem";
+            this.расписаниеПреподавателяAltTToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
+            this.расписаниеПреподавателяAltTToolStripMenuItem.Text = "Расписание преподавателя (Alt+T)";
+            this.расписаниеПреподавателяAltTToolStripMenuItem.Click += new System.EventHandler(this.РасписаниеПреподавателяToolStripMenuItemClick);
             // 
             // списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1
             // 
@@ -207,14 +225,6 @@
             this.trayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("trayIcon.Icon")));
             this.trayIcon.Text = "Учебный отдел";
             // 
-            // расписаниеПреподавателяAltTToolStripMenuItem
-            // 
-            this.расписаниеПреподавателяAltTToolStripMenuItem.Image = global::UchOtd.Properties.Resources.teacher;
-            this.расписаниеПреподавателяAltTToolStripMenuItem.Name = "расписаниеПреподавателяAltTToolStripMenuItem";
-            this.расписаниеПреподавателяAltTToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
-            this.расписаниеПреподавателяAltTToolStripMenuItem.Text = "Расписание преподавателя (Alt+T)";
-            this.расписаниеПреподавателяAltTToolStripMenuItem.Click += new System.EventHandler(this.РасписаниеПреподавателяToolStripMenuItemClick);
-            // 
             // StartupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -249,6 +259,7 @@
         private System.Windows.Forms.ToolStripMenuItem списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem списокПарПоДисциплинеAltLToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem расписаниеПреподавателяAltTToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem расписаниеНаДеньToolStripMenuItem;
     }
 }
 

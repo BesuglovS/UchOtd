@@ -1142,7 +1142,7 @@ namespace Schedule
         private void ExportWholeScheduleDates(string filename)
         {
             var groups = _repo
-                .GetFiltredStudentGroups(sg => !(sg.Name.Contains("-") || sg.Name.Contains("+") || sg.Name.Contains("I") || sg.Name.Length == 1 || sg.Name.Contains("(Н)")))
+                .GetFiltredStudentGroups(sg => !(sg.Name.Contains("-") || sg.Name.Contains("+") || sg.Name.Contains("I") || sg.Name.Length == 1 || sg.Name.Contains("(Н)") || sg.Name.Contains(".")))
                 .ToList();
 
             foreach (var group in groups)

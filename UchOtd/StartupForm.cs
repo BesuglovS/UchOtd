@@ -54,6 +54,9 @@ namespace UchOtd
         bool _teacherHoursFormOpened;
         public teacherHours teacherDiciplines;
 
+        bool _dailyLessonsFormOpened;
+        public DailyLessons dailyLessons;
+
         public StartupForm()
         {
             InitializeComponent();
@@ -82,6 +85,8 @@ namespace UchOtd
             HotKeyManager.RegisterHotKey(Keys.T, (uint)(KeyModifiers.Alt | KeyModifiers.Shift));
             // Список пар преподавателя - Ctrl-Shift-T
             HotKeyManager.RegisterHotKey(Keys.T, (uint)(KeyModifiers.Control | KeyModifiers.Shift));
+            // Расписание на день - Alt-D
+            HotKeyManager.RegisterHotKey(Keys.D, (uint)KeyModifiers.Alt);
 
             HotKeyManager.HotKeyPressed += ManageHotKeys;
 
@@ -106,6 +111,7 @@ namespace UchOtd
             _LessonsTFDFormOpened = false;
             _teacherLessonsFormOpened = false;
             _teacherHoursFormOpened = false;
+            _dailyLessonsFormOpened = false;
 
             trayIcon.Visible = true;
         }
@@ -222,6 +228,10 @@ namespace UchOtd
                 {
                     ShowLessonListByTFD();
                 }
+                if (e.Key == Keys.D)
+                {
+                    ShowDailyLessons();
+                }
             }
 
             if (e.Modifiers == (KeyModifiers.Alt | KeyModifiers.Shift))
@@ -239,6 +249,21 @@ namespace UchOtd
                     ShowTeacherHours();
                 }
             }
+        }
+
+        private void ShowDailyLessons()
+        {
+            if (_dailyLessonsFormOpened)
+            {
+                dailyLessons.Activate();
+                dailyLessons.Focus();
+                return;
+            }
+
+            dailyLessons = new DailyLessons(_repo);
+            _dailyLessonsFormOpened = true;
+            dailyLessons.Show();
+            _dailyLessonsFormOpened = false;
         }
 
         private void ShowEditScheduleForm()
@@ -481,6 +506,11 @@ namespace UchOtd
             _teacherHoursFormOpened = true;
             teacherDiciplines.Show();
             _teacherHoursFormOpened = false;
+        }
+
+        private void расписаниеНаДеньToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowDailyLessons();
         }                
     }
 }
