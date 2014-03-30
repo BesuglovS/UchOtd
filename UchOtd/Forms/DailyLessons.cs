@@ -7,7 +7,10 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using UchOtd.Core;
 
 namespace UchOtd.Forms
 {
@@ -15,9 +18,16 @@ namespace UchOtd.Forms
     {
         readonly ScheduleRepository repo;
 
+        private readonly TaskScheduler _uiScheduler;
+
+        CancellationTokenSource tokenSource;
+        CancellationToken cToken;
+
         public DailyLessons(ScheduleRepository repo)
         {
             InitializeComponent();
+
+            _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
             this.repo = repo;
         }
@@ -30,114 +40,180 @@ namespace UchOtd.Forms
             facultyFilter.DisplayMember = "Name";
             facultyFilter.DataSource = faculties;
 
+            var groups = MainGroups();
+                        
+            studentGroupList.DisplayMember = "Name";
+            studentGroupList.DataSource = groups;
+
             lessonsDate.Value = DateTime.Now.Date.Date;
         }
 
         private void refresh_Click(object sender, EventArgs e)
         {
-            RefreshView();
+            UpdateData();
         }
 
-        private void RefreshView()
+        private void UpdateData()
         {
-            var groups = repo
-                .GetFiltredStudentGroups(sg => 
-                    !(sg.Name.Contains("-") || sg.Name.Contains("+") || sg.Name.Contains("I") || 
-                      sg.Name.Length == 1 || sg.Name.Contains("(Н)") || sg.Name.Contains(".")))
-                .ToList();
-
-            if (facultyFiltered.Checked)
+            if (tokenSource != null)
             {
-                groups = repo
-                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == (int)facultyFilter.SelectedValue)
-                    .Select(gif => gif.StudentGroup)
-                    .ToList();               
+                tokenSource.Cancel();
             }
 
-            // Dictionary<StudentGroupId,Dictionary<ringId, List<Lessons>>>
-            var result = new Dictionary<int, Dictionary<int, List<Lesson>>>();
-            var rings = new List<Ring>();
+            tokenSource = new CancellationTokenSource();
+            cToken = tokenSource.Token;
 
-            foreach (var group in groups)
+            loadingLabel.Visible = true;
+
+            bool isfacultyFiltered = facultyFiltered.Checked;
+            int facultyFilterSelectedValue = (int)facultyFilter.SelectedValue;
+
+            bool isStudentGroupsFiltered = studentGroupsFiltered.Checked;
+            List<StudentGroup> groups = null;
+            if (isStudentGroupsFiltered)
             {
-                result.Add(group.StudentGroupId, new Dictionary<int, List<Lesson>>());
-
-                var studentIds = repo
-                    .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
-                    .ToList()
-                    .Select(stig => stig.Student.StudentId);
-
-                var groupIds = repo
-                    .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
-                    .ToList()
-                    .Select(stig => stig.StudentGroup.StudentGroupId);
-
-                var dailyLessons = repo.GetFiltredLessons(l => 
-                    l.IsActive &&
-                    l.Calendar.Date == lessonsDate.Value &&
-                    groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
-
-                foreach (var lesson in dailyLessons)
+                groups = new List<StudentGroup>();
+                foreach (Object groupObject in studentGroupList.SelectedItems)
                 {
-                    if (!result[group.StudentGroupId].ContainsKey(lesson.Ring.RingId))
-                    {
-                        result[group.StudentGroupId].Add(lesson.Ring.RingId, new List<Lesson>());
-                    }
-                    if (!rings.Select(r => r.RingId).ToList().Contains(lesson.Ring.RingId))
-                    {
-                        rings.Add(lesson.Ring);
-                    }
-
-                    result[group.StudentGroupId][lesson.Ring.RingId].Add(lesson);
+                    StudentGroup group = groupObject as StudentGroup;
+                    groups.Add(group);
                 }
             }
-
-            rings = rings.OrderBy(r => r.Time.TimeOfDay).ToList();
-
-            view.RowCount = rings.Count + 1;
-            view.ColumnCount = result.Count + 1;
-
-            int columnIndex1 = 1;
-            foreach (var group in result)
-            {
-                view.Rows[0].Cells[columnIndex1].Value = repo.GetStudentGroup(group.Key).Name;
-
-                columnIndex1++;
-            }
-
-            int rowIndex = 1;
-            foreach (var ring in rings)
-            {
-                view.Rows[rowIndex].Cells[0].Value = rings[rowIndex-1].Time.ToString("H:mm");
-
-                //foreach (var group in result[ring.RingId])
-                for(int columnIndex = 1; columnIndex < view.Columns.Count; columnIndex++)
-                {
-                    var group = repo.GetStudentGroup(groups[columnIndex - 1].StudentGroupId);
-
-                    if (result[group.StudentGroupId].ContainsKey(ring.RingId))
-                    {
-                        var lesson = result[group.StudentGroupId][ring.RingId][0];
-
-                        bool groupsNotEqual = lesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId != group.StudentGroupId;
-
-                        view.Rows[rowIndex].Cells[columnIndex].Value = LessonToString(lesson, groupsNotEqual);
-                    }
-                    else
-                    {
-                        view.Rows[rowIndex].Cells[columnIndex].Value = "";
-                    }
-
-                }
-
-                rowIndex++;
-            }            
-
-            view.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            view.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-
-            ResizeColumns();
             
+            var calculateTask = Task.Factory.StartNew(() =>
+            {
+                var data = new DailyLessonsData();
+
+                data.groups = MainGroups();
+
+                if (isStudentGroupsFiltered)
+                {
+                    data.groups = groups;
+                }
+                else
+                {
+                    if (isfacultyFiltered)
+                    {
+                        data.groups = repo
+                            .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == facultyFilterSelectedValue)
+                            .Select(gif => gif.StudentGroup)
+                            .ToList();
+                    }
+                }
+                
+                // Dictionary<StudentGroupId,Dictionary<ringId, List<Lessons>>>
+                data.lessonsData = new Dictionary<int, Dictionary<int, List<Lesson>>>();
+                data.rings = new List<Ring>();
+
+                foreach (var group in data.groups)
+                {
+                    data.lessonsData.Add(group.StudentGroupId, new Dictionary<int, List<Lesson>>());
+
+                    var studentIds = repo
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
+                        .ToList()
+                        .Select(stig => stig.Student.StudentId);
+
+                    var groupIds = repo
+                        .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                        .ToList()
+                        .Select(stig => stig.StudentGroup.StudentGroupId);
+
+                    var dailyLessons = repo.GetFiltredLessons(l =>
+                        l.IsActive &&
+                        l.Calendar.Date == lessonsDate.Value &&
+                        groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
+
+                    foreach (var lesson in dailyLessons)
+                    {
+                        if (!data.lessonsData[group.StudentGroupId].ContainsKey(lesson.Ring.RingId))
+                        {
+                            data.lessonsData[group.StudentGroupId].Add(lesson.Ring.RingId, new List<Lesson>());
+                        }
+                        if (!data.rings.Select(r => r.RingId).ToList().Contains(lesson.Ring.RingId))
+                        {
+                            data.rings.Add(lesson.Ring);
+                        }
+
+                        data.lessonsData[group.StudentGroupId][lesson.Ring.RingId].Add(lesson);
+                    }
+                }
+
+                data.rings = data.rings.OrderBy(r => r.Time.TimeOfDay).ToList();
+
+                return data;
+            }, cToken);
+
+            if (calculateTask.Status == TaskStatus.Canceled)
+            {
+                return;
+            }
+
+            calculateTask.ContinueWith(
+                antecedent =>
+                {
+                    var data = antecedent.Result;
+                    view.RowCount = data.rings.Count + 1;
+                    view.ColumnCount = data.lessonsData.Count + 1;
+
+                    int columnIndex1 = 1;
+                    foreach (var group in data.lessonsData)
+                    {
+                        view.Rows[0].Cells[columnIndex1].Value = repo.GetStudentGroup(group.Key).Name;
+
+                        columnIndex1++;
+                    }
+
+                    int rowIndex = 1;
+                    foreach (var ring in data.rings)
+                    {
+                        view.Rows[rowIndex].Cells[0].Value = data.rings[rowIndex - 1].Time.ToString("H:mm");
+
+                        //foreach (var group in result[ring.RingId])
+                        for (int columnIndex = 1; columnIndex < view.Columns.Count; columnIndex++)
+                        {
+                            var group = repo.GetStudentGroup(data.groups[columnIndex - 1].StudentGroupId);
+
+                            if (data.lessonsData[group.StudentGroupId].ContainsKey(ring.RingId))
+                            {
+                                var lesson = data.lessonsData[group.StudentGroupId][ring.RingId][0];
+
+                                bool groupsNotEqual = lesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId != group.StudentGroupId;
+
+                                view.Rows[rowIndex].Cells[columnIndex].Value = LessonToString(lesson, groupsNotEqual);
+                            }
+                            else
+                            {
+                                view.Rows[rowIndex].Cells[columnIndex].Value = "";
+                            }
+
+                        }
+
+                        rowIndex++;
+                    }
+
+                    view.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    view.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+
+                    ResizeColumns();
+
+                    loadingLabel.Visible = false;
+                },
+                cToken,
+                TaskContinuationOptions.None,
+                _uiScheduler
+            );
+            
+            
+        }
+
+        private List<StudentGroup> MainGroups()
+        {
+            return repo
+                                .GetFiltredStudentGroups(sg =>
+                                    !(sg.Name.Contains("-") || sg.Name.Contains("+") || sg.Name.Contains("I") ||
+                                      sg.Name.Length == 1 || sg.Name.Contains("(Н)") || sg.Name.Contains(".")))
+                                .ToList();
         }
 
         private string LessonToString(Lesson lesson, bool groupsNotEqual)

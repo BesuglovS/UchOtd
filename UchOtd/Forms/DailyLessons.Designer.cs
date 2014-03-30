@@ -35,7 +35,10 @@
             this.lessonsDate = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
             this.viewPanel = new System.Windows.Forms.Panel();
+            this.loadingLabel = new System.Windows.Forms.Label();
             this.view = new System.Windows.Forms.DataGridView();
+            this.studentGroupList = new System.Windows.Forms.ListBox();
+            this.studentGroupsFiltered = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view)).BeginInit();
@@ -43,6 +46,8 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.studentGroupsFiltered);
+            this.controlsPanel.Controls.Add(this.studentGroupList);
             this.controlsPanel.Controls.Add(this.refresh);
             this.controlsPanel.Controls.Add(this.facultyFilter);
             this.controlsPanel.Controls.Add(this.facultyFiltered);
@@ -51,14 +56,14 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(881, 100);
+            this.controlsPanel.Size = new System.Drawing.Size(881, 108);
             this.controlsPanel.TabIndex = 0;
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(609, 10);
+            this.refresh.Location = new System.Drawing.Point(437, 28);
             this.refresh.Name = "refresh";
-            this.refresh.Size = new System.Drawing.Size(92, 57);
+            this.refresh.Size = new System.Drawing.Size(180, 70);
             this.refresh.TabIndex = 8;
             this.refresh.Text = "Обновить";
             this.refresh.UseVisualStyleBackColor = true;
@@ -67,7 +72,7 @@
             // facultyFilter
             // 
             this.facultyFilter.FormattingEnabled = true;
-            this.facultyFilter.Location = new System.Drawing.Point(399, 10);
+            this.facultyFilter.Location = new System.Drawing.Point(12, 61);
             this.facultyFilter.Name = "facultyFilter";
             this.facultyFilter.Size = new System.Drawing.Size(204, 21);
             this.facultyFilter.TabIndex = 7;
@@ -75,7 +80,7 @@
             // facultyFiltered
             // 
             this.facultyFiltered.AutoSize = true;
-            this.facultyFiltered.Location = new System.Drawing.Point(251, 12);
+            this.facultyFiltered.Location = new System.Drawing.Point(12, 38);
             this.facultyFiltered.Name = "facultyFiltered";
             this.facultyFiltered.Size = new System.Drawing.Size(142, 17);
             this.facultyFiltered.TabIndex = 6;
@@ -101,12 +106,25 @@
             // 
             // viewPanel
             // 
+            this.viewPanel.Controls.Add(this.loadingLabel);
             this.viewPanel.Controls.Add(this.view);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 100);
+            this.viewPanel.Location = new System.Drawing.Point(0, 108);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(881, 605);
+            this.viewPanel.Size = new System.Drawing.Size(881, 597);
             this.viewPanel.TabIndex = 1;
+            // 
+            // loadingLabel
+            // 
+            this.loadingLabel.AutoSize = true;
+            this.loadingLabel.BackColor = System.Drawing.SystemColors.AppWorkspace;
+            this.loadingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 48.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.loadingLabel.Location = new System.Drawing.Point(12, 17);
+            this.loadingLabel.Name = "loadingLabel";
+            this.loadingLabel.Size = new System.Drawing.Size(376, 74);
+            this.loadingLabel.TabIndex = 4;
+            this.loadingLabel.Text = "Загрузка ...";
+            this.loadingLabel.Visible = false;
             // 
             // view
             // 
@@ -119,8 +137,29 @@
             this.view.Name = "view";
             this.view.ReadOnly = true;
             this.view.RowHeadersVisible = false;
-            this.view.Size = new System.Drawing.Size(881, 605);
+            this.view.Size = new System.Drawing.Size(881, 597);
             this.view.TabIndex = 0;
+            // 
+            // studentGroupList
+            // 
+            this.studentGroupList.ColumnWidth = 35;
+            this.studentGroupList.FormattingEnabled = true;
+            this.studentGroupList.Location = new System.Drawing.Point(251, 3);
+            this.studentGroupList.MultiColumn = true;
+            this.studentGroupList.Name = "studentGroupList";
+            this.studentGroupList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.studentGroupList.Size = new System.Drawing.Size(180, 95);
+            this.studentGroupList.TabIndex = 9;
+            // 
+            // studentGroupsFiltered
+            // 
+            this.studentGroupsFiltered.AutoSize = true;
+            this.studentGroupsFiltered.Location = new System.Drawing.Point(437, 5);
+            this.studentGroupsFiltered.Name = "studentGroupsFiltered";
+            this.studentGroupsFiltered.Size = new System.Drawing.Size(180, 17);
+            this.studentGroupsFiltered.TabIndex = 10;
+            this.studentGroupsFiltered.Text = "Фильтр по группам студентов";
+            this.studentGroupsFiltered.UseVisualStyleBackColor = true;
             // 
             // DailyLessons
             // 
@@ -136,6 +175,7 @@
             this.controlsPanel.ResumeLayout(false);
             this.controlsPanel.PerformLayout();
             this.viewPanel.ResumeLayout(false);
+            this.viewPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view)).EndInit();
             this.ResumeLayout(false);
 
@@ -151,5 +191,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button refresh;
         private System.Windows.Forms.DataGridView view;
+        private System.Windows.Forms.Label loadingLabel;
+        private System.Windows.Forms.ListBox studentGroupList;
+        private System.Windows.Forms.CheckBox studentGroupsFiltered;
     }
 }

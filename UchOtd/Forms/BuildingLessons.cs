@@ -17,8 +17,7 @@ namespace UchOtd.Forms
         readonly ScheduleRepository _repo;
 
         private readonly TaskScheduler _uiScheduler;
-        private static int counter = 0;
-
+        
         CancellationTokenSource tokenSource;
         CancellationToken cToken;
 
@@ -66,8 +65,6 @@ namespace UchOtd.Forms
 
             tokenSource = new CancellationTokenSource();
             cToken = tokenSource.Token;
-
-            counter++;
 
             if ((building.SelectedIndex == -1) || (lessonsDate.Value == new DateTime(1985, 4, 4)))
             {
