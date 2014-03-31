@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\BuildingLessonsData.cs" />
+    <Compile Include="Core\DailyLessonsData.cs" />
     <Compile Include="Core\LayoutSupport.cs" />
     <Compile Include="Core\StudentDetailsMode.cs" />
     <Compile Include="Core\Utilities.cs" />

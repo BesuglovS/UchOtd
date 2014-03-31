@@ -62,9 +62,7 @@ namespace UchOtd.Forms
 
             tokenSource = new CancellationTokenSource();
             cToken = tokenSource.Token;
-
-            loadingLabel.Visible = true;
-
+            
             bool isfacultyFiltered = facultyFiltered.Checked;
             int facultyFilterSelectedValue = (int)facultyFilter.SelectedValue;
 
@@ -79,28 +77,38 @@ namespace UchOtd.Forms
                     groups.Add(group);
                 }
             }
+
+            var data = new DailyLessonsData();
+
+            data.groups = MainGroups();
+
+            if (isfacultyFiltered)
+            {
+                data.groups = repo
+                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == facultyFilterSelectedValue)
+                    .Select(gif => gif.StudentGroup)
+                    .ToList();
+            }
+
+            if (isStudentGroupsFiltered)
+            {
+                var groupIds = groups.Select(g => g.StudentGroupId).ToList();
+
+                data.groups = data.groups
+                    .Where(g => groupIds.Contains(g.StudentGroupId))
+                    .ToList();
+            }
+
+            if (data.groups.Count == 0)
+            {
+                MessageBox.Show("В итоговом списке нет ни одной группы.", "Незадача");                
+                return;
+            }
+
+            loadingLabel.Visible = true;
             
             var calculateTask = Task.Factory.StartNew(() =>
-            {
-                var data = new DailyLessonsData();
-
-                data.groups = MainGroups();
-
-                if (isStudentGroupsFiltered)
-                {
-                    data.groups = groups;
-                }
-                else
-                {
-                    if (isfacultyFiltered)
-                    {
-                        data.groups = repo
-                            .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == facultyFilterSelectedValue)
-                            .Select(gif => gif.StudentGroup)
-                            .ToList();
-                    }
-                }
-                
+            {   
                 // Dictionary<StudentGroupId,Dictionary<ringId, List<Lessons>>>
                 data.lessonsData = new Dictionary<int, Dictionary<int, List<Lesson>>>();
                 data.rings = new List<Ring>();
@@ -152,12 +160,18 @@ namespace UchOtd.Forms
             calculateTask.ContinueWith(
                 antecedent =>
                 {
-                    var data = antecedent.Result;
-                    view.RowCount = data.rings.Count + 1;
-                    view.ColumnCount = data.lessonsData.Count + 1;
+                    var LessonsData = antecedent.Result;
+
+                    if (LessonsData == null)
+                    {
+                        return;
+                    }
+
+                    view.RowCount = LessonsData.rings.Count + 1;
+                    view.ColumnCount = LessonsData.lessonsData.Count + 1;
 
                     int columnIndex1 = 1;
-                    foreach (var group in data.lessonsData)
+                    foreach (var group in LessonsData.lessonsData)
                     {
                         view.Rows[0].Cells[columnIndex1].Value = repo.GetStudentGroup(group.Key).Name;
 
@@ -165,18 +179,18 @@ namespace UchOtd.Forms
                     }
 
                     int rowIndex = 1;
-                    foreach (var ring in data.rings)
+                    foreach (var ring in LessonsData.rings)
                     {
-                        view.Rows[rowIndex].Cells[0].Value = data.rings[rowIndex - 1].Time.ToString("H:mm");
+                        view.Rows[rowIndex].Cells[0].Value = LessonsData.rings[rowIndex - 1].Time.ToString("H:mm");
 
                         //foreach (var group in result[ring.RingId])
                         for (int columnIndex = 1; columnIndex < view.Columns.Count; columnIndex++)
                         {
-                            var group = repo.GetStudentGroup(data.groups[columnIndex - 1].StudentGroupId);
+                            var group = repo.GetStudentGroup(LessonsData.groups[columnIndex - 1].StudentGroupId);
 
-                            if (data.lessonsData[group.StudentGroupId].ContainsKey(ring.RingId))
+                            if (LessonsData.lessonsData[group.StudentGroupId].ContainsKey(ring.RingId))
                             {
-                                var lesson = data.lessonsData[group.StudentGroupId][ring.RingId][0];
+                                var lesson = LessonsData.lessonsData[group.StudentGroupId][ring.RingId][0];
 
                                 bool groupsNotEqual = lesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId != group.StudentGroupId;
 
@@ -229,10 +243,13 @@ namespace UchOtd.Forms
             if (view.Columns.Count != 0)
             {
                 view.Columns[0].Width = 75;
-                var columnWidth = (view.Width - 80) / (view.Columns.Count - 1);
-                for (int i = 1; i <= view.Columns.Count - 1; i++)
+                if (view.Columns.Count > 1)
                 {
-                    view.Columns[i].Width = columnWidth;
+                    var columnWidth = (view.Width - 80) / (view.Columns.Count - 1);
+                    for (int i = 1; i <= view.Columns.Count - 1; i++)
+                    {
+                        view.Columns[i].Width = columnWidth;
+                    }
                 }
 
                 view.AutoResizeRows(DataGridViewAutoSizeRowsMode.AllCells);
@@ -242,6 +259,11 @@ namespace UchOtd.Forms
         private void DailyLessons_ResizeEnd(object sender, EventArgs e)
         {
             ResizeColumns();
+        }
+
+        private void view_SelectionChanged(object sender, EventArgs e)
+        {
+            view.ClearSelection();
         }
     }
 }

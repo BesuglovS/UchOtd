@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.studentGroupsFiltered = new System.Windows.Forms.CheckBox();
+            this.studentGroupList = new System.Windows.Forms.ListBox();
             this.refresh = new System.Windows.Forms.Button();
             this.facultyFilter = new System.Windows.Forms.ComboBox();
             this.facultyFiltered = new System.Windows.Forms.CheckBox();
@@ -37,8 +39,6 @@
             this.viewPanel = new System.Windows.Forms.Panel();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.view = new System.Windows.Forms.DataGridView();
-            this.studentGroupList = new System.Windows.Forms.ListBox();
-            this.studentGroupsFiltered = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view)).BeginInit();
@@ -58,6 +58,27 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(881, 108);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // studentGroupsFiltered
+            // 
+            this.studentGroupsFiltered.AutoSize = true;
+            this.studentGroupsFiltered.Location = new System.Drawing.Point(437, 5);
+            this.studentGroupsFiltered.Name = "studentGroupsFiltered";
+            this.studentGroupsFiltered.Size = new System.Drawing.Size(180, 17);
+            this.studentGroupsFiltered.TabIndex = 10;
+            this.studentGroupsFiltered.Text = "Фильтр по группам студентов";
+            this.studentGroupsFiltered.UseVisualStyleBackColor = true;
+            // 
+            // studentGroupList
+            // 
+            this.studentGroupList.ColumnWidth = 35;
+            this.studentGroupList.FormattingEnabled = true;
+            this.studentGroupList.Location = new System.Drawing.Point(251, 3);
+            this.studentGroupList.MultiColumn = true;
+            this.studentGroupList.Name = "studentGroupList";
+            this.studentGroupList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.studentGroupList.Size = new System.Drawing.Size(180, 95);
+            this.studentGroupList.TabIndex = 9;
             // 
             // refresh
             // 
@@ -139,27 +160,7 @@
             this.view.RowHeadersVisible = false;
             this.view.Size = new System.Drawing.Size(881, 597);
             this.view.TabIndex = 0;
-            // 
-            // studentGroupList
-            // 
-            this.studentGroupList.ColumnWidth = 35;
-            this.studentGroupList.FormattingEnabled = true;
-            this.studentGroupList.Location = new System.Drawing.Point(251, 3);
-            this.studentGroupList.MultiColumn = true;
-            this.studentGroupList.Name = "studentGroupList";
-            this.studentGroupList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.studentGroupList.Size = new System.Drawing.Size(180, 95);
-            this.studentGroupList.TabIndex = 9;
-            // 
-            // studentGroupsFiltered
-            // 
-            this.studentGroupsFiltered.AutoSize = true;
-            this.studentGroupsFiltered.Location = new System.Drawing.Point(437, 5);
-            this.studentGroupsFiltered.Name = "studentGroupsFiltered";
-            this.studentGroupsFiltered.Size = new System.Drawing.Size(180, 17);
-            this.studentGroupsFiltered.TabIndex = 10;
-            this.studentGroupsFiltered.Text = "Фильтр по группам студентов";
-            this.studentGroupsFiltered.UseVisualStyleBackColor = true;
+            this.view.SelectionChanged += new System.EventHandler(this.view_SelectionChanged);
             // 
             // DailyLessons
             // 
