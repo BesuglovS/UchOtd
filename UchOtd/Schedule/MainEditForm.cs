@@ -68,13 +68,43 @@ namespace Schedule
                 DOWList.Items.Add(dow);
             }
             DOWList.SelectedIndex = 0;
+            /*
+            var weeks = _repo
+                .GetAllActiveLessons()
+                .Select(l => _repo.CalculateWeekNumber(l.Calendar.Date))
+                .Distinct()
+                .OrderBy(w => w)
+                .ToList();
+            
+            WeekFilter.Items.Clear();
+            foreach (var week in weeks)
+            {
+                WeekFilter.Items.Add(week);
+            }*/
+
+            WeekFilter.Items.Clear();
+            for (int i = 1; i <= 18; i++)            
+            {
+                WeekFilter.Items.Add(i);
+            }
         }
 
         private void ShowGroupLessonsClick(object sender, EventArgs e)
         {
             var sStarts = _repo.GetSemesterStarts();
 
-            var groupLessons = _repo.GetGroupedGroupLessons((int)groupList.SelectedValue, sStarts);
+            Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>> groupLessons;
+            if (weekFiltered.Checked)
+            {
+                int weekNum = -1;
+                int.TryParse(WeekFilter.Text, out weekNum);
+
+                groupLessons = _repo.GetGroupedGroupLessons((int)groupList.SelectedValue, sStarts, weekNum);
+            }
+            else
+            {
+                groupLessons = _repo.GetGroupedGroupLessons((int)groupList.SelectedValue, sStarts);
+            }
                         
             List<GroupTableView> groupEvents = CreateGroupTableView(groupLessons);
             

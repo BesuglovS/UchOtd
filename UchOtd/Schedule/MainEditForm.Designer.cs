@@ -30,6 +30,7 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.WholeScheduleDatesExport = new System.Windows.Forms.Button();
             this.DownloadAndRestore = new System.Windows.Forms.Button();
             this.BackupAndUpload = new System.Windows.Forms.Button();
             this.AllInPDF = new System.Windows.Forms.Button();
@@ -72,7 +73,8 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.WholeScheduleDatesExport = new System.Windows.Forms.Button();
+            this.weekFiltered = new System.Windows.Forms.CheckBox();
+            this.WeekFilter = new System.Windows.Forms.ComboBox();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -81,6 +83,8 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.WeekFilter);
+            this.controlsPanel.Controls.Add(this.weekFiltered);
             this.controlsPanel.Controls.Add(this.WholeScheduleDatesExport);
             this.controlsPanel.Controls.Add(this.DownloadAndRestore);
             this.controlsPanel.Controls.Add(this.BackupAndUpload);
@@ -114,8 +118,18 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(876, 149);
+            this.controlsPanel.Size = new System.Drawing.Size(876, 177);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // WholeScheduleDatesExport
+            // 
+            this.WholeScheduleDatesExport.Location = new System.Drawing.Point(130, 56);
+            this.WholeScheduleDatesExport.Name = "WholeScheduleDatesExport";
+            this.WholeScheduleDatesExport.Size = new System.Drawing.Size(135, 23);
+            this.WholeScheduleDatesExport.TabIndex = 33;
+            this.WholeScheduleDatesExport.Text = "Все даты расписания";
+            this.WholeScheduleDatesExport.UseVisualStyleBackColor = true;
+            this.WholeScheduleDatesExport.Click += new System.EventHandler(this.WholeScheduleDatesExport_Click);
             // 
             // DownloadAndRestore
             // 
@@ -494,9 +508,9 @@
             // 
             this.viewPanel.Controls.Add(this.ScheduleView);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 149);
+            this.viewPanel.Location = new System.Drawing.Point(0, 177);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(876, 440);
+            this.viewPanel.Size = new System.Drawing.Size(876, 412);
             this.viewPanel.TabIndex = 1;
             // 
             // ScheduleView
@@ -510,19 +524,27 @@
             this.ScheduleView.Name = "ScheduleView";
             this.ScheduleView.ReadOnly = true;
             this.ScheduleView.RowHeadersVisible = false;
-            this.ScheduleView.Size = new System.Drawing.Size(876, 440);
+            this.ScheduleView.Size = new System.Drawing.Size(876, 412);
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // WholeScheduleDatesExport
+            // weekFiltered
             // 
-            this.WholeScheduleDatesExport.Location = new System.Drawing.Point(130, 56);
-            this.WholeScheduleDatesExport.Name = "WholeScheduleDatesExport";
-            this.WholeScheduleDatesExport.Size = new System.Drawing.Size(135, 23);
-            this.WholeScheduleDatesExport.TabIndex = 33;
-            this.WholeScheduleDatesExport.Text = "Все даты расписания";
-            this.WholeScheduleDatesExport.UseVisualStyleBackColor = true;
-            this.WholeScheduleDatesExport.Click += new System.EventHandler(this.WholeScheduleDatesExport_Click);
+            this.weekFiltered.AutoSize = true;
+            this.weekFiltered.Location = new System.Drawing.Point(13, 144);
+            this.weekFiltered.Name = "weekFiltered";
+            this.weekFiltered.Size = new System.Drawing.Size(120, 17);
+            this.weekFiltered.TabIndex = 34;
+            this.weekFiltered.Text = "Фильтр по неделе";
+            this.weekFiltered.UseVisualStyleBackColor = true;
+            // 
+            // WeekFilter
+            // 
+            this.WeekFilter.FormattingEnabled = true;
+            this.WeekFilter.Location = new System.Drawing.Point(139, 140);
+            this.WeekFilter.Name = "WeekFilter";
+            this.WeekFilter.Size = new System.Drawing.Size(60, 21);
+            this.WeekFilter.TabIndex = 35;
             // 
             // MainEditForm
             // 
@@ -594,6 +616,8 @@
         private System.Windows.Forms.Button DownloadAndRestore;
         private System.Windows.Forms.Button BackupAndUpload;
         private System.Windows.Forms.Button WholeScheduleDatesExport;
+        private System.Windows.Forms.CheckBox weekFiltered;
+        private System.Windows.Forms.ComboBox WeekFilter;
     }
 }
 
