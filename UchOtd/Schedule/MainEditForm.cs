@@ -287,7 +287,71 @@ namespace Schedule
             // ExportStudentsData("StudentsExport-1sem.txt");
             // ImportStudentData("StudentsExport-1sem.txt");
             // CopyINOGroupLessonsFromRealSchedule();
+            // ExportScheduleDates();
+
         }
+
+        private void ExportScheduleDates()
+        {
+            foreach (var faculty in _repo.GetAllFaculties().OrderBy(f => f.SortingOrder))
+            {
+                foreach (var group in _repo.GetFacultyGroups(faculty.FacultyId))
+                {
+                    String semesterString = (_repo.GetSemesterStarts().Month > 6) ? " (1 семестр)" : " (2 семестр)";
+
+                    AppendToFile(group.Name + semesterString);
+
+                    var studentIds = _repo
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
+                        .ToList()
+                        .Select(stig => stig.Student.StudentId);
+
+                    var groupsListIds = _repo
+                        .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                        .ToList()
+                        .Select(stig => stig.StudentGroup.StudentGroupId);
+
+                    var tfds = _repo.GetFiltredTeacherForDiscipline(tfd => groupsListIds.Contains(tfd.Discipline.StudentGroup.StudentGroupId));
+
+                    foreach (var tfd in tfds)
+                    {
+                        if (tfd.Discipline.AuditoriumHours == 0)
+                        {
+                            continue;
+                        }
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append(
+                            tfd.Discipline.StudentGroup.Name + '\t' +
+                            tfd.Discipline.Name + '\t' +
+                            tfd.Discipline.AuditoriumHours + '\t' +
+                            tfd.Teacher.FIO + '\n'
+                        );
+
+
+                        var lessons = _repo.GetFiltredLessons(l => l.IsActive && l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
+
+                        foreach (var lesson in lessons.OrderBy(l => l.Calendar.Date.Date))
+                        {
+                            sb.Append('\t' + lesson.Calendar.Date.Date.ToString("dd.MM.yyyy"));
+                        }
+
+                        AppendToFile(sb.ToString());
+                    }
+                }
+            }
+
+            
+        }
+
+        private static void AppendToFile(String line)
+        {
+            StreamWriter sw = new StreamWriter("Oops\\stat.txt", true);
+            sw.WriteLine(line);
+            sw.Close();
+        }
+
+
 
         private void CopyINOGroupLessonsFromRealSchedule()
         {

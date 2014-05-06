@@ -202,7 +202,7 @@ namespace UchOtd.Repositories
         {
             using (var context = new UchOtdContext(ConnectionString))
             {
-                var note = GetNote(noteId);
+                var note = context.Notes.FirstOrDefault(n => n.NoteId == noteId);
 
                 context.Notes.Remove(note);
                 context.SaveChanges();
@@ -293,7 +293,7 @@ namespace UchOtd.Repositories
         {
             using (var context = new UchOtdContext(ConnectionString))
             {
-                var phone = GetPhone(phoneId);
+                var phone = context.Phones.FirstOrDefault(p => p.PhoneId == phoneId);
 
                 context.Phones.Remove(phone);
                 context.SaveChanges();
