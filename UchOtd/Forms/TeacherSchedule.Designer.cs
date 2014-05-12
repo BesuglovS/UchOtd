@@ -30,11 +30,12 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TeacherSchedule));
             this.controlsPanel = new System.Windows.Forms.Panel();
-            this.currentWeek = new System.Windows.Forms.CheckBox();
+            this.refresh = new System.Windows.Forms.Button();
             this.teacherList = new System.Windows.Forms.ComboBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.scheduleView = new System.Windows.Forms.DataGridView();
-            this.refresh = new System.Windows.Forms.Button();
+            this.weekFiltered = new System.Windows.Forms.CheckBox();
+            this.weekFilter = new System.Windows.Forms.ComboBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scheduleView)).BeginInit();
@@ -42,25 +43,25 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.weekFilter);
             this.controlsPanel.Controls.Add(this.refresh);
-            this.controlsPanel.Controls.Add(this.currentWeek);
+            this.controlsPanel.Controls.Add(this.weekFiltered);
             this.controlsPanel.Controls.Add(this.teacherList);
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(718, 50);
+            this.controlsPanel.Size = new System.Drawing.Size(750, 50);
             this.controlsPanel.TabIndex = 2;
             // 
-            // currentWeek
+            // refresh
             // 
-            this.currentWeek.AutoSize = true;
-            this.currentWeek.Location = new System.Drawing.Point(466, 14);
-            this.currentWeek.Name = "currentWeek";
-            this.currentWeek.Size = new System.Drawing.Size(110, 17);
-            this.currentWeek.TabIndex = 1;
-            this.currentWeek.Text = "Текущая неделя";
-            this.currentWeek.UseVisualStyleBackColor = true;
-            this.currentWeek.CheckedChanged += new System.EventHandler(this.CurrentWeekCheckedChanged);
+            this.refresh.Location = new System.Drawing.Point(658, 10);
+            this.refresh.Name = "refresh";
+            this.refresh.Size = new System.Drawing.Size(85, 23);
+            this.refresh.TabIndex = 2;
+            this.refresh.Text = "Обновить";
+            this.refresh.UseVisualStyleBackColor = true;
+            this.refresh.Click += new System.EventHandler(this.refresh_Click);
             // 
             // teacherList
             // 
@@ -79,7 +80,7 @@
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 50);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(718, 630);
+            this.viewPanel.Size = new System.Drawing.Size(750, 630);
             this.viewPanel.TabIndex = 4;
             // 
             // scheduleView
@@ -92,26 +93,34 @@
             this.scheduleView.Location = new System.Drawing.Point(0, 0);
             this.scheduleView.Name = "scheduleView";
             this.scheduleView.ReadOnly = true;
-            this.scheduleView.Size = new System.Drawing.Size(718, 630);
+            this.scheduleView.Size = new System.Drawing.Size(750, 630);
             this.scheduleView.TabIndex = 0;
             this.scheduleView.TabStop = false;
             this.scheduleView.SelectionChanged += new System.EventHandler(this.ScheduleViewSelectionChanged);
             // 
-            // refresh
+            // weekFiltered
             // 
-            this.refresh.Location = new System.Drawing.Point(588, 12);
-            this.refresh.Name = "refresh";
-            this.refresh.Size = new System.Drawing.Size(85, 23);
-            this.refresh.TabIndex = 2;
-            this.refresh.Text = "Обновить";
-            this.refresh.UseVisualStyleBackColor = true;
-            this.refresh.Click += new System.EventHandler(this.refresh_Click);
+            this.weekFiltered.AutoSize = true;
+            this.weekFiltered.Location = new System.Drawing.Point(466, 14);
+            this.weekFiltered.Name = "weekFiltered";
+            this.weekFiltered.Size = new System.Drawing.Size(120, 17);
+            this.weekFiltered.TabIndex = 1;
+            this.weekFiltered.Text = "Фильтр по неделе";
+            this.weekFiltered.UseVisualStyleBackColor = true;
+            // 
+            // weekFilter
+            // 
+            this.weekFilter.FormattingEnabled = true;
+            this.weekFilter.Location = new System.Drawing.Point(592, 10);
+            this.weekFilter.Name = "weekFilter";
+            this.weekFilter.Size = new System.Drawing.Size(60, 21);
+            this.weekFilter.TabIndex = 36;
             // 
             // TeacherSchedule
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(718, 680);
+            this.ClientSize = new System.Drawing.Size(750, 680);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -131,10 +140,11 @@
         #endregion
 
         private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.CheckBox currentWeek;
         private System.Windows.Forms.ComboBox teacherList;
         private System.Windows.Forms.Panel viewPanel;
         private System.Windows.Forms.DataGridView scheduleView;
         private System.Windows.Forms.Button refresh;
+        private System.Windows.Forms.CheckBox weekFiltered;
+        private System.Windows.Forms.ComboBox weekFilter;
     }
 }

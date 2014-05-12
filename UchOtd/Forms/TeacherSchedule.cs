@@ -21,6 +21,12 @@ namespace UchOtd.Forms
             InitializeComponent();
             
             _repo = repo;
+
+            weekFilter.Items.Clear();
+            for (int i = 1; i <= 18; i++)
+            {
+                weekFilter.Items.Add(i);
+            }
         }
 
         private void TeacherScheduleLoad(object sender, EventArgs e)
@@ -47,22 +53,20 @@ namespace UchOtd.Forms
         }
 
         private void UpdateTeacherSchedule()
-        {
-            var weekStarts = DateTime.Now.Date.AddDays(1 - 1 * Constants.DOWEnToRu[(int)DateTime.Now.DayOfWeek]);
-            var currentWeekCalendarIds = _repo
-                .GetFiltredCalendars(c => c.Date >= weekStarts.Date && c.Date <= weekStarts.Date.AddDays(6).Date)
-                .Select(c => c.CalendarId)
-                .ToList();
+        {            
 
             var result = new List<TeacherScheduleTimeView>();
 
             var teacherId = (int)(teacherList.SelectedValue);
             List<Lesson> lessonList;
-            if (currentWeek.Checked)
+            if (weekFiltered.Checked)
             {
+                int weekNum = -1;
+                int.TryParse(weekFilter.Text, out weekNum);
+
                 lessonList = _repo
-                    .GetFiltredLessons(l => l.TeacherForDiscipline.Teacher.TeacherId == teacherId && 
-                        l.IsActive && currentWeekCalendarIds.Contains(l.Calendar.CalendarId))
+                    .GetFiltredLessons(l => l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
+                        l.IsActive && _repo.CalculateWeekNumber(l.Calendar.Date.Date) == weekNum)
                     .ToList();
             }
             else
