@@ -292,7 +292,7 @@ namespace UchOtd
 
             PhonesForm = new Phones(_UOrepo);
             _PhonesFormOpened = true;
-            PhonesForm.ShowDialog();
+            PhonesForm.Show();
             _PhonesFormOpened = false;
         }
 
@@ -307,7 +307,7 @@ namespace UchOtd
 
             NotesForm = new Notes(_UOrepo);
             _NotesFormOpened = true;
-            NotesForm.ShowDialog();
+            NotesForm.Show();
             _NotesFormOpened = false;
         }
         
@@ -322,7 +322,7 @@ namespace UchOtd
 
             BuildingForm = new BuildingLessons(_repo);
             _teacherScheduleFormOpened = true;
-            BuildingForm.ShowDialog();
+            BuildingForm.Show();
             _teacherScheduleFormOpened = false;
         }
 
@@ -338,7 +338,7 @@ namespace UchOtd
 
             TeacherScheduleForm = new TeacherSchedule(_repo);
             _teacherScheduleFormOpened = true;
-            TeacherScheduleForm.ShowDialog();
+            TeacherScheduleForm.Show();
             _teacherScheduleFormOpened = false;
         }
         
@@ -353,7 +353,7 @@ namespace UchOtd
 
             ScheduleForm = new ScheduleForm(_repo);
             _scheduleFormOpened = true;
-            ScheduleForm.ShowDialog();
+            ScheduleForm.Show();
             _scheduleFormOpened = false;
         }
 
@@ -368,7 +368,7 @@ namespace UchOtd
 
             StudentListForm = new StudentList(_repo);
             _studentListFormOpened = true;
-            StudentListForm.ShowDialog();
+            StudentListForm.Show();
             _studentListFormOpened = false;
         }
 
@@ -383,7 +383,7 @@ namespace UchOtd
 
             ChangesForm = new Changes(_repo, 0);
             _changesFormOpened = true;
-            ChangesForm.ShowDialog();
+            ChangesForm.Show();
             _changesFormOpened = false;
         }
 
@@ -437,7 +437,7 @@ namespace UchOtd
         private void openDBToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var openDBForm = new OpenDB(this);
-            openDBForm.ShowDialog();
+            openDBForm.Show();
 
             RefreshDbOrConnectionName();
         }
