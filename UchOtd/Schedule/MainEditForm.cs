@@ -288,18 +288,63 @@ namespace Schedule
             // ImportStudentData("StudentsExport-1sem.txt");
             // CopyINOGroupLessonsFromRealSchedule();
             // ExportScheduleDates();
+            ExportFacultyGroups();
+        }
 
+        private void ExportFacultyGroups()
+        {
+            var faculty = _repo.GetFirstFiltredFaculty(f => f.Letter == "Д");
+
+            foreach (var group in _repo.GetFacultyGroups(faculty.FacultyId))
+            {
+                AppendToFile("Oops\\groups.txt", group.Name);
+
+                var studentIds = _repo
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
+                        .ToList()
+                        .Select(stig => stig.Student.StudentId);
+
+                var groupList = _repo
+                    .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                    .ToList()
+                    .Select(stig => stig.StudentGroup)
+                    .Distinct()
+                    .ToList();
+
+                foreach (var g in groupList)
+                {
+                    AppendToFile("Oops\\groups.txt", g.Name);
+
+                    var studentsInGroup = _repo
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == g.StudentGroupId)
+                        .Select(sig => sig.Student)
+                        .ToList()
+                        .OrderBy(s => s.F)
+                        .ThenBy(s => s.I)
+                        .ThenBy(s => s.O)
+                        .ThenBy(s => s.BirthDate)
+                        .ToList();
+
+                    foreach (var student in studentsInGroup)
+                    {
+                        AppendToFile("Oops\\groups.txt", student.F + " " + student.I + " " + student.O);
+                    }
+
+                    AppendToFile("Oops\\groups.txt", "");
+                }
+            }
         }
 
         private void ExportScheduleDates()
         {
+            String semesterString = (_repo.GetSemesterStarts().Month > 6) ? " (1 семестр)" : " (2 семестр)";
+
+            
             foreach (var faculty in _repo.GetAllFaculties().OrderBy(f => f.SortingOrder))
             {
                 foreach (var group in _repo.GetFacultyGroups(faculty.FacultyId))
                 {
-                    String semesterString = (_repo.GetSemesterStarts().Month > 6) ? " (1 семестр)" : " (2 семестр)";
-
-                    AppendToFile(group.Name + semesterString);
+                    AppendToFile("Oops\\stat.txt", group.Name + semesterString);
 
                     var studentIds = _repo
                         .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
@@ -336,17 +381,15 @@ namespace Schedule
                             sb.Append('\t' + lesson.Calendar.Date.Date.ToString("dd.MM.yyyy"));
                         }
 
-                        AppendToFile(sb.ToString());
-                    }
+                        AppendToFile("Oops\\stat.txt", sb.ToString());
+                    }            
                 }
             }
-
-            
         }
 
-        private static void AppendToFile(String line)
+        private static void AppendToFile(String filename, String line)
         {
-            StreamWriter sw = new StreamWriter("Oops\\stat.txt", true);
+            StreamWriter sw = new StreamWriter(filename, true);
             sw.WriteLine(line);
             sw.Close();
         }
