@@ -287,13 +287,13 @@ namespace Schedule
             // ExportStudentsData("StudentsExport-1sem.txt");
             // ImportStudentData("StudentsExport-1sem.txt");
             // CopyINOGroupLessonsFromRealSchedule();
-            // ExportScheduleDates();
-            ExportFacultyGroups();
+            ExportScheduleDates();
+            // ExportFacultyGroups();
         }
 
         private void ExportFacultyGroups()
         {
-            var faculty = _repo.GetFirstFiltredFaculty(f => f.Letter == "Д");
+            var faculty = _repo.GetFirstFiltredFaculty(f => f.Letter == "Г");
 
             foreach (var group in _repo.GetFacultyGroups(faculty.FacultyId))
             {
@@ -339,12 +339,16 @@ namespace Schedule
         {
             String semesterString = (_repo.GetSemesterStarts().Month > 6) ? " (1 семестр)" : " (2 семестр)";
 
-            
+            /*
             foreach (var faculty in _repo.GetAllFaculties().OrderBy(f => f.SortingOrder))
-            {
+            {*/
+            var faculty = _repo.GetFirstFiltredFaculty(f => f.Letter == "Т");
+
                 foreach (var group in _repo.GetFacultyGroups(faculty.FacultyId))
                 {
-                    AppendToFile("Oops\\stat.txt", group.Name + semesterString);
+                    //var group = _repo.GetFirstFiltredStudentGroups(sg => sg.Name == "13 Г (+Н)");
+                    
+                    AppendToFile("Oops\\stat.txt", "*" + group.Name + semesterString);
 
                     var studentIds = _repo
                         .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
@@ -384,7 +388,7 @@ namespace Schedule
                         AppendToFile("Oops\\stat.txt", sb.ToString());
                     }            
                 }
-            }
+            //}
         }
 
         private static void AppendToFile(String filename, String line)
@@ -1254,8 +1258,12 @@ namespace Schedule
         }
 
         private void AllInPDF_Click(object sender, EventArgs e)
-        {
+        {            
+            //PDFExport.ExportWholeSchedule("Export.pdf", _repo, false, false, false);
 
+            PDFExport.PrintWholeSchedule(_repo);
+
+            var eprst = 999;
         }
 
         private void BackupAndUpload_Click(object sender, EventArgs e)

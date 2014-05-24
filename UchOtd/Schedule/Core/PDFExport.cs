@@ -3,6 +3,7 @@ using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
 using PdfSharp.Pdf;
+using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using System;
@@ -46,11 +47,43 @@ namespace UchOtd.Schedule.Core
             pdfRenderer.Document = document;
             pdfRenderer.RenderDocument();
 
-            // Save the document...            
-            pdfRenderer.PdfDocument.Save(filename);
+            // Save the document...                
+            if (save)
+            {
+                pdfRenderer.PdfDocument.Save(filename);
+            }
             // ...and start a viewer.
-            Process.Start(filename);
+            //Process.Start(filename);
+
+            if (print)
+            {
+                if (!save)
+                {
+                    pdfRenderer.PdfDocument.Save(filename);
+                }
+
+                SendToPrinter(filename);
+            }
         }
+
+        private static void SendToPrinter(String filename)
+        {
+            ProcessStartInfo info = new ProcessStartInfo();
+            info.Verb = "print";
+            info.FileName = filename;
+            info.CreateNoWindow = true;
+            info.WindowStyle = ProcessWindowStyle.Hidden;
+
+            Process p = new Process();
+            p.StartInfo = info;
+            p.Start();
+
+            p.WaitForInputIdle();
+            System.Threading.Thread.Sleep(3000);
+            if (false == p.CloseMainWindow())
+                p.Kill();
+        }
+
 
         private static Document CreateDocument(ScheduleRepository repo, string facultyName, string dow, 
             Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> schedule,
@@ -352,6 +385,35 @@ namespace UchOtd.Schedule.Core
 
                 timeRowIndex++;
             }            
+        }
+
+        public static void ExportWholeSchedule(
+            string filename, 
+            ScheduleRepository _repo,
+            bool save,
+            bool quit,
+            bool print)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void PrintWholeSchedule(ScheduleRepository _repo)
+        {
+            
+            /*foreach (var faculty in _repo.GetAllFaculties().OrderBy(f => f.SortingOrder))
+            {*/
+                //var facultyId = faculty.FacultyId;
+                var facultyId = _repo.GetFirstFiltredFaculty(f => f.Letter == "Д").FacultyId;
+                var facultyName = _repo.GetFaculty(facultyId).Name;
+                
+
+                /*for (int i = 1; i <= 7; i++)
+                {*/
+                    var i = 4;
+                    var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, i);
+                    PDFExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.pdf", Constants.DOWLocal[i], _repo, false, false, true);
+                //}
+            //}
         }
     }
 }
