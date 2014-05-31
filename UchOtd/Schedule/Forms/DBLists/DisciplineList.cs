@@ -83,6 +83,23 @@ namespace Schedule.Forms.DBLists
                     .ToList();
             }
 
+            if (HoursFitFiltered.Checked)
+            {
+                var discListFiltered = new List<Discipline>();
+
+                foreach (var disc in discList)
+                {
+                    var tfd = _repo.GetFirstFiltredTeacherForDiscipline(tefd => tefd.Discipline.DisciplineId == disc.DisciplineId);
+
+                    if ((tfd != null) && (Math.Abs(disc.AuditoriumHours - _repo.getTFDHours(tfd.TeacherForDisciplineId)) != 0))
+                    {
+                        discListFiltered.Add(disc);
+                    }
+                }
+
+                discList = discListFiltered;
+            }
+
             var discView = DisciplineView.DisciplinesToView(_repo, discList);
 
             DiscipineListView.DataSource = discView;

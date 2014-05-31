@@ -13,6 +13,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Collections.Generic;
 using Schedule.Forms;
+using UchOtd.Forms.Session;
 
 namespace UchOtd
 {
@@ -57,6 +58,9 @@ namespace UchOtd
         bool _dailyLessonsFormOpened;
         public DailyLessons dailyLessons;
 
+        bool _sessionFormOpened;
+        public Session sessionForm;
+
         public StartupForm()
         {
             InitializeComponent();
@@ -87,6 +91,8 @@ namespace UchOtd
             HotKeyManager.RegisterHotKey(Keys.T, (uint)(KeyModifiers.Control | KeyModifiers.Shift));
             // Расписание на день - Alt-D
             HotKeyManager.RegisterHotKey(Keys.D, (uint)KeyModifiers.Alt);
+            // Расписание сессии - Ctrl-Alt-S
+            HotKeyManager.RegisterHotKey(Keys.S, (uint)(KeyModifiers.Control | KeyModifiers.Alt));
 
             HotKeyManager.HotKeyPressed += ManageHotKeys;
 
@@ -112,6 +118,7 @@ namespace UchOtd
             _teacherLessonsFormOpened = false;
             _teacherHoursFormOpened = false;
             _dailyLessonsFormOpened = false;
+            _sessionFormOpened = false;
 
             trayIcon.Visible = true;
         }
@@ -247,6 +254,14 @@ namespace UchOtd
                 if (e.Key == Keys.T)
                 {
                     ShowTeacherHours();
+                }
+            }
+
+            if (e.Modifiers == (KeyModifiers.Control | KeyModifiers.Alt))
+            {
+                if (e.Key == Keys.S)
+                {
+                    ShowSession();
                 }
             }
         }
@@ -511,6 +526,26 @@ namespace UchOtd
         private void расписаниеНаДеньToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowDailyLessons();
+        }
+
+        private void расписаниеСессииToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowSession();
+        }
+
+        private void ShowSession()
+        {
+            if (_sessionFormOpened)
+            {
+                sessionForm.Activate();
+                sessionForm.Focus();
+                return;
+            }
+
+            sessionForm = new Session(_repo);
+            _sessionFormOpened = true;
+            sessionForm.Show();
+            _sessionFormOpened = false;
         }                
     }
 }

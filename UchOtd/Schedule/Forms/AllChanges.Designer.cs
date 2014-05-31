@@ -29,17 +29,17 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.eventDateFilter = new System.Windows.Forms.DateTimePicker();
+            this.eventDateFiltering = new System.Windows.Forms.CheckBox();
             this.lessonDateFilter = new System.Windows.Forms.DateTimePicker();
             this.lessonDateFiltering = new System.Windows.Forms.CheckBox();
-            this.Refresh = new System.Windows.Forms.Button();
+            this.UpdateView = new System.Windows.Forms.Button();
             this.teacherFiltering = new System.Windows.Forms.CheckBox();
             this.teacherFilter = new System.Windows.Forms.ComboBox();
             this.tfdFiltering = new System.Windows.Forms.CheckBox();
             this.tfdFilter = new System.Windows.Forms.ComboBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.view = new System.Windows.Forms.DataGridView();
-            this.eventDateFilter = new System.Windows.Forms.DateTimePicker();
-            this.eventDateFiltering = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view)).BeginInit();
@@ -51,7 +51,7 @@
             this.controlsPanel.Controls.Add(this.eventDateFiltering);
             this.controlsPanel.Controls.Add(this.lessonDateFilter);
             this.controlsPanel.Controls.Add(this.lessonDateFiltering);
-            this.controlsPanel.Controls.Add(this.Refresh);
+            this.controlsPanel.Controls.Add(this.UpdateView);
             this.controlsPanel.Controls.Add(this.teacherFiltering);
             this.controlsPanel.Controls.Add(this.teacherFilter);
             this.controlsPanel.Controls.Add(this.tfdFiltering);
@@ -61,6 +61,23 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(747, 103);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // eventDateFilter
+            // 
+            this.eventDateFilter.Location = new System.Drawing.Point(181, 63);
+            this.eventDateFilter.Name = "eventDateFilter";
+            this.eventDateFilter.Size = new System.Drawing.Size(141, 20);
+            this.eventDateFilter.TabIndex = 9;
+            // 
+            // eventDateFiltering
+            // 
+            this.eventDateFiltering.AutoSize = true;
+            this.eventDateFiltering.Location = new System.Drawing.Point(12, 66);
+            this.eventDateFiltering.Name = "eventDateFiltering";
+            this.eventDateFiltering.Size = new System.Drawing.Size(166, 17);
+            this.eventDateFiltering.TabIndex = 8;
+            this.eventDateFiltering.Text = "Фильтр по дате изменения";
+            this.eventDateFiltering.UseVisualStyleBackColor = true;
             // 
             // lessonDateFilter
             // 
@@ -79,15 +96,15 @@
             this.lessonDateFiltering.Text = "Фильтр по дате урока";
             this.lessonDateFiltering.UseVisualStyleBackColor = true;
             // 
-            // Refresh
+            // UpdateView
             // 
-            this.Refresh.Location = new System.Drawing.Point(653, 10);
-            this.Refresh.Name = "Refresh";
-            this.Refresh.Size = new System.Drawing.Size(82, 73);
-            this.Refresh.TabIndex = 5;
-            this.Refresh.Text = "Обновить";
-            this.Refresh.UseVisualStyleBackColor = true;
-            this.Refresh.Click += new System.EventHandler(this.Refresh_Click);
+            this.UpdateView.Location = new System.Drawing.Point(653, 10);
+            this.UpdateView.Name = "UpdateView";
+            this.UpdateView.Size = new System.Drawing.Size(82, 73);
+            this.UpdateView.TabIndex = 5;
+            this.UpdateView.Text = "Обновить";
+            this.UpdateView.UseVisualStyleBackColor = true;
+            this.UpdateView.Click += new System.EventHandler(this.Refresh_Click);
             // 
             // teacherFiltering
             // 
@@ -146,23 +163,6 @@
             this.view.Size = new System.Drawing.Size(747, 465);
             this.view.TabIndex = 0;
             // 
-            // eventDateFilter
-            // 
-            this.eventDateFilter.Location = new System.Drawing.Point(181, 63);
-            this.eventDateFilter.Name = "eventDateFilter";
-            this.eventDateFilter.Size = new System.Drawing.Size(141, 20);
-            this.eventDateFilter.TabIndex = 9;
-            // 
-            // eventDateFiltering
-            // 
-            this.eventDateFiltering.AutoSize = true;
-            this.eventDateFiltering.Location = new System.Drawing.Point(12, 66);
-            this.eventDateFiltering.Name = "eventDateFiltering";
-            this.eventDateFiltering.Size = new System.Drawing.Size(166, 17);
-            this.eventDateFiltering.TabIndex = 8;
-            this.eventDateFiltering.Text = "Фильтр по дате изменения";
-            this.eventDateFiltering.UseVisualStyleBackColor = true;
-            // 
             // AllChanges
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -190,7 +190,7 @@
         private System.Windows.Forms.ComboBox teacherFilter;
         private System.Windows.Forms.CheckBox tfdFiltering;
         private System.Windows.Forms.ComboBox tfdFilter;
-        private System.Windows.Forms.Button Refresh;
+        private System.Windows.Forms.Button UpdateView;
         private System.Windows.Forms.DateTimePicker lessonDateFilter;
         private System.Windows.Forms.CheckBox lessonDateFiltering;
         private System.Windows.Forms.DateTimePicker eventDateFilter;

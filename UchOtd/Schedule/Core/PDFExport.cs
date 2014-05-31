@@ -403,16 +403,16 @@ namespace UchOtd.Schedule.Core
             /*foreach (var faculty in _repo.GetAllFaculties().OrderBy(f => f.SortingOrder))
             {*/
                 //var facultyId = faculty.FacultyId;
-                var facultyId = _repo.GetFirstFiltredFaculty(f => f.Letter == "Д").FacultyId;
+                var facultyId = _repo.GetFirstFiltredFaculty(f => f.Letter == "Т").FacultyId;
                 var facultyName = _repo.GetFaculty(facultyId).Name;
                 
-
-                /*for (int i = 1; i <= 7; i++)
-                {*/
-                    var i = 4;
+                
+                for (int i = 1; i <= 6; i++)
+                {
+                    //var i = 4;
                     var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, i);
                     PDFExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.pdf", Constants.DOWLocal[i], _repo, false, false, true);
-                //}
+                }
             //}
         }
     }

@@ -146,6 +146,18 @@
     <Compile Include="Forms\Phones.Designer.cs">
       <DependentUpon>Phones.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Session\ExamProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Session\ExamProperties.Designer.cs">
+      <DependentUpon>ExamProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Session\Session.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Session\Session.Designer.cs">
+      <DependentUpon>Session.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\StudentList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -326,6 +338,8 @@
     <Compile Include="Schedule\wnu\MySQLViews\MySQLAuditoriumEvent.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLCalendar.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLDiscipline.cs" />
+    <Compile Include="Schedule\wnu\MySQLViews\MySQLExam.cs" />
+    <Compile Include="Schedule\wnu\MySQLViews\MySQLExamLogEvent.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLGroupsInFaculty.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLLesson.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLLessonLogEvent.cs" />
@@ -343,6 +357,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\ExamView.cs" />
     <Compile Include="Views\NoteView.cs" />
     <Compile Include="Views\StudentListView.cs" />
     <EmbeddedResource Include="Forms\BuildingLessons.resx">
@@ -359,6 +374,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Phones.resx">
       <DependentUpon>Phones.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Session\ExamProperties.resx">
+      <DependentUpon>ExamProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Session\Session.resx">
+      <DependentUpon>Session.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\StudentList.resx">
       <DependentUpon>StudentList.cs</DependentUpon>
@@ -539,6 +560,38 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\daily1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bell.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>5</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Word">
+      <Guid>{00020905-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>8</VersionMajor>
+      <VersionMinor>5</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

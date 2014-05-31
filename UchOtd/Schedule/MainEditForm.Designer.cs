@@ -30,6 +30,8 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.WeekFilter = new System.Windows.Forms.ComboBox();
+            this.weekFiltered = new System.Windows.Forms.CheckBox();
             this.WholeScheduleDatesExport = new System.Windows.Forms.Button();
             this.DownloadAndRestore = new System.Windows.Forms.Button();
             this.BackupAndUpload = new System.Windows.Forms.Button();
@@ -73,8 +75,7 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.weekFiltered = new System.Windows.Forms.CheckBox();
-            this.WeekFilter = new System.Windows.Forms.ComboBox();
+            this.DBRestoreName = new System.Windows.Forms.TextBox();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -83,6 +84,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.DBRestoreName);
             this.controlsPanel.Controls.Add(this.WeekFilter);
             this.controlsPanel.Controls.Add(this.weekFiltered);
             this.controlsPanel.Controls.Add(this.WholeScheduleDatesExport);
@@ -121,6 +123,24 @@
             this.controlsPanel.Size = new System.Drawing.Size(876, 177);
             this.controlsPanel.TabIndex = 0;
             // 
+            // WeekFilter
+            // 
+            this.WeekFilter.FormattingEnabled = true;
+            this.WeekFilter.Location = new System.Drawing.Point(139, 140);
+            this.WeekFilter.Name = "WeekFilter";
+            this.WeekFilter.Size = new System.Drawing.Size(60, 21);
+            this.WeekFilter.TabIndex = 35;
+            // 
+            // weekFiltered
+            // 
+            this.weekFiltered.AutoSize = true;
+            this.weekFiltered.Location = new System.Drawing.Point(13, 144);
+            this.weekFiltered.Name = "weekFiltered";
+            this.weekFiltered.Size = new System.Drawing.Size(120, 17);
+            this.weekFiltered.TabIndex = 34;
+            this.weekFiltered.Text = "Фильтр по неделе";
+            this.weekFiltered.UseVisualStyleBackColor = true;
+            // 
             // WholeScheduleDatesExport
             // 
             this.WholeScheduleDatesExport.Location = new System.Drawing.Point(130, 56);
@@ -133,7 +153,7 @@
             // 
             // DownloadAndRestore
             // 
-            this.DownloadAndRestore.Location = new System.Drawing.Point(761, 84);
+            this.DownloadAndRestore.Location = new System.Drawing.Point(761, 138);
             this.DownloadAndRestore.Name = "DownloadAndRestore";
             this.DownloadAndRestore.Size = new System.Drawing.Size(103, 23);
             this.DownloadAndRestore.TabIndex = 32;
@@ -143,9 +163,9 @@
             // 
             // BackupAndUpload
             // 
-            this.BackupAndUpload.Location = new System.Drawing.Point(761, 55);
+            this.BackupAndUpload.Location = new System.Drawing.Point(474, 142);
             this.BackupAndUpload.Name = "BackupAndUpload";
-            this.BackupAndUpload.Size = new System.Drawing.Size(103, 23);
+            this.BackupAndUpload.Size = new System.Drawing.Size(110, 23);
             this.BackupAndUpload.TabIndex = 31;
             this.BackupAndUpload.Text = "BackupUpload";
             this.BackupAndUpload.UseVisualStyleBackColor = true;
@@ -223,9 +243,9 @@
             // 
             // dayDelta
             // 
-            this.dayDelta.Location = new System.Drawing.Point(615, 115);
+            this.dayDelta.Location = new System.Drawing.Point(761, 56);
             this.dayDelta.Name = "dayDelta";
-            this.dayDelta.Size = new System.Drawing.Size(33, 23);
+            this.dayDelta.Size = new System.Drawing.Size(103, 23);
             this.dayDelta.TabIndex = 22;
             this.dayDelta.Text = "Δ";
             this.dayDelta.UseVisualStyleBackColor = true;
@@ -233,9 +253,9 @@
             // 
             // scheduleHours
             // 
-            this.scheduleHours.Location = new System.Drawing.Point(654, 113);
+            this.scheduleHours.Location = new System.Drawing.Point(761, 86);
             this.scheduleHours.Name = "scheduleHours";
-            this.scheduleHours.Size = new System.Drawing.Size(210, 23);
+            this.scheduleHours.Size = new System.Drawing.Size(103, 46);
             this.scheduleHours.TabIndex = 21;
             this.scheduleHours.Text = "Динамика часов в семестре";
             this.scheduleHours.UseVisualStyleBackColor = true;
@@ -528,23 +548,12 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // weekFiltered
+            // DBRestoreName
             // 
-            this.weekFiltered.AutoSize = true;
-            this.weekFiltered.Location = new System.Drawing.Point(13, 144);
-            this.weekFiltered.Name = "weekFiltered";
-            this.weekFiltered.Size = new System.Drawing.Size(120, 17);
-            this.weekFiltered.TabIndex = 34;
-            this.weekFiltered.Text = "Фильтр по неделе";
-            this.weekFiltered.UseVisualStyleBackColor = true;
-            // 
-            // WeekFilter
-            // 
-            this.WeekFilter.FormattingEnabled = true;
-            this.WeekFilter.Location = new System.Drawing.Point(139, 140);
-            this.WeekFilter.Name = "WeekFilter";
-            this.WeekFilter.Size = new System.Drawing.Size(60, 21);
-            this.WeekFilter.TabIndex = 35;
+            this.DBRestoreName.Location = new System.Drawing.Point(615, 140);
+            this.DBRestoreName.Name = "DBRestoreName";
+            this.DBRestoreName.Size = new System.Drawing.Size(140, 20);
+            this.DBRestoreName.TabIndex = 36;
             // 
             // MainEditForm
             // 
@@ -618,6 +627,7 @@
         private System.Windows.Forms.Button WholeScheduleDatesExport;
         private System.Windows.Forms.CheckBox weekFiltered;
         private System.Windows.Forms.ComboBox WeekFilter;
+        private System.Windows.Forms.TextBox DBRestoreName;
     }
 }
 

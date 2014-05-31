@@ -37,6 +37,8 @@
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.EditScheduleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.расписаниеСессииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             this.показатьОкноToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.расписаниеНаДеньToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.расписаниеПреподавателяToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,6 +65,8 @@
             this.toolStripMenuItem4,
             this.EditScheduleToolStripMenuItem,
             this.toolStripMenuItem2,
+            this.расписаниеСессииToolStripMenuItem,
+            this.toolStripMenuItem5,
             this.показатьОкноToolStripMenuItem,
             this.расписаниеНаДеньToolStripMenuItem,
             this.расписаниеПреподавателяToolStripMenuItem,
@@ -74,7 +78,7 @@
             this.toolStripMenuItem1,
             this.выходToolStripMenuItem});
             this.trayIconMenu.Name = "trayIconMenu";
-            this.trayIconMenu.Size = new System.Drawing.Size(266, 292);
+            this.trayIconMenu.Size = new System.Drawing.Size(266, 342);
             // 
             // контингентToolStripMenuItem
             // 
@@ -117,6 +121,19 @@
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(262, 6);
+            // 
+            // расписаниеСессииToolStripMenuItem
+            // 
+            this.расписаниеСессииToolStripMenuItem.Image = global::UchOtd.Properties.Resources.bell;
+            this.расписаниеСессииToolStripMenuItem.Name = "расписаниеСессииToolStripMenuItem";
+            this.расписаниеСессииToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
+            this.расписаниеСессииToolStripMenuItem.Text = "Расписание сессии (Ctrl+Alt+S)";
+            this.расписаниеСессииToolStripMenuItem.Click += new System.EventHandler(this.расписаниеСессииToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem5
+            // 
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(262, 6);
             // 
             // показатьОкноToolStripMenuItem
             // 
@@ -260,6 +277,8 @@
         private System.Windows.Forms.ToolStripMenuItem списокПарПоДисциплинеAltLToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem расписаниеПреподавателяAltTToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem расписаниеНаДеньToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem расписаниеСессииToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
     }
 }
 

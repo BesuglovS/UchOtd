@@ -18,6 +18,7 @@ using UchOtd.Schedule.Core;
 using UchOtd.Schedule.wnu.MySQLViews;
 using System.Net;
 using System.Text;
+using System.Diagnostics;
 
 namespace Schedule
 {
@@ -293,7 +294,7 @@ namespace Schedule
 
         private void ExportFacultyGroups()
         {
-            var faculty = _repo.GetFirstFiltredFaculty(f => f.Letter == "Г");
+            var faculty = _repo.GetFirstFiltredFaculty(f => f.Letter == "У");
 
             foreach (var group in _repo.GetFacultyGroups(faculty.FacultyId))
             {
@@ -339,14 +340,14 @@ namespace Schedule
         {
             String semesterString = (_repo.GetSemesterStarts().Month > 6) ? " (1 семестр)" : " (2 семестр)";
 
-            /*
+            
             foreach (var faculty in _repo.GetAllFaculties().OrderBy(f => f.SortingOrder))
-            {*/
-            var faculty = _repo.GetFirstFiltredFaculty(f => f.Letter == "Т");
+            {
+            //var faculty = _repo.GetFirstFiltredFaculty(f => f.Letter == "Г");
 
                 foreach (var group in _repo.GetFacultyGroups(faculty.FacultyId))
                 {
-                    //var group = _repo.GetFirstFiltredStudentGroups(sg => sg.Name == "13 Г (+Н)");
+                    //var group = _repo.GetFirstFiltredStudentGroups(sg => sg.Name == "14 В");
                     
                     AppendToFile("Oops\\stat.txt", "*" + group.Name + semesterString);
 
@@ -388,7 +389,7 @@ namespace Schedule
                         AppendToFile("Oops\\stat.txt", sb.ToString());
                     }            
                 }
-            //}
+            }
         }
 
         private static void AppendToFile(String filename, String line)
@@ -1252,8 +1253,9 @@ namespace Schedule
             var ruDOW = DOWList.SelectedIndex + 1;
 
             var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, ruDOW);
-            PDFExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.pdf", DOWList.Text, _repo, false, false, false);
+            PDFExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.pdf", DOWList.Text, _repo, true, false, false);
 
+            Process.Start("Export.pdf");
             var eprst = 999;
         }
 
@@ -1268,15 +1270,17 @@ namespace Schedule
 
         private void BackupAndUpload_Click(object sender, EventArgs e)
         {
-            _repo.BackupDB(Application.StartupPath + "\\ScheduleDB.bak");
-            WnuUpload.UploadFile(Application.StartupPath + "\\ScheduleDB.bak", "httpdocs/upload/DB-Backup/ScheduleDB.bak");
+            var DBName = _repo.ExtractDBName(_repo.ConnectionString);
+
+            _repo.BackupDB(Application.StartupPath + "\\" + DBName + ".bak");
+            WnuUpload.UploadFile(Application.StartupPath + "\\" + DBName + ".bak", "httpdocs/upload/DB-Backup/" + DBName + ".bak");
         }
 
         private void DownloadAndRestore_Click(object sender, EventArgs e)
         {
             var wc = new WebClient();
-            wc.DownloadFile("http://wiki.nayanova.edu/upload/DB-Backup/ScheduleDB.bak", Application.StartupPath + "\\ScheduleDB.bak");
-            _repo.RestoreDB(Application.StartupPath + "\\ScheduleDB.bak");
+            wc.DownloadFile("http://wiki.nayanova.edu/upload/DB-Backup/" + DBRestoreName.Text + ".bak", Application.StartupPath + "\\" + DBRestoreName.Text + ".bak");
+            _repo.RestoreDB(DBRestoreName.Text, Application.StartupPath + "\\" + DBRestoreName.Text + ".bak");
         }
 
         private void WholeScheduleDatesExport_Click(object sender, EventArgs e)

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.CompletelyDelete = new System.Windows.Forms.Button();
             this.Paste = new System.Windows.Forms.Button();
             this.Attestation = new System.Windows.Forms.ComboBox();
             this.Group = new System.Windows.Forms.ComboBox();
@@ -57,7 +58,7 @@
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.showAll = new System.Windows.Forms.Button();
             this.filter = new System.Windows.Forms.TextBox();
-            this.CompletelyDelete = new System.Windows.Forms.Button();
+            this.HoursFitFiltered = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -89,6 +90,16 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(233, 506);
             this.controlsPanel.TabIndex = 27;
+            // 
+            // CompletelyDelete
+            // 
+            this.CompletelyDelete.Location = new System.Drawing.Point(8, 334);
+            this.CompletelyDelete.Name = "CompletelyDelete";
+            this.CompletelyDelete.Size = new System.Drawing.Size(195, 57);
+            this.CompletelyDelete.TabIndex = 102;
+            this.CompletelyDelete.Text = "Совсем удалить";
+            this.CompletelyDelete.UseVisualStyleBackColor = true;
+            this.CompletelyDelete.Click += new System.EventHandler(this.CompletelyDelete_Click);
             // 
             // Paste
             // 
@@ -273,6 +284,7 @@
             // 
             // filterPanel
             // 
+            this.filterPanel.Controls.Add(this.HoursFitFiltered);
             this.filterPanel.Controls.Add(this.label8);
             this.filterPanel.Controls.Add(this.label7);
             this.filterPanel.Controls.Add(this.refresh);
@@ -357,15 +369,15 @@
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
             // 
-            // CompletelyDelete
+            // HoursFitFiltered
             // 
-            this.CompletelyDelete.Location = new System.Drawing.Point(8, 334);
-            this.CompletelyDelete.Name = "CompletelyDelete";
-            this.CompletelyDelete.Size = new System.Drawing.Size(195, 57);
-            this.CompletelyDelete.TabIndex = 102;
-            this.CompletelyDelete.Text = "Совсем удалить";
-            this.CompletelyDelete.UseVisualStyleBackColor = true;
-            this.CompletelyDelete.Click += new System.EventHandler(this.CompletelyDelete_Click);
+            this.HoursFitFiltered.AutoSize = true;
+            this.HoursFitFiltered.Location = new System.Drawing.Point(560, 24);
+            this.HoursFitFiltered.Name = "HoursFitFiltered";
+            this.HoursFitFiltered.Size = new System.Drawing.Size(199, 17);
+            this.HoursFitFiltered.TabIndex = 9;
+            this.HoursFitFiltered.Text = "только не совпадающие по часам";
+            this.HoursFitFiltered.UseVisualStyleBackColor = true;
             // 
             // DisciplineList
             // 
@@ -420,5 +432,6 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button CompletelyDelete;
+        private System.Windows.Forms.CheckBox HoursFitFiltered;
     }
 }

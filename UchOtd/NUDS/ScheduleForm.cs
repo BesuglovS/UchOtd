@@ -17,8 +17,6 @@ namespace UchOtd.NUDS
     {
         readonly ScheduleRepository _repo;
 
-        ScheduleRepository localRepo;
-
         public ScheduleForm(ScheduleRepository repo)
         {   
             InitializeComponent();
