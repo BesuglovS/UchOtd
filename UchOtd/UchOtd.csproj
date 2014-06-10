@@ -116,6 +116,7 @@
     <Compile Include="Core\LayoutSupport.cs" />
     <Compile Include="Core\StudentDetailsMode.cs" />
     <Compile Include="Core\Utilities.cs" />
+    <Compile Include="Core\WordExport.cs" />
     <Compile Include="Forms\BuildingLessons.cs">
       <SubType>Form</SubType>
     </Compile>

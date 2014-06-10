@@ -30,6 +30,8 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.ExportInWord = new System.Windows.Forms.Button();
+            this.DBRestoreName = new System.Windows.Forms.TextBox();
             this.WeekFilter = new System.Windows.Forms.ComboBox();
             this.weekFiltered = new System.Windows.Forms.CheckBox();
             this.WholeScheduleDatesExport = new System.Windows.Forms.Button();
@@ -75,7 +77,7 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.DBRestoreName = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -84,6 +86,8 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.button2);
+            this.controlsPanel.Controls.Add(this.ExportInWord);
             this.controlsPanel.Controls.Add(this.DBRestoreName);
             this.controlsPanel.Controls.Add(this.WeekFilter);
             this.controlsPanel.Controls.Add(this.weekFiltered);
@@ -122,6 +126,23 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(876, 177);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // ExportInWord
+            // 
+            this.ExportInWord.Location = new System.Drawing.Point(205, 138);
+            this.ExportInWord.Name = "ExportInWord";
+            this.ExportInWord.Size = new System.Drawing.Size(106, 23);
+            this.ExportInWord.TabIndex = 37;
+            this.ExportInWord.Text = "WordExport (90)";
+            this.ExportInWord.UseVisualStyleBackColor = true;
+            this.ExportInWord.Click += new System.EventHandler(this.ExportInWord_Click);
+            // 
+            // DBRestoreName
+            // 
+            this.DBRestoreName.Location = new System.Drawing.Point(615, 140);
+            this.DBRestoreName.Name = "DBRestoreName";
+            this.DBRestoreName.Size = new System.Drawing.Size(140, 20);
+            this.DBRestoreName.TabIndex = 36;
             // 
             // WeekFilter
             // 
@@ -548,12 +569,15 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // DBRestoreName
+            // button2
             // 
-            this.DBRestoreName.Location = new System.Drawing.Point(615, 140);
-            this.DBRestoreName.Name = "DBRestoreName";
-            this.DBRestoreName.Size = new System.Drawing.Size(140, 20);
-            this.DBRestoreName.TabIndex = 36;
+            this.button2.Location = new System.Drawing.Point(317, 138);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(106, 23);
+            this.button2.TabIndex = 38;
+            this.button2.Text = "WordExport (80)";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // MainEditForm
             // 
@@ -628,6 +652,8 @@
         private System.Windows.Forms.CheckBox weekFiltered;
         private System.Windows.Forms.ComboBox WeekFilter;
         private System.Windows.Forms.TextBox DBRestoreName;
+        private System.Windows.Forms.Button ExportInWord;
+        private System.Windows.Forms.Button button2;
     }
 }
 

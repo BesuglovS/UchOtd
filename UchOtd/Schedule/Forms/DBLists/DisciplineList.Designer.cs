@@ -50,6 +50,7 @@
             this.viewPanel = new System.Windows.Forms.Panel();
             this.DiscipineListView = new System.Windows.Forms.DataGridView();
             this.filterPanel = new System.Windows.Forms.Panel();
+            this.HoursFitFiltered = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.refresh = new System.Windows.Forms.Button();
@@ -58,7 +59,7 @@
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.showAll = new System.Windows.Forms.Button();
             this.filter = new System.Windows.Forms.TextBox();
-            this.HoursFitFiltered = new System.Windows.Forms.CheckBox();
+            this.DifferenceByOne = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -284,6 +285,7 @@
             // 
             // filterPanel
             // 
+            this.filterPanel.Controls.Add(this.DifferenceByOne);
             this.filterPanel.Controls.Add(this.HoursFitFiltered);
             this.filterPanel.Controls.Add(this.label8);
             this.filterPanel.Controls.Add(this.label7);
@@ -298,6 +300,16 @@
             this.filterPanel.Name = "filterPanel";
             this.filterPanel.Size = new System.Drawing.Size(999, 67);
             this.filterPanel.TabIndex = 1;
+            // 
+            // HoursFitFiltered
+            // 
+            this.HoursFitFiltered.AutoSize = true;
+            this.HoursFitFiltered.Location = new System.Drawing.Point(554, 12);
+            this.HoursFitFiltered.Name = "HoursFitFiltered";
+            this.HoursFitFiltered.Size = new System.Drawing.Size(199, 17);
+            this.HoursFitFiltered.TabIndex = 9;
+            this.HoursFitFiltered.Text = "только не совпадающие по часам";
+            this.HoursFitFiltered.UseVisualStyleBackColor = true;
             // 
             // label8
             // 
@@ -369,15 +381,15 @@
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
             // 
-            // HoursFitFiltered
+            // DifferenceByOne
             // 
-            this.HoursFitFiltered.AutoSize = true;
-            this.HoursFitFiltered.Location = new System.Drawing.Point(560, 24);
-            this.HoursFitFiltered.Name = "HoursFitFiltered";
-            this.HoursFitFiltered.Size = new System.Drawing.Size(199, 17);
-            this.HoursFitFiltered.TabIndex = 9;
-            this.HoursFitFiltered.Text = "только не совпадающие по часам";
-            this.HoursFitFiltered.UseVisualStyleBackColor = true;
+            this.DifferenceByOne.AutoSize = true;
+            this.DifferenceByOne.Location = new System.Drawing.Point(554, 33);
+            this.DifferenceByOne.Name = "DifferenceByOne";
+            this.DifferenceByOne.Size = new System.Drawing.Size(196, 17);
+            this.DifferenceByOne.TabIndex = 10;
+            this.DifferenceByOne.Text = "в т.ч. убрать с превышением на 1";
+            this.DifferenceByOne.UseVisualStyleBackColor = true;
             // 
             // DisciplineList
             // 
@@ -433,5 +445,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button CompletelyDelete;
         private System.Windows.Forms.CheckBox HoursFitFiltered;
+        private System.Windows.Forms.CheckBox DifferenceByOne;
     }
 }

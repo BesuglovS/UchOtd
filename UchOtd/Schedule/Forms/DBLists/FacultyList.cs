@@ -54,7 +54,11 @@ namespace Schedule.Forms.DBLists
 
             if (refreshType == RefreshType.GroupsOnly || refreshType == RefreshType.FullRefresh)
             {
-                var faculty = ((List<Faculty>)FacultiesListView.DataSource)[FacultiesListView.SelectedCells[0].RowIndex];
+                Faculty faculty = null;
+                if (FacultiesListView.SelectedCells.Count > 0)
+                {
+                    faculty = ((List<Faculty>)FacultiesListView.DataSource)[FacultiesListView.SelectedCells[0].RowIndex];
+                }
 
                 if (faculty == null)
                 {

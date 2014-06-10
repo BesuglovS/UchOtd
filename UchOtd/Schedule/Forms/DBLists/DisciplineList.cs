@@ -91,7 +91,14 @@ namespace Schedule.Forms.DBLists
                 {
                     var tfd = _repo.GetFirstFiltredTeacherForDiscipline(tefd => tefd.Discipline.DisciplineId == disc.DisciplineId);
 
-                    if ((tfd != null) && (Math.Abs(disc.AuditoriumHours - _repo.getTFDHours(tfd.TeacherForDisciplineId)) != 0))
+                    var diffList = new List<int>();
+                    diffList.Add(0);
+                    if (DifferenceByOne.Checked)
+                    {
+                        diffList.Add(-1);
+                    }
+
+                    if ((tfd != null) && (!diffList.Contains(disc.AuditoriumHours - _repo.getTFDHours(tfd.TeacherForDisciplineId))))
                     {
                         discListFiltered.Add(disc);
                     }

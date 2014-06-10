@@ -19,6 +19,7 @@ using UchOtd.Schedule.wnu.MySQLViews;
 using System.Net;
 using System.Text;
 using System.Diagnostics;
+using UchOtd.Core;
 
 namespace Schedule
 {
@@ -39,7 +40,7 @@ namespace Schedule
 
             if (_repo != null)
             {
-                this.Text = "Расписание (" + Utilities.ExtractDBOrConnectionName(_repo.ConnectionString) + ")";
+                this.Text = "Расписание (" + UchOtd.Core.Utilities.ExtractDBOrConnectionName(_repo.ConnectionString) + ")";
             }
         }
 
@@ -288,8 +289,111 @@ namespace Schedule
             // ExportStudentsData("StudentsExport-1sem.txt");
             // ImportStudentData("StudentsExport-1sem.txt");
             // CopyINOGroupLessonsFromRealSchedule();
-            ExportScheduleDates();
+            ExportScheduleDates("Oops\\stat.txt");
             // ExportFacultyGroups();
+            // ExportDiscAuds("Auds.txt");
+            //ExportGroupDisciplines("Oops\\Discs.txt");
+        }
+
+        private void ExportGroupDisciplines(string filename)
+        {
+            String semesterString = (_repo.GetSemesterStarts().Month > 6) ? " (1 семестр)" : " (2 семестр)";
+
+            foreach (var faculty in _repo.GetAllFaculties())
+            {
+                foreach (var group in _repo.GetFacultyGroups(faculty.FacultyId))
+                {
+                    AppendToFile(filename, "*" + group.Name + semesterString);
+
+                    var studentIds = _repo
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
+                        .ToList()
+                        .Select(stig => stig.Student.StudentId);
+
+                    var groupsListIds = _repo
+                        .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                        .ToList()
+                        .Select(stig => stig.StudentGroup.StudentGroupId);
+
+                    var tfds = _repo.GetFiltredTeacherForDiscipline(tfd => groupsListIds.Contains(tfd.Discipline.StudentGroup.StudentGroupId));
+
+                    foreach (var tfd in tfds)
+                    {
+                        AppendToFile(filename, 
+                            tfd.Discipline.Name + '\t' + 
+                            tfd.Discipline.StudentGroup.Name + '\t' +
+                            tfd.Teacher.FIO + '\t' +
+                            tfd.Discipline.AuditoriumHours + '\t' +
+                            Constants.Constants.Attestation[tfd.Discipline.Attestation]
+                        );
+                    }
+                }
+            }
+        }
+
+        private void ExportDiscAuds(string filename)
+        {
+            //var sw = new StreamWriter(filename);
+            var groupsId = _repo.GetFiltredStudentGroups(sg => sg.Name == "12 Д (+Н)" || sg.Name == "13 Д (+Н)" || sg.Name == "14 Д")
+                    .Select(sg => sg.StudentGroupId)
+                    .ToList();
+
+            var econstudentIds = _repo
+                .GetFiltredStudentsInGroups(sig => groupsId.Contains(sig.StudentGroup.StudentGroupId))
+                .Select(stig => stig.Student.StudentId)
+                .ToList();
+
+            foreach (var tfd in _repo.GetAllTeacherForDiscipline().OrderBy(tefd => tefd.Discipline.Name))
+            {
+                if (tfd.Discipline.StudentGroup.Name == "12 И")
+                {
+                    continue;
+                }
+
+                var studentIds = _repo.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == tfd.Discipline.StudentGroup.StudentGroupId)
+                    .ToList()
+                    .Select(stig => stig.Student.StudentId);
+
+                
+
+                Boolean econ = false;
+
+                foreach (var studentId in studentIds)
+                {
+                    if (econstudentIds.Contains(studentId))
+                    {
+                        econ = true;
+                        break;
+                    }
+                }
+
+                if (!econ)
+                {
+                    continue;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append(tfd.Discipline.Name + '\t' + tfd.Discipline.StudentGroup.Name + '\t');
+
+                var Auditoriums = _repo.GetFiltredLessons(l =>
+                    l.IsActive &&
+                    l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
+                    .ToList()
+                    .Select(l => l.Auditorium.Name)                    
+                    .Distinct()
+                    .OrderBy(n => n)
+                    .ToList();
+
+                foreach (var aud in Auditoriums)
+                {
+                    sb.Append(aud + '\t');
+                }
+
+                //sw.WriteLine(sb.ToString());
+                AppendToFile(filename, sb.ToString());
+            }
+
+            //sw.Close();
         }
 
         private void ExportFacultyGroups()
@@ -336,7 +440,7 @@ namespace Schedule
             }
         }
 
-        private void ExportScheduleDates()
+        private void ExportScheduleDates(string filename)
         {
             String semesterString = (_repo.GetSemesterStarts().Month > 6) ? " (1 семестр)" : " (2 семестр)";
 
@@ -348,8 +452,8 @@ namespace Schedule
                 foreach (var group in _repo.GetFacultyGroups(faculty.FacultyId))
                 {
                     //var group = _repo.GetFirstFiltredStudentGroups(sg => sg.Name == "14 В");
-                    
-                    AppendToFile("Oops\\stat.txt", "*" + group.Name + semesterString);
+
+                    AppendToFile(filename, "*" + group.Name + semesterString);
 
                     var studentIds = _repo
                         .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
@@ -386,7 +490,7 @@ namespace Schedule
                             sb.Append('\t' + lesson.Calendar.Date.Date.ToString("dd.MM.yyyy"));
                         }
 
-                        AppendToFile("Oops\\stat.txt", sb.ToString());
+                        AppendToFile(filename, sb.ToString());
                     }            
                 }
             }
@@ -1350,6 +1454,16 @@ namespace Schedule
                 sw.Close();
                 
             }
+        }
+
+        private void ExportInWord_Click(object sender, EventArgs e)
+        {
+            WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 90);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 80);
         }
     }
 }
