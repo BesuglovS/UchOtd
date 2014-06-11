@@ -46,7 +46,7 @@ namespace Schedule.Forms.DBLists.Lessons
             if (tfdId != -1)
             {
                 teacherForDisciplineBox.SelectedValue = tfdId;
-                ringsBox.Focus();
+                //ringsBox.Focus();
             }
 
             // Rings load
@@ -55,9 +55,9 @@ namespace Schedule.Forms.DBLists.Lessons
                 .ToList();
             var ringsView = RingView.RingsToView(ringsList);
 
-            ringsBox.DataSource = ringsView;
-            ringsBox.DisplayMember = "Time";
-            ringsBox.ValueMember = "RingId";
+            ringsListBox.DataSource = ringsView;
+            ringsListBox.DisplayMember = "Time";
+            ringsListBox.ValueMember = "RingId";
 
             // DOW Local
             var dowList = new List<object>();
@@ -100,8 +100,15 @@ namespace Schedule.Forms.DBLists.Lessons
             var studentIdsInGroup = sigFromGroup.Select(studentsInGroupse => studentsInGroupse.Student.StudentId).ToList();
             var studentGroupsIds = _repo.GetFiltredStudentsInGroups(sig => studentIdsInGroup.Contains(sig.Student.StudentId)).Select(sing => sing.StudentGroup.StudentGroupId).Distinct();
                                     
-            var ring = _repo.GetRing((int)ringsBox.SelectedValue);
-
+            //var ring = _repo.GetRing((int)ringsBox.SelectedValue);
+            var rings = new List<Ring>();
+            foreach (var ringView in ringsListBox.SelectedItems)
+            {
+                rings.Add(_repo.GetRing(((RingView)ringView).RingId));
+            }
+            var ringIds = rings.Select(r => r.RingId).ToList();
+            
+            
             var calendarIdsList = new List<int>();
             for (int i = 0; i < weekList.Count; i++)
             {
@@ -112,11 +119,13 @@ namespace Schedule.Forms.DBLists.Lessons
                     calendarIdsList.Add(calendar.CalendarId);
                 }
             }
+            
             var groupsLessons = _repo
                 .GetFiltredLessons(
                     l => studentGroupsIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) && 
                          calendarIdsList.Contains(l.Calendar.CalendarId) && 
-                         l.Ring.RingId == ring.RingId &&
+                         //l.Ring.RingId == ring.RingId &&
+                         ringIds.Contains(l.Ring.RingId) &&
                          l.IsActive);
 
 
@@ -135,48 +144,51 @@ namespace Schedule.Forms.DBLists.Lessons
 
             for (int i = 0; i < weekList.Count; i++)
             {
-                var lesson = new Lesson();
-
-                lesson.IsActive = isActive.Checked;
-                lesson.TeacherForDiscipline = tfd;
-                lesson.Ring = _repo.GetRing((int)ringsBox.SelectedValue);
-
-                var date = _repo.GetDateFromDowAndWeek((int)dayOfWeekBox.SelectedValue, weekList[i]);
-                var calendar = _repo.FindCalendar(date);
-                if (calendar == null)
+                foreach (var ring in rings)
                 {
-                    calendar = new Calendar(date);
-                }
-                lesson.Calendar = calendar;
+                    var lesson = new Lesson();
 
-                // Auditorium
-                Auditorium aud;
-                if (audList.SelectedIndex != -1)
-                {
-                    aud = _repo.GetAuditorium((int)audList.SelectedValue);
-                }
-                else
-                {
-                    if (audWeekList.Keys.Count == 1)
+                    lesson.IsActive = isActive.Checked;
+                    lesson.TeacherForDiscipline = tfd;
+                    lesson.Ring = ring;
+
+                    var date = _repo.GetDateFromDowAndWeek((int)dayOfWeekBox.SelectedValue, weekList[i]);
+                    var calendar = _repo.FindCalendar(date);
+                    if (calendar == null)
                     {
-                        var lessonAud = audWeekList[0];
-                        audWeekList.Clear();
-                        foreach (var week in weekList)
+                        calendar = new Calendar(date);
+                    }
+                    lesson.Calendar = calendar;
+
+                    // Auditorium
+                    Auditorium aud;
+                    if (audList.SelectedIndex != -1)
+                    {
+                        aud = _repo.GetAuditorium((int)audList.SelectedValue);
+                    }
+                    else
+                    {
+                        if (audWeekList.Keys.Count == 1)
                         {
-                            audWeekList.Add(week, lessonAud);
+                            var lessonAud = audWeekList[0];
+                            audWeekList.Clear();
+                            foreach (var week in weekList)
+                            {
+                                audWeekList.Add(week, lessonAud);
+                            }
+                        }
+
+                        aud = _repo.FindAuditorium(audWeekList[weekList[i]]);
+                        if (aud == null)
+                        {
+                            _repo.AddAuditorium(new Auditorium(audWeekList[weekList[i]]));
+                            aud = _repo.FindAuditorium(audWeekList[weekList[i]]);
                         }
                     }
+                    lesson.Auditorium = aud;
 
-                    aud = _repo.FindAuditorium(audWeekList[weekList[i]]);
-                    if (aud == null)
-                    {
-                        _repo.AddAuditorium(new Auditorium(audWeekList[weekList[i]]));
-                        aud = _repo.FindAuditorium(audWeekList[weekList[i]]);
-                    }
+                    _repo.AddLesson(lesson, publicComment.Text, hiddenComment.Text);
                 }
-                lesson.Auditorium = aud;
-
-                _repo.AddLesson(lesson, publicComment.Text, hiddenComment.Text);
             }
 
             this.Close();
@@ -216,11 +228,11 @@ namespace Schedule.Forms.DBLists.Lessons
             {
                 return;
             }
-
-            if ((dayOfWeekBox.SelectedIndex == -1) || (ringsBox.SelectedIndex == -1) || (lessonWeeks.Text == ""))
+            
+            if ((dayOfWeekBox.SelectedIndex == -1) || (ringsListBox.SelectedItems.Count == 0) || (lessonWeeks.Text == ""))
             {
                 return;
-            }           
+            }          
             
             var calendarIds = new List<int>();
             foreach (var cal in _repo.GetAllCalendars())
@@ -235,7 +247,14 @@ namespace Schedule.Forms.DBLists.Lessons
                 }
             }
 
-            var res = _repo.GetFreeAuditoriumAtDOWTime(calendarIds, _repo.GetRing((int)ringsBox.SelectedValue));
+            var rings = new List<Ring>();
+            foreach (var ringView in ringsListBox.SelectedItems)
+            {
+                rings.Add(_repo.GetRing(((RingView)ringView).RingId));
+            }
+            var ringIds = rings.Select(r => r.RingId).ToList();
+
+            var res = _repo.GetFreeAuditoriumAtDOWTime(calendarIds, ringIds);
 
             var c = new Utilities.AudComparer();
             res = res

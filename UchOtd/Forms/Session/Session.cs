@@ -90,6 +90,12 @@ namespace UchOtd.Forms.Session
             TeacherList.ValueMember = "TeacherId";
             TeacherList.DisplayMember = "FIO";
             TeacherList.DataSource = TeachersList;
+
+            var faculties = _repo.GetAllFaculties();
+
+            FacultyList.DisplayMember = "Letter";
+            FacultyList.ValueMember = "FacultyId";
+            FacultyList.DataSource = faculties;
         }
 
         private void BigRedButton_Click(object sender, EventArgs e)
@@ -227,7 +233,19 @@ namespace UchOtd.Forms.Session
             oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
 
-            var faculties = _repo.GetAllFaculties();
+            List<Faculty> faculties;
+            /*
+            if (oneFaculty.Checked)
+            {
+                faculties = new List<Faculty>();
+                faculties.Add(_repo.GetFaculty((int)FacultyList.SelectedValue));
+            }
+            else
+            {
+                faculties = _repo.GetAllFaculties();
+            }*/
+
+            faculties = _repo.GetAllFaculties();
 
             for (int facCounter = 0; facCounter < Constants.facultyGroups.Keys.Count; facCounter++)
             {

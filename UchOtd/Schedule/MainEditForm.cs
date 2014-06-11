@@ -64,6 +64,15 @@ namespace Schedule
             FacultyList.ValueMember = "FacultyId";
             FacultyList.DataSource = faculties;
 
+            var faculties2 = _repo
+                .GetAllFaculties()
+                .OrderBy(f => f.SortingOrder)
+                .ToList();
+
+            WordFacultyFilter.DisplayMember = "Letter";
+            WordFacultyFilter.ValueMember = "FacultyId";
+            WordFacultyFilter.DataSource = faculties;
+
             DOWList.Items.Clear();
             foreach (var dow in Constants.Constants.DOWLocal.Values)
             {
@@ -1326,15 +1335,21 @@ namespace Schedule
             this.Top = 0;
             this.Left = 0;
             this.Width = width / 2;
-            this.Height = height / 2;
-            
-            var audsForm = new Auditoriums(_repo);
-            audsForm.Show();
-            audsForm.Top = height / 2;
-            audsForm.Left = 0;
-            audsForm.Width = width / 2;
-            audsForm.Height = height / 2;            
+            this.Height = height;
 
+            var discListForm = new DisciplineList(_repo);
+            discListForm.Show();
+            discListForm.Left = width / 2;
+            discListForm.Top = 0;
+            discListForm.Width = width / 2;
+            discListForm.Height = height / 2;
+
+            var teachersList = new TeacherList(_repo);
+            teachersList.Show();
+            teachersList.Left = width / 2;
+            teachersList.Top = height / 2;
+            teachersList.Width = width / 2;
+            teachersList.Height = height / 2;
         }
 
         private void setLayout2_Click(object sender, EventArgs e)
@@ -1458,12 +1473,27 @@ namespace Schedule
 
         private void ExportInWord_Click(object sender, EventArgs e)
         {
-            WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 90);
+            if (WordOneFaculty.Checked)
+            {
+                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 90, (int)WordFacultyFilter.SelectedValue);
+            }
+            else
+            {
+                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 90, -1);
+            }
+            
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 80);
+            if (WordOneFaculty.Checked)
+            {
+                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 80, (int)WordFacultyFilter.SelectedValue);
+            }
+            else
+            {
+                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 80, -1);
+            }
         }
     }
 }

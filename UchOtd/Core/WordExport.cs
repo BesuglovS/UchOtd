@@ -20,7 +20,8 @@ namespace UchOtd.Core
             string filename,
             bool save,
             bool quit,
-            int lessonLength)
+            int lessonLength,
+            int facultyFilter)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
@@ -36,7 +37,15 @@ namespace UchOtd.Core
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
             int pageCounter = 0;
 
+            List<Faculty> facultiesList;
+            facultiesList = _repo.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
 
+            if (facultyFilter != -1)
+            {
+                facultiesList = new List<Faculty>();
+                facultiesList.Add(_repo.GetFaculty(facultyFilter));
+            }
+            
             foreach (var faculty in _repo.GetAllFaculties().OrderBy(f => f.SortingOrder))
             {
                 //var faculty = _repo.GetFirstFiltredFaculty(f => f.Letter == "Д");

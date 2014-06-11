@@ -30,6 +30,7 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
             this.ExportInWord = new System.Windows.Forms.Button();
             this.DBRestoreName = new System.Windows.Forms.TextBox();
             this.WeekFilter = new System.Windows.Forms.ComboBox();
@@ -77,7 +78,8 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.button2 = new System.Windows.Forms.Button();
+            this.WordOneFaculty = new System.Windows.Forms.CheckBox();
+            this.WordFacultyFilter = new System.Windows.Forms.ComboBox();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -86,6 +88,8 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.WordFacultyFilter);
+            this.controlsPanel.Controls.Add(this.WordOneFaculty);
             this.controlsPanel.Controls.Add(this.button2);
             this.controlsPanel.Controls.Add(this.ExportInWord);
             this.controlsPanel.Controls.Add(this.DBRestoreName);
@@ -127,9 +131,19 @@
             this.controlsPanel.Size = new System.Drawing.Size(876, 177);
             this.controlsPanel.TabIndex = 0;
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(478, 140);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(106, 23);
+            this.button2.TabIndex = 38;
+            this.button2.Text = "WordExport (80)";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // ExportInWord
             // 
-            this.ExportInWord.Location = new System.Drawing.Point(205, 138);
+            this.ExportInWord.Location = new System.Drawing.Point(366, 140);
             this.ExportInWord.Name = "ExportInWord";
             this.ExportInWord.Size = new System.Drawing.Size(106, 23);
             this.ExportInWord.TabIndex = 37;
@@ -139,7 +153,7 @@
             // 
             // DBRestoreName
             // 
-            this.DBRestoreName.Location = new System.Drawing.Point(615, 140);
+            this.DBRestoreName.Location = new System.Drawing.Point(614, 109);
             this.DBRestoreName.Name = "DBRestoreName";
             this.DBRestoreName.Size = new System.Drawing.Size(140, 20);
             this.DBRestoreName.TabIndex = 36;
@@ -147,7 +161,7 @@
             // WeekFilter
             // 
             this.WeekFilter.FormattingEnabled = true;
-            this.WeekFilter.Location = new System.Drawing.Point(139, 140);
+            this.WeekFilter.Location = new System.Drawing.Point(130, 142);
             this.WeekFilter.Name = "WeekFilter";
             this.WeekFilter.Size = new System.Drawing.Size(60, 21);
             this.WeekFilter.TabIndex = 35;
@@ -174,9 +188,9 @@
             // 
             // DownloadAndRestore
             // 
-            this.DownloadAndRestore.Location = new System.Drawing.Point(761, 138);
+            this.DownloadAndRestore.Location = new System.Drawing.Point(615, 135);
             this.DownloadAndRestore.Name = "DownloadAndRestore";
-            this.DownloadAndRestore.Size = new System.Drawing.Size(103, 23);
+            this.DownloadAndRestore.Size = new System.Drawing.Size(139, 23);
             this.DownloadAndRestore.TabIndex = 32;
             this.DownloadAndRestore.Text = "DownloadRestore";
             this.DownloadAndRestore.UseVisualStyleBackColor = true;
@@ -184,9 +198,9 @@
             // 
             // BackupAndUpload
             // 
-            this.BackupAndUpload.Location = new System.Drawing.Point(474, 142);
+            this.BackupAndUpload.Location = new System.Drawing.Point(760, 135);
             this.BackupAndUpload.Name = "BackupAndUpload";
-            this.BackupAndUpload.Size = new System.Drawing.Size(110, 23);
+            this.BackupAndUpload.Size = new System.Drawing.Size(104, 23);
             this.BackupAndUpload.TabIndex = 31;
             this.BackupAndUpload.Text = "BackupUpload";
             this.BackupAndUpload.UseVisualStyleBackColor = true;
@@ -264,7 +278,7 @@
             // 
             // dayDelta
             // 
-            this.dayDelta.Location = new System.Drawing.Point(761, 56);
+            this.dayDelta.Location = new System.Drawing.Point(761, 54);
             this.dayDelta.Name = "dayDelta";
             this.dayDelta.Size = new System.Drawing.Size(103, 23);
             this.dayDelta.TabIndex = 22;
@@ -274,7 +288,7 @@
             // 
             // scheduleHours
             // 
-            this.scheduleHours.Location = new System.Drawing.Point(761, 86);
+            this.scheduleHours.Location = new System.Drawing.Point(761, 83);
             this.scheduleHours.Name = "scheduleHours";
             this.scheduleHours.Size = new System.Drawing.Size(103, 46);
             this.scheduleHours.TabIndex = 21;
@@ -569,15 +583,23 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // button2
+            // WordOneFaculty
             // 
-            this.button2.Location = new System.Drawing.Point(317, 138);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(106, 23);
-            this.button2.TabIndex = 38;
-            this.button2.Text = "WordExport (80)";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.WordOneFaculty.AutoSize = true;
+            this.WordOneFaculty.Location = new System.Drawing.Point(196, 144);
+            this.WordOneFaculty.Name = "WordOneFaculty";
+            this.WordOneFaculty.Size = new System.Drawing.Size(106, 17);
+            this.WordOneFaculty.TabIndex = 39;
+            this.WordOneFaculty.Text = "один факультет";
+            this.WordOneFaculty.UseVisualStyleBackColor = true;
+            // 
+            // WordFacultyFilter
+            // 
+            this.WordFacultyFilter.FormattingEnabled = true;
+            this.WordFacultyFilter.Location = new System.Drawing.Point(306, 140);
+            this.WordFacultyFilter.Name = "WordFacultyFilter";
+            this.WordFacultyFilter.Size = new System.Drawing.Size(54, 21);
+            this.WordFacultyFilter.TabIndex = 40;
             // 
             // MainEditForm
             // 
@@ -654,6 +676,8 @@
         private System.Windows.Forms.TextBox DBRestoreName;
         private System.Windows.Forms.Button ExportInWord;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ComboBox WordFacultyFilter;
+        private System.Windows.Forms.CheckBox WordOneFaculty;
     }
 }
 

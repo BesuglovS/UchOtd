@@ -33,11 +33,11 @@ namespace UchOtd.NUDS.Core
         public static Dictionary<int, List<string>> facultyGroups = new Dictionary<int, List<string>> {             
             { 1, new List<string> { "12 А", "13 А" } }, 
             { 2, new List<string> { "12 Б", "13 Б", "14 Б" } }, 
-            { 3, new List<string> { "12 В0", "12 В", "13 В", "14 В", "15 В" } },
+            { 3, new List<string> { "12 В0", "12 В", "13 В", "14 В", /*"15 В"*/ } },
             { 4, new List<string> { "12 Г", "13 Г", "14 Г" } }, 
             { 5, new List<string> { "12 Д", "13 Д", "14 Д" } },
             { 6, new List<string> { "12 Е", "13 Е", "14 Е" } }, 
-            { 7, new List<string> { "12 У", "13 У", "14 У", "15 У", "16 У" } },
+            { 7, new List<string> { "12 У", "13 У", "14 У", "15 У"/*, "16 У"*/ } },
             { 8, new List<string> { "12 Т", "13 Т", "14 Т"} }
             /*,
             { 9, new List<string> { "12 Г(Н)", "13 Г(Н)"} }, 

@@ -43,6 +43,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.FacultyList = new System.Windows.Forms.ComboBox();
+            this.oneFaculty = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.examsView)).BeginInit();
             this.viewPanel.SuspendLayout();
             this.controlsPanel.SuspendLayout();
@@ -58,13 +60,13 @@
             this.examsView.Name = "examsView";
             this.examsView.ReadOnly = true;
             this.examsView.RowHeadersVisible = false;
-            this.examsView.Size = new System.Drawing.Size(763, 308);
+            this.examsView.Size = new System.Drawing.Size(763, 294);
             this.examsView.TabIndex = 0;
             this.examsView.DoubleClick += new System.EventHandler(this.examsView_DoubleClick);
             // 
             // Auditoriums
             // 
-            this.Auditoriums.Location = new System.Drawing.Point(15, 72);
+            this.Auditoriums.Location = new System.Drawing.Point(15, 95);
             this.Auditoriums.Name = "Auditoriums";
             this.Auditoriums.Size = new System.Drawing.Size(161, 23);
             this.Auditoriums.TabIndex = 13;
@@ -84,9 +86,9 @@
             // 
             // AddExamsFromSchedule
             // 
-            this.AddExamsFromSchedule.Location = new System.Drawing.Point(294, 71);
+            this.AddExamsFromSchedule.Location = new System.Drawing.Point(324, 71);
             this.AddExamsFromSchedule.Name = "AddExamsFromSchedule";
-            this.AddExamsFromSchedule.Size = new System.Drawing.Size(237, 23);
+            this.AddExamsFromSchedule.Size = new System.Drawing.Size(207, 23);
             this.AddExamsFromSchedule.TabIndex = 11;
             this.AddExamsFromSchedule.Text = "Добавить экзамены из расписания";
             this.AddExamsFromSchedule.UseVisualStyleBackColor = true;
@@ -94,9 +96,9 @@
             // 
             // TeacherSchedule
             // 
-            this.TeacherSchedule.Location = new System.Drawing.Point(384, 42);
+            this.TeacherSchedule.Location = new System.Drawing.Point(301, 42);
             this.TeacherSchedule.Name = "TeacherSchedule";
-            this.TeacherSchedule.Size = new System.Drawing.Size(293, 23);
+            this.TeacherSchedule.Size = new System.Drawing.Size(376, 23);
             this.TeacherSchedule.TabIndex = 10;
             this.TeacherSchedule.Text = "GO";
             this.TeacherSchedule.UseVisualStyleBackColor = true;
@@ -105,9 +107,9 @@
             // TeacherList
             // 
             this.TeacherList.FormattingEnabled = true;
-            this.TeacherList.Location = new System.Drawing.Point(384, 16);
+            this.TeacherList.Location = new System.Drawing.Point(301, 16);
             this.TeacherList.Name = "TeacherList";
-            this.TeacherList.Size = new System.Drawing.Size(293, 21);
+            this.TeacherList.Size = new System.Drawing.Size(376, 21);
             this.TeacherList.TabIndex = 9;
             // 
             // UpdateView
@@ -122,9 +124,9 @@
             // 
             // WordExport
             // 
-            this.WordExport.Location = new System.Drawing.Point(301, 16);
+            this.WordExport.Location = new System.Drawing.Point(241, 71);
             this.WordExport.Name = "WordExport";
-            this.WordExport.Size = new System.Drawing.Size(77, 47);
+            this.WordExport.Size = new System.Drawing.Size(77, 39);
             this.WordExport.TabIndex = 5;
             this.WordExport.Text = "Экспорт в Word";
             this.WordExport.UseVisualStyleBackColor = true;
@@ -181,13 +183,15 @@
             // 
             this.viewPanel.Controls.Add(this.examsView);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 110);
+            this.viewPanel.Location = new System.Drawing.Point(0, 124);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(763, 308);
+            this.viewPanel.Size = new System.Drawing.Size(763, 294);
             this.viewPanel.TabIndex = 3;
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.oneFaculty);
+            this.controlsPanel.Controls.Add(this.FacultyList);
             this.controlsPanel.Controls.Add(this.Auditoriums);
             this.controlsPanel.Controls.Add(this.RemoveSyncWithSchedule);
             this.controlsPanel.Controls.Add(this.AddExamsFromSchedule);
@@ -203,8 +207,26 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(763, 110);
+            this.controlsPanel.Size = new System.Drawing.Size(763, 124);
             this.controlsPanel.TabIndex = 2;
+            // 
+            // FacultyList
+            // 
+            this.FacultyList.FormattingEnabled = true;
+            this.FacultyList.Location = new System.Drawing.Point(182, 74);
+            this.FacultyList.Name = "FacultyList";
+            this.FacultyList.Size = new System.Drawing.Size(53, 21);
+            this.FacultyList.TabIndex = 14;
+            // 
+            // oneFaculty
+            // 
+            this.oneFaculty.AutoSize = true;
+            this.oneFaculty.Location = new System.Drawing.Point(70, 76);
+            this.oneFaculty.Name = "oneFaculty";
+            this.oneFaculty.Size = new System.Drawing.Size(106, 17);
+            this.oneFaculty.TabIndex = 15;
+            this.oneFaculty.Text = "один факультет";
+            this.oneFaculty.UseVisualStyleBackColor = true;
             // 
             // Session
             // 
@@ -241,5 +263,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel viewPanel;
         private System.Windows.Forms.Panel controlsPanel;
+        private System.Windows.Forms.CheckBox oneFaculty;
+        private System.Windows.Forms.ComboBox FacultyList;
     }
 }
