@@ -365,5 +365,13 @@ namespace Schedule.Forms.DBLists
                 RefreshView();
             }
         }
+
+        private void DisciplineName_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                add.PerformClick();
+            }
+        }
     }
 }

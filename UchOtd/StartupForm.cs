@@ -126,8 +126,8 @@ namespace UchOtd
         private void InitRepositories()
         {
             var ServerList = new List<string>() { 
-                "uch-otd-disp",
-                "127.0.0.1"
+                "127.0.0.1",
+                "uch-otd-disp"                
             };
 
             bool successPing = false;

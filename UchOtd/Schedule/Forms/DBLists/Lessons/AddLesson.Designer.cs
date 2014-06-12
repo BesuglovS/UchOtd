@@ -34,7 +34,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.teacherForDisciplineBox = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.dayOfWeekBox = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.lessonWeeks = new System.Windows.Forms.TextBox();
@@ -47,6 +46,7 @@
             this.audList = new System.Windows.Forms.ListBox();
             this.reset = new System.Windows.Forms.Button();
             this.ringsListBox = new System.Windows.Forms.ListBox();
+            this.DayOfWeekListBox = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // Execute
@@ -109,19 +109,10 @@
             this.label2.TabIndex = 6;
             this.label2.Text = "Время занятия";
             // 
-            // dayOfWeekBox
-            // 
-            this.dayOfWeekBox.FormattingEnabled = true;
-            this.dayOfWeekBox.Location = new System.Drawing.Point(237, 83);
-            this.dayOfWeekBox.Name = "dayOfWeekBox";
-            this.dayOfWeekBox.Size = new System.Drawing.Size(121, 21);
-            this.dayOfWeekBox.TabIndex = 2;
-            this.dayOfWeekBox.SelectedIndexChanged += new System.EventHandler(this.dayOfWeekBox_SelectedIndexChanged);
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(234, 67);
+            this.label3.Location = new System.Drawing.Point(139, 67);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(73, 13);
             this.label3.TabIndex = 8;
@@ -130,7 +121,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(384, 67);
+            this.label4.Location = new System.Drawing.Point(363, 67);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(89, 13);
             this.label4.TabIndex = 10;
@@ -138,9 +129,9 @@
             // 
             // lessonWeeks
             // 
-            this.lessonWeeks.Location = new System.Drawing.Point(387, 84);
+            this.lessonWeeks.Location = new System.Drawing.Point(366, 84);
             this.lessonWeeks.Name = "lessonWeeks";
-            this.lessonWeeks.Size = new System.Drawing.Size(121, 20);
+            this.lessonWeeks.Size = new System.Drawing.Size(223, 20);
             this.lessonWeeks.TabIndex = 3;
             this.lessonWeeks.TextChanged += new System.EventHandler(this.lessonWeeks_TextChanged);
             // 
@@ -200,14 +191,14 @@
             // audList
             // 
             this.audList.FormattingEnabled = true;
-            this.audList.Location = new System.Drawing.Point(234, 136);
+            this.audList.Location = new System.Drawing.Point(234, 84);
             this.audList.Name = "audList";
-            this.audList.Size = new System.Drawing.Size(126, 173);
+            this.audList.Size = new System.Drawing.Size(126, 225);
             this.audList.TabIndex = 27;
             // 
             // reset
             // 
-            this.reset.Location = new System.Drawing.Point(234, 107);
+            this.reset.Location = new System.Drawing.Point(234, 58);
             this.reset.Name = "reset";
             this.reset.Size = new System.Drawing.Size(126, 23);
             this.reset.TabIndex = 28;
@@ -218,17 +209,27 @@
             // ringsListBox
             // 
             this.ringsListBox.FormattingEnabled = true;
-            this.ringsListBox.Location = new System.Drawing.Point(107, 67);
+            this.ringsListBox.Location = new System.Drawing.Point(15, 83);
             this.ringsListBox.Name = "ringsListBox";
             this.ringsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.ringsListBox.Size = new System.Drawing.Size(121, 147);
+            this.ringsListBox.Size = new System.Drawing.Size(121, 134);
             this.ringsListBox.TabIndex = 1;
+            // 
+            // DayOfWeekListBox
+            // 
+            this.DayOfWeekListBox.FormattingEnabled = true;
+            this.DayOfWeekListBox.Location = new System.Drawing.Point(142, 83);
+            this.DayOfWeekListBox.Name = "DayOfWeekListBox";
+            this.DayOfWeekListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.DayOfWeekListBox.Size = new System.Drawing.Size(86, 134);
+            this.DayOfWeekListBox.TabIndex = 29;
             // 
             // AddLesson
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(601, 374);
+            this.Controls.Add(this.DayOfWeekListBox);
             this.Controls.Add(this.ringsListBox);
             this.Controls.Add(this.reset);
             this.Controls.Add(this.audList);
@@ -240,7 +241,6 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.lessonWeeks);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.dayOfWeekBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.teacherForDisciplineBox);
@@ -268,7 +268,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox teacherForDisciplineBox;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox dayOfWeekBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox lessonWeeks;
@@ -281,5 +280,6 @@
         private System.Windows.Forms.ListBox audList;
         private System.Windows.Forms.Button reset;
         private System.Windows.Forms.ListBox ringsListBox;
+        private System.Windows.Forms.ListBox DayOfWeekListBox;
     }
 }

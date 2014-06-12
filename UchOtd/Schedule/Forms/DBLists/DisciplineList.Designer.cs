@@ -50,6 +50,7 @@
             this.viewPanel = new System.Windows.Forms.Panel();
             this.DiscipineListView = new System.Windows.Forms.DataGridView();
             this.filterPanel = new System.Windows.Forms.Panel();
+            this.DifferenceByOne = new System.Windows.Forms.CheckBox();
             this.HoursFitFiltered = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -59,7 +60,6 @@
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.showAll = new System.Windows.Forms.Button();
             this.filter = new System.Windows.Forms.TextBox();
-            this.DifferenceByOne = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -235,6 +235,7 @@
             this.DisciplineName.Name = "DisciplineName";
             this.DisciplineName.Size = new System.Drawing.Size(197, 20);
             this.DisciplineName.TabIndex = 0;
+            this.DisciplineName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.DisciplineName_KeyPress);
             this.DisciplineName.Leave += new System.EventHandler(this.DisciplineName_Leave);
             // 
             // label1
@@ -300,6 +301,16 @@
             this.filterPanel.Name = "filterPanel";
             this.filterPanel.Size = new System.Drawing.Size(999, 67);
             this.filterPanel.TabIndex = 1;
+            // 
+            // DifferenceByOne
+            // 
+            this.DifferenceByOne.AutoSize = true;
+            this.DifferenceByOne.Location = new System.Drawing.Point(554, 33);
+            this.DifferenceByOne.Name = "DifferenceByOne";
+            this.DifferenceByOne.Size = new System.Drawing.Size(196, 17);
+            this.DifferenceByOne.TabIndex = 10;
+            this.DifferenceByOne.Text = "в т.ч. убрать с превышением на 1";
+            this.DifferenceByOne.UseVisualStyleBackColor = true;
             // 
             // HoursFitFiltered
             // 
@@ -380,16 +391,6 @@
             this.filter.Name = "filter";
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
-            // 
-            // DifferenceByOne
-            // 
-            this.DifferenceByOne.AutoSize = true;
-            this.DifferenceByOne.Location = new System.Drawing.Point(554, 33);
-            this.DifferenceByOne.Name = "DifferenceByOne";
-            this.DifferenceByOne.Size = new System.Drawing.Size(196, 17);
-            this.DifferenceByOne.TabIndex = 10;
-            this.DifferenceByOne.Text = "в т.ч. убрать с превышением на 1";
-            this.DifferenceByOne.UseVisualStyleBackColor = true;
             // 
             // DisciplineList
             // 

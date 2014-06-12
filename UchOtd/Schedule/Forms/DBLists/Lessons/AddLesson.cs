@@ -66,9 +66,9 @@ namespace Schedule.Forms.DBLists.Lessons
                 dowList.Add(new { Value = dow.Key, Text = dow.Value });
             }
 
-            dayOfWeekBox.DataSource = dowList;
-            dayOfWeekBox.ValueMember = "Value";
-            dayOfWeekBox.DisplayMember = "Text";
+            DayOfWeekListBox.ValueMember = "Value";
+            DayOfWeekListBox.DisplayMember = "Text";
+            DayOfWeekListBox.DataSource = dowList;            
 
             // Public comment
             publicComment.Items.AddRange(Constants.Constants.LessonAddPublicComment.ToArray());
@@ -112,7 +112,7 @@ namespace Schedule.Forms.DBLists.Lessons
             var calendarIdsList = new List<int>();
             for (int i = 0; i < weekList.Count; i++)
             {
-                var date = _repo.GetDateFromDowAndWeek((int)dayOfWeekBox.SelectedValue, weekList[i]);
+                var date = _repo.GetDateFromDowAndWeek((int)DayOfWeekListBox.SelectedValue, weekList[i]);
                 var calendar = _repo.FindCalendar(date);
                 if (calendar != null)
                 {
@@ -152,7 +152,7 @@ namespace Schedule.Forms.DBLists.Lessons
                     lesson.TeacherForDiscipline = tfd;
                     lesson.Ring = ring;
 
-                    var date = _repo.GetDateFromDowAndWeek((int)dayOfWeekBox.SelectedValue, weekList[i]);
+                    var date = _repo.GetDateFromDowAndWeek((int)DayOfWeekListBox.SelectedValue, weekList[i]);
                     var calendar = _repo.FindCalendar(date);
                     if (calendar == null)
                     {
@@ -228,8 +228,8 @@ namespace Schedule.Forms.DBLists.Lessons
             {
                 return;
             }
-            
-            if ((dayOfWeekBox.SelectedIndex == -1) || (ringsListBox.SelectedItems.Count == 0) || (lessonWeeks.Text == ""))
+
+            if ((DayOfWeekListBox.SelectedIndex == -1) || (ringsListBox.SelectedItems.Count == 0) || (lessonWeeks.Text == ""))
             {
                 return;
             }          
@@ -237,7 +237,7 @@ namespace Schedule.Forms.DBLists.Lessons
             var calendarIds = new List<int>();
             foreach (var cal in _repo.GetAllCalendars())
             {
-                if (Constants.Constants.DOWRemap[(int)cal.Date.DayOfWeek]-1 == dayOfWeekBox.SelectedIndex)
+                if (Constants.Constants.DOWRemap[(int)cal.Date.DayOfWeek] - 1 == DayOfWeekListBox.SelectedIndex)
                 {
                     var week = _repo.CalculateWeekNumber(cal.Date);
                     if (weekList.Contains(week))
