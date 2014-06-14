@@ -47,7 +47,13 @@ namespace Schedule.Forms.DBLists
                 FacultiesListView.Columns["FacultyId"].Visible = false;
                 FacultiesListView.Columns["SortingOrder"].Visible = false;
 
-                FacultiesListView.Columns["Name"].Width = FacultiesListView.Width - 50;
+                FacultiesListView.Columns["Name"].Width = (int)Math.Round((FacultiesListView.Width - 30) * 0.6);
+
+                FacultiesListView.Columns["ScheduleSigningTitle"].Width = (int)Math.Round((FacultiesListView.Width - 30) * 0.1);
+                FacultiesListView.Columns["DeanSigningSchedule"].Width = (int)Math.Round((FacultiesListView.Width - 30) * 0.1);
+
+                FacultiesListView.Columns["SessionSigningTitle"].Width = (int)Math.Round((FacultiesListView.Width - 30) * 0.1);
+                FacultiesListView.Columns["DeanSigningSessionSchedule"].Width = (int)Math.Round((FacultiesListView.Width - 30) * 0.1);
 
                 FacultiesListView.Columns["Letter"].Width = 30;
             }
@@ -95,6 +101,13 @@ namespace Schedule.Forms.DBLists
             FacultyLetter.Text = faculty.Letter;
             SortingOrder.Text = faculty.SortingOrder.ToString(CultureInfo.InvariantCulture);
 
+            TitleOfSemesterScheduleSigner.Text = faculty.ScheduleSigningTitle;
+            SemesterScheduleSigner.Text = faculty.DeanSigningSchedule;
+
+            TitleOfSessionScheduleSigner.Text = faculty.SessionSigningTitle;
+            SessionScheduleSigner.Text = faculty.DeanSigningSessionSchedule;
+            
+
             var facultyGroups = _repo.GetFacultyGroups(faculty.FacultyId).OrderBy(sg => sg.Name).ToList();
 
             GroupsView.DataSource = facultyGroups;
@@ -108,7 +121,9 @@ namespace Schedule.Forms.DBLists
             int sOrder;
             int.TryParse(SortingOrder.Text, out sOrder);
 
-            var newFaculty = new Faculty(FacultyName.Text, FacultyLetter.Text, sOrder);
+            var newFaculty = new Faculty(FacultyName.Text, FacultyLetter.Text, sOrder,
+                TitleOfSemesterScheduleSigner.Text, SemesterScheduleSigner.Text, 
+                TitleOfSessionScheduleSigner.Text, SessionScheduleSigner.Text);
             _repo.AddFaculty(newFaculty);
 
             RefreshView(RefreshType.FacultiesOnly);
@@ -125,6 +140,12 @@ namespace Schedule.Forms.DBLists
                 int sOrder;
                 int.TryParse(SortingOrder.Text, out sOrder);
                 faculty.SortingOrder = sOrder;
+
+                faculty.ScheduleSigningTitle = TitleOfSemesterScheduleSigner.Text;
+                faculty.DeanSigningSchedule = SemesterScheduleSigner.Text;
+
+                faculty.SessionSigningTitle = SessionScheduleSigner.Text;
+                faculty.DeanSigningSessionSchedule = SessionScheduleSigner.Text;
 
                 _repo.UpdateFaculty(faculty);
 
@@ -195,7 +216,7 @@ namespace Schedule.Forms.DBLists
             }
         }
 
-        private void removeStudentFrunGroup_Click(object sender, EventArgs e)
+        private void removeGroupFromFaculty_Click(object sender, EventArgs e)
         {
             if (FacultiesListView.SelectedCells.Count == 0)
             {

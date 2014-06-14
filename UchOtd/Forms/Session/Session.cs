@@ -209,10 +209,18 @@ namespace UchOtd.Forms.Session
         
         private void WordExport_Click(object sender, EventArgs e)
         {
-            SaveAsWordDocument();
+            if (oneFaculty.Checked)
+            {
+                SaveAsWordDocument((int)FacultyList.SelectedValue);
+            }
+            else
+            {
+                SaveAsWordDocument(-1);
+            }
+            
         }
 
-        private void SaveAsWordDocument()
+        private void SaveAsWordDocument(int facultyFilter)
         {
             DateTime beginSessionDate, endSessionDate;
             DetectSessionDates(out beginSessionDate, out endSessionDate);
@@ -233,24 +241,30 @@ namespace UchOtd.Forms.Session
             oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
 
-            List<Faculty> faculties;
-            /*
-            if (oneFaculty.Checked)
+            List<Faculty> faculties = null;
+
+            if (facultyFilter != -1)
             {
-                faculties = new List<Faculty>();
-                faculties.Add(_repo.GetFaculty((int)FacultyList.SelectedValue));
+                var onefaculty = _repo.GetFaculty((int)FacultyList.SelectedValue);
+                if (oneFaculty == null)
+                {
+                    faculties = _repo.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
+                }
+                else
+                {
+                    faculties = new List<Faculty>();
+                    faculties.Add(onefaculty);
+                }
             }
             else
             {
-                faculties = _repo.GetAllFaculties();
-            }*/
-
-            faculties = _repo.GetAllFaculties();
-
-            for (int facCounter = 0; facCounter < Constants.facultyGroups.Keys.Count; facCounter++)
+                faculties = _repo.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
+            }
+            
+            foreach (var faculty in faculties)
             {
-                var groupIds = new List<int>();
-
+                /*
+                var groupIds = new List<int>();                
                 foreach (var group in Constants.facultyGroups.ElementAt(facCounter).Value)
                 {
                     var groupId = _repo.FindStudentGroup(group);
@@ -258,11 +272,18 @@ namespace UchOtd.Forms.Session
                     {
                         groupIds.Add(groupId.StudentGroupId);
                     }
-                }
+                }*/
+
+                var groupIds = _repo
+                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                    .Select(gif => gif.StudentGroup.StudentGroupId)
+                    .ToList();
 
                 var facultyExams = _repo.GetFacultyExams(_repo, groupIds);
 
-                facultyExams = facultyExams.OrderBy(fe => fe.Key).ToDictionary((keyItem) => keyItem.Key, (valueItem) => valueItem.Value);
+                facultyExams = facultyExams
+                    .OrderBy(fe => fe.Key)
+                    .ToDictionary((keyItem) => keyItem.Key, (valueItem) => valueItem.Value);
 
                 Word.Paragraph oPara1 =
                     oDoc.Content.Paragraphs.Add(ref oMissing);
@@ -279,13 +300,15 @@ namespace UchOtd.Forms.Session
                 {
                     var startYear = beginSessionDate.Year - 1;
                     oPara1.Range.Text = "зимней сессии " + startYear + "-" + (startYear + 1) + " учебного года" +
-                        Environment.NewLine + Constants.facultyTitles[facCounter];
+                        Environment.NewLine +
+                        faculty.Name;
                 }
                 else
                 {
                     var startYear = beginSessionDate.Year - 1;
                     oPara1.Range.Text = "летней сессии " + startYear + "-" + (startYear + 1) + " учебного года" +
-                        Environment.NewLine + Constants.facultyTitles[facCounter];
+                        Environment.NewLine +
+                        faculty.Name;
                 }
                 oPara1.Range.InsertParagraphAfter();
 
@@ -296,17 +319,23 @@ namespace UchOtd.Forms.Session
                 signBox.TextFrame.ContainingRange.ParagraphFormat.Alignment =
                     Word.WdParagraphAlignment.wdAlignParagraphRight;
 
+                var ProrUchRabNameOption = _repo.GetFirstFiltredConfigOption(co => co.Key == "Проректор по учебной работе");
+                var ProrUchRabName = (ProrUchRabNameOption == null) ? "" : ProrUchRabNameOption.Value;
+
                 signBox.TextFrame.ContainingRange.InsertAfter("«УТВЕРЖДАЮ»");
                 signBox.TextFrame.ContainingRange.InsertParagraphAfter();
                 signBox.TextFrame.ContainingRange.InsertAfter("Проректор по учебной работе");
                 signBox.TextFrame.ContainingRange.InsertParagraphAfter();
-                signBox.TextFrame.ContainingRange.InsertAfter("____________  А.В. Синицкий");
+                signBox.TextFrame.ContainingRange.InsertAfter("____________  " + ProrUchRabName);
 
-                var groups = Constants.facultyGroups.ElementAt(facCounter).Value;
+                List<StudentGroup> groups = _repo
+                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                    .Select(gif => gif.StudentGroup)
+                    .ToList();
 
                 Word.Table oTable;
                 Word.Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
-                oTable = oDoc.Tables.Add(wrdRng, 1 + facultyExams.Keys.Count, 1 + groups.Count);
+                oTable = oDoc.Tables.Add(wrdRng, 1 + facultyExams.Keys.Count, 1 + groups.Count());
 
                 //oTable.Rows(1).HeadingFormat = True;
                 //oTable.ApplyStyleHeadingRows = True;
@@ -324,9 +353,9 @@ namespace UchOtd.Forms.Session
                 oTable.Cell(1, 1).Range.Text = "Дата";
                 oTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
                         Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                for (var column = 1; column <= groups.Count; column++)
+                for (var column = 1; column <= groups.Count(); column++)
                 {
-                    oTable.Cell(1, column + 1).Range.Text = groups[column - 1];
+                    oTable.Cell(1, column + 1).Range.Text = groups[column - 1].Name;
                     oTable.Cell(1, column + 1).Range.ParagraphFormat.Alignment =
                         Word.WdParagraphAlignment.wdAlignParagraphCenter;
                 }
@@ -400,8 +429,6 @@ namespace UchOtd.Forms.Session
                             }
                         }
                     }
-
-
                 }
 
 
@@ -421,11 +448,15 @@ namespace UchOtd.Forms.Session
                 oPara2.Format.SpaceAfter = 0;
                 oPara2.Range.InsertParagraphAfter();
 
+
+                var HeadUchOtdNameOption = _repo.GetFirstFiltredConfigOption(co => co.Key == "Начальник учебного отдела");
+                var HeadUchOtdName = (HeadUchOtdNameOption == null) ? "" : HeadUchOtdNameOption.Value;
+
                 oPara2 =
                     oDoc.Content.Paragraphs.Add(ref oMissing);
                 oPara2.Range.Font.Size = 12;
                 oPara2.Format.LineSpacing = oWord.LinesToPoints(1);
-                oPara2.Range.Text = "Начальник учебного отдела\t\t" + "_________________  " + Constants.UchOtdHead;
+                oPara2.Range.Text = "Начальник учебного отдела\t\t" + "_________________  " + HeadUchOtdName;
                 oPara2.Format.SpaceAfter = 0;
                 oPara2.Range.InsertParagraphAfter();
                 oPara2.Range.InsertParagraphAfter();
@@ -434,20 +465,17 @@ namespace UchOtd.Forms.Session
                     oDoc.Content.Paragraphs.Add(ref oMissing);
                 oPara2.Range.Font.Size = 12;
                 oPara2.Format.LineSpacing = oWord.LinesToPoints(1);
-                oPara2.Range.Text = "Декан " + Constants.facultyTitles[facCounter] + "\t\t_________________  "
-                    + Constants.HeadsOfFaculties.ElementAt(facCounter).Value;
+                oPara2.Range.Text = faculty.SessionSigningTitle + "\t\t_________________  " + faculty.DeanSigningSessionSchedule;
                 oPara2.Format.SpaceAfter = 0;
                 oPara2.Range.InsertParagraphAfter();
                 oPara2.Range.InsertParagraphAfter();
 
-
-                if (facCounter != Constants.facultyGroups.Keys.Count - 1)
+                if (faculty.FacultyId != faculties.OrderBy(f => f.SortingOrder).Last().FacultyId)
                 {
                     oDoc.Words.Last.InsertBreak(Word.WdBreakType.wdPageBreak);
                 }
 
                 Application.DoEvents();
-
             }
 
             object fileName = Application.StartupPath + @"\Export2.docx";
@@ -469,18 +497,6 @@ namespace UchOtd.Forms.Session
             var maxExamDate = _repo.GetAllExams().Select(e => e.ExamDateTime).Max();
 
             endSessionDate = (maxConsDate <= maxExamDate) ? maxConsDate : maxExamDate;
-        }
-
-        private void BackupUpload_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void DownloadRestore_Click(object sender, EventArgs e)
-        {
-            var wc = new WebClient();
-            wc.DownloadFile("http://wiki.nayanova.edu/upload/DB-Backup/Session2DB.bak", Application.StartupPath + "\\Session2DB.bak");
-            _repo.RestoreDB("Session2DB", Application.StartupPath + "\\Session2DB.bak");
         }
 
         private void Refresh_Click(object sender, EventArgs e)

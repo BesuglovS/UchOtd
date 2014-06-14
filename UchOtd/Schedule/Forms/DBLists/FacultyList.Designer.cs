@@ -43,11 +43,19 @@
             this.FacultyName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.ControlsPanel = new System.Windows.Forms.Panel();
+            this.SessionScheduleSigner = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.SemesterScheduleSigner = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.SortingOrder = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.FacultyLetter = new System.Windows.Forms.TextBox();
             this.label768 = new System.Windows.Forms.Label();
             this.LeftPanel = new System.Windows.Forms.Panel();
+            this.TitleOfSessionScheduleSigner = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.TitleOfSemesterScheduleSigner = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.GroupsView)).BeginInit();
             this.GroupListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FacultiesListView)).BeginInit();
@@ -69,22 +77,22 @@
             this.GroupsView.Name = "GroupsView";
             this.GroupsView.ReadOnly = true;
             this.GroupsView.RowHeadersVisible = false;
-            this.GroupsView.Size = new System.Drawing.Size(274, 688);
+            this.GroupsView.Size = new System.Drawing.Size(507, 688);
             this.GroupsView.TabIndex = 2;
             // 
             // GroupListPanel
             // 
             this.GroupListPanel.Controls.Add(this.GroupsView);
             this.GroupListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GroupListPanel.Location = new System.Drawing.Point(309, 0);
+            this.GroupListPanel.Location = new System.Drawing.Point(484, 0);
             this.GroupListPanel.Name = "GroupListPanel";
-            this.GroupListPanel.Size = new System.Drawing.Size(274, 688);
+            this.GroupListPanel.Size = new System.Drawing.Size(507, 688);
             this.GroupListPanel.TabIndex = 19;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 237);
+            this.label2.Location = new System.Drawing.Point(244, 334);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(42, 13);
             this.label2.TabIndex = 32;
@@ -94,21 +102,21 @@
             // 
             this.GroupList.FormattingEnabled = true;
             this.GroupList.ItemHeight = 13;
-            this.GroupList.Location = new System.Drawing.Point(16, 261);
+            this.GroupList.Location = new System.Drawing.Point(244, 354);
             this.GroupList.Name = "GroupList";
-            this.GroupList.Size = new System.Drawing.Size(287, 21);
+            this.GroupList.Size = new System.Drawing.Size(223, 21);
             this.GroupList.TabIndex = 31;
             this.GroupList.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.GroupList_KeyPress);
             // 
             // removeStudentFrunGroup
             // 
-            this.removeStudentFrunGroup.Location = new System.Drawing.Point(170, 288);
+            this.removeStudentFrunGroup.Location = new System.Drawing.Point(362, 381);
             this.removeStudentFrunGroup.Name = "removeStudentFrunGroup";
-            this.removeStudentFrunGroup.Size = new System.Drawing.Size(133, 23);
+            this.removeStudentFrunGroup.Size = new System.Drawing.Size(105, 23);
             this.removeStudentFrunGroup.TabIndex = 9;
             this.removeStudentFrunGroup.Text = "Удалить";
             this.removeStudentFrunGroup.UseVisualStyleBackColor = true;
-            this.removeStudentFrunGroup.Click += new System.EventHandler(this.removeStudentFrunGroup_Click);
+            this.removeStudentFrunGroup.Click += new System.EventHandler(this.removeGroupFromFaculty_Click);
             // 
             // FacultiesListView
             // 
@@ -123,7 +131,7 @@
             this.FacultiesListView.Name = "FacultiesListView";
             this.FacultiesListView.ReadOnly = true;
             this.FacultiesListView.RowHeadersVisible = false;
-            this.FacultiesListView.Size = new System.Drawing.Size(309, 355);
+            this.FacultiesListView.Size = new System.Drawing.Size(484, 263);
             this.FacultiesListView.TabIndex = 1;
             this.FacultiesListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.FacultiesListViewCellClick);
             // 
@@ -131,16 +139,16 @@
             // 
             this.FacultyListPanel.Controls.Add(this.FacultiesListView);
             this.FacultyListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.FacultyListPanel.Location = new System.Drawing.Point(0, 333);
+            this.FacultyListPanel.Location = new System.Drawing.Point(0, 425);
             this.FacultyListPanel.Name = "FacultyListPanel";
-            this.FacultyListPanel.Size = new System.Drawing.Size(309, 355);
+            this.FacultyListPanel.Size = new System.Drawing.Size(484, 263);
             this.FacultyListPanel.TabIndex = 23;
             // 
             // addGroupToFaculty
             // 
-            this.addGroupToFaculty.Location = new System.Drawing.Point(16, 288);
+            this.addGroupToFaculty.Location = new System.Drawing.Point(244, 381);
             this.addGroupToFaculty.Name = "addGroupToFaculty";
-            this.addGroupToFaculty.Size = new System.Drawing.Size(139, 23);
+            this.addGroupToFaculty.Size = new System.Drawing.Size(112, 23);
             this.addGroupToFaculty.TabIndex = 8;
             this.addGroupToFaculty.Text = "Добавить";
             this.addGroupToFaculty.UseVisualStyleBackColor = true;
@@ -148,9 +156,9 @@
             // 
             // cascadeDelete
             // 
-            this.cascadeDelete.Location = new System.Drawing.Point(16, 185);
+            this.cascadeDelete.Location = new System.Drawing.Point(13, 363);
             this.cascadeDelete.Name = "cascadeDelete";
-            this.cascadeDelete.Size = new System.Drawing.Size(287, 49);
+            this.cascadeDelete.Size = new System.Drawing.Size(222, 49);
             this.cascadeDelete.TabIndex = 6;
             this.cascadeDelete.Text = "Удалить вместе с привязками к группам";
             this.cascadeDelete.UseVisualStyleBackColor = true;
@@ -158,9 +166,9 @@
             // 
             // remove
             // 
-            this.remove.Location = new System.Drawing.Point(218, 156);
+            this.remove.Location = new System.Drawing.Point(166, 334);
             this.remove.Name = "remove";
-            this.remove.Size = new System.Drawing.Size(85, 23);
+            this.remove.Size = new System.Drawing.Size(69, 23);
             this.remove.TabIndex = 5;
             this.remove.Text = "Удалить";
             this.remove.UseVisualStyleBackColor = true;
@@ -168,9 +176,9 @@
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(116, 156);
+            this.update.Location = new System.Drawing.Point(89, 334);
             this.update.Name = "update";
-            this.update.Size = new System.Drawing.Size(85, 23);
+            this.update.Size = new System.Drawing.Size(71, 23);
             this.update.TabIndex = 4;
             this.update.Text = "Изменить";
             this.update.UseVisualStyleBackColor = true;
@@ -178,9 +186,9 @@
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(15, 156);
+            this.add.Location = new System.Drawing.Point(12, 334);
             this.add.Name = "add";
-            this.add.Size = new System.Drawing.Size(85, 23);
+            this.add.Size = new System.Drawing.Size(71, 23);
             this.add.TabIndex = 3;
             this.add.Text = "Добавить";
             this.add.UseVisualStyleBackColor = true;
@@ -190,13 +198,13 @@
             // 
             this.FacultyName.Location = new System.Drawing.Point(15, 34);
             this.FacultyName.Name = "FacultyName";
-            this.FacultyName.Size = new System.Drawing.Size(288, 20);
+            this.FacultyName.Size = new System.Drawing.Size(452, 20);
             this.FacultyName.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Location = new System.Drawing.Point(13, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(119, 13);
             this.label1.TabIndex = 22;
@@ -204,6 +212,14 @@
             // 
             // ControlsPanel
             // 
+            this.ControlsPanel.Controls.Add(this.TitleOfSemesterScheduleSigner);
+            this.ControlsPanel.Controls.Add(this.label7);
+            this.ControlsPanel.Controls.Add(this.TitleOfSessionScheduleSigner);
+            this.ControlsPanel.Controls.Add(this.label6);
+            this.ControlsPanel.Controls.Add(this.SessionScheduleSigner);
+            this.ControlsPanel.Controls.Add(this.label5);
+            this.ControlsPanel.Controls.Add(this.SemesterScheduleSigner);
+            this.ControlsPanel.Controls.Add(this.label4);
             this.ControlsPanel.Controls.Add(this.SortingOrder);
             this.ControlsPanel.Controls.Add(this.label3);
             this.ControlsPanel.Controls.Add(this.FacultyLetter);
@@ -221,20 +237,52 @@
             this.ControlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.ControlsPanel.Location = new System.Drawing.Point(0, 0);
             this.ControlsPanel.Name = "ControlsPanel";
-            this.ControlsPanel.Size = new System.Drawing.Size(309, 333);
+            this.ControlsPanel.Size = new System.Drawing.Size(484, 425);
             this.ControlsPanel.TabIndex = 22;
+            // 
+            // SessionScheduleSigner
+            // 
+            this.SessionScheduleSigner.Location = new System.Drawing.Point(16, 302);
+            this.SessionScheduleSigner.Name = "SessionScheduleSigner";
+            this.SessionScheduleSigner.Size = new System.Drawing.Size(451, 20);
+            this.SessionScheduleSigner.TabIndex = 39;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(13, 286);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(196, 13);
+            this.label5.TabIndex = 38;
+            this.label5.Text = "Подписывающий расписание сессии";
+            // 
+            // SemesterScheduleSigner
+            // 
+            this.SemesterScheduleSigner.Location = new System.Drawing.Point(16, 217);
+            this.SemesterScheduleSigner.Name = "SemesterScheduleSigner";
+            this.SemesterScheduleSigner.Size = new System.Drawing.Size(451, 20);
+            this.SemesterScheduleSigner.TabIndex = 37;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 201);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(209, 13);
+            this.label4.TabIndex = 36;
+            this.label4.Text = "Подписывающий расписание семестра";
             // 
             // SortingOrder
             // 
             this.SortingOrder.Location = new System.Drawing.Point(16, 130);
             this.SortingOrder.Name = "SortingOrder";
-            this.SortingOrder.Size = new System.Drawing.Size(287, 20);
+            this.SortingOrder.Size = new System.Drawing.Size(451, 20);
             this.SortingOrder.TabIndex = 2;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 105);
+            this.label3.Location = new System.Drawing.Point(13, 105);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(113, 13);
             this.label3.TabIndex = 35;
@@ -244,7 +292,7 @@
             // 
             this.FacultyLetter.Location = new System.Drawing.Point(16, 82);
             this.FacultyLetter.Name = "FacultyLetter";
-            this.FacultyLetter.Size = new System.Drawing.Size(287, 20);
+            this.FacultyLetter.Size = new System.Drawing.Size(451, 20);
             this.FacultyLetter.TabIndex = 1;
             // 
             // label768
@@ -263,14 +311,46 @@
             this.LeftPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.LeftPanel.Location = new System.Drawing.Point(0, 0);
             this.LeftPanel.Name = "LeftPanel";
-            this.LeftPanel.Size = new System.Drawing.Size(309, 688);
+            this.LeftPanel.Size = new System.Drawing.Size(484, 688);
             this.LeftPanel.TabIndex = 18;
+            // 
+            // TitleOfSessionScheduleSigner
+            // 
+            this.TitleOfSessionScheduleSigner.Location = new System.Drawing.Point(16, 259);
+            this.TitleOfSessionScheduleSigner.Name = "TitleOfSessionScheduleSigner";
+            this.TitleOfSessionScheduleSigner.Size = new System.Drawing.Size(451, 20);
+            this.TitleOfSessionScheduleSigner.TabIndex = 41;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(13, 243);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(260, 13);
+            this.label6.TabIndex = 40;
+            this.label6.Text = "Должность подписывающего расписание сессии";
+            // 
+            // TitleOfSemesterScheduleSigner
+            // 
+            this.TitleOfSemesterScheduleSigner.Location = new System.Drawing.Point(17, 175);
+            this.TitleOfSemesterScheduleSigner.Name = "TitleOfSemesterScheduleSigner";
+            this.TitleOfSemesterScheduleSigner.Size = new System.Drawing.Size(451, 20);
+            this.TitleOfSemesterScheduleSigner.TabIndex = 43;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(13, 159);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(273, 13);
+            this.label7.TabIndex = 42;
+            this.label7.Text = "Должность подписывающего расписание семестра";
             // 
             // FacultyList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(583, 688);
+            this.ClientSize = new System.Drawing.Size(991, 688);
             this.Controls.Add(this.GroupListPanel);
             this.Controls.Add(this.LeftPanel);
             this.Name = "FacultyList";
@@ -309,5 +389,13 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox FacultyLetter;
         private System.Windows.Forms.Label label768;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox SessionScheduleSigner;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox SemesterScheduleSigner;
+        private System.Windows.Forms.TextBox TitleOfSemesterScheduleSigner;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox TitleOfSessionScheduleSigner;
+        private System.Windows.Forms.Label label6;
     }
 }

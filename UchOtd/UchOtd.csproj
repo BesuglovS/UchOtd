@@ -403,6 +403,9 @@
     <EmbeddedResource Include="Schedule\Forms\DBLists\DisciplineList.resx">
       <DependentUpon>DisciplineList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\DBLists\FacultyList.resx">
+      <DependentUpon>FacultyList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\DBLists\Lessons\AddLesson.resx">
       <DependentUpon>AddLesson.cs</DependentUpon>
     </EmbeddedResource>

@@ -19,33 +19,29 @@ namespace UchOtd.NUDS.Core
                 {7, "Воскресенье"},
         };
 
-        public static Dictionary<int, int> DOWRemap = new Dictionary<int, int> { { 0, 7 }, { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 } };
-       
         // Session
-
         public static DateTime DefaultEmptyDateForEvent = new DateTime(2020, 1, 1);
 
         //public static DateTime DefaultEditDate = new DateTime(2014, 6, 9);
         public static DateTime DefaultEditDate = new DateTime(2014, 1, 9);
 
+        /*
         public static string UchOtdHead = "Карасёва Т.Б.";
-
+                
         public static Dictionary<int, List<string>> facultyGroups = new Dictionary<int, List<string>> {             
             { 1, new List<string> { "12 А", "13 А" } }, 
             { 2, new List<string> { "12 Б", "13 Б", "14 Б" } }, 
-            { 3, new List<string> { "12 В0", "12 В", "13 В", "14 В", /*"15 В"*/ } },
+            { 3, new List<string> { "12 В0", "12 В", "13 В", "14 В", "15 В" } },
             { 4, new List<string> { "12 Г", "13 Г", "14 Г" } }, 
             { 5, new List<string> { "12 Д", "13 Д", "14 Д" } },
             { 6, new List<string> { "12 Е", "13 Е", "14 Е" } }, 
-            { 7, new List<string> { "12 У", "13 У", "14 У", "15 У"/*, "16 У"*/ } },
+            { 7, new List<string> { "12 У", "13 У", "14 У", "15 У", "16 У" } },
             { 8, new List<string> { "12 Т", "13 Т", "14 Т"} },
-            { 9, new List<string> { "12 И" } }
-            /*,
-            { 9, new List<string> { "12 Г(Н)", "13 Г(Н)"} }, 
-            { 10, new List<string> { "12 Д(Н)", "13 Д(Н)"} }
-             */
+            { 9, new List<string> { "12 И" } },
+            { 10, new List<string> { "12 Г(Н)", "13 Г(Н)"} }, 
+            { 11, new List<string> { "12 Д(Н)", "13 Д(Н)"} }             
         };
-
+        
         public static List<string> facultyTitles = new List<string> { 
             "факультета математики и компьютерных наук", 
             "философского факультета",
@@ -56,10 +52,10 @@ namespace UchOtd.NUDS.Core
             "факультета управления", 
             "факультета туризма", 
             "факультета искусств"
-            /*"экономического факультета", 
-            "юридического факультета"*/
+            "экономического факультета", 
+            "юридического факультета"
         };
-
+        
         public static Dictionary<int, string> HeadsOfFaculties = new Dictionary<int, string> { 
             {1, "Конопацкий А.В."},      //"А"
             {2, "Стёпкина М.В."},        //"Б"
@@ -70,8 +66,8 @@ namespace UchOtd.NUDS.Core
             {7, "Спирина Т.В."},         //"У" 
             {8, "Соломина И.Ю."},        //"Т" 
             {9, "Зорина Е.В."},          //"И" 
-            //{9, "Зиновьева О.Г."},       //"ГН" 
-            //{10, "Никищенкова М.А."}     //"ДН" 
-        };
+            {10, "Зиновьева О.Г."},       //"ГН" 
+            {11, "Никищенкова М.А."}     //"ДН" 
+        };*/
     }
 }

@@ -298,10 +298,10 @@ namespace Schedule
             // ExportStudentsData("StudentsExport-1sem.txt");
             // ImportStudentData("StudentsExport-1sem.txt");
             // CopyINOGroupLessonsFromRealSchedule();
-            // ExportScheduleDates("Oops\\stat.txt");
+            ExportScheduleDates("Oops\\stat.txt");
             // ExportFacultyGroups();
             // ExportDiscAuds("Auds.txt");
-            ExportGroupDisciplines("Oops\\Discs.txt");
+            // ExportGroupDisciplines("Oops\\Discs.txt");
         }
 
         private void ExportGroupDisciplines(string filename)
@@ -461,7 +461,7 @@ namespace Schedule
 
                 foreach (var group in _repo.GetFacultyGroups(faculty.FacultyId))
                 {
-                    //var group = _repo.GetFirstFiltredStudentGroups(sg => sg.Name == "14 В");
+                    //var group = _repo.GetFirstFiltredStudentGroups(sg => sg.Name == "12 Т");
 
                     AppendToFile(filename, "*" + group.Name + semesterString);
 
