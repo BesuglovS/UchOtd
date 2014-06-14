@@ -30,6 +30,8 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.WordFacultyFilter = new System.Windows.Forms.ComboBox();
+            this.WordOneFaculty = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
             this.ExportInWord = new System.Windows.Forms.Button();
             this.DBRestoreName = new System.Windows.Forms.TextBox();
@@ -78,8 +80,7 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.WordOneFaculty = new System.Windows.Forms.CheckBox();
-            this.WordFacultyFilter = new System.Windows.Forms.ComboBox();
+            this.button3 = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -88,6 +89,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.button3);
             this.controlsPanel.Controls.Add(this.WordFacultyFilter);
             this.controlsPanel.Controls.Add(this.WordOneFaculty);
             this.controlsPanel.Controls.Add(this.button2);
@@ -131,13 +133,31 @@
             this.controlsPanel.Size = new System.Drawing.Size(876, 177);
             this.controlsPanel.TabIndex = 0;
             // 
+            // WordFacultyFilter
+            // 
+            this.WordFacultyFilter.FormattingEnabled = true;
+            this.WordFacultyFilter.Location = new System.Drawing.Point(306, 140);
+            this.WordFacultyFilter.Name = "WordFacultyFilter";
+            this.WordFacultyFilter.Size = new System.Drawing.Size(54, 21);
+            this.WordFacultyFilter.TabIndex = 40;
+            // 
+            // WordOneFaculty
+            // 
+            this.WordOneFaculty.AutoSize = true;
+            this.WordOneFaculty.Location = new System.Drawing.Point(196, 144);
+            this.WordOneFaculty.Name = "WordOneFaculty";
+            this.WordOneFaculty.Size = new System.Drawing.Size(106, 17);
+            this.WordOneFaculty.TabIndex = 39;
+            this.WordOneFaculty.Text = "один факультет";
+            this.WordOneFaculty.UseVisualStyleBackColor = true;
+            // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(478, 140);
+            this.button2.Location = new System.Drawing.Point(516, 142);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(106, 23);
+            this.button2.Size = new System.Drawing.Size(68, 23);
             this.button2.TabIndex = 38;
-            this.button2.Text = "WordExport (80)";
+            this.button2.Text = "Word (80)";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -145,9 +165,9 @@
             // 
             this.ExportInWord.Location = new System.Drawing.Point(366, 140);
             this.ExportInWord.Name = "ExportInWord";
-            this.ExportInWord.Size = new System.Drawing.Size(106, 23);
+            this.ExportInWord.Size = new System.Drawing.Size(62, 23);
             this.ExportInWord.TabIndex = 37;
-            this.ExportInWord.Text = "WordExport (90)";
+            this.ExportInWord.Text = "Word (90)";
             this.ExportInWord.UseVisualStyleBackColor = true;
             this.ExportInWord.Click += new System.EventHandler(this.ExportInWord_Click);
             // 
@@ -583,23 +603,15 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // WordOneFaculty
+            // button3
             // 
-            this.WordOneFaculty.AutoSize = true;
-            this.WordOneFaculty.Location = new System.Drawing.Point(196, 144);
-            this.WordOneFaculty.Name = "WordOneFaculty";
-            this.WordOneFaculty.Size = new System.Drawing.Size(106, 17);
-            this.WordOneFaculty.TabIndex = 39;
-            this.WordOneFaculty.Text = "один факультет";
-            this.WordOneFaculty.UseVisualStyleBackColor = true;
-            // 
-            // WordFacultyFilter
-            // 
-            this.WordFacultyFilter.FormattingEnabled = true;
-            this.WordFacultyFilter.Location = new System.Drawing.Point(306, 140);
-            this.WordFacultyFilter.Name = "WordFacultyFilter";
-            this.WordFacultyFilter.Size = new System.Drawing.Size(54, 21);
-            this.WordFacultyFilter.TabIndex = 40;
+            this.button3.Location = new System.Drawing.Point(434, 140);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(76, 23);
+            this.button3.TabIndex = 41;
+            this.button3.Text = "Word 7 (90)";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // MainEditForm
             // 
@@ -678,6 +690,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ComboBox WordFacultyFilter;
         private System.Windows.Forms.CheckBox WordOneFaculty;
+        private System.Windows.Forms.Button button3;
     }
 }
 

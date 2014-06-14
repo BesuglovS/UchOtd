@@ -21,7 +21,8 @@ namespace UchOtd.Core
             bool save,
             bool quit,
             int lessonLength,
-            int facultyFilter)
+            int facultyFilter,
+            int daysOfWeek)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
@@ -45,6 +46,8 @@ namespace UchOtd.Core
                 facultiesList = new List<Faculty>();
                 facultiesList.Add(_repo.GetFaculty(facultyFilter));
             }
+
+            int facCounter = 0;
             
             foreach (var faculty in _repo.GetAllFaculties().OrderBy(f => f.SortingOrder))
             {
@@ -52,7 +55,7 @@ namespace UchOtd.Core
 
                 var facultyName = faculty.Name;
 
-                for (int dayOfWeek = 1; dayOfWeek < 7; dayOfWeek++)
+                for (int dayOfWeek = 1; dayOfWeek <= daysOfWeek; dayOfWeek++)
                 {
                     string dow = Constants.DOWLocal[dayOfWeek];
 
@@ -296,16 +299,42 @@ namespace UchOtd.Core
 
                         timeRowIndex++;
                     }
-                    /*
+
                     if (dow == "Суббота")
                     {
-                        oPara1 = oDoc.Content.Paragraphs.Add();
-                        //oPara1.Range.Text = ;
-                        oPara1.Range.Font.Bold = 0;
-                        oPara1.Range.Font.Size = 10;
-                        oPara1.Range.ParagraphFormat.LineSpacingRule =
-                            WdLineSpacing.wdLineSpaceSingle;
-                    }*/
+                        Microsoft.Office.Interop.Word.Paragraph oPara3 =
+                            oDoc.Content.Paragraphs.Add(ref oMissing);                        
+                        oPara3.Range.Font.Size = 12;
+                        oPara3.Format.LineSpacing = oWord.LinesToPoints(1);
+                        oPara3.Range.Text = "";
+                        oPara3.Format.SpaceAfter = 0;
+                        oPara3.Range.InsertParagraphAfter();
+
+                        oPara3 =
+                            oDoc.Content.Paragraphs.Add(ref oMissing);
+                        oPara3.Range.Text = "Начальник учебного отдела\t\t" + "_________________  " + UchOtd.NUDS.Core.Constants.UchOtdHead;
+                        oPara3.Range.Font.Size = 12;
+                        oPara3.Range.Font.Bold = 0;
+                        oPara3.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                        oPara3.Format.LineSpacing = oWord.LinesToPoints(1);
+                        oPara3.Format.SpaceAfter = 0;
+                        oPara3.Range.InsertParagraphAfter();
+                        oPara3.Range.InsertParagraphAfter();
+
+                        oPara3 =
+                            oDoc.Content.Paragraphs.Add(ref oMissing);
+                        oPara3.Range.Text = "Декан " + UchOtd.NUDS.Core.Constants.facultyTitles[facCounter] + "\t\t_________________  "
+                            + UchOtd.NUDS.Core.Constants.HeadsOfFaculties.ElementAt(facCounter).Value;
+                        oPara3.Range.Font.Size = 12;
+                        oPara3.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                        oPara3.Format.LineSpacing = oWord.LinesToPoints(1);                        
+                        oPara3.Range.Font.Bold = 0;                        
+                        oPara3.Format.SpaceAfter = 0;
+                        oPara3.Range.InsertParagraphAfter();
+                        oPara3.Range.InsertParagraphAfter();
+
+                        facCounter++;
+                    }
 
                     pageCounter++;
                     int pageCount;
@@ -323,9 +352,9 @@ namespace UchOtd.Core
                         pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
                     } while (pageCount > pageCounter);
 
-                    //var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
-                    oTable.Range.Next().Font.Size = 1;
-                    oTable.Range.Next().InsertBreak(WdBreakType.wdPageBreak);
+                    var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                    endOfDoc.Font.Size = 1;
+                    endOfDoc.InsertBreak(WdBreakType.wdSectionBreakNextPage);                    
                 }
             }
 

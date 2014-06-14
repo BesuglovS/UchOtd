@@ -298,10 +298,10 @@ namespace Schedule
             // ExportStudentsData("StudentsExport-1sem.txt");
             // ImportStudentData("StudentsExport-1sem.txt");
             // CopyINOGroupLessonsFromRealSchedule();
-            ExportScheduleDates("Oops\\stat.txt");
+            // ExportScheduleDates("Oops\\stat.txt");
             // ExportFacultyGroups();
             // ExportDiscAuds("Auds.txt");
-            //ExportGroupDisciplines("Oops\\Discs.txt");
+            ExportGroupDisciplines("Oops\\Discs.txt");
         }
 
         private void ExportGroupDisciplines(string filename)
@@ -332,8 +332,9 @@ namespace Schedule
                             tfd.Discipline.Name + '\t' + 
                             tfd.Discipline.StudentGroup.Name + '\t' +
                             tfd.Teacher.FIO + '\t' +
-                            tfd.Discipline.AuditoriumHours + '\t' +
-                            Constants.Constants.Attestation[tfd.Discipline.Attestation]
+                            _repo.getTFDHours(tfd.TeacherForDisciplineId)
+                            /*tfd.Discipline.AuditoriumHours + '\t' +
+                            Constants.Constants.Attestation[tfd.Discipline.Attestation]*/
                         );
                     }
                 }
@@ -1475,11 +1476,11 @@ namespace Schedule
         {
             if (WordOneFaculty.Checked)
             {
-                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 90, (int)WordFacultyFilter.SelectedValue);
+                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 90, (int)WordFacultyFilter.SelectedValue, 6);
             }
             else
             {
-                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 90, -1);
+                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 90, -1, 6);
             }
             
         }
@@ -1488,11 +1489,23 @@ namespace Schedule
         {
             if (WordOneFaculty.Checked)
             {
-                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 80, (int)WordFacultyFilter.SelectedValue);
+                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 80, (int)WordFacultyFilter.SelectedValue, 6);
             }
             else
             {
-                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 80, -1);
+                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 80, -1, 6);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (WordOneFaculty.Checked)
+            {
+                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 90, (int)WordFacultyFilter.SelectedValue, 7);
+            }
+            else
+            {
+                WordExport.ExportWholeSchedule(_repo, "Расписание.docx", false, false, 90, -1, 7);
             }
         }
     }
