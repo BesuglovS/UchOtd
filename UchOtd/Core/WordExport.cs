@@ -1518,6 +1518,65 @@ namespace UchOtd.Core
 
             var faculty = repo.GetFaculty(facultyId);
 
+            Paragraph oPara1;
+            oPara1 = oDoc.Content.Paragraphs.Add();
+            oPara1.Range.Text = "Расписание";
+            oPara1.Range.Font.Bold = 0;
+            oPara1.Range.Font.Size = 10;
+            oPara1.Range.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+            oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oPara1.SpaceAfter = 0;
+            oPara1.Range.InsertParagraphAfter();
+
+            var textBoxRange = oPara1.Range;
+
+            oPara1 = oDoc.Content.Paragraphs.Add();
+            //oPara1.Range.Text = "второго семестра 2013 – 2014 учебного года";
+            oPara1.Range.Text = DetectSemesterString(repo);
+            oPara1.Range.Font.Bold = 0;
+            oPara1.Range.Font.Size = 10;
+            oPara1.Range.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+            oPara1.Range.InsertParagraphAfter();
+
+            oPara1 = oDoc.Content.Paragraphs.Add();
+            oPara1.Range.Text = faculty.Name;
+            oPara1.Range.Font.Bold = 0;
+            oPara1.Range.Font.Size = 10;
+            oPara1.Range.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+            oPara1.Range.InsertParagraphAfter();
+
+            oPara1 = oDoc.Content.Paragraphs.Add();
+            oPara1.Range.Font.Size = 14;
+            oPara1.Range.Text = Constants.DOWLocal[dayOfWeek];
+            oPara1.Range.Font.Bold = 1;
+            oPara1.Range.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+            oPara1.Range.InsertParagraphAfter();
+
+            Shape cornerStamp = oDoc.Shapes.AddTextbox(
+                Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
+                oWord.CentimetersToPoints(22f),
+                oWord.CentimetersToPoints(0.5f),
+                200, 50,
+                textBoxRange);
+            cornerStamp.TextFrame.TextRange.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+
+            if (dayOfWeek == 1)
+            {
+                cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
+                            Environment.NewLine + "Ректор   " + "______________     Наянова М.В." +
+                            Environment.NewLine + "«___» ____________  20__ г.";
+                cornerStamp.TextFrame.TextRange.Font.Size = 10;
+                cornerStamp.TextFrame.TextRange.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphRight;
+            }
+            cornerStamp.TextFrame.WordWrap = 1;
+            cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
+            cornerStamp.Line.Visible = Microsoft.Office.Core.MsoTriState.msoFalse;
+
             Table oTable = GetAndPutDOWSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null);
 
             int pageCount;
@@ -2126,6 +2185,18 @@ namespace UchOtd.Core
                                         cellText += Environment.NewLine;
                                     }
                                 }
+                            }
+
+                            if ((groupDowTimeLessons.Count == 1) &&
+                               (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.")))
+                            {
+                                cellText = Environment.NewLine + cellText;
+                            }
+
+                            if ((groupDowTimeLessons.Count == 1) &&
+                               (groupDowTimeLessons[0].Value.Item1.Contains("(нечёт.")))
+                            {
+                                cellText = cellText + Environment.NewLine;
                             }
 
                             timeTable.Cell(tfdIndex + 1, 1).Range.Text = cellText;
