@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.PlusTeacherFIO = new System.Windows.Forms.CheckBox();
+            this.ExportInWord = new System.Windows.Forms.CheckBox();
             this.buildingList = new System.Windows.Forms.ComboBox();
             this.oneBuilding = new System.Windows.Forms.CheckBox();
             this.weekNumber = new System.Windows.Forms.NumericUpDown();
@@ -49,6 +51,8 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.PlusTeacherFIO);
+            this.controlsPanel.Controls.Add(this.ExportInWord);
             this.controlsPanel.Controls.Add(this.buildingList);
             this.controlsPanel.Controls.Add(this.oneBuilding);
             this.controlsPanel.Controls.Add(this.weekNumber);
@@ -62,21 +66,41 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(814, 76);
+            this.controlsPanel.Size = new System.Drawing.Size(870, 76);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // PlusTeacherFIO
+            // 
+            this.PlusTeacherFIO.AutoSize = true;
+            this.PlusTeacherFIO.Location = new System.Drawing.Point(648, 40);
+            this.PlusTeacherFIO.Name = "PlusTeacherFIO";
+            this.PlusTeacherFIO.Size = new System.Drawing.Size(205, 17);
+            this.PlusTeacherFIO.TabIndex = 11;
+            this.PlusTeacherFIO.Text = "+ фамилии преподавателей в Word";
+            this.PlusTeacherFIO.UseVisualStyleBackColor = true;
+            // 
+            // ExportInWord
+            // 
+            this.ExportInWord.AutoSize = true;
+            this.ExportInWord.Location = new System.Drawing.Point(536, 41);
+            this.ExportInWord.Name = "ExportInWord";
+            this.ExportInWord.Size = new System.Drawing.Size(106, 17);
+            this.ExportInWord.TabIndex = 10;
+            this.ExportInWord.Text = "Экспорт в Word";
+            this.ExportInWord.UseVisualStyleBackColor = true;
             // 
             // buildingList
             // 
             this.buildingList.FormattingEnabled = true;
-            this.buildingList.Location = new System.Drawing.Point(320, 39);
+            this.buildingList.Location = new System.Drawing.Point(273, 39);
             this.buildingList.Name = "buildingList";
-            this.buildingList.Size = new System.Drawing.Size(216, 21);
+            this.buildingList.Size = new System.Drawing.Size(236, 21);
             this.buildingList.TabIndex = 9;
             // 
             // oneBuilding
             // 
             this.oneBuilding.AutoSize = true;
-            this.oneBuilding.Location = new System.Drawing.Point(224, 42);
+            this.oneBuilding.Location = new System.Drawing.Point(177, 41);
             this.oneBuilding.Name = "oneBuilding";
             this.oneBuilding.Size = new System.Drawing.Size(90, 17);
             this.oneBuilding.TabIndex = 8;
@@ -181,7 +205,7 @@
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 76);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(814, 395);
+            this.viewPanel.Size = new System.Drawing.Size(870, 395);
             this.viewPanel.TabIndex = 1;
             // 
             // audView
@@ -194,14 +218,14 @@
             this.audView.Name = "audView";
             this.audView.ReadOnly = true;
             this.audView.RowHeadersWidth = 20;
-            this.audView.Size = new System.Drawing.Size(814, 395);
+            this.audView.Size = new System.Drawing.Size(870, 395);
             this.audView.TabIndex = 0;
             // 
             // Auditoriums
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(814, 471);
+            this.ClientSize = new System.Drawing.Size(870, 471);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.Name = "Auditoriums";
@@ -232,5 +256,7 @@
         private System.Windows.Forms.CheckBox oneWeek;
         private System.Windows.Forms.ComboBox buildingList;
         private System.Windows.Forms.CheckBox oneBuilding;
+        private System.Windows.Forms.CheckBox ExportInWord;
+        private System.Windows.Forms.CheckBox PlusTeacherFIO;
     }
 }

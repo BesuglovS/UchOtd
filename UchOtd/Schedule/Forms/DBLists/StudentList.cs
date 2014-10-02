@@ -23,7 +23,7 @@ namespace Schedule.Forms.DBLists
 
             _repo = repo;
 
-            var groups = _repo.GetAllStudentGroups();
+            var groups = _repo.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
             studentGroups.DataSource = groups;
             studentGroups.DisplayMember = "Name";
             studentGroups.ValueMember = "StudentGroupId";
@@ -34,7 +34,7 @@ namespace Schedule.Forms.DBLists
             RefreshView();
         }
 
-        private void RefreshView()
+        private void RefreshView(string fFilter = "")
         {
             List<Student> studentList = new List<Student>();
             List<StudentView> studentView = new List<StudentView>();
@@ -49,6 +49,11 @@ namespace Schedule.Forms.DBLists
             else
             {
                 studentList = _repo.GetAllStudents().OrderBy(s => s.Expelled).ThenBy(s => s.F).ToList();
+            }
+
+            if (fFilter != "")
+            {
+                studentList = studentList.Where(s => s.F.ToLower().Contains(fFilter.ToLower())).ToList();
             }
 
             studentView = StudentView.StudentsToView(studentList);
@@ -252,6 +257,27 @@ namespace Schedule.Forms.DBLists
             {
                 add.PerformClick();
             }
+        }
+
+        private void FBox_TextChanged(object sender, EventArgs e)
+        {
+            var fio = FBox.Text;
+            if (fio.Split(' ').Count() != 3)
+            {
+                return;
+            }
+            
+            var f = fio.Split(' ')[0];
+            var i = fio.Split(' ')[1];
+            var o = fio.Split(' ')[2];
+            FBox.Text = f[0] + f.Substring(1).ToLower();
+            IBox.Text = i;
+            OBox.Text = o;
+        }
+
+        private void Filter_Click(object sender, EventArgs e)
+        {
+            RefreshView(FBox.Text);
         }
     }
 }

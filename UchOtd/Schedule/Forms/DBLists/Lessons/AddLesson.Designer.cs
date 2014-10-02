@@ -103,7 +103,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 67);
+            this.label2.Location = new System.Drawing.Point(144, 68);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(84, 13);
             this.label2.TabIndex = 6;
@@ -112,7 +112,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(139, 67);
+            this.label3.Location = new System.Drawing.Point(12, 68);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(73, 13);
             this.label3.TabIndex = 8;
@@ -209,19 +209,19 @@
             // ringsListBox
             // 
             this.ringsListBox.FormattingEnabled = true;
-            this.ringsListBox.Location = new System.Drawing.Point(15, 83);
+            this.ringsListBox.Location = new System.Drawing.Point(147, 84);
             this.ringsListBox.Name = "ringsListBox";
             this.ringsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.ringsListBox.Size = new System.Drawing.Size(121, 134);
+            this.ringsListBox.Size = new System.Drawing.Size(81, 134);
             this.ringsListBox.TabIndex = 1;
             // 
             // DayOfWeekListBox
             // 
             this.DayOfWeekListBox.FormattingEnabled = true;
-            this.DayOfWeekListBox.Location = new System.Drawing.Point(142, 83);
+            this.DayOfWeekListBox.Location = new System.Drawing.Point(15, 84);
             this.DayOfWeekListBox.Name = "DayOfWeekListBox";
             this.DayOfWeekListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.DayOfWeekListBox.Size = new System.Drawing.Size(86, 134);
+            this.DayOfWeekListBox.Size = new System.Drawing.Size(126, 134);
             this.DayOfWeekListBox.TabIndex = 29;
             // 
             // AddLesson

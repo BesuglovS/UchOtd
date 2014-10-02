@@ -33,6 +33,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.view = new System.Windows.Forms.DataGridView();
+            this.update = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view)).BeginInit();
@@ -40,12 +41,13 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.update);
             this.controlsPanel.Controls.Add(this.teachersList);
             this.controlsPanel.Controls.Add(this.label1);
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(618, 49);
+            this.controlsPanel.Size = new System.Drawing.Size(731, 49);
             this.controlsPanel.TabIndex = 0;
             // 
             // teachersList
@@ -72,7 +74,7 @@
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 49);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(618, 455);
+            this.viewPanel.Size = new System.Drawing.Size(731, 455);
             this.viewPanel.TabIndex = 1;
             // 
             // view
@@ -84,15 +86,26 @@
             this.view.Location = new System.Drawing.Point(0, 0);
             this.view.Name = "view";
             this.view.ReadOnly = true;
-            this.view.Size = new System.Drawing.Size(618, 455);
+            this.view.Size = new System.Drawing.Size(731, 455);
             this.view.TabIndex = 0;
             this.view.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.view_CellFormatting);
+            this.view.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.view_CellMouseDoubleClick);
+            // 
+            // update
+            // 
+            this.update.Location = new System.Drawing.Point(615, 13);
+            this.update.Name = "update";
+            this.update.Size = new System.Drawing.Size(104, 23);
+            this.update.TabIndex = 2;
+            this.update.Text = "Обновить";
+            this.update.UseVisualStyleBackColor = true;
+            this.update.Click += new System.EventHandler(this.update_Click);
             // 
             // teacherHours
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(618, 504);
+            this.ClientSize = new System.Drawing.Size(731, 504);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.Name = "teacherHours";
@@ -113,5 +126,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel viewPanel;
         private System.Windows.Forms.DataGridView view;
+        private System.Windows.Forms.Button update;
     }
 }

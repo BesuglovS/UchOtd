@@ -11,6 +11,7 @@ namespace Schedule.Views
     public class TeacherForDisciplineView
     {
         public int tfdId { get; set; }
+        public int DisciplineId { get; set; }
         public string DisciplineName { get; set; }
         public string GroupName { get; set; }
         public int PlanHours { get; set; }
@@ -36,6 +37,7 @@ namespace Schedule.Views
                 result.Add(new TeacherForDisciplineView()
                 {
                      tfdId = tfd.TeacherForDisciplineId,
+                     DisciplineId = tfd.Discipline.DisciplineId,
                      DisciplineName = tfd.Discipline.Name,
                      GroupName = tfd.Discipline.StudentGroup.Name,
                      PlanHours = tfd.Discipline.AuditoriumHours,

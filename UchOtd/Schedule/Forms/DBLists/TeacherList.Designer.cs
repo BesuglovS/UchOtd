@@ -258,6 +258,7 @@
             this.TFDListView.RowHeadersVisible = false;
             this.TFDListView.Size = new System.Drawing.Size(945, 182);
             this.TFDListView.TabIndex = 4;
+            this.TFDListView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.TFDListView_CellDoubleClick);
             // 
             // TeacherTFDTitle
             // 

@@ -1,4 +1,5 @@
 ﻿using Schedule.DomainClasses.Main;
+using Schedule.Forms.DBLists.Lessons;
 using Schedule.Repositories;
 using Schedule.Views.DBListViews;
 using System;
@@ -268,10 +269,10 @@ namespace Schedule.Forms.DBLists
 
             var tfdLessons = _repo.GetFiltredLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
 
-            var lessonIds = tfdLessons.Select(l => l.LessonId);
+            var lessonIds = tfdLessons.Select(l => l.LessonId).ToList();
 
             var logIds = _repo
-                .GetFiltredLessonLogEvents(lle => lessonIds.Contains(lle.OldLesson.LessonId) || lessonIds.Contains(lle.NewLesson.LessonId))
+                .GetFiltredLessonLogEvents(lle => ((lle.OldLesson != null) && lessonIds.Contains(lle.OldLesson.LessonId)) || ((lle.NewLesson != null) && lessonIds.Contains(lle.NewLesson.LessonId)))
                 .Select(lle => lle.LessonLogEventId);
 
             foreach (var evtId in logIds)
@@ -281,7 +282,7 @@ namespace Schedule.Forms.DBLists
 
             foreach (var lesson in tfdLessons)            
             {
-                _repo.RemoveLesson(lesson.LessonId);
+                _repo.RemoveLessonWOLog(lesson.LessonId);
             }
 
             _repo.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
@@ -313,6 +314,22 @@ namespace Schedule.Forms.DBLists
                 teacherPhone.Text = text[1];
 
                 add.Focus();
+            }
+        }
+
+        private void TFDListView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var discId = ((List<DisciplineView>)TFDListView.DataSource)[e.RowIndex].DisciplineId;
+            var tefd = _repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
+            if (tefd != null)
+            {
+                var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId);
+                addLessonForm.Show();
+            }
+            else
+            {
+                var addLessonForm = new AddLesson(_repo);
+                addLessonForm.Show();
             }
         }
     }

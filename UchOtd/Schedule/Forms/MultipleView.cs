@@ -165,9 +165,20 @@ namespace Schedule.Forms
             view.AutoResizeRows(DataGridViewAutoSizeRowsMode.AllCells);
         }
 
-        private IEnumerable<GroupView> CreateGroupView(Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>> data)
+        private IEnumerable<GroupView> CreateGroupView(int groupId, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>> data)
         {
             var result = new List<GroupView>();
+
+            var plainGroupName = "";
+            var nGroupName = "";
+
+            var group = _repo.GetFirstFiltredStudentGroups(sg => sg.StudentGroupId == groupId);
+            
+            if (group.Name.Contains(" (+Н)"))
+            {
+                plainGroupName = group.Name.Replace(" (+Н)", "");
+                nGroupName = group.Name.Replace(" (+", "(");
+            }
 
             foreach (var dt in data)
             {
@@ -178,7 +189,14 @@ namespace Schedule.Forms
                     var item = dt.Value.ElementAt(i);
                     var tfd = item.Value.Item2[0].TeacherForDiscipline;
 
-                    eventString += tfd.Discipline.Name + Environment.NewLine;
+                    eventString += tfd.Discipline.Name;
+                    if (tfd.Discipline.StudentGroup.StudentGroupId != groupId &&
+                        ((plainGroupName == "") || (tfd.Discipline.StudentGroup.Name != plainGroupName)) &&
+                        ((nGroupName == "") || (tfd.Discipline.StudentGroup.Name != nGroupName)))
+                    {
+                        eventString += " (" + tfd.Discipline.StudentGroup.Name + ")";
+                    }
+                    eventString += Environment.NewLine;
                     eventString += tfd.Teacher.FIO + Environment.NewLine;
                     eventString += "(" + item.Value.Item1 + ")" + Environment.NewLine;
 
@@ -225,7 +243,7 @@ namespace Schedule.Forms
             var i = 1;
             foreach (var group in groupsLessons)
             {
-                var groupView = CreateGroupView(group.Value);
+                var groupView = CreateGroupView(group.Key, group.Value);
                 
                 foreach (var gv in groupView)
                 {

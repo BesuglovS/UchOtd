@@ -35,7 +35,7 @@ namespace UchOtd.Schedule.Core
                 document = CreateDocument(_repo, facultyName, dow, schedule, ScheduleFontsize);
 
                 // Create a renderer and prepare (=layout) the document
-                MigraDoc.Rendering.DocumentRenderer docRenderer = new DocumentRenderer(document);
+                var docRenderer = new DocumentRenderer(document);
                 docRenderer.PrepareDocument();
                 pageCount = docRenderer.FormattedDocument.PageCount;
 
@@ -410,7 +410,7 @@ namespace UchOtd.Schedule.Core
                 for (int i = 1; i <= 6; i++)
                 {
                     //var i = 4;
-                    var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, i);
+                    var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, i, false, -1);
                     PDFExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.pdf", Constants.DOWLocal[i], _repo, false, false, true);
                 }
             //}

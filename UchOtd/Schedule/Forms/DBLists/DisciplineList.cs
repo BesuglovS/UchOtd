@@ -51,6 +51,8 @@ namespace Schedule.Forms.DBLists
             groupNameList.DataSource = groups2;
 
 
+            checkForDoubleDiscsOnAdding.Text = "Проверять дубликаты дисциплин\r\nпри добавлении";
+
             //RefreshView();
         }
 
@@ -107,10 +109,34 @@ namespace Schedule.Forms.DBLists
                 discList = discListFiltered;
             }
 
+            if (mixedGroups.Checked)
+            {
+                discList = discList.Where(disc => disc.StudentGroup.Name.Contains(" + ")).ToList();                
+            }
+
+            if (orderByGroupname.Checked)
+            {
+                discList = discList.OrderBy(disc => disc.StudentGroup.Name).ToList();
+            }
+            else
+            {
+                // ORDER BY NAME
+                discList = discList.OrderBy(disc => disc.Name).ToList();
+            }
+
+            Text = "Дисциплины - " + discList.Count();
+
             var discView = DisciplineView.DisciplinesToView(_repo, discList);
 
-            DiscipineListView.DataSource = discView;
+            DiscipineListView.DataSource = discView.OrderBy(dv =>dv.TeacherFIO).ToList();
 
+            FormatView();
+
+            DiscipineListView.ClearSelection();
+        }
+
+        private void FormatView()
+        {
             //DiscipineListView.Columns["DisciplineId"].Visible = false;
             DiscipineListView.Columns["DisciplineId"].Width = 40;
             DiscipineListView.Columns["Name"].Width = 270;
@@ -121,8 +147,6 @@ namespace Schedule.Forms.DBLists
             DiscipineListView.Columns["LectureHours"].Width = 80;
             DiscipineListView.Columns["PracticalHours"].Width = 80;
             DiscipineListView.Columns["StudentGroupName"].Width = 120;
-
-            DiscipineListView.ClearSelection();
         }
 
         private void DiscipineListViewCellClick(object sender, DataGridViewCellEventArgs e)
@@ -147,11 +171,20 @@ namespace Schedule.Forms.DBLists
             int.TryParse(LectureHours.Text, out lecHours);
             int practHours;
             int.TryParse(PracticalHours.Text, out practHours);
-            if (_repo.FindDiscipline(DisciplineName.Text, Attestation.SelectedIndex,
-                audHours, lecHours, practHours, Group.Text) != null)
+            
+            if ((checkForDoubleDiscsOnAdding.Checked) && 
+                (_repo.FindDiscipline(DisciplineName.Text, Attestation.SelectedIndex,
+                audHours, lecHours, practHours, Group.Text) != null))
             {
-                MessageBox.Show("Такая дисциплина уже есть.");
-                return;
+                var dialogResult = MessageBox.Show("Такая дисциплина уже есть", "Всё равно добавить?", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    //do something, in this case nothing
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    return;
+                }
             }
 
             if (Attestation.SelectedIndex == -1)
@@ -372,6 +405,54 @@ namespace Schedule.Forms.DBLists
             {
                 add.PerformClick();
             }
+        }
+
+        private void reloadGroupList_Click(object sender, EventArgs e)
+        {
+            var groups = _repo.GetAllStudentGroups()
+                .OrderBy(g => g.Name)
+                .ToList();
+
+            Group.ValueMember = "StudentGroupId";
+            Group.DisplayMember = "Name";
+            Group.DataSource = groups;
+        }
+
+        private void zeroHours_Click(object sender, EventArgs e)
+        {
+            var discList = new List<Discipline>();
+
+            foreach (var disc in _repo.GetAllDisciplines())
+            {
+                if (disc.AuditoriumHours == 0)
+                {
+                    continue;
+                }
+
+                var tfd = _repo.GetFirstFiltredTeacherForDiscipline(tefd => tefd.Discipline.DisciplineId == disc.DisciplineId);
+
+                if (tfd != null)
+                {
+                    if (_repo.getTFDHours(tfd.TeacherForDisciplineId) == 0)
+                    {
+                        discList.Add(disc);
+                    }
+                }
+                else
+                {
+                    discList.Add(disc);
+                }
+            }
+
+            Text = "Дисциплины - " + discList.Count();
+
+            var discView = DisciplineView.DisciplinesToView(_repo, discList);
+
+            DiscipineListView.DataSource = discView.OrderBy(dv => dv.TeacherFIO).ToList();
+
+            FormatView();
+
+            DiscipineListView.ClearSelection();
         }
     }
 }

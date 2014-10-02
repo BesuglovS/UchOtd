@@ -17,7 +17,7 @@ namespace UchOtd.Repositories
 
         public UchOtdRepository(string connectionString)
         {
-            //Database.SetInitializer(new MigrateDatabaseToLatestVersion<UchOtdContext, Configuration>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<UchOtdContext, Configuration>());
 
             ConnectionString = connectionString;
         }

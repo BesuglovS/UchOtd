@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.reloadGroupList = new System.Windows.Forms.Button();
             this.CompletelyDelete = new System.Windows.Forms.Button();
             this.Paste = new System.Windows.Forms.Button();
             this.Attestation = new System.Windows.Forms.ComboBox();
@@ -50,6 +51,9 @@
             this.viewPanel = new System.Windows.Forms.Panel();
             this.DiscipineListView = new System.Windows.Forms.DataGridView();
             this.filterPanel = new System.Windows.Forms.Panel();
+            this.zeroHours = new System.Windows.Forms.Button();
+            this.orderByGroupname = new System.Windows.Forms.CheckBox();
+            this.mixedGroups = new System.Windows.Forms.CheckBox();
             this.DifferenceByOne = new System.Windows.Forms.CheckBox();
             this.HoursFitFiltered = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -58,8 +62,8 @@
             this.groupNameList = new System.Windows.Forms.ComboBox();
             this.groupnameFilter = new System.Windows.Forms.CheckBox();
             this.discnameFilter = new System.Windows.Forms.CheckBox();
-            this.showAll = new System.Windows.Forms.Button();
             this.filter = new System.Windows.Forms.TextBox();
+            this.checkForDoubleDiscsOnAdding = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -69,6 +73,8 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.checkForDoubleDiscsOnAdding);
+            this.controlsPanel.Controls.Add(this.reloadGroupList);
             this.controlsPanel.Controls.Add(this.CompletelyDelete);
             this.controlsPanel.Controls.Add(this.Paste);
             this.controlsPanel.Controls.Add(this.Attestation);
@@ -92,9 +98,19 @@
             this.controlsPanel.Size = new System.Drawing.Size(233, 506);
             this.controlsPanel.TabIndex = 27;
             // 
+            // reloadGroupList
+            // 
+            this.reloadGroupList.Location = new System.Drawing.Point(88, 280);
+            this.reloadGroupList.Name = "reloadGroupList";
+            this.reloadGroupList.Size = new System.Drawing.Size(115, 81);
+            this.reloadGroupList.TabIndex = 103;
+            this.reloadGroupList.Text = "Перезагрузить список групп";
+            this.reloadGroupList.UseVisualStyleBackColor = true;
+            this.reloadGroupList.Click += new System.EventHandler(this.reloadGroupList_Click);
+            // 
             // CompletelyDelete
             // 
-            this.CompletelyDelete.Location = new System.Drawing.Point(8, 334);
+            this.CompletelyDelete.Location = new System.Drawing.Point(8, 367);
             this.CompletelyDelete.Name = "CompletelyDelete";
             this.CompletelyDelete.Size = new System.Drawing.Size(195, 57);
             this.CompletelyDelete.TabIndex = 102;
@@ -201,7 +217,7 @@
             // 
             // remove
             // 
-            this.remove.Location = new System.Drawing.Point(8, 305);
+            this.remove.Location = new System.Drawing.Point(8, 338);
             this.remove.Name = "remove";
             this.remove.Size = new System.Drawing.Size(75, 23);
             this.remove.TabIndex = 31;
@@ -211,7 +227,7 @@
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(8, 276);
+            this.update.Location = new System.Drawing.Point(8, 309);
             this.update.Name = "update";
             this.update.Size = new System.Drawing.Size(75, 23);
             this.update.TabIndex = 30;
@@ -221,7 +237,7 @@
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(7, 247);
+            this.add.Location = new System.Drawing.Point(7, 280);
             this.add.Name = "add";
             this.add.Size = new System.Drawing.Size(75, 23);
             this.add.TabIndex = 6;
@@ -286,6 +302,9 @@
             // 
             // filterPanel
             // 
+            this.filterPanel.Controls.Add(this.zeroHours);
+            this.filterPanel.Controls.Add(this.orderByGroupname);
+            this.filterPanel.Controls.Add(this.mixedGroups);
             this.filterPanel.Controls.Add(this.DifferenceByOne);
             this.filterPanel.Controls.Add(this.HoursFitFiltered);
             this.filterPanel.Controls.Add(this.label8);
@@ -294,7 +313,6 @@
             this.filterPanel.Controls.Add(this.groupNameList);
             this.filterPanel.Controls.Add(this.groupnameFilter);
             this.filterPanel.Controls.Add(this.discnameFilter);
-            this.filterPanel.Controls.Add(this.showAll);
             this.filterPanel.Controls.Add(this.filter);
             this.filterPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.filterPanel.Location = new System.Drawing.Point(0, 0);
@@ -302,10 +320,40 @@
             this.filterPanel.Size = new System.Drawing.Size(999, 67);
             this.filterPanel.TabIndex = 1;
             // 
+            // zeroHours
+            // 
+            this.zeroHours.Location = new System.Drawing.Point(763, 29);
+            this.zeroHours.Name = "zeroHours";
+            this.zeroHours.Size = new System.Drawing.Size(179, 23);
+            this.zeroHours.TabIndex = 13;
+            this.zeroHours.Text = "0 часов в расписании";
+            this.zeroHours.UseVisualStyleBackColor = true;
+            this.zeroHours.Click += new System.EventHandler(this.zeroHours_Click);
+            // 
+            // orderByGroupname
+            // 
+            this.orderByGroupname.AutoSize = true;
+            this.orderByGroupname.Location = new System.Drawing.Point(763, 7);
+            this.orderByGroupname.Name = "orderByGroupname";
+            this.orderByGroupname.Size = new System.Drawing.Size(179, 17);
+            this.orderByGroupname.TabIndex = 12;
+            this.orderByGroupname.Text = "сортировать по имени группы";
+            this.orderByGroupname.UseVisualStyleBackColor = true;
+            // 
+            // mixedGroups
+            // 
+            this.mixedGroups.AutoSize = true;
+            this.mixedGroups.Location = new System.Drawing.Point(554, 43);
+            this.mixedGroups.Name = "mixedGroups";
+            this.mixedGroups.Size = new System.Drawing.Size(163, 17);
+            this.mixedGroups.TabIndex = 11;
+            this.mixedGroups.Text = "только смешанные группы";
+            this.mixedGroups.UseVisualStyleBackColor = true;
+            // 
             // DifferenceByOne
             // 
             this.DifferenceByOne.AutoSize = true;
-            this.DifferenceByOne.Location = new System.Drawing.Point(554, 33);
+            this.DifferenceByOne.Location = new System.Drawing.Point(554, 24);
             this.DifferenceByOne.Name = "DifferenceByOne";
             this.DifferenceByOne.Size = new System.Drawing.Size(196, 17);
             this.DifferenceByOne.TabIndex = 10;
@@ -315,7 +363,7 @@
             // HoursFitFiltered
             // 
             this.HoursFitFiltered.AutoSize = true;
-            this.HoursFitFiltered.Location = new System.Drawing.Point(554, 12);
+            this.HoursFitFiltered.Location = new System.Drawing.Point(554, 5);
             this.HoursFitFiltered.Name = "HoursFitFiltered";
             this.HoursFitFiltered.Size = new System.Drawing.Size(199, 17);
             this.HoursFitFiltered.TabIndex = 9;
@@ -376,21 +424,22 @@
             this.discnameFilter.TabIndex = 3;
             this.discnameFilter.UseVisualStyleBackColor = true;
             // 
-            // showAll
-            // 
-            this.showAll.Location = new System.Drawing.Point(915, 9);
-            this.showAll.Name = "showAll";
-            this.showAll.Size = new System.Drawing.Size(72, 35);
-            this.showAll.TabIndex = 2;
-            this.showAll.Text = "Показать все";
-            this.showAll.UseVisualStyleBackColor = true;
-            // 
             // filter
             // 
             this.filter.Location = new System.Drawing.Point(34, 30);
             this.filter.Name = "filter";
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
+            // 
+            // checkForDoubleDiscsOnAdding
+            // 
+            this.checkForDoubleDiscsOnAdding.AutoSize = true;
+            this.checkForDoubleDiscsOnAdding.Location = new System.Drawing.Point(8, 247);
+            this.checkForDoubleDiscsOnAdding.Name = "checkForDoubleDiscsOnAdding";
+            this.checkForDoubleDiscsOnAdding.Size = new System.Drawing.Size(160, 17);
+            this.checkForDoubleDiscsOnAdding.TabIndex = 104;
+            this.checkForDoubleDiscsOnAdding.Text = "Проверка при добавлении";
+            this.checkForDoubleDiscsOnAdding.UseVisualStyleBackColor = true;
             // 
             // DisciplineList
             // 
@@ -437,7 +486,6 @@
         private System.Windows.Forms.Panel filterPanel;
         private System.Windows.Forms.TextBox filter;
         private System.Windows.Forms.Button Paste;
-        private System.Windows.Forms.Button showAll;
         private System.Windows.Forms.CheckBox discnameFilter;
         private System.Windows.Forms.Button refresh;
         private System.Windows.Forms.ComboBox groupNameList;
@@ -447,5 +495,10 @@
         private System.Windows.Forms.Button CompletelyDelete;
         private System.Windows.Forms.CheckBox HoursFitFiltered;
         private System.Windows.Forms.CheckBox DifferenceByOne;
+        private System.Windows.Forms.Button reloadGroupList;
+        private System.Windows.Forms.CheckBox mixedGroups;
+        private System.Windows.Forms.CheckBox orderByGroupname;
+        private System.Windows.Forms.Button zeroHours;
+        private System.Windows.Forms.CheckBox checkForDoubleDiscsOnAdding;
     }
 }

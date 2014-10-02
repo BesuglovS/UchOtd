@@ -24,7 +24,8 @@ namespace Schedule.Forms.DBLists
         private void LoadStudentsList()
         {
             var studentList = _repo
-                .GetFiltredStudents(st => st.Expelled == false)
+                //.GetFiltredStudents(st => st.Expelled == false)
+                .GetAllStudents()
                 .OrderBy(st => st.F)
                 .ThenBy(st => st.I)
                 .ToList();

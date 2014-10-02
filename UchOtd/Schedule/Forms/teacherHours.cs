@@ -1,4 +1,5 @@
-﻿using Schedule.Repositories;
+﻿using Schedule.Forms.DBLists.Lessons;
+using Schedule.Repositories;
 using Schedule.Views;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,11 @@ namespace Schedule.Forms
 
         private void teachersList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            RefreshView();
+        }
+
+        private void RefreshView()
+        {
             var teacherId = (int)teachersList.SelectedValue;
 
             var tfds = _repo.GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacherId);
@@ -51,6 +57,8 @@ namespace Schedule.Forms
         private void FormatView()
         {
             view.Columns["tfdId"].Visible = false;
+
+            view.Columns["DisciplineId"].Visible = false;
 
             view.Columns["DisciplineName"].HeaderText = "Дисциплина";
             view.Columns["DisciplineName"].Width = 200;
@@ -108,12 +116,33 @@ namespace Schedule.Forms
 
         private void view_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.ColumnIndex == 5)
+            if (e.ColumnIndex == 6)
             {
                 var discView = ((List<TeacherForDisciplineView>)view.DataSource)[e.RowIndex];
 
                 e.CellStyle.BackColor = PickPercentColor(discView.PlanHours, discView.ScheduleHours);
             }
+        }
+
+        private void view_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            var discId = ((List<Schedule.Views.TeacherForDisciplineView>)view.DataSource)[e.RowIndex].DisciplineId;
+            var tefd = _repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
+            if (tefd != null)
+            {
+                var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId);
+                addLessonForm.Show();
+            }
+            else
+            {
+                var addLessonForm = new AddLesson(_repo);
+                addLessonForm.Show();
+            }
+        }
+
+        private void update_Click(object sender, EventArgs e)
+        {
+            RefreshView();
         }
     }
 }

@@ -144,7 +144,7 @@ namespace Schedule.Forms.DBLists
                 faculty.ScheduleSigningTitle = TitleOfSemesterScheduleSigner.Text;
                 faculty.DeanSigningSchedule = SemesterScheduleSigner.Text;
 
-                faculty.SessionSigningTitle = SessionScheduleSigner.Text;
+                faculty.SessionSigningTitle = TitleOfSessionScheduleSigner.Text;
                 faculty.DeanSigningSessionSchedule = SessionScheduleSigner.Text;
 
                 _repo.UpdateFaculty(faculty);

@@ -7,8 +7,10 @@ using System.Windows.Forms;
 using NUDispSchedule.Views;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using UchOtd.Core;
 using UchOtd.NUDS.Core;
 using UchOtd.Properties;
+using Utilities = UchOtd.NUDS.Core.Utilities;
 
 namespace UchOtd.Forms
 {
@@ -53,11 +55,19 @@ namespace UchOtd.Forms
         }
 
         private void UpdateTeacherSchedule()
-        {            
+        {
+            var result = GetTeacherScheduleToView();
 
+            scheduleView.DataSource = result;
+
+            FormatView();
+        }
+
+        private List<TeacherScheduleTimeView> GetTeacherScheduleToView()
+        {
             var result = new List<TeacherScheduleTimeView>();
 
-            var teacherId = (int)(teacherList.SelectedValue);
+            var teacherId = (int) (teacherList.SelectedValue);
             List<Lesson> lessonList;
             if (weekFiltered.Checked)
             {
@@ -66,7 +76,7 @@ namespace UchOtd.Forms
 
                 lessonList = _repo
                     .GetFiltredLessons(l => l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
-                        l.IsActive && _repo.CalculateWeekNumber(l.Calendar.Date.Date) == weekNum)
+                                            l.IsActive && _repo.CalculateWeekNumber(l.Calendar.Date.Date) == weekNum)
                     .ToList();
             }
             else
@@ -79,21 +89,21 @@ namespace UchOtd.Forms
             var lessonsGrouped = lessonList
                 .GroupBy(l => l.Ring.Time)
                 .ToDictionary(l => l.Key,
-                              l2 => l2.GroupBy(l3 => Constants.DOWEnToRu[(int)l3.Calendar.Date.DayOfWeek])
-                                        .ToDictionary(ll => ll.Key,
-                                                      ll => ll.GroupBy(l4 => l4.TeacherForDiscipline.TeacherForDisciplineId)
-                                                                .ToDictionary(l5 => l5.Key, l5 => l5.ToList())))
+                    l2 => l2.GroupBy(l3 => Constants.DOWEnToRu[(int) l3.Calendar.Date.DayOfWeek])
+                        .ToDictionary(ll => ll.Key,
+                            ll => ll.GroupBy(l4 => l4.TeacherForDiscipline.TeacherForDisciplineId)
+                                .ToDictionary(l5 => l5.Key, l5 => l5.ToList())))
                 .ToList();
 
             var semesterStartsOption = _repo.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts");
             if (semesterStartsOption == null)
             {
-                return;
+                return result;
             }
 
             foreach (var time in lessonsGrouped.OrderBy(lg => lg.Key.TimeOfDay))
             {
-                var tstv = new TeacherScheduleTimeView { Time = time.Key.ToString("H:mm") };
+                var tstv = new TeacherScheduleTimeView {Time = time.Key.ToString("H:mm")};
 
                 foreach (var timeDowLessons in time.Value)
                 {
@@ -108,7 +118,7 @@ namespace UchOtd.Forms
                         message += tfdBundle.Value[0].TeacherForDiscipline.Discipline.Name;
                         message += Environment.NewLine;
                         var semesterStartsDate = DateTime.ParseExact(semesterStartsOption.Value, "yyyy-MM-dd",
-                                                                     CultureInfo.InvariantCulture);
+                            CultureInfo.InvariantCulture);
                         var weekList = tfdBundle.Value
                             .Select(l => Utilities.WeekFromDate(l.Calendar.Date, semesterStartsDate))
                             .ToList();
@@ -133,9 +143,9 @@ namespace UchOtd.Forms
                         {
                             message = sortedWeeks
                                 .Aggregate(message, (current, kvp) =>
-                                                    current +
-                                                    (Utilities.GatherWeeksToString(kvp.Value) + " - " + kvp.Key +
-                                                     Environment.NewLine));
+                                    current +
+                                    (Utilities.GatherWeeksToString(kvp.Value) + " - " + kvp.Key +
+                                     Environment.NewLine));
                         }
 
                         if (i != timeDowLessons.Value.Count - 1)
@@ -180,9 +190,7 @@ namespace UchOtd.Forms
                 result.Add(tstv);
             }
 
-            scheduleView.DataSource = result;
-
-            FormatView();
+            return result;
         }
 
         private static int Percent(double percent, double whole)
@@ -310,6 +318,24 @@ namespace UchOtd.Forms
         private void refresh_Click(object sender, EventArgs e)
         {
             UpdateTeacherSchedule();
+        }
+
+        private void WordExport_Click(object sender, EventArgs e)
+        {
+            var result = GetTeacherScheduleToView();
+
+            var teacher = _repo.GetTeacher((int)(teacherList.SelectedValue));
+
+            WordExport.TeacherSchedule(result, teacher, false);
+        }
+
+        private void ExportInWordLandscape_Click(object sender, EventArgs e)
+        {
+            var result = GetTeacherScheduleToView();
+
+            var teacher = _repo.GetTeacher((int)(teacherList.SelectedValue));
+
+            WordExport.TeacherSchedule(result, teacher, true);
         }
     }
 }

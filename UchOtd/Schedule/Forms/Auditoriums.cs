@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
+using UchOtd.Core;
 
 namespace Schedule.Forms
 {
@@ -32,6 +33,12 @@ namespace Schedule.Forms
             }
             auds = _repo.getDOWAuds(DayOfWeek.Monday, weekNum, buildingNum);
 
+            if (ExportInWord.Checked)
+            {
+                WordExport.AuditoriumsExport(_repo, auds, 1, PlusTeacherFIO.Checked);
+                return;
+            }
+            
             PutAudsOnGrid(auds);
         }
 
@@ -49,6 +56,12 @@ namespace Schedule.Forms
                 buildingNum = (int)buildingList.SelectedValue;
             }
             auds = _repo.getDOWAuds(DayOfWeek.Tuesday, weekNum, buildingNum);
+
+            if (ExportInWord.Checked)
+            {
+                WordExport.AuditoriumsExport(_repo, auds, 2, PlusTeacherFIO.Checked);
+                return;
+            }
 
             PutAudsOnGrid(auds);
         }
@@ -68,6 +81,12 @@ namespace Schedule.Forms
             }
             auds = _repo.getDOWAuds(DayOfWeek.Wednesday, weekNum, buildingNum);
 
+            if (ExportInWord.Checked)
+            {
+                WordExport.AuditoriumsExport(_repo, auds, 3, PlusTeacherFIO.Checked);
+                return;
+            }
+
             PutAudsOnGrid(auds);
         }
 
@@ -85,6 +104,12 @@ namespace Schedule.Forms
                 buildingNum = (int)buildingList.SelectedValue;
             }
             auds = _repo.getDOWAuds(DayOfWeek.Thursday, weekNum, buildingNum);
+
+            if (ExportInWord.Checked)
+            {
+                WordExport.AuditoriumsExport(_repo, auds, 4, PlusTeacherFIO.Checked);
+                return;
+            }
 
             PutAudsOnGrid(auds);
         }
@@ -104,6 +129,12 @@ namespace Schedule.Forms
             }
             auds = _repo.getDOWAuds(DayOfWeek.Friday, weekNum, buildingNum);
 
+            if (ExportInWord.Checked)
+            {
+                WordExport.AuditoriumsExport(_repo, auds, 5, PlusTeacherFIO.Checked);
+                return;
+            }
+
             PutAudsOnGrid(auds);
         }
 
@@ -121,6 +152,12 @@ namespace Schedule.Forms
                 buildingNum = (int)buildingList.SelectedValue;
             }
             auds = _repo.getDOWAuds(DayOfWeek.Saturday, weekNum, buildingNum);
+
+            if (ExportInWord.Checked)
+            {
+                WordExport.AuditoriumsExport(_repo, auds, 6, PlusTeacherFIO.Checked);
+                return;
+            }
 
             PutAudsOnGrid(auds);
         }

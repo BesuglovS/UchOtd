@@ -14,6 +14,7 @@ using System.Text;
 using System.Collections.Generic;
 using Schedule.Forms;
 using UchOtd.Forms.Session;
+using UchOtd.Schedule;
 
 namespace UchOtd
 {
@@ -129,7 +130,7 @@ namespace UchOtd
                 "127.0.0.1",
                 "uch-otd-disp"                
             };
-
+            /*
             bool successPing = false;
             int connectionIndex = 0;
             do
@@ -139,7 +140,7 @@ namespace UchOtd
                 {
                     successPing = true;
 
-                    _repo = new ScheduleRepository("data source=tcp:" + serverName + ",1433;Database=ScheduleDB;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+                    _repo = new ScheduleRepository("data source=tcp:" + serverName + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
                     _UOrepo = new UchOtdRepository("data source=tcp:" + serverName + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
                 }
             } while (!successPing && connectionIndex != ServerList.Count);
@@ -148,6 +149,10 @@ namespace UchOtd
             {
                 MessageBox.Show("Не удалось подключится к базе данных.");
             }
+             */
+
+            _repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+            _UOrepo = new UchOtdRepository("data source=tcp:" + ServerList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");           
         }
 
         private static bool PingServerExistence(string server)

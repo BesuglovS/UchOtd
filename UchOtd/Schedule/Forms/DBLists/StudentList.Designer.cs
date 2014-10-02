@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.ControlsPanel = new System.Windows.Forms.Panel();
+            this.Filter = new System.Windows.Forms.Button();
             this.showAll = new System.Windows.Forms.Button();
             this.checkZachNumberDistinction = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -67,6 +68,7 @@
             // 
             // ControlsPanel
             // 
+            this.ControlsPanel.Controls.Add(this.Filter);
             this.ControlsPanel.Controls.Add(this.showAll);
             this.ControlsPanel.Controls.Add(this.checkZachNumberDistinction);
             this.ControlsPanel.Controls.Add(this.label9);
@@ -102,9 +104,19 @@
             this.ControlsPanel.Size = new System.Drawing.Size(230, 821);
             this.ControlsPanel.TabIndex = 10;
             // 
+            // Filter
+            // 
+            this.Filter.Location = new System.Drawing.Point(192, 23);
+            this.Filter.Name = "Filter";
+            this.Filter.Size = new System.Drawing.Size(28, 23);
+            this.Filter.TabIndex = 65;
+            this.Filter.Text = "F";
+            this.Filter.UseVisualStyleBackColor = true;
+            this.Filter.Click += new System.EventHandler(this.Filter_Click);
+            // 
             // showAll
             // 
-            this.showAll.Location = new System.Drawing.Point(14, 600);
+            this.showAll.Location = new System.Drawing.Point(14, 656);
             this.showAll.Name = "showAll";
             this.showAll.Size = new System.Drawing.Size(206, 23);
             this.showAll.TabIndex = 64;
@@ -116,7 +128,7 @@
             // 
             this.checkZachNumberDistinction.AutoSize = true;
             this.checkZachNumberDistinction.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.checkZachNumberDistinction.Location = new System.Drawing.Point(15, 578);
+            this.checkZachNumberDistinction.Location = new System.Drawing.Point(15, 634);
             this.checkZachNumberDistinction.Name = "checkZachNumberDistinction";
             this.checkZachNumberDistinction.Size = new System.Drawing.Size(201, 16);
             this.checkZachNumberDistinction.TabIndex = 63;
@@ -126,7 +138,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(16, 554);
+            this.label9.Location = new System.Drawing.Point(16, 610);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(42, 13);
             this.label9.TabIndex = 62;
@@ -135,7 +147,7 @@
             // studentGroups
             // 
             this.studentGroups.FormattingEnabled = true;
-            this.studentGroups.Location = new System.Drawing.Point(86, 551);
+            this.studentGroups.Location = new System.Drawing.Point(86, 607);
             this.studentGroups.Name = "studentGroups";
             this.studentGroups.Size = new System.Drawing.Size(130, 21);
             this.studentGroups.TabIndex = 61;
@@ -144,7 +156,7 @@
             // studentCombo
             // 
             this.studentCombo.FormattingEnabled = true;
-            this.studentCombo.Location = new System.Drawing.Point(15, 524);
+            this.studentCombo.Location = new System.Drawing.Point(15, 580);
             this.studentCombo.Name = "studentCombo";
             this.studentCombo.Size = new System.Drawing.Size(205, 21);
             this.studentCombo.TabIndex = 60;
@@ -155,7 +167,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(12, 336);
+            this.label8.Location = new System.Drawing.Point(12, 392);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(53, 13);
             this.label8.TabIndex = 59;
@@ -163,7 +175,7 @@
             // 
             // OrderList
             // 
-            this.OrderList.Location = new System.Drawing.Point(16, 352);
+            this.OrderList.Location = new System.Drawing.Point(16, 408);
             this.OrderList.Multiline = true;
             this.OrderList.Name = "OrderList";
             this.OrderList.Size = new System.Drawing.Size(196, 88);
@@ -172,7 +184,7 @@
             // PayForThis
             // 
             this.PayForThis.AutoSize = true;
-            this.PayForThis.Location = new System.Drawing.Point(98, 316);
+            this.PayForThis.Location = new System.Drawing.Point(98, 372);
             this.PayForThis.Name = "PayForThis";
             this.PayForThis.Size = new System.Drawing.Size(118, 17);
             this.PayForThis.TabIndex = 47;
@@ -182,7 +194,7 @@
             // NFactor
             // 
             this.NFactor.AutoSize = true;
-            this.NFactor.Location = new System.Drawing.Point(98, 293);
+            this.NFactor.Location = new System.Drawing.Point(98, 349);
             this.NFactor.Name = "NFactor";
             this.NFactor.Size = new System.Drawing.Size(76, 17);
             this.NFactor.TabIndex = 45;
@@ -192,7 +204,7 @@
             // Expelled
             // 
             this.Expelled.AutoSize = true;
-            this.Expelled.Location = new System.Drawing.Point(19, 316);
+            this.Expelled.Location = new System.Drawing.Point(19, 372);
             this.Expelled.Name = "Expelled";
             this.Expelled.Size = new System.Drawing.Size(74, 17);
             this.Expelled.TabIndex = 44;
@@ -202,7 +214,7 @@
             // Starosta
             // 
             this.Starosta.AutoSize = true;
-            this.Starosta.Location = new System.Drawing.Point(19, 293);
+            this.Starosta.Location = new System.Drawing.Point(19, 349);
             this.Starosta.Name = "Starosta";
             this.Starosta.Size = new System.Drawing.Size(73, 17);
             this.Starosta.TabIndex = 43;
@@ -211,7 +223,7 @@
             // 
             // Phone
             // 
-            this.Phone.Location = new System.Drawing.Point(15, 259);
+            this.Phone.Location = new System.Drawing.Point(15, 315);
             this.Phone.Name = "Phone";
             this.Phone.Size = new System.Drawing.Size(198, 20);
             this.Phone.TabIndex = 42;
@@ -219,7 +231,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(13, 243);
+            this.label7.Location = new System.Drawing.Point(13, 299);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(52, 13);
             this.label7.TabIndex = 58;
@@ -228,8 +240,9 @@
             // Address
             // 
             this.Address.Location = new System.Drawing.Point(15, 220);
+            this.Address.Multiline = true;
             this.Address.Name = "Address";
-            this.Address.Size = new System.Drawing.Size(198, 20);
+            this.Address.Size = new System.Drawing.Size(198, 76);
             this.Address.TabIndex = 41;
             // 
             // label6
@@ -307,7 +320,7 @@
             // 
             // deletewithlessons
             // 
-            this.deletewithlessons.Location = new System.Drawing.Point(14, 475);
+            this.deletewithlessons.Location = new System.Drawing.Point(14, 531);
             this.deletewithlessons.Name = "deletewithlessons";
             this.deletewithlessons.Size = new System.Drawing.Size(206, 43);
             this.deletewithlessons.TabIndex = 52;
@@ -317,7 +330,7 @@
             // 
             // remove
             // 
-            this.remove.Location = new System.Drawing.Point(158, 446);
+            this.remove.Location = new System.Drawing.Point(158, 502);
             this.remove.Name = "remove";
             this.remove.Size = new System.Drawing.Size(62, 23);
             this.remove.TabIndex = 51;
@@ -327,7 +340,7 @@
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(86, 446);
+            this.update.Location = new System.Drawing.Point(86, 502);
             this.update.Name = "update";
             this.update.Size = new System.Drawing.Size(66, 23);
             this.update.TabIndex = 50;
@@ -337,7 +350,7 @@
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(14, 446);
+            this.add.Location = new System.Drawing.Point(14, 502);
             this.add.Name = "add";
             this.add.Size = new System.Drawing.Size(66, 23);
             this.add.TabIndex = 49;
@@ -349,8 +362,9 @@
             // 
             this.FBox.Location = new System.Drawing.Point(15, 25);
             this.FBox.Name = "FBox";
-            this.FBox.Size = new System.Drawing.Size(198, 20);
+            this.FBox.Size = new System.Drawing.Size(171, 20);
             this.FBox.TabIndex = 36;
+            this.FBox.TextChanged += new System.EventHandler(this.FBox_TextChanged);
             this.FBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.FBox_KeyPress);
             // 
             // label1
@@ -439,5 +453,6 @@
         private System.Windows.Forms.ComboBox studentGroups;
         private System.Windows.Forms.CheckBox checkZachNumberDistinction;
         private System.Windows.Forms.Button showAll;
+        private System.Windows.Forms.Button Filter;
     }
 }
