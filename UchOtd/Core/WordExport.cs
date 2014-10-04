@@ -2088,7 +2088,12 @@ namespace UchOtd.Core
                             timeTable.Rows.Add();
                         }
 
-                        if (@group.Value[time].Count != 2)
+                        var groupDowTimeLessons = @group.Value[time]
+                            .OrderBy(tfd => tfd.Value.Item2.Select(l =>
+                                repo.CalculateWeekNumber(l.Calendar.Date)).Min())
+                            .ToList();
+
+                        if (!((@group.Value[time].Count == 2) && ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт.")))))
                         {
                             for (int i = 0; i < @group.Value[time].Count - 1; i++)
                             {
@@ -2102,17 +2107,7 @@ namespace UchOtd.Core
 
                         var tfdIndex = 0;
 
-                        var groupDowTimeLessons = @group.Value[time]
-                            .OrderBy(tfd => tfd.Value.Item2.Select(l =>
-                                repo.CalculateWeekNumber(l.Calendar.Date)).Min())
-                            .ToList();
-
-                        if ((@group.Value[time].Count == 2) ||
-                            ((@group.Value[time].Count == 1) && (groupDowTimeLessons[0].Value.Item1.Contains("чёт."))))
-                        {
-                            var rng = oTable.Cell(tableRowOffset + timeRowIndex, columnGroupIndex).Range;
-                            rng.Borders[WdBorderType.wdBorderDiagonalUp].LineStyle = WdLineStyle.wdLineStyleSingle;
-                        }
+                        
 
                         if (groupDowTimeLessons.Count() == 2)
                         {
@@ -2123,6 +2118,15 @@ namespace UchOtd.Core
                                 groupDowTimeLessons[0] = groupDowTimeLessons[1];
                                 groupDowTimeLessons[1] = tmp;
                             }
+                        }
+
+                        if (
+                            ((@group.Value[time].Count == 2) &&
+                            ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт."))))
+                            || ((@group.Value[time].Count == 1) && (groupDowTimeLessons[0].Value.Item1.Contains("чёт."))))
+                        {
+                            var rng = oTable.Cell(tableRowOffset + timeRowIndex, columnGroupIndex).Range;
+                            rng.Borders[WdBorderType.wdBorderDiagonalUp].LineStyle = WdLineStyle.wdLineStyleSingle;
                         }
 
                         foreach (var tfdData in groupDowTimeLessons)
@@ -2202,7 +2206,8 @@ namespace UchOtd.Core
                             timeTable.Cell(tfdIndex + 1, 1).Range.Text = cellText;
                             timeTable.Cell(tfdIndex + 1, 1).VerticalAlignment =
                                 WdCellVerticalAlignment.wdCellAlignVerticalCenter;
-                            if (@group.Value[time].Count == 2)
+                            if ((@group.Value[time].Count == 2) &&
+                                ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт."))))
                             {
                                 timeTable.Cell(tfdIndex + 1, 1).Range.ParagraphFormat.Alignment =
                                     (tfdIndex == 0)
