@@ -30,6 +30,11 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.OnePageGroupScheduleWordExport = new System.Windows.Forms.Button();
+            this.WordWholeScheduleOneGroupOnePage = new System.Windows.Forms.Button();
+            this.uploadPrefix = new System.Windows.Forms.TextBox();
+            this.happyBirthday = new System.Windows.Forms.Button();
+            this.WordSchool2 = new System.Windows.Forms.Button();
             this.WordSchool = new System.Windows.Forms.Button();
             this.BIGREDBUTTON = new System.Windows.Forms.Button();
             this.WordExportWeekFilter = new System.Windows.Forms.ComboBox();
@@ -68,7 +73,6 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.WordSchool2 = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -77,6 +81,10 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.OnePageGroupScheduleWordExport);
+            this.controlsPanel.Controls.Add(this.WordWholeScheduleOneGroupOnePage);
+            this.controlsPanel.Controls.Add(this.uploadPrefix);
+            this.controlsPanel.Controls.Add(this.happyBirthday);
             this.controlsPanel.Controls.Add(this.WordSchool2);
             this.controlsPanel.Controls.Add(this.WordSchool);
             this.controlsPanel.Controls.Add(this.BIGREDBUTTON);
@@ -106,8 +114,55 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(962, 128);
+            this.controlsPanel.Size = new System.Drawing.Size(962, 144);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // OnePageGroupScheduleWordExport
+            // 
+            this.OnePageGroupScheduleWordExport.Location = new System.Drawing.Point(94, 115);
+            this.OnePageGroupScheduleWordExport.Name = "OnePageGroupScheduleWordExport";
+            this.OnePageGroupScheduleWordExport.Size = new System.Drawing.Size(165, 23);
+            this.OnePageGroupScheduleWordExport.TabIndex = 55;
+            this.OnePageGroupScheduleWordExport.Text = "Экспорт в Word - одна группа";
+            this.OnePageGroupScheduleWordExport.UseVisualStyleBackColor = true;
+            this.OnePageGroupScheduleWordExport.Click += new System.EventHandler(this.OnePageGroupScheduleWordExport_Click);
+            // 
+            // WordWholeScheduleOneGroupOnePage
+            // 
+            this.WordWholeScheduleOneGroupOnePage.Location = new System.Drawing.Point(265, 115);
+            this.WordWholeScheduleOneGroupOnePage.Name = "WordWholeScheduleOneGroupOnePage";
+            this.WordWholeScheduleOneGroupOnePage.Size = new System.Drawing.Size(255, 23);
+            this.WordWholeScheduleOneGroupOnePage.TabIndex = 54;
+            this.WordWholeScheduleOneGroupOnePage.Text = "Всё расписание в Word 1 группа на 1 стр.";
+            this.WordWholeScheduleOneGroupOnePage.UseVisualStyleBackColor = true;
+            this.WordWholeScheduleOneGroupOnePage.Click += new System.EventHandler(this.WordWholeScheduleOneGroupOnePage_Click);
+            // 
+            // uploadPrefix
+            // 
+            this.uploadPrefix.Location = new System.Drawing.Point(306, 27);
+            this.uploadPrefix.Name = "uploadPrefix";
+            this.uploadPrefix.Size = new System.Drawing.Size(31, 20);
+            this.uploadPrefix.TabIndex = 53;
+            // 
+            // happyBirthday
+            // 
+            this.happyBirthday.Location = new System.Drawing.Point(13, 115);
+            this.happyBirthday.Name = "happyBirthday";
+            this.happyBirthday.Size = new System.Drawing.Size(75, 23);
+            this.happyBirthday.TabIndex = 52;
+            this.happyBirthday.Text = "Happy";
+            this.happyBirthday.UseVisualStyleBackColor = true;
+            this.happyBirthday.Click += new System.EventHandler(this.happyBirthday_Click);
+            // 
+            // WordSchool2
+            // 
+            this.WordSchool2.Location = new System.Drawing.Point(705, 80);
+            this.WordSchool2.Name = "WordSchool2";
+            this.WordSchool2.Size = new System.Drawing.Size(123, 23);
+            this.WordSchool2.TabIndex = 51;
+            this.WordSchool2.Text = "Word (ШКОЛА) 2 дн.";
+            this.WordSchool2.UseVisualStyleBackColor = true;
+            this.WordSchool2.Click += new System.EventHandler(this.WordSchool2_Click);
             // 
             // WordSchool
             // 
@@ -302,9 +357,9 @@
             // 
             // LoadToSite
             // 
-            this.LoadToSite.Location = new System.Drawing.Point(324, 25);
+            this.LoadToSite.Location = new System.Drawing.Point(343, 25);
             this.LoadToSite.Name = "LoadToSite";
-            this.LoadToSite.Size = new System.Drawing.Size(124, 23);
+            this.LoadToSite.Size = new System.Drawing.Size(110, 23);
             this.LoadToSite.TabIndex = 6;
             this.LoadToSite.Text = "Загрузить на сайт";
             this.LoadToSite.UseVisualStyleBackColor = true;
@@ -314,7 +369,7 @@
             // 
             this.button1.Location = new System.Drawing.Point(204, 25);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(114, 23);
+            this.button1.Size = new System.Drawing.Size(96, 23);
             this.button1.TabIndex = 5;
             this.button1.Text = "Добавить урок";
             this.button1.UseVisualStyleBackColor = true;
@@ -439,9 +494,9 @@
             // 
             this.viewPanel.Controls.Add(this.ScheduleView);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 128);
+            this.viewPanel.Location = new System.Drawing.Point(0, 144);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(962, 461);
+            this.viewPanel.Size = new System.Drawing.Size(962, 445);
             this.viewPanel.TabIndex = 1;
             // 
             // ScheduleView
@@ -455,19 +510,9 @@
             this.ScheduleView.Name = "ScheduleView";
             this.ScheduleView.ReadOnly = true;
             this.ScheduleView.RowHeadersVisible = false;
-            this.ScheduleView.Size = new System.Drawing.Size(962, 461);
+            this.ScheduleView.Size = new System.Drawing.Size(962, 445);
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
-            // 
-            // WordSchool2
-            // 
-            this.WordSchool2.Location = new System.Drawing.Point(705, 80);
-            this.WordSchool2.Name = "WordSchool2";
-            this.WordSchool2.Size = new System.Drawing.Size(123, 23);
-            this.WordSchool2.TabIndex = 51;
-            this.WordSchool2.Text = "Word (ШКОЛА) 2 дн.";
-            this.WordSchool2.UseVisualStyleBackColor = true;
-            this.WordSchool2.Click += new System.EventHandler(this.WordSchool2_Click);
             // 
             // MainEditForm
             // 
@@ -535,6 +580,10 @@
         private System.Windows.Forms.Button BIGREDBUTTON;
         private System.Windows.Forms.Button WordSchool;
         private System.Windows.Forms.Button WordSchool2;
+        private System.Windows.Forms.Button happyBirthday;
+        private System.Windows.Forms.TextBox uploadPrefix;
+        private System.Windows.Forms.Button WordWholeScheduleOneGroupOnePage;
+        private System.Windows.Forms.Button OnePageGroupScheduleWordExport;
     }
 }
 

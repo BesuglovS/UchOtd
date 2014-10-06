@@ -9,6 +9,8 @@ using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using Shape = Microsoft.Office.Interop.Word.Shape;
 using Schedule.Constants;
+using Schedule.Views.DBListViews;
+using UchOtd.Schedule;
 
 namespace UchOtd.Core
 {
@@ -2233,6 +2235,191 @@ namespace UchOtd.Core
             }
 
             return oTable;
+        }
+
+        public static void ExportSchedulePage(ScheduleRepository repo, MainEditForm form)
+        {
+            //Start Word and create a new document.
+            _Application oWord = new Application { Visible = true };
+            _Document oDoc = oWord.Documents.Add();
+
+            oDoc.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+            oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
+
+            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+            
+            Range wrdRng;
+
+            int pageCounter = 0;
+
+            foreach (var faculty in repo.GetAllFaculties())            
+            {
+                //var faculty = repo.GetFirstFiltredFaculty(f => f.SortingOrder == i);
+
+                var facultyGroups = repo.GetFacultyGroups(faculty.FacultyId);
+
+                foreach (var group in facultyGroups)
+                {
+                    var sStarts = repo.GetSemesterStarts();
+
+                    var groupLessons = repo.GetGroupedGroupLessons(group.StudentGroupId, sStarts);
+
+                    List<GroupTableView> groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons);
+
+                    wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+
+                    Table oTable = oDoc.Tables.Add(wrdRng, 1 + groupEvents.Count, 7);
+                    oTable.Borders.Enable = 1;
+                    oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+                    oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                    oTable.Range.Font.Size = 10;
+                    oTable.Range.Font.Bold = 0;
+
+                    oTable.Cell(1, 1).Range.Text = group.Name;
+                    oTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    oTable.Columns[1].Width = oWord.CentimetersToPoints(2.44f);
+                    float colWidth = 25.64F / 6;
+                    for (int j = 1; j <= 6; j++)
+                    {
+                        oTable.Columns[j + 1].Width = oWord.CentimetersToPoints(colWidth);
+                        oTable.Cell(1, j + 1).Range.Text = Constants.DOWLocal[j];
+                        oTable.Cell(1, j + 1).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+                    }
+
+                    for (int j = 0; j < groupEvents.Count; j++)
+                    {
+                        oTable.Cell(j + 2, 1).Range.Text = groupEvents[j].Time;
+                        oTable.Cell(j + 2, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                        oTable.Cell(j + 2, 1).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+
+                        oTable.Cell(j + 2, 2).Range.Text = groupEvents[j].MonEvents;
+                        oTable.Cell(j + 2, 2).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                        oTable.Cell(j + 2, 3).Range.Text = groupEvents[j].TueEvents;
+                        oTable.Cell(j + 2, 3).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                        oTable.Cell(j + 2, 4).Range.Text = groupEvents[j].WenEvents;
+                        oTable.Cell(j + 2, 4).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                        oTable.Cell(j + 2, 5).Range.Text = groupEvents[j].ThuEvents;
+                        oTable.Cell(j + 2, 5).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                        oTable.Cell(j + 2, 6).Range.Text = groupEvents[j].FriEvents;
+                        oTable.Cell(j + 2, 6).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                        oTable.Cell(j + 2, 7).Range.Text = groupEvents[j].SatEvents;
+                        oTable.Cell(j + 2, 7).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                    }
+
+                    pageCounter++;
+                    int pageCount;
+                    float fontSize = 10.5F;
+                    do
+                    {
+                        fontSize -= 0.5F;
+                        oTable.Range.Font.Size = fontSize;
+
+                        if (fontSize <= 3)
+                        {
+                            break;
+                        }
+
+                        pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
+                    } while (pageCount > pageCounter);
+
+                    var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                    endOfDoc.Font.Size = 1;
+                    endOfDoc.InsertBreak(WdBreakType.wdSectionBreakNextPage);
+
+                }                
+            }
+        }
+
+        public static void ExportGroupSchedulePage(ScheduleRepository repo, MainEditForm form, int groupId)
+        {
+            //Start Word and create a new document.
+            _Application oWord = new Application { Visible = true };
+            _Document oDoc = oWord.Documents.Add();
+
+            oDoc.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+            oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
+
+            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+            Range wrdRng;
+
+            var group = repo.GetStudentGroup(groupId);
+            
+            var sStarts = repo.GetSemesterStarts();
+
+            var groupLessons = repo.GetGroupedGroupLessons(group.StudentGroupId, sStarts);
+
+            List<GroupTableView> groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons);
+
+            wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+
+            Table oTable = oDoc.Tables.Add(wrdRng, 1 + groupEvents.Count, 7);
+            oTable.Borders.Enable = 1;
+            oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+            oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+            oTable.Range.Font.Size = 10;
+            oTable.Range.Font.Bold = 0;
+
+            oTable.Cell(1, 1).Range.Text = group.Name;
+            oTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
+                        WdParagraphAlignment.wdAlignParagraphCenter;
+
+            oTable.Columns[1].Width = oWord.CentimetersToPoints(2.44f);
+            float colWidth = 25.64F / 6;
+            for (int j = 1; j <= 6; j++)
+            {
+                oTable.Columns[j + 1].Width = oWord.CentimetersToPoints(colWidth);
+                oTable.Cell(1, j + 1).Range.Text = Constants.DOWLocal[j];
+                oTable.Cell(1, j + 1).Range.ParagraphFormat.Alignment =
+                        WdParagraphAlignment.wdAlignParagraphCenter;
+            }
+
+            for (int j = 0; j < groupEvents.Count; j++)
+            {
+                oTable.Cell(j + 2, 1).Range.Text = groupEvents[j].Time;
+                oTable.Cell(j + 2, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                oTable.Cell(j + 2, 1).Range.ParagraphFormat.Alignment =
+                        WdParagraphAlignment.wdAlignParagraphCenter;
+
+                oTable.Cell(j + 2, 2).Range.Text = groupEvents[j].MonEvents;
+                oTable.Cell(j + 2, 2).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                oTable.Cell(j + 2, 3).Range.Text = groupEvents[j].TueEvents;
+                oTable.Cell(j + 2, 3).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                oTable.Cell(j + 2, 4).Range.Text = groupEvents[j].WenEvents;
+                oTable.Cell(j + 2, 4).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                oTable.Cell(j + 2, 5).Range.Text = groupEvents[j].ThuEvents;
+                oTable.Cell(j + 2, 5).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                oTable.Cell(j + 2, 6).Range.Text = groupEvents[j].FriEvents;
+                oTable.Cell(j + 2, 6).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                oTable.Cell(j + 2, 7).Range.Text = groupEvents[j].SatEvents;
+                oTable.Cell(j + 2, 7).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+            }
+
+
+            int pageCount;
+            float fontSize = 10.5F;
+            do
+            {
+                fontSize -= 0.5F;
+                oTable.Range.Font.Size = fontSize;
+
+                if (fontSize <= 3)
+                {
+                    break;
+                }
+
+                pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
+            } while (pageCount > 1);   
         }
     }
 }

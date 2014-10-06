@@ -151,7 +151,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private List<GroupTableView> CreateGroupTableView(int groupId, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>> groupLessons)
+        public List<GroupTableView> CreateGroupTableView(int groupId, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>> groupLessons)
         {
             var result = new List<GroupTableView>();
 
@@ -968,8 +968,7 @@ namespace UchOtd.Schedule
 
         private void LoadToSiteClick(object sender, EventArgs e)
         {
-            //var databaseTablesPrefix = "s_";
-            var databaseTablesPrefix = "";
+            var databaseTablesPrefix = uploadPrefix.Text;            
 
             var jsonSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
             jsonSerializer.MaxJsonLength = 10000000;
@@ -1688,33 +1687,7 @@ namespace UchOtd.Schedule
 
         private void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
-            //dayDelta_Click(sender, e);
-            var result = new List<TeacherForDiscipline>();
-
-            foreach (var tfd in Repo.GetAllTeacherForDiscipline())
-            {
-                var lessons = Repo
-                    .GetFiltredLessons(l => l.IsActive & l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
-                    .OrderBy(l => l.Calendar.Date.Date)
-                    .ToList();
-
-                if (lessons.Count != 0)
-                {
-                    var LastLessonDate = lessons.Last().Calendar.Date.Date;
-
-                    if (LastLessonDate < new DateTime(2014, 11, 1))
-                    {
-                        result.Add(tfd);
-                    }
-                }
-            }
-
-            var sw = new StreamWriter("november.txt");
-            foreach (var tfd in result)
-            {
-                sw.WriteLine(tfd.Discipline.StudentGroup.Name + " " + tfd.Discipline.Name + tfd.Discipline.AuditoriumHours + tfd.Teacher.FIO);
-            }
-            sw.Close();
+            //dayDelta_Click(sender, e);            
         }
 
         private void WordSchool_Click_1(object sender, EventArgs e)
@@ -1739,6 +1712,36 @@ namespace UchOtd.Schedule
             WordExport.WordSchoolTwoDays(
                 Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
                 wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
+        }
+
+        private void happyBirthday_Click(object sender, EventArgs e)
+        {
+            var message = "";
+
+            foreach (var student in Repo.GetFiltredStudents(s => !s.Expelled))
+            {
+                if (DateTime.Now.Date == student.BirthDate.Date)
+                {
+                    message += student.F + " " + student.I + " " + student.O  + " ( " + (student.BirthDate.Year - DateTime.Now.Year) + " / " + student.BirthDate.Year + " )" + Environment.NewLine;
+                }
+            }
+
+            if (message == "")
+            {
+                message = "Нету дома никого.";
+            }
+
+            MessageBox.Show(message, "Happy");
+        }
+
+        private void OnePageGroupScheduleWordExport_Click(object sender, EventArgs e)
+        {
+            WordExport.ExportGroupSchedulePage(Repo, this, (int)groupList.SelectedValue);
+        }
+
+        private void WordWholeScheduleOneGroupOnePage_Click(object sender, EventArgs e)
+        {
+            WordExport.ExportSchedulePage(Repo, this);            
         }
     }
 }
