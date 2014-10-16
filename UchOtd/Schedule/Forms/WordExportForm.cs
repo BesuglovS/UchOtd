@@ -54,7 +54,16 @@ namespace UchOtd.Schedule.Forms
             this.Controls.Add(wordButton);
 
             wordButton.Click += ExportButtonClick;
+
+            var checkBox90 = new CheckBox();
+            checkBox90.Parent = this;
+            checkBox90.Name = "cb90";
+            checkBox90.Text = "90 минут";
+            checkBox90.Checked = false;
+            checkBox90.Bounds = new Rectangle(130, 10 + (faculties.Count + 1) * 25, 75, 25);
+            this.Controls.Add(checkBox90);            
         }
+
 
         private void CheckBoxClicked(object sender, EventArgs e)
         {
@@ -67,8 +76,8 @@ namespace UchOtd.Schedule.Forms
         }
 
         private void ExportButtonClick(object sender, EventArgs e)
-        {   
-            WordExport.ExportCustomSchedule(choice, _repo, "Расписание.docx", false, false, 80, 6, MainEditForm.SchoolHeader);
+        {
+            WordExport.ExportCustomSchedule(choice, _repo, "Расписание.docx", false, false, ((CheckBox)Controls.Find("cb90", false).First()).Checked ? 90 : 80, 6, MainEditForm.SchoolHeader);
         }
     }
 }

@@ -328,16 +328,9 @@ namespace UchOtd.Schedule
             //ExportScheduleDates("Oops\\stat.txt");
             // ExportFacultyGroups();
             // ExportDiscAuds("Auds.txt");
-            // ExportGroupDisciplines("Oops\\Discs.txt");           
+            //ExportGroupDisciplines("Oops\\Discs.txt");
 
-            var auds = Repo.GetAllDisciplines();
-
-            var sw = new StreamWriter("AuditoriumBuilding.txt");
-            foreach (var aud in auds)
-            {
-                sw.WriteLine(aud.Name + " - " + Repo.AuditoriumBuilding(aud.Name));
-            }
-            sw.Close();
+            
         }
 
         private void ExportGroupDisciplines(string filename)
@@ -1401,7 +1394,14 @@ namespace UchOtd.Schedule
             Top = 0;
             Left = 0;
             Width = width / 2;
-            Height = height;
+            Height = height / 2;
+
+            var allAudsForm = new Auditoriums(Repo);
+            allAudsForm.Show();
+            allAudsForm.Left = 0;
+            allAudsForm.Top = height / 2;
+            allAudsForm.Width = width / 2;
+            allAudsForm.Height = height / 2;
 
             var discListForm = new DisciplineList(Repo);
             discListForm.Show();
@@ -1410,12 +1410,12 @@ namespace UchOtd.Schedule
             discListForm.Width = width / 2;
             discListForm.Height = height / 2;
 
-            var teachersList = new TeacherList(Repo);
-            teachersList.Show();
-            teachersList.Left = width / 2;
-            teachersList.Top = height / 2;
-            teachersList.Width = width / 2;
-            teachersList.Height = height / 2;
+            var teachersSchedule = new UchOtd.Forms.TeacherSchedule(Repo);
+            teachersSchedule.Show();
+            teachersSchedule.Left = width / 2;
+            teachersSchedule.Top = height / 2;
+            teachersSchedule.Width = width / 2;
+            teachersSchedule.Height = height / 2;
         }
 
         private void setLayout2_Click(object sender, EventArgs e)
@@ -1554,25 +1554,14 @@ namespace UchOtd.Schedule
         {
             if (WordOneFaculty.Checked)
             {
-                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, 80, (int)WordFacultyFilter.SelectedValue, 6, SchoolHeader);
+                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, cb90.Checked ? 90 : 80, (int)WordFacultyFilter.SelectedValue, 6, SchoolHeader);
             }
             else
             {
-                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, 80, -1, 6, SchoolHeader);
+                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, cb90.Checked ? 90 : 80, -1, 6, SchoolHeader);
             }
         }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            if (WordOneFaculty.Checked)
-            {
-                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, 90, (int)WordFacultyFilter.SelectedValue, 7, SchoolHeader);
-            }
-            else
-            {
-                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, 90, -1, 7, SchoolHeader);
-            }
-        }
+                
 
         private void AuditoriumPercentage_Click(object sender, EventArgs e)
         {
@@ -1652,7 +1641,7 @@ namespace UchOtd.Schedule
             int.TryParse(WordExportWeekFilter.Text, out weekFilter);
 
             WordExport.ExportSchedulePage(
-                Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
+                Repo, "Расписание.docx", false, false, cb90.Checked ? 90 : 80, facultyId, ruDow, 6,
                 wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
         }
 
@@ -1688,6 +1677,18 @@ namespace UchOtd.Schedule
         private void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
             //dayDelta_Click(sender, e);            
+            //setLayout_Click(sender, e);
+            ExportGroupDisciplines("Oops\\Discs.txt");
+
+            /*
+            foreach (var disc in Repo.GetAllDisciplines())
+            {
+                if (disc.Name.EndsWith("\t"))
+                {
+                    disc.Name = disc.Name.Substring(0, disc.Name.Length - 1);
+                    Repo.UpdateDiscipline(disc);
+                }
+            }*/
         }
 
         private void WordSchool_Click_1(object sender, EventArgs e)

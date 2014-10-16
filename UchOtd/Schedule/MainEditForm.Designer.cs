@@ -73,6 +73,8 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
+            this.cb90 = new System.Windows.Forms.CheckBox();
+            this.cb40 = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -81,6 +83,8 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.cb40);
+            this.controlsPanel.Controls.Add(this.cb90);
             this.controlsPanel.Controls.Add(this.OnePageGroupScheduleWordExport);
             this.controlsPanel.Controls.Add(this.WordWholeScheduleOneGroupOnePage);
             this.controlsPanel.Controls.Add(this.uploadPrefix);
@@ -514,6 +518,26 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
+            // cb90
+            // 
+            this.cb90.AutoSize = true;
+            this.cb90.Location = new System.Drawing.Point(526, 109);
+            this.cb90.Name = "cb90";
+            this.cb90.Size = new System.Drawing.Size(71, 17);
+            this.cb90.TabIndex = 56;
+            this.cb90.Text = "90 минут";
+            this.cb90.UseVisualStyleBackColor = true;
+            // 
+            // cb40
+            // 
+            this.cb40.AutoSize = true;
+            this.cb40.Location = new System.Drawing.Point(740, 109);
+            this.cb40.Name = "cb40";
+            this.cb40.Size = new System.Drawing.Size(80, 17);
+            this.cb40.TabIndex = 57;
+            this.cb40.Text = "checkBox1";
+            this.cb40.UseVisualStyleBackColor = true;
+            // 
             // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -584,6 +608,8 @@
         private System.Windows.Forms.TextBox uploadPrefix;
         private System.Windows.Forms.Button WordWholeScheduleOneGroupOnePage;
         private System.Windows.Forms.Button OnePageGroupScheduleWordExport;
+        private System.Windows.Forms.CheckBox cb90;
+        private System.Windows.Forms.CheckBox cb40;
     }
 }
 

@@ -151,6 +151,7 @@ namespace UchOtd
             }
              */
 
+            //_repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
             _repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
             _UOrepo = new UchOtdRepository("data source=tcp:" + ServerList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");           
         }
