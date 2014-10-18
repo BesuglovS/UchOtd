@@ -30,6 +30,8 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.cb40 = new System.Windows.Forms.CheckBox();
+            this.cb90 = new System.Windows.Forms.CheckBox();
             this.OnePageGroupScheduleWordExport = new System.Windows.Forms.Button();
             this.WordWholeScheduleOneGroupOnePage = new System.Windows.Forms.Button();
             this.uploadPrefix = new System.Windows.Forms.TextBox();
@@ -73,8 +75,10 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.cb90 = new System.Windows.Forms.CheckBox();
-            this.cb40 = new System.Windows.Forms.CheckBox();
+            this.BackupUpload = new System.Windows.Forms.Button();
+            this.FromDBName = new System.Windows.Forms.TextBox();
+            this.DownloadRestore = new System.Windows.Forms.Button();
+            this.ToDBName = new System.Windows.Forms.TextBox();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -83,6 +87,10 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.ToDBName);
+            this.controlsPanel.Controls.Add(this.DownloadRestore);
+            this.controlsPanel.Controls.Add(this.FromDBName);
+            this.controlsPanel.Controls.Add(this.BackupUpload);
             this.controlsPanel.Controls.Add(this.cb40);
             this.controlsPanel.Controls.Add(this.cb90);
             this.controlsPanel.Controls.Add(this.OnePageGroupScheduleWordExport);
@@ -118,8 +126,28 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(962, 144);
+            this.controlsPanel.Size = new System.Drawing.Size(962, 155);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // cb40
+            // 
+            this.cb40.AutoSize = true;
+            this.cb40.Location = new System.Drawing.Point(748, 69);
+            this.cb40.Name = "cb40";
+            this.cb40.Size = new System.Drawing.Size(71, 17);
+            this.cb40.TabIndex = 57;
+            this.cb40.Text = "40 минут";
+            this.cb40.UseVisualStyleBackColor = true;
+            // 
+            // cb90
+            // 
+            this.cb90.AutoSize = true;
+            this.cb90.Location = new System.Drawing.Point(526, 109);
+            this.cb90.Name = "cb90";
+            this.cb90.Size = new System.Drawing.Size(71, 17);
+            this.cb90.TabIndex = 56;
+            this.cb90.Text = "90 минут";
+            this.cb90.UseVisualStyleBackColor = true;
             // 
             // OnePageGroupScheduleWordExport
             // 
@@ -160,7 +188,7 @@
             // 
             // WordSchool2
             // 
-            this.WordSchool2.Location = new System.Drawing.Point(705, 80);
+            this.WordSchool2.Location = new System.Drawing.Point(705, 86);
             this.WordSchool2.Name = "WordSchool2";
             this.WordSchool2.Size = new System.Drawing.Size(123, 23);
             this.WordSchool2.TabIndex = 51;
@@ -172,7 +200,7 @@
             // 
             this.WordSchool.Location = new System.Drawing.Point(740, 27);
             this.WordSchool.Name = "WordSchool";
-            this.WordSchool.Size = new System.Drawing.Size(84, 50);
+            this.WordSchool.Size = new System.Drawing.Size(84, 36);
             this.WordSchool.TabIndex = 50;
             this.WordSchool.Text = "Word (ШКОЛА)";
             this.WordSchool.UseVisualStyleBackColor = true;
@@ -498,9 +526,9 @@
             // 
             this.viewPanel.Controls.Add(this.ScheduleView);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 144);
+            this.viewPanel.Location = new System.Drawing.Point(0, 155);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(962, 445);
+            this.viewPanel.Size = new System.Drawing.Size(962, 434);
             this.viewPanel.TabIndex = 1;
             // 
             // ScheduleView
@@ -514,29 +542,42 @@
             this.ScheduleView.Name = "ScheduleView";
             this.ScheduleView.ReadOnly = true;
             this.ScheduleView.RowHeadersVisible = false;
-            this.ScheduleView.Size = new System.Drawing.Size(962, 445);
+            this.ScheduleView.Size = new System.Drawing.Size(962, 434);
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // cb90
+            // BackupUpload
             // 
-            this.cb90.AutoSize = true;
-            this.cb90.Location = new System.Drawing.Point(526, 109);
-            this.cb90.Name = "cb90";
-            this.cb90.Size = new System.Drawing.Size(71, 17);
-            this.cb90.TabIndex = 56;
-            this.cb90.Text = "90 минут";
-            this.cb90.UseVisualStyleBackColor = true;
+            this.BackupUpload.Location = new System.Drawing.Point(709, 110);
+            this.BackupUpload.Name = "BackupUpload";
+            this.BackupUpload.Size = new System.Drawing.Size(75, 35);
+            this.BackupUpload.TabIndex = 58;
+            this.BackupUpload.Text = "Backup + Upload";
+            this.BackupUpload.UseVisualStyleBackColor = true;
+            this.BackupUpload.Click += new System.EventHandler(this.BackupUpload_Click);
             // 
-            // cb40
+            // FromDBName
             // 
-            this.cb40.AutoSize = true;
-            this.cb40.Location = new System.Drawing.Point(740, 109);
-            this.cb40.Name = "cb40";
-            this.cb40.Size = new System.Drawing.Size(80, 17);
-            this.cb40.TabIndex = 57;
-            this.cb40.Text = "checkBox1";
-            this.cb40.UseVisualStyleBackColor = true;
+            this.FromDBName.Location = new System.Drawing.Point(599, 118);
+            this.FromDBName.Name = "FromDBName";
+            this.FromDBName.Size = new System.Drawing.Size(100, 20);
+            this.FromDBName.TabIndex = 59;
+            // 
+            // DownloadRestore
+            // 
+            this.DownloadRestore.Location = new System.Drawing.Point(790, 109);
+            this.DownloadRestore.Name = "DownloadRestore";
+            this.DownloadRestore.Size = new System.Drawing.Size(75, 35);
+            this.DownloadRestore.TabIndex = 60;
+            this.DownloadRestore.Text = "Download + restore";
+            this.DownloadRestore.UseVisualStyleBackColor = true;
+            // 
+            // ToDBName
+            // 
+            this.ToDBName.Location = new System.Drawing.Point(871, 118);
+            this.ToDBName.Name = "ToDBName";
+            this.ToDBName.Size = new System.Drawing.Size(78, 20);
+            this.ToDBName.TabIndex = 61;
             // 
             // MainEditForm
             // 
@@ -610,6 +651,10 @@
         private System.Windows.Forms.Button OnePageGroupScheduleWordExport;
         private System.Windows.Forms.CheckBox cb90;
         private System.Windows.Forms.CheckBox cb40;
+        private System.Windows.Forms.TextBox ToDBName;
+        private System.Windows.Forms.Button DownloadRestore;
+        private System.Windows.Forms.TextBox FromDBName;
+        private System.Windows.Forms.Button BackupUpload;
     }
 }
 

@@ -1699,7 +1699,7 @@ namespace UchOtd.Schedule
             int.TryParse(WordExportWeekFilter.Text, out weekFilter);
 
             WordExport.WordSchool(
-                Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
+                Repo, "Расписание.docx", false, false, cb40.Checked ? 40 : 80, facultyId, ruDow, 6,
                 wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
         }
 
@@ -1743,6 +1743,14 @@ namespace UchOtd.Schedule
         private void WordWholeScheduleOneGroupOnePage_Click(object sender, EventArgs e)
         {
             WordExport.ExportSchedulePage(Repo, this);            
+        }
+
+        private void BackupUpload_Click(object sender, EventArgs e)
+        {
+            string dbName = (FromDBName.Text == "") ? Repo.ExtractDBName(Repo.ConnectionString) : FromDBName.Text;
+            
+            Repo.BackupDB(Application.StartupPath + "\\" + dbName + ".bak");
+            WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak", "httpdocs/upload/DB-Backup/" + ToDBName.Text + ".bak");
         }
     }
 }

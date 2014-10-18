@@ -72,7 +72,14 @@ namespace UchOtd.Schedule.Forms
             var facultyId = int.Parse(split[1]);
             var dow = int.Parse(split[2]);
 
-            choice[facultyId].Add(dow);
+            if (((CheckBox)sender).Checked)
+            {
+                choice[facultyId].Add(dow);
+            }
+            else
+            {
+                choice[facultyId].Remove(dow);
+            }
         }
 
         private void ExportButtonClick(object sender, EventArgs e)
