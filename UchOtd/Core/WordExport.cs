@@ -2421,5 +2421,115 @@ namespace UchOtd.Core
                 pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
             } while (pageCount > 1);   
         }
+
+        public static void WordStartSchool(
+            ScheduleRepository repo, string filename, bool save, bool quit,
+            int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek,
+            bool weekFiltered, int weekFilter, bool weeksMarksVisible)
+        {
+            object oMissing = Missing.Value;
+            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+            //Start Word and create a new document.
+            _Application oWord = new Application { Visible = true };
+            _Document oDoc = oWord.Documents.Add();
+
+            oDoc.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+            oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
+
+            var faculty = repo.GetFaculty(facultyId);
+
+            Paragraph oPara1;
+            oPara1 = oDoc.Content.Paragraphs.Add();
+            oPara1.Range.Text = "Расписание";
+            oPara1.Range.Font.Bold = 0;
+            oPara1.Range.Font.Size = 10;
+            oPara1.Range.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+            oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oPara1.SpaceAfter = 0;
+            oPara1.Range.InsertParagraphAfter();
+
+            var textBoxRange = oPara1.Range;
+
+            oPara1 = oDoc.Content.Paragraphs.Add();
+            //oPara1.Range.Text = "второго семестра 2013 – 2014 учебного года";
+            oPara1.Range.Text = DetectSemesterString(repo);
+            oPara1.Range.Font.Bold = 0;
+            oPara1.Range.Font.Size = 10;
+            oPara1.Range.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+            oPara1.Range.InsertParagraphAfter();
+
+            oPara1 = oDoc.Content.Paragraphs.Add();
+            oPara1.Range.Text = faculty.Name;
+            oPara1.Range.Font.Bold = 0;
+            oPara1.Range.Font.Size = 10;
+            oPara1.Range.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+            oPara1.Range.InsertParagraphAfter();
+
+            oPara1 = oDoc.Content.Paragraphs.Add();
+            oPara1.Range.Font.Size = 14;
+            oPara1.Range.Text = Constants.DOWLocal[dayOfWeek];
+            oPara1.Range.Font.Bold = 1;
+            oPara1.Range.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+            oPara1.Range.InsertParagraphAfter();
+
+            Shape cornerStamp = oDoc.Shapes.AddTextbox(
+                Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
+                oWord.CentimetersToPoints(22f),
+                oWord.CentimetersToPoints(0.5f),
+                200, 50,
+                textBoxRange);
+            cornerStamp.TextFrame.TextRange.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+
+            if (dayOfWeek == 1)
+            {
+                cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
+                            Environment.NewLine +
+                            "Ректор   ______________     Наянова М.В.   «___» ____________  20__ г.";
+                cornerStamp.TextFrame.TextRange.Font.Size = 10;
+                cornerStamp.TextFrame.TextRange.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphRight;
+            }
+            cornerStamp.TextFrame.WordWrap = 1;
+            cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
+            cornerStamp.Line.Visible = Microsoft.Office.Core.MsoTriState.msoFalse;
+
+            Table oTable = GetAndPutDOWSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null);
+
+            int pageCount;
+            var fontSize = 10.5F;
+            do
+            {
+                fontSize -= 0.5F;
+                oTable.Range.Font.Size = fontSize;
+
+                if (fontSize <= 3)
+                {
+                    break;
+                }
+
+                pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
+            } while (pageCount > 1);
+
+            if (save)
+            {
+                object fileName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + filename;
+                oDoc.SaveAs(ref fileName);
+            }
+
+            if (quit)
+            {
+                oWord.Quit();
+            }
+
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+        }
     }
 }
