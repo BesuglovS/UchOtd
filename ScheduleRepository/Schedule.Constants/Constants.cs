@@ -52,11 +52,6 @@ namespace Schedule.Constants
             public int id { get; set; }
             public string Name { get; set; }
         }
-
-        public static List<Building> Buildings = new List<Building> { 
-            new Building { id = 2, Name = "ул. Молодогвардейская, 196" },
-            new Building { id = 3, Name = "ул. Ярмарочная, 17" },
-            new Building { id = 0, Name = "Прочие" }
-        };                
+                       
     }
 }

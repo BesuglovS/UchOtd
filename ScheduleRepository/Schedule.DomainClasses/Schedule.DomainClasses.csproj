@@ -50,6 +50,7 @@
     <Compile Include="Logs\LessonLogEvent.cs" />
     <Compile Include="Main\Auditorium.cs" />
     <Compile Include="Main\AuditoriumEvent.cs" />
+    <Compile Include="Main\Building.cs" />
     <Compile Include="Main\Calendar.cs" />
     <Compile Include="Main\Discipline.cs" />
     <Compile Include="Main\Faculty.cs" />

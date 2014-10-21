@@ -36,26 +36,26 @@
             this.FacultiesListView = new System.Windows.Forms.DataGridView();
             this.FacultyListPanel = new System.Windows.Forms.Panel();
             this.addGroupToFaculty = new System.Windows.Forms.Button();
-            this.cascadeDelete = new System.Windows.Forms.Button();
             this.remove = new System.Windows.Forms.Button();
             this.update = new System.Windows.Forms.Button();
             this.add = new System.Windows.Forms.Button();
             this.FacultyName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.ControlsPanel = new System.Windows.Forms.Panel();
-            this.SessionScheduleSigner = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.SemesterScheduleSigner = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.SortingOrder = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.FacultyLetter = new System.Windows.Forms.TextBox();
-            this.label768 = new System.Windows.Forms.Label();
             this.LeftPanel = new System.Windows.Forms.Panel();
-            this.TitleOfSessionScheduleSigner = new System.Windows.Forms.TextBox();
+            this.cascadeDelete = new System.Windows.Forms.Button();
+            this.label768 = new System.Windows.Forms.Label();
+            this.FacultyLetter = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.SortingOrder = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.SemesterScheduleSigner = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.SessionScheduleSigner = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.TitleOfSemesterScheduleSigner = new System.Windows.Forms.TextBox();
+            this.TitleOfSessionScheduleSigner = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.TitleOfSemesterScheduleSigner = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.GroupsView)).BeginInit();
             this.GroupListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FacultiesListView)).BeginInit();
@@ -154,16 +154,6 @@
             this.addGroupToFaculty.UseVisualStyleBackColor = true;
             this.addGroupToFaculty.Click += new System.EventHandler(this.addGroupToFaculty_Click);
             // 
-            // cascadeDelete
-            // 
-            this.cascadeDelete.Location = new System.Drawing.Point(13, 363);
-            this.cascadeDelete.Name = "cascadeDelete";
-            this.cascadeDelete.Size = new System.Drawing.Size(222, 49);
-            this.cascadeDelete.TabIndex = 6;
-            this.cascadeDelete.Text = "Удалить вместе с привязками к группам";
-            this.cascadeDelete.UseVisualStyleBackColor = true;
-            this.cascadeDelete.Click += new System.EventHandler(this.cascadeDelete_Click);
-            // 
             // remove
             // 
             this.remove.Location = new System.Drawing.Point(166, 334);
@@ -240,70 +230,6 @@
             this.ControlsPanel.Size = new System.Drawing.Size(484, 425);
             this.ControlsPanel.TabIndex = 22;
             // 
-            // SessionScheduleSigner
-            // 
-            this.SessionScheduleSigner.Location = new System.Drawing.Point(16, 302);
-            this.SessionScheduleSigner.Name = "SessionScheduleSigner";
-            this.SessionScheduleSigner.Size = new System.Drawing.Size(451, 20);
-            this.SessionScheduleSigner.TabIndex = 39;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(13, 286);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(196, 13);
-            this.label5.TabIndex = 38;
-            this.label5.Text = "Подписывающий расписание сессии";
-            // 
-            // SemesterScheduleSigner
-            // 
-            this.SemesterScheduleSigner.Location = new System.Drawing.Point(16, 217);
-            this.SemesterScheduleSigner.Name = "SemesterScheduleSigner";
-            this.SemesterScheduleSigner.Size = new System.Drawing.Size(451, 20);
-            this.SemesterScheduleSigner.TabIndex = 37;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 201);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(209, 13);
-            this.label4.TabIndex = 36;
-            this.label4.Text = "Подписывающий расписание семестра";
-            // 
-            // SortingOrder
-            // 
-            this.SortingOrder.Location = new System.Drawing.Point(16, 130);
-            this.SortingOrder.Name = "SortingOrder";
-            this.SortingOrder.Size = new System.Drawing.Size(451, 20);
-            this.SortingOrder.TabIndex = 2;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 105);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(113, 13);
-            this.label3.TabIndex = 35;
-            this.label3.Text = "Порядок сортировки";
-            // 
-            // FacultyLetter
-            // 
-            this.FacultyLetter.Location = new System.Drawing.Point(16, 82);
-            this.FacultyLetter.Name = "FacultyLetter";
-            this.FacultyLetter.Size = new System.Drawing.Size(451, 20);
-            this.FacultyLetter.TabIndex = 1;
-            // 
-            // label768
-            // 
-            this.label768.AutoSize = true;
-            this.label768.Location = new System.Drawing.Point(13, 57);
-            this.label768.Name = "label768";
-            this.label768.Size = new System.Drawing.Size(37, 13);
-            this.label768.TabIndex = 33;
-            this.label768.Text = "Буква";
-            // 
             // LeftPanel
             // 
             this.LeftPanel.Controls.Add(this.FacultyListPanel);
@@ -314,12 +240,79 @@
             this.LeftPanel.Size = new System.Drawing.Size(484, 688);
             this.LeftPanel.TabIndex = 18;
             // 
-            // TitleOfSessionScheduleSigner
+            // cascadeDelete
             // 
-            this.TitleOfSessionScheduleSigner.Location = new System.Drawing.Point(16, 259);
-            this.TitleOfSessionScheduleSigner.Name = "TitleOfSessionScheduleSigner";
-            this.TitleOfSessionScheduleSigner.Size = new System.Drawing.Size(451, 20);
-            this.TitleOfSessionScheduleSigner.TabIndex = 41;
+            this.cascadeDelete.Location = new System.Drawing.Point(13, 363);
+            this.cascadeDelete.Name = "cascadeDelete";
+            this.cascadeDelete.Size = new System.Drawing.Size(222, 49);
+            this.cascadeDelete.TabIndex = 6;
+            this.cascadeDelete.Text = "Удалить вместе с привязками к группам";
+            this.cascadeDelete.UseVisualStyleBackColor = true;
+            this.cascadeDelete.Click += new System.EventHandler(this.cascadeDelete_Click);
+            // 
+            // label768
+            // 
+            this.label768.AutoSize = true;
+            this.label768.Location = new System.Drawing.Point(13, 57);
+            this.label768.Name = "label768";
+            this.label768.Size = new System.Drawing.Size(37, 13);
+            this.label768.TabIndex = 33;
+            this.label768.Text = "Буква";
+            // 
+            // FacultyLetter
+            // 
+            this.FacultyLetter.Location = new System.Drawing.Point(16, 82);
+            this.FacultyLetter.Name = "FacultyLetter";
+            this.FacultyLetter.Size = new System.Drawing.Size(451, 20);
+            this.FacultyLetter.TabIndex = 1;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(13, 105);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(113, 13);
+            this.label3.TabIndex = 35;
+            this.label3.Text = "Порядок сортировки";
+            // 
+            // SortingOrder
+            // 
+            this.SortingOrder.Location = new System.Drawing.Point(16, 130);
+            this.SortingOrder.Name = "SortingOrder";
+            this.SortingOrder.Size = new System.Drawing.Size(451, 20);
+            this.SortingOrder.TabIndex = 2;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 201);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(209, 13);
+            this.label4.TabIndex = 36;
+            this.label4.Text = "Подписывающий расписание семестра";
+            // 
+            // SemesterScheduleSigner
+            // 
+            this.SemesterScheduleSigner.Location = new System.Drawing.Point(16, 217);
+            this.SemesterScheduleSigner.Name = "SemesterScheduleSigner";
+            this.SemesterScheduleSigner.Size = new System.Drawing.Size(451, 20);
+            this.SemesterScheduleSigner.TabIndex = 37;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(13, 286);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(196, 13);
+            this.label5.TabIndex = 38;
+            this.label5.Text = "Подписывающий расписание сессии";
+            // 
+            // SessionScheduleSigner
+            // 
+            this.SessionScheduleSigner.Location = new System.Drawing.Point(16, 302);
+            this.SessionScheduleSigner.Name = "SessionScheduleSigner";
+            this.SessionScheduleSigner.Size = new System.Drawing.Size(451, 20);
+            this.SessionScheduleSigner.TabIndex = 39;
             // 
             // label6
             // 
@@ -330,12 +323,12 @@
             this.label6.TabIndex = 40;
             this.label6.Text = "Должность подписывающего расписание сессии";
             // 
-            // TitleOfSemesterScheduleSigner
+            // TitleOfSessionScheduleSigner
             // 
-            this.TitleOfSemesterScheduleSigner.Location = new System.Drawing.Point(17, 175);
-            this.TitleOfSemesterScheduleSigner.Name = "TitleOfSemesterScheduleSigner";
-            this.TitleOfSemesterScheduleSigner.Size = new System.Drawing.Size(451, 20);
-            this.TitleOfSemesterScheduleSigner.TabIndex = 43;
+            this.TitleOfSessionScheduleSigner.Location = new System.Drawing.Point(16, 259);
+            this.TitleOfSessionScheduleSigner.Name = "TitleOfSessionScheduleSigner";
+            this.TitleOfSessionScheduleSigner.Size = new System.Drawing.Size(451, 20);
+            this.TitleOfSessionScheduleSigner.TabIndex = 41;
             // 
             // label7
             // 
@@ -345,6 +338,13 @@
             this.label7.Size = new System.Drawing.Size(273, 13);
             this.label7.TabIndex = 42;
             this.label7.Text = "Должность подписывающего расписание семестра";
+            // 
+            // TitleOfSemesterScheduleSigner
+            // 
+            this.TitleOfSemesterScheduleSigner.Location = new System.Drawing.Point(17, 175);
+            this.TitleOfSemesterScheduleSigner.Name = "TitleOfSemesterScheduleSigner";
+            this.TitleOfSemesterScheduleSigner.Size = new System.Drawing.Size(451, 20);
+            this.TitleOfSemesterScheduleSigner.TabIndex = 43;
             // 
             // FacultyList
             // 
@@ -377,7 +377,6 @@
         private System.Windows.Forms.DataGridView FacultiesListView;
         private System.Windows.Forms.Panel FacultyListPanel;
         private System.Windows.Forms.Button addGroupToFaculty;
-        private System.Windows.Forms.Button cascadeDelete;
         private System.Windows.Forms.Button remove;
         private System.Windows.Forms.Button update;
         private System.Windows.Forms.Button add;
@@ -385,17 +384,18 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel ControlsPanel;
         private System.Windows.Forms.Panel LeftPanel;
-        private System.Windows.Forms.TextBox SortingOrder;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox FacultyLetter;
-        private System.Windows.Forms.Label label768;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox SessionScheduleSigner;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox SemesterScheduleSigner;
         private System.Windows.Forms.TextBox TitleOfSemesterScheduleSigner;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox TitleOfSessionScheduleSigner;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox SessionScheduleSigner;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox SemesterScheduleSigner;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox SortingOrder;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox FacultyLetter;
+        private System.Windows.Forms.Label label768;
+        private System.Windows.Forms.Button cascadeDelete;
     }
 }

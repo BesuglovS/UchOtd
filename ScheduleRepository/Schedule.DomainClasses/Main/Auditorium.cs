@@ -13,5 +13,6 @@
 
         public int AuditoriumId { get; set; }
         public string Name { get; set; }
+        public virtual Building Building { get; set; }
     }
 }

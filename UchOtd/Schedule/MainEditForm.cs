@@ -19,6 +19,7 @@ using UchOtd.Core;
 using UchOtd.Schedule.Core;
 using UchOtd.Schedule.Forms;
 using UchOtd.Schedule.wnu.MySQLViews;
+using UchOtd.Schedule.Forms.DBLists;
 
 namespace UchOtd.Schedule
 {
@@ -1763,6 +1764,12 @@ namespace UchOtd.Schedule
             WordExport.WordStartSchool(
                 Repo, "Расписание.docx", false, false, 40, facultyId, ruDow, 6,
                 wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
+        }
+
+        private void корпусаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var buildingsForm = new BuildingsList(Repo);
+            buildingsForm.Show();
         }
     }
 }

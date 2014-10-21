@@ -253,9 +253,13 @@ namespace Schedule.Forms
 
         private void Auditoriums_Load(object sender, EventArgs e)
         {
+            var buildings = _repo.GetAllBuildings()
+                .OrderBy(b => b.Name)
+                .ToList();
+
             buildingList.DisplayMember = "Name";
-            buildingList.ValueMember = "id";
-            buildingList.DataSource = Constants.Constants.Buildings;
+            buildingList.ValueMember = "BuildingId";
+            buildingList.DataSource = buildings;
         }
 
         private void Auditoriums_ResizeEnd(object sender, EventArgs e)

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
+using UchOtd.Schedule.Views.DBListViews;
 
 namespace Schedule.Forms.DBLists
 {
@@ -30,19 +31,38 @@ namespace Schedule.Forms.DBLists
                 .OrderBy(a => a.Name)
                 .ToList();
 
-            AuditoriumListView.DataSource = audList;
+            var audView = AuditoriumView.AuditoriumsToView(audList);
+
+            AuditoriumListView.DataSource = audView;
 
             AuditoriumListView.Columns["AuditoriumId"].Visible = false;
-            AuditoriumListView.Columns["Name"].Width = 270;
+            AuditoriumListView.Columns["Name"].Width = 250;
+            AuditoriumListView.Columns["BuildingName"].Width = 170;
 
             AuditoriumListView.ClearSelection();
+
+
+            var buildings = _repo.GetAllBuildings()
+                .OrderBy(b => b.Name)
+                .ToList();
+
+            BuildingsList.ValueMember = "BuildingId";
+            BuildingsList.DisplayMember = "Name";
+            BuildingsList.DataSource = buildings;      
         }
 
         private void AuditoriumListView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            var Aud = ((List<Auditorium>)AuditoriumListView.DataSource)[e.RowIndex];
+            var AudView = ((List<AuditoriumView>)AuditoriumListView.DataSource)[e.RowIndex];
+
+            var Aud = _repo.GetAuditorium(AudView.AuditoriumId);
 
             AudName.Text = Aud.Name;
+
+            if (Aud.Building != null)
+            {
+                BuildingsList.SelectedValue = Aud.Building.BuildingId;
+            }
         }
 
         private void add_Click(object sender, EventArgs e)
@@ -53,7 +73,9 @@ namespace Schedule.Forms.DBLists
                 return;
             }
 
-            var newAuditorium = new Auditorium { Name = AudName.Text };
+            var building = _repo.GetBuilding((int)BuildingsList.SelectedValue);
+
+            var newAuditorium = new Auditorium { Name = AudName.Text, Building = building };
             _repo.AddAuditorium(newAuditorium);
 
             RefreshView();
@@ -63,9 +85,14 @@ namespace Schedule.Forms.DBLists
         {
             if (AuditoriumListView.SelectedCells.Count > 0)
             {
-                var Aud = ((List<Auditorium>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
+                var AudView = ((List<AuditoriumView>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
+
+                var Aud = _repo.GetAuditorium(AudView.AuditoriumId);
+
+                var building = _repo.GetBuilding((int)BuildingsList.SelectedValue);
 
                 Aud.Name = AudName.Text;
+                Aud.Building = building;
 
                 _repo.UpdateAuditorium(Aud);
 
@@ -77,15 +104,15 @@ namespace Schedule.Forms.DBLists
         {
             if (AuditoriumListView.SelectedCells.Count > 0)
             {
-                var Aud = ((List<Auditorium>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
+                var AudView = ((List<AuditoriumView>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
 
-                if (_repo.GetFiltredLessons(l => l.Auditorium.AuditoriumId == Aud.AuditoriumId).Count > 0)
+                if (_repo.GetFiltredLessons(l => l.Auditorium.AuditoriumId == AudView.AuditoriumId).Count > 0)
                 {
                     MessageBox.Show("Аудитория есть в расписании.");
                     return;
                 }
-                
-                _repo.RemoveAuditorium(Aud.AuditoriumId);
+
+                _repo.RemoveAuditorium(AudView.AuditoriumId);
 
                 RefreshView();
             }
@@ -95,7 +122,9 @@ namespace Schedule.Forms.DBLists
         {
             if (AuditoriumListView.SelectedCells.Count > 0)
             {
-                var Aud = ((List<Auditorium>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
+                var AudView = ((List<AuditoriumView>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
+
+                var Aud = _repo.GetAuditorium(AudView.AuditoriumId);
 
                 var audLessons = _repo.GetFiltredLessons(l => l.Auditorium.AuditoriumId == Aud.AuditoriumId);
 
@@ -117,7 +146,9 @@ namespace Schedule.Forms.DBLists
         {
             if (AuditoriumListView.SelectedCells.Count > 0)
             {
-                var Aud = ((List<Auditorium>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
+                var AudView = ((List<AuditoriumView>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
+
+                var Aud = _repo.GetAuditorium(AudView.AuditoriumId);
 
                 var replaceAud = _repo.FindAuditorium(newAuditorium.Text);
 

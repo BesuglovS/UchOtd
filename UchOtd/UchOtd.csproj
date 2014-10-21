@@ -222,6 +222,12 @@
     <Compile Include="Schedule\Forms\DBLists\AuditoriumList.Designer.cs">
       <DependentUpon>AuditoriumList.cs</DependentUpon>
     </Compile>
+    <Compile Include="Schedule\Forms\DBLists\BuildingsList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\DBLists\BuildingsList.Designer.cs">
+      <DependentUpon>BuildingsList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Schedule\Forms\DBLists\CalendarList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -331,6 +337,7 @@
       <DependentUpon>MainEditForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Schedule\Views\DBListViews\AuditoriumEventView.cs" />
+    <Compile Include="Schedule\Views\DBListViews\AuditoriumView.cs" />
     <Compile Include="Schedule\Views\DBListViews\DisciplineView.cs" />
     <Compile Include="Schedule\Views\DBListViews\GroupTableView.cs" />
     <Compile Include="Schedule\Views\DBListViews\GroupView.cs" />
@@ -408,6 +415,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\Auditoriums.resx">
       <DependentUpon>Auditoriums.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\DBLists\AuditoriumList.resx">
+      <DependentUpon>AuditoriumList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\DBLists\BuildingsList.resx">
+      <DependentUpon>BuildingsList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\DBLists\DisciplineList.resx">
       <DependentUpon>DisciplineList.cs</DependentUpon>

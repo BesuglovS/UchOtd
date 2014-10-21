@@ -38,6 +38,8 @@
             this.deletewithlessons = new System.Windows.Forms.Button();
             this.forceDeleteWithReplace = new System.Windows.Forms.Button();
             this.newAuditorium = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.BuildingsList = new System.Windows.Forms.ComboBox();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AuditoriumListView)).BeginInit();
             this.SuspendLayout();
@@ -46,9 +48,9 @@
             // 
             this.ListPanel.Controls.Add(this.AuditoriumListView);
             this.ListPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.ListPanel.Location = new System.Drawing.Point(228, 0);
+            this.ListPanel.Location = new System.Drawing.Point(227, 0);
             this.ListPanel.Name = "ListPanel";
-            this.ListPanel.Size = new System.Drawing.Size(274, 394);
+            this.ListPanel.Size = new System.Drawing.Size(444, 404);
             this.ListPanel.TabIndex = 0;
             // 
             // AuditoriumListView
@@ -64,7 +66,7 @@
             this.AuditoriumListView.Name = "AuditoriumListView";
             this.AuditoriumListView.ReadOnly = true;
             this.AuditoriumListView.RowHeadersVisible = false;
-            this.AuditoriumListView.Size = new System.Drawing.Size(274, 394);
+            this.AuditoriumListView.Size = new System.Drawing.Size(444, 404);
             this.AuditoriumListView.TabIndex = 0;
             this.AuditoriumListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.AuditoriumListView_CellClick);
             // 
@@ -86,7 +88,7 @@
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(15, 60);
+            this.add.Location = new System.Drawing.Point(15, 111);
             this.add.Name = "add";
             this.add.Size = new System.Drawing.Size(75, 23);
             this.add.TabIndex = 3;
@@ -96,7 +98,7 @@
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(16, 89);
+            this.update.Location = new System.Drawing.Point(16, 140);
             this.update.Name = "update";
             this.update.Size = new System.Drawing.Size(75, 23);
             this.update.TabIndex = 4;
@@ -106,7 +108,7 @@
             // 
             // remove
             // 
-            this.remove.Location = new System.Drawing.Point(16, 118);
+            this.remove.Location = new System.Drawing.Point(16, 169);
             this.remove.Name = "remove";
             this.remove.Size = new System.Drawing.Size(75, 23);
             this.remove.TabIndex = 5;
@@ -116,7 +118,7 @@
             // 
             // deletewithlessons
             // 
-            this.deletewithlessons.Location = new System.Drawing.Point(16, 147);
+            this.deletewithlessons.Location = new System.Drawing.Point(16, 198);
             this.deletewithlessons.Name = "deletewithlessons";
             this.deletewithlessons.Size = new System.Drawing.Size(197, 23);
             this.deletewithlessons.TabIndex = 6;
@@ -126,7 +128,7 @@
             // 
             // forceDeleteWithReplace
             // 
-            this.forceDeleteWithReplace.Location = new System.Drawing.Point(16, 176);
+            this.forceDeleteWithReplace.Location = new System.Drawing.Point(16, 227);
             this.forceDeleteWithReplace.Name = "forceDeleteWithReplace";
             this.forceDeleteWithReplace.Size = new System.Drawing.Size(197, 23);
             this.forceDeleteWithReplace.TabIndex = 7;
@@ -136,16 +138,36 @@
             // 
             // newAuditorium
             // 
-            this.newAuditorium.Location = new System.Drawing.Point(16, 205);
+            this.newAuditorium.Location = new System.Drawing.Point(16, 256);
             this.newAuditorium.Name = "newAuditorium";
             this.newAuditorium.Size = new System.Drawing.Size(197, 20);
             this.newAuditorium.TabIndex = 8;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(13, 62);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(43, 13);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "Корпус";
+            // 
+            // BuildingsList
+            // 
+            this.BuildingsList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.BuildingsList.FormattingEnabled = true;
+            this.BuildingsList.Location = new System.Drawing.Point(14, 81);
+            this.BuildingsList.Name = "BuildingsList";
+            this.BuildingsList.Size = new System.Drawing.Size(199, 21);
+            this.BuildingsList.TabIndex = 10;
             // 
             // AuditoriumList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(502, 394);
+            this.ClientSize = new System.Drawing.Size(671, 404);
+            this.Controls.Add(this.BuildingsList);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.newAuditorium);
             this.Controls.Add(this.forceDeleteWithReplace);
             this.Controls.Add(this.deletewithlessons);
@@ -155,7 +177,6 @@
             this.Controls.Add(this.AudName);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.ListPanel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AuditoriumList";
@@ -181,5 +202,7 @@
         private System.Windows.Forms.Button deletewithlessons;
         private System.Windows.Forms.Button forceDeleteWithReplace;
         private System.Windows.Forms.TextBox newAuditorium;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox BuildingsList;
     }
 }

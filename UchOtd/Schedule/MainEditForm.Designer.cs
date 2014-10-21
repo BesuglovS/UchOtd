@@ -30,6 +30,7 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.startSchoolWordExport = new System.Windows.Forms.Button();
             this.ToDBName = new System.Windows.Forms.TextBox();
             this.DownloadRestore = new System.Windows.Forms.Button();
             this.FromDBName = new System.Windows.Forms.TextBox();
@@ -67,6 +68,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.справочникиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.аудиторииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.корпусаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.дниСеместраToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.звонкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.студентыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,7 +80,6 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.startSchoolWordExport = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -128,6 +129,17 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(967, 155);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // startSchoolWordExport
+            // 
+            this.startSchoolWordExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.startSchoolWordExport.Location = new System.Drawing.Point(740, 52);
+            this.startSchoolWordExport.Name = "startSchoolWordExport";
+            this.startSchoolWordExport.Size = new System.Drawing.Size(93, 24);
+            this.startSchoolWordExport.TabIndex = 62;
+            this.startSchoolWordExport.Text = "Word (1-7)";
+            this.startSchoolWordExport.UseVisualStyleBackColor = true;
+            this.startSchoolWordExport.Click += new System.EventHandler(this.startSchoolWordExport_Click);
             // 
             // ToDBName
             // 
@@ -462,6 +474,7 @@
             // 
             this.справочникиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.аудиторииToolStripMenuItem,
+            this.корпусаToolStripMenuItem,
             this.дниСеместраToolStripMenuItem,
             this.звонкиToolStripMenuItem,
             this.студентыToolStripMenuItem,
@@ -481,6 +494,13 @@
             this.аудиторииToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.аудиторииToolStripMenuItem.Text = "Аудитории";
             this.аудиторииToolStripMenuItem.Click += new System.EventHandler(this.АудиторииToolStripMenuItemClick);
+            // 
+            // корпусаToolStripMenuItem
+            // 
+            this.корпусаToolStripMenuItem.Name = "корпусаToolStripMenuItem";
+            this.корпусаToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.корпусаToolStripMenuItem.Text = "Корпуса";
+            this.корпусаToolStripMenuItem.Click += new System.EventHandler(this.корпусаToolStripMenuItem_Click);
             // 
             // дниСеместраToolStripMenuItem
             // 
@@ -569,17 +589,6 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // startSchoolWordExport
-            // 
-            this.startSchoolWordExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.startSchoolWordExport.Location = new System.Drawing.Point(740, 52);
-            this.startSchoolWordExport.Name = "startSchoolWordExport";
-            this.startSchoolWordExport.Size = new System.Drawing.Size(93, 24);
-            this.startSchoolWordExport.TabIndex = 62;
-            this.startSchoolWordExport.Text = "Word (1-7)";
-            this.startSchoolWordExport.UseVisualStyleBackColor = true;
-            this.startSchoolWordExport.Click += new System.EventHandler(this.startSchoolWordExport_Click);
-            // 
             // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -656,6 +665,7 @@
         private System.Windows.Forms.TextBox FromDBName;
         private System.Windows.Forms.Button BackupUpload;
         private System.Windows.Forms.Button startSchoolWordExport;
+        private System.Windows.Forms.ToolStripMenuItem корпусаToolStripMenuItem;
     }
 }
 

@@ -32,9 +32,13 @@ namespace UchOtd.Forms
 
         private void BuildingLessonsLoad(object sender, EventArgs e)
         {
+            var buildings = _repo.GetAllBuildings()
+                .OrderBy(b => b.Name)
+                .ToList();
+
             building.DisplayMember = "Name";
-            building.ValueMember = "id";
-            building.DataSource = Constants.Buildings;
+            building.ValueMember = "BuildingId";
+            building.DataSource = buildings;            
 
             var initialCalendar = _repo.GetFirstFiltredCalendar(c => c.Date.Date == DateTime.Now.Date);
             if (initialCalendar == null)
@@ -83,13 +87,13 @@ namespace UchOtd.Forms
                 var lessons = _repo
                     .GetFiltredLessons(l =>
                         l.IsActive &&
-                        AuditoriumBuilding(l.Auditorium.Name) == buildingId &&
+                        l.Auditorium.Building.BuildingId == buildingId &&
                         l.Calendar.Date.Date == viewDate);
                 cToken.ThrowIfCancellationRequested();
 
                 var evts = _repo
                     .GetFiltredAuditoriumEvents(ae =>
-                        AuditoriumBuilding(ae.Auditorium.Name) == buildingId &&
+                        ae.Auditorium.Building.BuildingId == buildingId &&
                         ae.Calendar.Date.Date == viewDate
                     );
                 cToken.ThrowIfCancellationRequested();
@@ -241,10 +245,12 @@ namespace UchOtd.Forms
         }
 
         public List<Auditorium> SortAuditoriums(List<Auditorium> list, int buildingIndex)
-        {
-            switch (buildingIndex)
+        {   
+            var building = _repo.GetFirstFiltredBuilding(b => b.BuildingId == buildingIndex);
+            if (building != null)
             {
-                case 2:
+                if (building.Name == "ул. Молодогвардейская, 196")
+                {
                     var result = new List<Auditorium>();
                     var a3 = list
                         .Where(a => a.Name.Length >= 6 && a.Name.Substring(5, 1) == "3")
@@ -266,12 +272,10 @@ namespace UchOtd.Forms
                     }
                     result.AddRange(list.OrderBy(a => a.Name));
                     return result;
-                case 3:
-                case 0:
-                    return list.OrderBy(a => a.Name).ToList();
-            }
+                }
+            }            
 
-            return null;
+            return list.OrderBy(a => a.Name).ToList();
         }
 
         private int AuditoriumBuilding(string auditoriumName)

@@ -139,7 +139,7 @@ namespace Schedule.Repositories
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Auditoriums.ToList();
+                return context.Auditoriums.Include(a => a.Building).ToList();
             }
         }
 
@@ -147,7 +147,7 @@ namespace Schedule.Repositories
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Auditoriums.ToList().Where(condition).ToList();
+                return context.Auditoriums.Include(a => a.Building).ToList().Where(condition).ToList();
             }
         }
 
@@ -155,7 +155,7 @@ namespace Schedule.Repositories
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Auditoriums.ToList().FirstOrDefault(condition);
+                return context.Auditoriums.Include(a => a.Building).ToList().FirstOrDefault(condition);
             }
         }
 
@@ -163,7 +163,7 @@ namespace Schedule.Repositories
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == auditoriumId);
+                return context.Auditoriums.Include(a => a.Building).FirstOrDefault(a => a.AuditoriumId == auditoriumId);
             }
         }
 
@@ -171,7 +171,7 @@ namespace Schedule.Repositories
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Auditoriums.FirstOrDefault(a => a.Name == name);
+                return context.Auditoriums.Include(a => a.Building).FirstOrDefault(a => a.Name == name);
             }
         }
 
@@ -180,6 +180,8 @@ namespace Schedule.Repositories
             using (var context = new ScheduleContext(ConnectionString))
             {
                 aud.AuditoriumId = 0;
+
+                aud.Building = context.Buildings.FirstOrDefault(b => b.BuildingId == aud.Building.BuildingId);
 
                 context.Auditoriums.Add(aud);
                 context.SaveChanges();
@@ -193,6 +195,7 @@ namespace Schedule.Repositories
                 var curAud = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == aud.AuditoriumId);
 
                 curAud.Name = aud.Name;
+                curAud.Building = context.Buildings.FirstOrDefault(b => b.BuildingId == aud.Building.BuildingId);
 
                 context.SaveChanges();
             }
@@ -216,7 +219,99 @@ namespace Schedule.Repositories
                 foreach (var aud in audList)
                 {
                     aud.AuditoriumId = 0;
+                    aud.Building = context.Buildings.FirstOrDefault(b => b.BuildingId == aud.Building.BuildingId);
+
                     context.Auditoriums.Add(aud);
+                }
+
+                context.SaveChanges();
+            }
+        }
+        #endregion
+
+        #region BuildingRepository
+        public List<Building> GetAllBuildings()
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Buildings.ToList();
+            }
+        }
+
+        public List<Building> GetFiltredBuildings(Func<Building, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Buildings.ToList().Where(condition).ToList();
+            }
+        }
+
+        public Building GetFirstFiltredBuilding(Func<Building, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Buildings.ToList().FirstOrDefault(condition);
+            }
+        }
+
+        public Building GetBuilding(int buildingId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Buildings.FirstOrDefault(b => b.BuildingId == buildingId);
+            }
+        }
+
+        public Building FindBuilding(string name)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Buildings.FirstOrDefault(b => b.Name == name);
+            }
+        }
+
+        public void AddBuilding(Building building)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                building.BuildingId = 0;
+
+                context.Buildings.Add(building);
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateBuilding(Building building)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var curBuilding = context.Buildings.FirstOrDefault(b => b.BuildingId == building.BuildingId);
+
+                curBuilding.Name = building.Name;
+
+                context.SaveChanges();
+            }
+        }
+
+        public void RemoveBuilding(int buildingId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var building = context.Buildings.FirstOrDefault(b => b.BuildingId == buildingId);
+
+                context.Buildings.Remove(building);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddBuildingRange(IEnumerable<Building> buildingList)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                foreach (var building in buildingList)
+                {
+                    building.BuildingId = 0;
+                    context.Buildings.Add(building);
                 }
 
                 context.SaveChanges();
