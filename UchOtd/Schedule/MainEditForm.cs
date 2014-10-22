@@ -1768,7 +1768,7 @@ namespace UchOtd.Schedule
 
         private void корпусаToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var buildingsForm = new BuildingsList(Repo);
+            var buildingsForm = new BuildingList(Repo);
             buildingsForm.Show();
         }
     }

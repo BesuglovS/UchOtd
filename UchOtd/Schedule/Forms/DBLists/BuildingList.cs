@@ -11,11 +11,11 @@ using System.Windows.Forms;
 
 namespace UchOtd.Schedule.Forms.DBLists
 {
-    public partial class BuildingsList : Form
+    public partial class BuildingList : Form
     {
         private readonly ScheduleRepository _repo;
 
-        public BuildingsList(ScheduleRepository repo)
+        public BuildingList(ScheduleRepository repo)
         {
             InitializeComponent();
 
