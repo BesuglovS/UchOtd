@@ -968,10 +968,15 @@ namespace UchOtd.Schedule
             jsonSerializer.MaxJsonLength = 10000000;
             
             var allAuditoriums = Repo.GetAllAuditoriums();
-            var wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "auditoriums", data = jsonSerializer.Serialize(allAuditoriums) };
+            var mySqlAuditoriums = MySQLAuditorium.FromAuditoriumList(allAuditoriums);
+            var wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "auditoriums", data = jsonSerializer.Serialize(mySqlAuditoriums) };
             string json = jsonSerializer.Serialize(wud);
             WnuUpload.UploadTableData(json);
-            
+
+            var allBuildings = Repo.GetAllBuildings();
+            wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "buildings", data = jsonSerializer.Serialize(allBuildings) };
+            json = jsonSerializer.Serialize(wud);
+            WnuUpload.UploadTableData(json);
 
             var calendars = Repo.GetAllCalendars();
             var mySqlCalendars = MySQLCalendar.FromCalendarList(calendars);

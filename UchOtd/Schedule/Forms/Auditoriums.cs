@@ -257,9 +257,16 @@ namespace Schedule.Forms
                 .OrderBy(b => b.Name)
                 .ToList();
 
+            var mainBuilding = buildings.FirstOrDefault(b => b.Name == "ул. Молодогвардейская, 196");
+            
             buildingList.DisplayMember = "Name";
             buildingList.ValueMember = "BuildingId";
             buildingList.DataSource = buildings;
+
+            if (mainBuilding != null)
+            {
+                buildingList.SelectedValue = mainBuilding.BuildingId;
+            }
         }
 
         private void Auditoriums_ResizeEnd(object sender, EventArgs e)

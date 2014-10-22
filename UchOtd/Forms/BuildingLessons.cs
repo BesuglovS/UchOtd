@@ -36,9 +36,16 @@ namespace UchOtd.Forms
                 .OrderBy(b => b.Name)
                 .ToList();
 
+            var mainBuilding = buildings.FirstOrDefault(b => b.Name == "ул. Молодогвардейская, 196");
+
             building.DisplayMember = "Name";
             building.ValueMember = "BuildingId";
-            building.DataSource = buildings;            
+            building.DataSource = buildings;
+
+            if (mainBuilding != null)
+            {
+                building.SelectedValue = mainBuilding.BuildingId;
+            }
 
             var initialCalendar = _repo.GetFirstFiltredCalendar(c => c.Date.Date == DateTime.Now.Date);
             if (initialCalendar == null)
