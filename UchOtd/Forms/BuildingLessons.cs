@@ -284,20 +284,5 @@ namespace UchOtd.Forms
 
             return list.OrderBy(a => a.Name).ToList();
         }
-
-        private int AuditoriumBuilding(string auditoriumName)
-        {
-            if (auditoriumName.StartsWith("Корп № 3"))
-            {
-                return 3;
-            }
-
-            if (((auditoriumName.Length >= 6) && (Char.IsDigit(auditoriumName[5]) || auditoriumName == "Ауд. ШКОЛА")) || (auditoriumName == "Ауд. "))
-            {
-                return 2;
-            }
-
-            return 0;
-        }
     }
 }

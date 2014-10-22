@@ -3095,43 +3095,29 @@ namespace Schedule.Repositories
                 return result;
             }
         }
-
-        public int AuditoriumBuilding(string auditoriumName)
-        {
-            if (auditoriumName.StartsWith("Корп № 3"))
-            {
-                return 3;
-            }
-
-            if ((auditoriumName.Length >= 6) && (Char.IsDigit(auditoriumName[5])) || auditoriumName == "Ауд. ШКОЛА")
-            {
-                return 2;
-            }
-
-            return 0;
-        }
-
+        
         // data   - Dictionary<RingId, Dictionary <AuditoriumId, List<Dictionary<tfd, List<Lesson>>>>>
         // result - Dictionary<RingId, Dictionary <AuditoriumId, List<tfd/Event-string>>>
-        public Dictionary<int, Dictionary<int, List<string>>> getDOWAuds(DayOfWeek dow, int weekNumber, int buildingNumber)
+        public Dictionary<int, Dictionary<int, List<string>>> getDOWAuds(DayOfWeek dow, int weekNumber, int buildingId)
         {
             var data = new Dictionary<int, Dictionary<int, Dictionary<int, List<Lesson>>>>();
 
             List<Lesson> dowLessons;
             if (weekNumber == -1)
             {
-                if (buildingNumber == -1)
+                if (buildingId == -1)
                 {
                     dowLessons = GetFiltredLessons(l => l.Calendar.Date.DayOfWeek == dow && l.IsActive).ToList();
                 }
                 else
                 {
-                    dowLessons = GetFiltredLessons(l => l.Calendar.Date.DayOfWeek == dow && l.IsActive && AuditoriumBuilding(l.Auditorium.Name) == buildingNumber).ToList();
+                    dowLessons = GetFiltredLessons(l => l.Calendar.Date.DayOfWeek == dow && l.IsActive && 
+                        l.Auditorium.Building.BuildingId == buildingId).ToList();
                 }
             }
             else
             {
-                if (buildingNumber == -1)
+                if (buildingId == -1)
                 {
                     dowLessons = GetFiltredLessons(l =>
                             l.Calendar.Date.DayOfWeek == dow &&
@@ -3145,7 +3131,7 @@ namespace Schedule.Repositories
                             l.Calendar.Date.DayOfWeek == dow &&
                             l.IsActive &&
                             CalculateWeekNumber(l.Calendar.Date) == weekNumber &&
-                            AuditoriumBuilding(l.Auditorium.Name) == buildingNumber)
+                            l.Auditorium.Building.BuildingId == buildingId)
                         .ToList();
                 }
             }
@@ -3198,18 +3184,19 @@ namespace Schedule.Repositories
             List<AuditoriumEvent> audEvents;
             if (weekNumber == -1)
             {
-                if (buildingNumber == -1)
+                if (buildingId == -1)
                 {
                     audEvents = GetFiltredAuditoriumEvents(evt => evt.Calendar.Date.DayOfWeek == dow);
                 }
                 else
                 {
-                    audEvents = GetFiltredAuditoriumEvents(evt => evt.Calendar.Date.DayOfWeek == dow && AuditoriumBuilding(evt.Auditorium.Name) == buildingNumber);
+                    audEvents = GetFiltredAuditoriumEvents(evt => evt.Calendar.Date.DayOfWeek == dow && 
+                        evt.Auditorium.Building.BuildingId == buildingId);
                 }
             }
             else
             {
-                if (buildingNumber == -1)
+                if (buildingId == -1)
                 {
                     audEvents = GetFiltredAuditoriumEvents(evt =>
                         evt.Calendar.Date.DayOfWeek == dow &&
@@ -3220,7 +3207,7 @@ namespace Schedule.Repositories
                     audEvents = GetFiltredAuditoriumEvents(evt =>
                         evt.Calendar.Date.DayOfWeek == dow &&
                         CalculateWeekNumber(evt.Calendar.Date) == weekNumber &&
-                        AuditoriumBuilding(evt.Auditorium.Name) == buildingNumber);
+                        evt.Auditorium.Building.BuildingId == buildingId);
                 }
             }
 

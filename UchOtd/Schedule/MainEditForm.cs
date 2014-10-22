@@ -1578,11 +1578,11 @@ namespace UchOtd.Schedule
 
             WriteAuditoriumPercentageToFile(activeLessons, "AuditoriumPercentage.txt");
 
-            activeLessons = Repo.GetFiltredLessons(l => l.IsActive && l.Ring.RingId <= 8 && (Repo.AuditoriumBuilding(l.Auditorium.Name) == 2));
+            activeLessons = Repo.GetFiltredLessons(l => l.IsActive && l.Ring.RingId <= 8 && (l.Auditorium.Building.BuildingId == 2));
 
             WriteAuditoriumPercentageToFile(activeLessons, "AuditoriumPercentage.txt");
 
-            activeLessons = Repo.GetFiltredLessons(l => l.IsActive && l.Ring.RingId <= 8 && (Repo.AuditoriumBuilding(l.Auditorium.Name) == 3));
+            activeLessons = Repo.GetFiltredLessons(l => l.IsActive && l.Ring.RingId <= 8 && (l.Auditorium.Building.BuildingId == 3));
 
             WriteAuditoriumPercentageToFile(activeLessons, "AuditoriumPercentage.txt");
         }

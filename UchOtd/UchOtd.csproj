@@ -349,6 +349,7 @@
     <Compile Include="Schedule\Views\LessonViewAtLessonListByTFD.cs" />
     <Compile Include="Schedule\Views\TeacherForDisciplineView.cs" />
     <Compile Include="Schedule\Views\tfdView.cs" />
+    <Compile Include="Schedule\wnu\MySQLViews\MySQLAuditorium.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLAuditoriumEvent.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLCalendar.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLDiscipline.cs" />

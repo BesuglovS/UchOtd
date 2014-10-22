@@ -22,16 +22,16 @@ namespace Schedule.Forms
         {
             Dictionary<int, Dictionary<int, List<string>>> auds;
             int weekNum = -1;
-            int buildingNum = -1;
+            int buildingId = -1;
             if (oneWeek.Checked)
             {
                 weekNum = (int)weekNumber.Value;
             }
             if (oneBuilding.Checked)
             {
-                buildingNum = (int)buildingList.SelectedValue;
+                buildingId = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Monday, weekNum, buildingNum);
+            auds = _repo.getDOWAuds(DayOfWeek.Monday, weekNum, buildingId);
 
             if (ExportInWord.Checked)
             {
