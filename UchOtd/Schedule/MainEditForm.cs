@@ -44,6 +44,11 @@ namespace UchOtd.Schedule
             {
                 Text = "Расписание (" + Utilities.ExtractDBOrConnectionName(Repo.ConnectionString) + ")";
             }
+
+            if (StartupForm.school)
+            {
+                uploadPrefix.Text = "s_";
+            }
         }
 
         private void LoadLists()

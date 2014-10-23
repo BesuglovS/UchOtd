@@ -210,7 +210,6 @@
             this.uploadPrefix.Name = "uploadPrefix";
             this.uploadPrefix.Size = new System.Drawing.Size(31, 20);
             this.uploadPrefix.TabIndex = 53;
-            this.uploadPrefix.Text = "s_";
             // 
             // happyBirthday
             // 

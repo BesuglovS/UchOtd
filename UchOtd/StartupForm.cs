@@ -22,6 +22,8 @@ namespace UchOtd
 {
     public partial class StartupForm : Form
     {
+        public static bool school = false;
+
         public ScheduleRepository _repo;
         public UchOtdRepository _UOrepo; 
 
@@ -157,7 +159,10 @@ namespace UchOtd
             _repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
             _UOrepo = new UchOtdRepository("data source=tcp:" + ServerList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
 
-            uploadTimer.Enabled = true;
+            if (StartupForm.school)
+            {
+                uploadTimer.Enabled = true;
+            }
         }
 
         private static bool PingServerExistence(string server)
@@ -564,7 +569,7 @@ namespace UchOtd
             {
                 try
                 {
-                    WnuUpload.UploadSchedule(_repo, "s_");
+                    WnuUpload.UploadSchedule(_repo, school ? "s_" : "");
                 }
                 catch 
                 {   
