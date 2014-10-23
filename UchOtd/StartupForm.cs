@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using Schedule.Forms;
 using UchOtd.Forms.Session;
 using UchOtd.Schedule;
+using Schedule.wnu;
+using System.Threading.Tasks;
 
 namespace UchOtd
 {
@@ -153,7 +155,9 @@ namespace UchOtd
 
             //_repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
             _repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
-            _UOrepo = new UchOtdRepository("data source=tcp:" + ServerList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");           
+            _UOrepo = new UchOtdRepository("data source=tcp:" + ServerList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+
+            uploadTimer.Enabled = true;
         }
 
         private static bool PingServerExistence(string server)
@@ -552,6 +556,20 @@ namespace UchOtd
             _sessionFormOpened = true;
             sessionForm.Show();
             _sessionFormOpened = false;
+        }
+
+        private void uploadTimer_Tick(object sender, EventArgs e)
+        {            
+            Task t = Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    WnuUpload.UploadSchedule(_repo, "s_");
+                }
+                catch 
+                {   
+                }                
+            });                         
         }                
     }
 }

@@ -53,6 +53,7 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.uploadTimer = new System.Windows.Forms.Timer(this.components);
             this.trayIconMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,7 +79,7 @@
             this.toolStripMenuItem1,
             this.выходToolStripMenuItem});
             this.trayIconMenu.Name = "trayIconMenu";
-            this.trayIconMenu.Size = new System.Drawing.Size(266, 342);
+            this.trayIconMenu.Size = new System.Drawing.Size(266, 320);
             // 
             // контингентToolStripMenuItem
             // 
@@ -242,6 +243,11 @@
             this.trayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("trayIcon.Icon")));
             this.trayIcon.Text = "Учебный отдел";
             // 
+            // uploadTimer
+            // 
+            this.uploadTimer.Interval = 1800000;
+            this.uploadTimer.Tick += new System.EventHandler(this.uploadTimer_Tick);
+            // 
             // StartupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -279,6 +285,7 @@
         private System.Windows.Forms.ToolStripMenuItem расписаниеНаДеньToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem расписаниеСессииToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
+        private System.Windows.Forms.Timer uploadTimer;
     }
 }
 
