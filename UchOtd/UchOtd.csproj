@@ -326,6 +326,12 @@
     <Compile Include="Schedule\Forms\teacherHours.Designer.cs">
       <DependentUpon>teacherHours.cs</DependentUpon>
     </Compile>
+    <Compile Include="Schedule\Forms\Wishes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\Wishes.Designer.cs">
+      <DependentUpon>Wishes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Schedule\Forms\WordExportForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -349,6 +355,7 @@
     <Compile Include="Schedule\Views\LessonLogEventView.cs" />
     <Compile Include="Schedule\Views\LessonViewAtLessonListByTeacher.cs" />
     <Compile Include="Schedule\Views\LessonViewAtLessonListByTFD.cs" />
+    <Compile Include="Schedule\Views\RingWeekView.cs" />
     <Compile Include="Schedule\Views\TeacherForDisciplineView.cs" />
     <Compile Include="Schedule\Views\tfdView.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLAuditorium.cs" />
@@ -445,6 +452,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\teacherHours.resx">
       <DependentUpon>teacherHours.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\Wishes.resx">
+      <DependentUpon>Wishes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\WordExportForm.resx">
       <DependentUpon>WordExportForm.cs</DependentUpon>

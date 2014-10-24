@@ -78,6 +78,8 @@
             this.опцииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.факультетыгруппыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.анализToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.пожеланияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.controlsPanel.SuspendLayout();
@@ -463,7 +465,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.справочникиToolStripMenuItem});
+            this.справочникиToolStripMenuItem,
+            this.анализToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(967, 24);
@@ -564,6 +567,21 @@
             this.занятостьАудиторийToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.занятостьАудиторийToolStripMenuItem.Text = "Занятость аудиторий";
             this.занятостьАудиторийToolStripMenuItem.Click += new System.EventHandler(this.занятостьАудиторийToolStripMenuItem_Click);
+            // 
+            // анализToolStripMenuItem
+            // 
+            this.анализToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.пожеланияToolStripMenuItem});
+            this.анализToolStripMenuItem.Name = "анализToolStripMenuItem";
+            this.анализToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
+            this.анализToolStripMenuItem.Text = "Анализ";
+            // 
+            // пожеланияToolStripMenuItem
+            // 
+            this.пожеланияToolStripMenuItem.Name = "пожеланияToolStripMenuItem";
+            this.пожеланияToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.пожеланияToolStripMenuItem.Text = "Пожелания";
+            this.пожеланияToolStripMenuItem.Click += new System.EventHandler(this.пожеланияToolStripMenuItem_Click);
             // 
             // viewPanel
             // 
@@ -666,6 +684,8 @@
         private System.Windows.Forms.Button BackupUpload;
         private System.Windows.Forms.Button startSchoolWordExport;
         private System.Windows.Forms.ToolStripMenuItem корпусаToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem анализToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem пожеланияToolStripMenuItem;
     }
 }
 

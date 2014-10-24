@@ -14,6 +14,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Data;
 using Schedule.DomainClasses.Session;
+using Schedule.DomainClasses.Analyse;
 
 namespace Schedule.Repositories
 {
@@ -2751,6 +2752,131 @@ namespace Schedule.Repositories
         }
         #endregion
 
+        #region TeacherWishRepository
+        public List<TeacherWish> GetAllTeacherWishes()
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.TeacherWishes.Include(w => w.Teacher).Include(w => w.Calendar).Include(w => w.Ring).ToList();
+            }
+        }
+
+        public List<TeacherWish> GetFiltredTeacherWishes(Func<TeacherWish, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.TeacherWishes.Include(w => w.Teacher).Include(w => w.Calendar).Include(w => w.Ring).ToList().Where(condition).ToList();
+            }
+        }
+
+        public TeacherWish GetFirstFiltredTeacherWish(Func<TeacherWish, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.TeacherWishes.Include(w => w.Teacher).Include(w => w.Calendar).Include(w => w.Ring).ToList().FirstOrDefault(condition);
+            }
+        }
+
+        public TeacherWish GetTeacherWish(int teacherWishId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.TeacherWishes.Include(w => w.Teacher).Include(w => w.Calendar).Include(w => w.Ring).FirstOrDefault(w => w.TeacherWishId == teacherWishId);
+            }
+        }
+
+        public void AddTeacherWish(TeacherWish wish)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                wish.TeacherWishId = 0;
+
+                wish.Teacher = context.Teachers.FirstOrDefault(t => t.TeacherId == wish.Teacher.TeacherId);
+                wish.Calendar = context.Calendars.FirstOrDefault(c => c.CalendarId == wish.Calendar.CalendarId);
+                wish.Ring = context.Rings.FirstOrDefault(r => r.RingId == wish.Ring.RingId);
+                                
+                context.TeacherWishes.Add(wish);
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateTeacherWish(TeacherWish wish)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var curWish = context.TeacherWishes.FirstOrDefault(w => w.TeacherWishId == wish.TeacherWishId);
+
+                curWish.Teacher = context.Teachers.FirstOrDefault(t => t.TeacherId == wish.Teacher.TeacherId);
+                curWish.Calendar = context.Calendars.FirstOrDefault(c => c.CalendarId == wish.Calendar.CalendarId);
+                curWish.Ring = context.Rings.FirstOrDefault(r => r.RingId == wish.Ring.RingId);
+
+                curWish.Wish = wish.Wish;
+
+                context.SaveChanges();
+            }
+        }
+
+        public void RemoveTeacherWish(int teacherWishId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var wish = context.TeacherWishes.FirstOrDefault(w => w.TeacherWishId == teacherWishId);
+
+                context.TeacherWishes.Remove(wish);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddTeacherWishRange(IEnumerable<TeacherWish> teacherWishList)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                foreach (var wish in teacherWishList)
+                {
+                    wish.TeacherWishId = 0;
+
+                    wish.Teacher = context.Teachers.FirstOrDefault(t => t.TeacherId == wish.Teacher.TeacherId);
+                    wish.Calendar = context.Calendars.FirstOrDefault(c => c.CalendarId == wish.Calendar.CalendarId);
+                    wish.Ring = context.Rings.FirstOrDefault(r => r.RingId == wish.Ring.RingId);
+
+                    context.TeacherWishes.Add(wish);
+                }
+
+                context.SaveChanges();
+            }
+        }
+
+        public TeacherWish FindTeacherWish(Teacher teacher, Calendar calendar, Ring ring)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.TeacherWishes.FirstOrDefault(w =>
+                    w.Teacher.TeacherId == teacher.TeacherId &&
+                    w.Calendar.CalendarId == calendar.CalendarId &&
+                    w.Ring.RingId == ring.RingId);
+            }
+        }
+
+        public void UpdateOrSetTeacherWish(TeacherWish wish)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                TeacherWish targetWish = FindTeacherWish(wish.Teacher, wish.Calendar, wish.Ring);
+
+                if (targetWish == null)
+                {
+                    context.TeacherWishes.Add(wish);
+                }
+                else
+                {
+                    targetWish.Wish = wish.Wish;                    
+                }
+
+                context.SaveChanges();
+            }            
+        }
+        #endregion
+        
         #region CommonFunctions
         public static string CombineWeeks(List<int> list)
         {
@@ -3416,7 +3542,7 @@ namespace Schedule.Repositories
             return result;
         }
 
-        public string GetWeekStringFromLessons(List<Lesson> list)
+        public string GetWeekStringFromLessons(IEnumerable<Lesson> list)
         {
             var weeksList = new List<int>();
 
@@ -3430,13 +3556,27 @@ namespace Schedule.Repositories
             return result;
         }
 
-        public string GetWeekStringFromEvents(List<AuditoriumEvent> list)
+        public string GetWeekStringFromEvents(IEnumerable<AuditoriumEvent> list)
         {
             var weeksList = new List<int>();
 
             foreach (var lesson in list)
             {
                 weeksList.Add(CalculateWeekNumber(lesson.Calendar.Date));
+            }
+
+            string result = CombineWeeks(weeksList);
+
+            return result;
+        }
+
+        public string GetWeekStringFromWishes(IEnumerable<TeacherWish> list)
+        {
+            var weeksList = new List<int>();
+
+            foreach (var wish in list)
+            {
+                weeksList.Add(CalculateWeekNumber(wish.Calendar.Date));
             }
 
             string result = CombineWeeks(weeksList);

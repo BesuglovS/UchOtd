@@ -4,13 +4,14 @@ using Schedule.DomainClasses.Config;
 using Schedule.DomainClasses.Main;
 using Schedule.DomainClasses.Logs;
 using Schedule.DomainClasses.Session;
+using Schedule.DomainClasses.Analyse;
 
 namespace Schedule.DataLayer
 {
     public class ScheduleContext : DbContext
     {
         public ScheduleContext()
-            //: base("data source=tcp:127.0.0.1,1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
+            : base("data source=tcp:127.0.0.1,1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
         {
         }
 
@@ -45,6 +46,9 @@ namespace Schedule.DataLayer
 
         // Options
         public DbSet<ConfigOption> Config { get; set; }
+
+        // Analyse
+        public DbSet<TeacherWish> TeacherWishes { get; set; }
 
         // Session
         public DbSet<Exam> Exams { get; set; }

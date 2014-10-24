@@ -1687,5 +1687,12 @@ namespace UchOtd.Schedule
             var buildingsForm = new BuildingList(Repo);
             buildingsForm.Show();
         }
+
+        private void пожеланияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var wishesForm = new Wishes(Repo);
+            wishesForm.Show();
+
+        }
     }
 }
