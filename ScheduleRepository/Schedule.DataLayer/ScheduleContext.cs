@@ -49,6 +49,7 @@ namespace Schedule.DataLayer
 
         // Analyse
         public DbSet<TeacherWish> TeacherWishes { get; set; }
+        public DbSet<CustomTeacherWish> CustomTeacherWishes { get; set; }
 
         // Session
         public DbSet<Exam> Exams { get; set; }

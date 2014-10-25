@@ -11,6 +11,7 @@ namespace UchOtd.Schedule.Views
     public class RingWeekView
     {
         public int RingId { get; set; }
+        public string RingTime { get; set; }
         public string MonWishes { get; set; }
         public string TueWishes { get; set; }
         public string WedWishes { get; set; }
@@ -65,8 +66,14 @@ namespace UchOtd.Schedule.Views
                             ringWeekView.SunWishes = RingWeekView.WishesToString(repo, dowWishes.wishes);
                             break;
                     }
-                }                
+                }
+
+                ringWeekView.RingTime = repo.GetRing(ringWeekView.RingId).Time.ToString("HH:mm");
+
+                result.Add(ringWeekView);
             }
+
+            result = result.OrderBy(rwv => repo.GetRing(rwv.RingId).Time).ToList();
 
             return result;
         }
@@ -79,7 +86,7 @@ namespace UchOtd.Schedule.Views
 
             foreach (var wish in groupedWishes)                
             {
-                result += wish.wish + " - " + wish.weeks + "; ";
+                result += wish.weeks + "@" + wish.wish + "; ";
             }
 
             result = result.Substring(0, result.Length - 2);

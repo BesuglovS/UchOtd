@@ -408,6 +408,16 @@ namespace Schedule.Repositories
                 context.SaveChanges();
             }
         }
+
+        public List<Calendar> GetDOWCalendars(int dow)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Calendars.ToList()
+                    .Where(c => Constants.Constants.DOWRemap[(int)c.Date.Date.DayOfWeek] == dow)
+                    .ToList();
+            }
+        }
         #endregion
 
         #region RingRepository
@@ -2850,14 +2860,16 @@ namespace Schedule.Repositories
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.TeacherWishes.FirstOrDefault(w =>
+                return context.TeacherWishes
+                    .Include(w => w.Teacher).Include(w => w.Calendar).Include(w => w.Ring)
+                    .FirstOrDefault(w =>
                     w.Teacher.TeacherId == teacher.TeacherId &&
                     w.Calendar.CalendarId == calendar.CalendarId &&
                     w.Ring.RingId == ring.RingId);
             }
         }
 
-        public void UpdateOrSetTeacherWish(TeacherWish wish)
+        public void UpdateOrAddTeacherWish(TeacherWish wish)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -2865,15 +2877,140 @@ namespace Schedule.Repositories
 
                 if (targetWish == null)
                 {
-                    context.TeacherWishes.Add(wish);
+                    AddTeacherWish(wish);
                 }
                 else
                 {
-                    targetWish.Wish = wish.Wish;                    
+                    if (targetWish.Wish != wish.Wish)
+                    {
+                        targetWish.Wish = wish.Wish;
+
+                        UpdateTeacherWish(targetWish);
+                    }
+                }
+                
+            }            
+        }
+        #endregion
+
+        #region CustomTeacherWishRepository
+        public List<CustomTeacherWish> GetAllCustomTeacherWishes()
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.CustomTeacherWishes.Include(w => w.Teacher).ToList();
+            }
+        }
+
+        public List<CustomTeacherWish> GetFiltredCustomTeacherWishes(Func<CustomTeacherWish, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.CustomTeacherWishes.Include(w => w.Teacher).ToList().Where(condition).ToList();
+            }
+        }
+
+        public CustomTeacherWish GetFirstFiltredCustomTeacherWish(Func<CustomTeacherWish, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.CustomTeacherWishes.Include(w => w.Teacher).ToList().FirstOrDefault(condition);
+            }
+        }
+
+        public CustomTeacherWish GetCustomTeacherWish(int teacherWishId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.CustomTeacherWishes.Include(w => w.Teacher).FirstOrDefault(w => w.CustomTeacherWishId == teacherWishId);
+            }
+        }
+
+        public CustomTeacherWish GetCustomTeacherWish(Teacher teacher, string key)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.CustomTeacherWishes.Include(w => w.Teacher).FirstOrDefault(w => w.Teacher.TeacherId == teacher.TeacherId && w.Key == key);
+            }
+        }
+
+        public void AddCustomTeacherWish(CustomTeacherWish wish)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                wish.CustomTeacherWishId = 0;
+
+                wish.Teacher = context.Teachers.FirstOrDefault(t => t.TeacherId == wish.Teacher.TeacherId);
+
+                context.CustomTeacherWishes.Add(wish);
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateCustomTeacherWish(CustomTeacherWish wish)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var curWish = context.CustomTeacherWishes.FirstOrDefault(w => w.CustomTeacherWishId == wish.CustomTeacherWishId);
+
+                curWish.Teacher = context.Teachers.FirstOrDefault(t => t.TeacherId == wish.Teacher.TeacherId);
+
+                curWish.Key = wish.Key;
+                curWish.Value = wish.Value;
+
+                context.SaveChanges();
+            }
+        }
+
+        public void RemoveCustomTeacherWish(int customTeacherWishId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var wish = context.CustomTeacherWishes.FirstOrDefault(w => w.CustomTeacherWishId == customTeacherWishId);
+
+                context.CustomTeacherWishes.Remove(wish);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddCustomTeacherWishRange(IEnumerable<CustomTeacherWish> teacherWishList)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                foreach (var wish in teacherWishList)
+                {
+                    wish.CustomTeacherWishId = 0;
+
+                    wish.Teacher = context.Teachers.FirstOrDefault(t => t.TeacherId == wish.Teacher.TeacherId);
+
+                    context.CustomTeacherWishes.Add(wish);
                 }
 
                 context.SaveChanges();
-            }            
+            }
+        }
+
+        public void UpdateOrAddCustomTeacherWish(CustomTeacherWish wish)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                CustomTeacherWish targetWish = GetCustomTeacherWish(wish.Teacher, wish.Key);
+
+                if (targetWish == null)
+                {
+                    AddCustomTeacherWish(wish);
+                }
+                else
+                {
+                    if (targetWish.Value != wish.Value)
+                    {
+                        targetWish.Value = wish.Value;
+
+                        UpdateCustomTeacherWish(targetWish);
+                    }
+                }
+
+            }
         }
         #endregion
         
@@ -3095,6 +3232,28 @@ namespace Schedule.Repositories
                 var ssDOW = (semesterStarts.DayOfWeek != DayOfWeek.Sunday) ? (int)semesterStarts.DayOfWeek : 7;
 
                 return semesterStarts.AddDays((-1) * (ssDOW - 1) + (week - 1) * 7 + dow - 1);
+            }
+        }
+
+        public Calendar GetCalendarFromDowAndWeek(int dow, int week)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var semesterStartsOption = context.Config
+                    .FirstOrDefault(co => co.Key == "Semester Starts");
+                if (semesterStartsOption == null)
+                {
+                    return null;
+                }
+
+                var semesterStarts = DateTime.ParseExact(semesterStartsOption.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var ssDOW = (semesterStarts.DayOfWeek != DayOfWeek.Sunday) ? (int)semesterStarts.DayOfWeek : 7;
+
+                var resultDate = semesterStarts.AddDays((-1) * (ssDOW - 1) + (week - 1) * 7 + dow - 1);
+
+                var result = context.Calendars.FirstOrDefault(c => c.Date == resultDate);
+
+                return result;
             }
         }
 

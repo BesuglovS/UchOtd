@@ -29,12 +29,26 @@
         private void InitializeComponent()
         {
             this.mainSplit = new System.Windows.Forms.SplitContainer();
-            this.wishesView = new System.Windows.Forms.DataGridView();
-            this.teacherList = new System.Windows.Forms.ComboBox();
-            this.refreshButton = new System.Windows.Forms.Button();
-            this.Yes = new System.Windows.Forms.Button();
-            this.No = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.FitAllLessonsDaysCount = new System.Windows.Forms.TextBox();
+            this.FitAllLessonsInXDays = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.LessonsLimitPerDay = new System.Windows.Forms.TextBox();
+            this.LessonsLimitedPerDay = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.windowsPossibleSize = new System.Windows.Forms.TextBox();
+            this.windowsPossible = new System.Windows.Forms.CheckBox();
+            this.OneValue = new System.Windows.Forms.Button();
+            this.wishToSetValue = new System.Windows.Forms.TextBox();
+            this.ValueSelected = new System.Windows.Forms.Button();
+            this.MinSelected = new System.Windows.Forms.Button();
+            this.MaxSelected = new System.Windows.Forms.Button();
             this.Clear = new System.Windows.Forms.Button();
+            this.No = new System.Windows.Forms.Button();
+            this.Yes = new System.Windows.Forms.Button();
+            this.refreshButton = new System.Windows.Forms.Button();
+            this.teacherList = new System.Windows.Forms.ComboBox();
+            this.wishesView = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplit)).BeginInit();
             this.mainSplit.Panel1.SuspendLayout();
             this.mainSplit.Panel2.SuspendLayout();
@@ -51,6 +65,20 @@
             // 
             // mainSplit.Panel1
             // 
+            this.mainSplit.Panel1.Controls.Add(this.label3);
+            this.mainSplit.Panel1.Controls.Add(this.FitAllLessonsDaysCount);
+            this.mainSplit.Panel1.Controls.Add(this.FitAllLessonsInXDays);
+            this.mainSplit.Panel1.Controls.Add(this.label2);
+            this.mainSplit.Panel1.Controls.Add(this.LessonsLimitPerDay);
+            this.mainSplit.Panel1.Controls.Add(this.LessonsLimitedPerDay);
+            this.mainSplit.Panel1.Controls.Add(this.label1);
+            this.mainSplit.Panel1.Controls.Add(this.windowsPossibleSize);
+            this.mainSplit.Panel1.Controls.Add(this.windowsPossible);
+            this.mainSplit.Panel1.Controls.Add(this.OneValue);
+            this.mainSplit.Panel1.Controls.Add(this.wishToSetValue);
+            this.mainSplit.Panel1.Controls.Add(this.ValueSelected);
+            this.mainSplit.Panel1.Controls.Add(this.MinSelected);
+            this.mainSplit.Panel1.Controls.Add(this.MaxSelected);
             this.mainSplit.Panel1.Controls.Add(this.Clear);
             this.mainSplit.Panel1.Controls.Add(this.No);
             this.mainSplit.Panel1.Controls.Add(this.Yes);
@@ -60,26 +88,171 @@
             // mainSplit.Panel2
             // 
             this.mainSplit.Panel2.Controls.Add(this.wishesView);
-            this.mainSplit.Size = new System.Drawing.Size(969, 654);
-            this.mainSplit.SplitterDistance = 51;
+            this.mainSplit.Size = new System.Drawing.Size(976, 654);
+            this.mainSplit.SplitterDistance = 75;
             this.mainSplit.TabIndex = 0;
             // 
-            // wishesView
+            // label3
             // 
-            this.wishesView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.wishesView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.wishesView.Location = new System.Drawing.Point(0, 0);
-            this.wishesView.Name = "wishesView";
-            this.wishesView.Size = new System.Drawing.Size(969, 599);
-            this.wishesView.TabIndex = 0;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(540, 48);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(31, 13);
+            this.label3.TabIndex = 19;
+            this.label3.Text = "дней";
             // 
-            // teacherList
+            // FitAllLessonsDaysCount
             // 
-            this.teacherList.FormattingEnabled = true;
-            this.teacherList.Location = new System.Drawing.Point(12, 15);
-            this.teacherList.Name = "teacherList";
-            this.teacherList.Size = new System.Drawing.Size(435, 21);
-            this.teacherList.TabIndex = 0;
+            this.FitAllLessonsDaysCount.Location = new System.Drawing.Point(504, 45);
+            this.FitAllLessonsDaysCount.Name = "FitAllLessonsDaysCount";
+            this.FitAllLessonsDaysCount.Size = new System.Drawing.Size(34, 20);
+            this.FitAllLessonsDaysCount.TabIndex = 18;
+            this.FitAllLessonsDaysCount.Text = "0";
+            // 
+            // FitAllLessonsInXDays
+            // 
+            this.FitAllLessonsInXDays.AutoSize = true;
+            this.FitAllLessonsInXDays.Location = new System.Drawing.Point(407, 47);
+            this.FitAllLessonsInXDays.Name = "FitAllLessonsInXDays";
+            this.FitAllLessonsInXDays.Size = new System.Drawing.Size(98, 17);
+            this.FitAllLessonsInXDays.TabIndex = 17;
+            this.FitAllLessonsInXDays.Text = "Все занятия в";
+            this.FitAllLessonsInXDays.UseVisualStyleBackColor = true;
+            this.FitAllLessonsInXDays.CheckStateChanged += new System.EventHandler(this.FitAllLessonsInXDays_CheckStateChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(313, 48);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(61, 13);
+            this.label2.TabIndex = 16;
+            this.label2.Text = "пар в день";
+            // 
+            // LessonsLimitPerDay
+            // 
+            this.LessonsLimitPerDay.Location = new System.Drawing.Point(276, 45);
+            this.LessonsLimitPerDay.Name = "LessonsLimitPerDay";
+            this.LessonsLimitPerDay.Size = new System.Drawing.Size(34, 20);
+            this.LessonsLimitPerDay.TabIndex = 15;
+            this.LessonsLimitPerDay.Text = "0";
+            // 
+            // LessonsLimitedPerDay
+            // 
+            this.LessonsLimitedPerDay.AutoSize = true;
+            this.LessonsLimitedPerDay.Location = new System.Drawing.Point(208, 47);
+            this.LessonsLimitedPerDay.Name = "LessonsLimitedPerDay";
+            this.LessonsLimitedPerDay.Size = new System.Drawing.Size(71, 17);
+            this.LessonsLimitedPerDay.TabIndex = 14;
+            this.LessonsLimitedPerDay.Text = "не более";
+            this.LessonsLimitedPerDay.UseVisualStyleBackColor = true;
+            this.LessonsLimitedPerDay.CheckStateChanged += new System.EventHandler(this.LessonsLimitedPerDay_CheckStateChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(158, 47);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(25, 13);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "пар";
+            // 
+            // windowsPossibleSize
+            // 
+            this.windowsPossibleSize.Location = new System.Drawing.Point(118, 44);
+            this.windowsPossibleSize.Name = "windowsPossibleSize";
+            this.windowsPossibleSize.Size = new System.Drawing.Size(34, 20);
+            this.windowsPossibleSize.TabIndex = 12;
+            this.windowsPossibleSize.Text = "0";
+            // 
+            // windowsPossible
+            // 
+            this.windowsPossible.AutoSize = true;
+            this.windowsPossible.Location = new System.Drawing.Point(12, 46);
+            this.windowsPossible.Name = "windowsPossible";
+            this.windowsPossible.Size = new System.Drawing.Size(107, 17);
+            this.windowsPossible.TabIndex = 11;
+            this.windowsPossible.Text = "возможны окна";
+            this.windowsPossible.UseVisualStyleBackColor = true;
+            this.windowsPossible.CheckStateChanged += new System.EventHandler(this.windowsPossible_CheckStateChanged);
+            // 
+            // OneValue
+            // 
+            this.OneValue.Location = new System.Drawing.Point(924, 12);
+            this.OneValue.Name = "OneValue";
+            this.OneValue.Size = new System.Drawing.Size(40, 23);
+            this.OneValue.TabIndex = 10;
+            this.OneValue.Text = "все";
+            this.OneValue.UseVisualStyleBackColor = true;
+            this.OneValue.Click += new System.EventHandler(this.OneValue_Click);
+            // 
+            // wishToSetValue
+            // 
+            this.wishToSetValue.Location = new System.Drawing.Point(840, 13);
+            this.wishToSetValue.Name = "wishToSetValue";
+            this.wishToSetValue.Size = new System.Drawing.Size(45, 20);
+            this.wishToSetValue.TabIndex = 9;
+            this.wishToSetValue.Text = "50";
+            // 
+            // ValueSelected
+            // 
+            this.ValueSelected.Location = new System.Drawing.Point(891, 13);
+            this.ValueSelected.Name = "ValueSelected";
+            this.ValueSelected.Size = new System.Drawing.Size(27, 23);
+            this.ValueSelected.TabIndex = 8;
+            this.ValueSelected.Text = "=";
+            this.ValueSelected.UseVisualStyleBackColor = true;
+            this.ValueSelected.Click += new System.EventHandler(this.ValueSelected_Click);
+            // 
+            // MinSelected
+            // 
+            this.MinSelected.Location = new System.Drawing.Point(807, 12);
+            this.MinSelected.Name = "MinSelected";
+            this.MinSelected.Size = new System.Drawing.Size(27, 23);
+            this.MinSelected.TabIndex = 7;
+            this.MinSelected.Text = "-";
+            this.MinSelected.UseVisualStyleBackColor = true;
+            this.MinSelected.Click += new System.EventHandler(this.MinSelected_Click);
+            // 
+            // MaxSelected
+            // 
+            this.MaxSelected.Location = new System.Drawing.Point(774, 12);
+            this.MaxSelected.Name = "MaxSelected";
+            this.MaxSelected.Size = new System.Drawing.Size(27, 23);
+            this.MaxSelected.TabIndex = 6;
+            this.MaxSelected.Text = "+";
+            this.MaxSelected.UseVisualStyleBackColor = true;
+            this.MaxSelected.Click += new System.EventHandler(this.MaxSelected_Click);
+            // 
+            // Clear
+            // 
+            this.Clear.Location = new System.Drawing.Point(682, 13);
+            this.Clear.Name = "Clear";
+            this.Clear.Size = new System.Drawing.Size(69, 23);
+            this.Clear.TabIndex = 4;
+            this.Clear.Text = "Очистить";
+            this.Clear.UseVisualStyleBackColor = true;
+            this.Clear.Click += new System.EventHandler(this.Clear_Click);
+            // 
+            // No
+            // 
+            this.No.Location = new System.Drawing.Point(620, 13);
+            this.No.Name = "No";
+            this.No.Size = new System.Drawing.Size(56, 23);
+            this.No.TabIndex = 3;
+            this.No.Text = "Все - 0";
+            this.No.UseVisualStyleBackColor = true;
+            this.No.Click += new System.EventHandler(this.No_Click);
+            // 
+            // Yes
+            // 
+            this.Yes.Location = new System.Drawing.Point(547, 13);
+            this.Yes.Name = "Yes";
+            this.Yes.Size = new System.Drawing.Size(67, 23);
+            this.Yes.TabIndex = 2;
+            this.Yes.Text = "Все - 100";
+            this.Yes.UseVisualStyleBackColor = true;
+            this.Yes.Click += new System.EventHandler(this.Yes_Click);
             // 
             // refreshButton
             // 
@@ -91,46 +264,37 @@
             this.refreshButton.UseVisualStyleBackColor = true;
             this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
             // 
-            // Yes
+            // teacherList
             // 
-            this.Yes.Location = new System.Drawing.Point(554, 13);
-            this.Yes.Name = "Yes";
-            this.Yes.Size = new System.Drawing.Size(115, 23);
-            this.Yes.TabIndex = 2;
-            this.Yes.Text = "Всегда говори ДА";
-            this.Yes.UseVisualStyleBackColor = true;
-            this.Yes.Click += new System.EventHandler(this.Yes_Click);
+            this.teacherList.FormattingEnabled = true;
+            this.teacherList.Location = new System.Drawing.Point(12, 15);
+            this.teacherList.Name = "teacherList";
+            this.teacherList.Size = new System.Drawing.Size(435, 21);
+            this.teacherList.TabIndex = 0;
             // 
-            // No
+            // wishesView
             // 
-            this.No.Location = new System.Drawing.Point(675, 12);
-            this.No.Name = "No";
-            this.No.Size = new System.Drawing.Size(76, 23);
-            this.No.TabIndex = 3;
-            this.No.Text = "Ни за что";
-            this.No.UseVisualStyleBackColor = true;
-            this.No.Click += new System.EventHandler(this.No_Click);
-            // 
-            // Clear
-            // 
-            this.Clear.Location = new System.Drawing.Point(757, 12);
-            this.Clear.Name = "Clear";
-            this.Clear.Size = new System.Drawing.Size(75, 23);
-            this.Clear.TabIndex = 4;
-            this.Clear.Text = "Очистить";
-            this.Clear.UseVisualStyleBackColor = true;
-            this.Clear.Click += new System.EventHandler(this.Clear_Click);
+            this.wishesView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.wishesView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.wishesView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.wishesView.Location = new System.Drawing.Point(0, 0);
+            this.wishesView.Name = "wishesView";
+            this.wishesView.Size = new System.Drawing.Size(976, 575);
+            this.wishesView.TabIndex = 0;
+            this.wishesView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.wishesView_CellValueChanged);
+            this.wishesView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.wishesView_KeyDown);
             // 
             // Wishes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(969, 654);
+            this.ClientSize = new System.Drawing.Size(976, 654);
             this.Controls.Add(this.mainSplit);
             this.Name = "Wishes";
             this.Text = "Пожелания";
             this.Load += new System.EventHandler(this.Wishes_Load);
             this.mainSplit.Panel1.ResumeLayout(false);
+            this.mainSplit.Panel1.PerformLayout();
             this.mainSplit.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainSplit)).EndInit();
             this.mainSplit.ResumeLayout(false);
@@ -148,5 +312,19 @@
         private System.Windows.Forms.Button Yes;
         private System.Windows.Forms.Button No;
         private System.Windows.Forms.Button Clear;
+        private System.Windows.Forms.Button MinSelected;
+        private System.Windows.Forms.Button MaxSelected;
+        private System.Windows.Forms.TextBox wishToSetValue;
+        private System.Windows.Forms.Button ValueSelected;
+        private System.Windows.Forms.Button OneValue;
+        private System.Windows.Forms.CheckBox windowsPossible;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox windowsPossibleSize;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox FitAllLessonsDaysCount;
+        private System.Windows.Forms.CheckBox FitAllLessonsInXDays;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox LessonsLimitPerDay;
+        private System.Windows.Forms.CheckBox LessonsLimitedPerDay;
     }
 }

@@ -124,8 +124,49 @@ namespace UchOtd
             _teacherHoursFormOpened = false;
             _dailyLessonsFormOpened = false;
             _sessionFormOpened = false;
-
+            
+            //BackupDBEveryXRuns();
+            
             trayIcon.Visible = true;
+        }
+
+        private void BackupDBEveryXRuns()
+        {
+            try
+            {
+                string pathCount = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\RunCount.txt";
+                int count = -1;
+                if (!File.Exists(pathCount))
+                {
+                    var sw = new StreamWriter(pathCount);
+                    sw.WriteLine("1");
+                    count = 1;
+                    sw.Close();
+                }
+                else
+                {
+                    var sr = new StreamReader(pathCount);
+                    int.TryParse(sr.ReadLine(), out count);
+
+                    count++;
+
+                    var sw = new StreamWriter(pathCount);
+                    sw.WriteLine(count);
+                    sw.Close();
+                }
+
+                if (count % 10 == 0)
+                {
+                    string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                    var dbName = _repo.ExtractDBName(_repo.ConnectionString);
+                    var filename = path + "\\" + dbName + DateTime.Now.ToString("_dd-MMM_HH-mm-ss") + ".bak";
+
+                    _repo.BackupDB(filename);
+                }
+            }
+            catch
+            {
+            }
         }
 
         private void InitRepositories()
