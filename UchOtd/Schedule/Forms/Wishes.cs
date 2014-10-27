@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Schedule.Views.DBListViews;
 using UchOtd.Schedule.Views;
 
 namespace UchOtd.Schedule.Forms
@@ -16,6 +17,10 @@ namespace UchOtd.Schedule.Forms
     public partial class Wishes : Form
     {
         private readonly ScheduleRepository _repo;
+
+        private bool listBoxInitialization = true;
+
+        public static bool NeedsUpdateAfterChoosingRings = false;
 
         public Wishes(ScheduleRepository repo)
         {
@@ -33,13 +38,49 @@ namespace UchOtd.Schedule.Forms
             teacherList.ValueMember = "TeacherId";
             teacherList.DisplayMember = "FIO";
             teacherList.DataSource = teachers;
+
+            RingsList.ClearSelected();
+            listBoxInitialization = false;
         }
 
         private void refreshButton_Click(object sender, EventArgs e)
         {
             RefreshWishes();
+            RefreshRings();
         }
 
+        private void RefreshRings()
+        {
+            var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
+
+            var teacherRingIds = _repo
+                .GetFiltredTeacherRings(tr => tr.Teacher.TeacherId == teacher.TeacherId)
+                .Select(tr => tr.Ring.RingId)
+                .ToList();
+            
+            var allRingViews = RingView.RingsToView(_repo.GetAllRings());
+
+            listBoxInitialization = true;
+            
+            RingsList.ValueMember = "RingId";
+            RingsList.DisplayMember = "Time";
+            RingsList.DataSource = allRingViews;
+
+            RingsList.ClearSelected();
+
+            for (int i = 0; i < RingsList.Items.Count; i++)
+            {
+                var ringId = allRingViews[i].RingId;
+
+                if (teacherRingIds.Contains(ringId))
+                {
+                    RingsList.SetSelected(i, true);
+                }
+            }
+            
+            listBoxInitialization = false;
+        }
+        
         private void RefreshWishes()
         {
             var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
@@ -94,7 +135,7 @@ namespace UchOtd.Schedule.Forms
         {
             var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
 
-            SetTeacherWishes(teacher, 100);
+            SetTeacherWishesForTeacherRings(teacher, 100);
 
             RefreshWishes();
         }
@@ -103,16 +144,19 @@ namespace UchOtd.Schedule.Forms
         {
             var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
 
-            SetTeacherWishes(teacher, 0);
+            SetTeacherWishesForTeacherRings(teacher, 0);
 
             RefreshWishes();
         }
 
-        private void SetTeacherWishes(Teacher teacher, int wishAmount)
+        private void SetTeacherWishesForTeacherRings(Teacher teacher, int wishAmount)
         {
             foreach (var calendar in _repo.GetAllCalendars())
             {
-                foreach (var ring in _repo.GetAllRings())
+                var teacherRings = _repo.GetTeacherRings(teacher);
+                var rings = teacherRings.Select(tr => tr.Ring);
+
+                foreach (var ring in rings)
                 {
                     var wish = new TeacherWish(teacher, calendar, ring, wishAmount);
 
@@ -139,7 +183,7 @@ namespace UchOtd.Schedule.Forms
 
         private void wishesView_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Tab && wishesView.CurrentCell != null && wishesView.CurrentCell.ColumnIndex > 1)
+            if (e.KeyCode == Keys.F2 && wishesView.CurrentCell != null && wishesView.CurrentCell.ColumnIndex > 1)
             {
                 e.Handled = true;
                 DataGridViewCell cell = wishesView.Rows[wishesView.CurrentCell.RowIndex].Cells[wishesView.CurrentCell.ColumnIndex];
@@ -214,7 +258,7 @@ namespace UchOtd.Schedule.Forms
                     }
 
 	            }
-	            catch (Exception exc)
+	            catch
 	            {
                     correct = false;
                     break;
@@ -250,7 +294,7 @@ namespace UchOtd.Schedule.Forms
                 var cell = collection[i];
                 var dow = cell.ColumnIndex - 1;
 
-                if (cell.ColumnIndex > 1)
+                if (cell.ColumnIndex <= 1)
                 {
                     continue;
                 }
@@ -297,7 +341,7 @@ namespace UchOtd.Schedule.Forms
             {
                 var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
 
-                SetTeacherWishes(teacher, simpleWish);
+                SetTeacherWishesForTeacherRings(teacher, simpleWish);
 
                 RefreshWishes();
             }
@@ -392,6 +436,90 @@ namespace UchOtd.Schedule.Forms
                     _repo.RemoveCustomTeacherWish(wish.CustomTeacherWishId);
                 }
             }  
+        }
+
+        private void RingsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBoxInitialization)
+            {
+                return;
+            }
+
+            var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
+
+            var teacherRingIds = _repo
+                .GetFiltredTeacherRings(tr => tr.Teacher.TeacherId == teacher.TeacherId)
+                .Select(tr => tr.Ring.RingId)
+                .ToList();
+
+
+            for (int i = 0; i < RingsList.Items.Count; i++)
+            {
+                bool selected = RingsList.GetSelected(i);
+                int ringId = ((List<RingView>)RingsList.DataSource)[i].RingId;
+                var ring = _repo.GetRing(ringId);
+
+                if (selected && !teacherRingIds.Contains(ringId))
+                {
+                    var newTeacherRing = new TeacherRing(teacher, _repo.GetRing(ringId));
+                    _repo.AddTeacherRing(newTeacherRing);
+
+                    var newTeacherWishList = new List<TeacherWish>();
+
+                    for (int dow = 1; dow <= 6; dow++)
+                    {
+                        newTeacherWishList.AddRange(
+                            _repo.GetDOWCalendars(dow)
+                            .Select(calendar => new TeacherWish(teacher, calendar, ring, 0)));
+                    }
+
+                    _repo.AddTeacherWishRange(newTeacherWishList);
+
+                    RefreshWishes();
+
+                    break;
+                }
+
+                if (!selected && teacherRingIds.Contains(ringId))
+                {
+                    var teacherRing = _repo.GetFirstFiltredTeacherRing(tr =>
+                        tr.Teacher.TeacherId == teacher.TeacherId &&
+                        tr.Ring.RingId == ringId);
+
+                    _repo.RemoveTeacherRing(teacherRing.TeacherRingId);
+
+                    var teacherWishes = _repo
+                        .GetFiltredTeacherWishes(tw =>
+                            tw.Teacher.TeacherId == teacher.TeacherId &&
+                            tw.Ring.RingId == ringId);
+
+                    foreach (var wish in teacherWishes)
+                    {
+                        _repo.RemoveTeacherWish(wish.TeacherWishId);
+                    }
+
+                    RefreshWishes();
+
+                    break;
+                }
+                
+            }
+        }
+
+        private void chooseRings_Click(object sender, EventArgs e)
+        {
+            var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
+
+            var chooseRingsForm = new ChooseRings(_repo, teacher);
+            chooseRingsForm.ShowDialog();
+
+            if (NeedsUpdateAfterChoosingRings)
+            {
+                RefreshWishes();
+                RefreshRings();
+            }
+
+            NeedsUpdateAfterChoosingRings = false;
         }        
     }
 }

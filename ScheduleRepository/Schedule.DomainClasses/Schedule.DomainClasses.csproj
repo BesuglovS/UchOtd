@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analyse\CustomTeacherWish.cs" />
+    <Compile Include="Analyse\TeacherRing.cs" />
     <Compile Include="Analyse\TeacherWish.cs" />
     <Compile Include="Config\ConfigOption.cs" />
     <Compile Include="Logs\LessonLogEvent.cs" />

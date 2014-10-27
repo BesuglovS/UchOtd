@@ -1358,7 +1358,6 @@ namespace UchOtd.Schedule
             PDFExport.ExportSchedulePage(facultyDowLessons, facultyName, "Export.pdf", DOWList.Text, Repo, true, false, false);
 
             Process.Start("Export.pdf");
-            var eprst = 999;
         }
 
         private void AllInPDF_Click(object sender, EventArgs e)
@@ -1366,8 +1365,6 @@ namespace UchOtd.Schedule
             //PDFExport.ExportWholeSchedule("Export.pdf", _repo, false, false, false);
 
             PDFExport.PrintWholeSchedule(Repo);
-
-            var eprst = 999;
         }
 
         private void BackupAndUpload_Click(object sender, EventArgs e)

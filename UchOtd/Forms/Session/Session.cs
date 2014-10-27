@@ -101,8 +101,6 @@ namespace UchOtd.Forms.Session
         private void BigRedButton_Click(object sender, EventArgs e)
         {
             _repo.FillExamListFromSchedule(_repo);
-
-            var eprst = 999;
         }
 
         private void showAll_Click(object sender, EventArgs e)

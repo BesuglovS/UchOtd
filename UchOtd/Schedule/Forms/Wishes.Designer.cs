@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.mainSplit = new System.Windows.Forms.SplitContainer();
+            this.chooseRings = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.FitAllLessonsDaysCount = new System.Windows.Forms.TextBox();
             this.FitAllLessonsInXDays = new System.Windows.Forms.CheckBox();
@@ -48,12 +49,17 @@
             this.Yes = new System.Windows.Forms.Button();
             this.refreshButton = new System.Windows.Forms.Button();
             this.teacherList = new System.Windows.Forms.ComboBox();
+            this.viewPanel = new System.Windows.Forms.Panel();
             this.wishesView = new System.Windows.Forms.DataGridView();
+            this.ringsPanel = new System.Windows.Forms.Panel();
+            this.RingsList = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplit)).BeginInit();
             this.mainSplit.Panel1.SuspendLayout();
             this.mainSplit.Panel2.SuspendLayout();
             this.mainSplit.SuspendLayout();
+            this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.wishesView)).BeginInit();
+            this.ringsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainSplit
@@ -65,6 +71,7 @@
             // 
             // mainSplit.Panel1
             // 
+            this.mainSplit.Panel1.Controls.Add(this.chooseRings);
             this.mainSplit.Panel1.Controls.Add(this.label3);
             this.mainSplit.Panel1.Controls.Add(this.FitAllLessonsDaysCount);
             this.mainSplit.Panel1.Controls.Add(this.FitAllLessonsInXDays);
@@ -87,10 +94,21 @@
             // 
             // mainSplit.Panel2
             // 
-            this.mainSplit.Panel2.Controls.Add(this.wishesView);
+            this.mainSplit.Panel2.Controls.Add(this.viewPanel);
+            this.mainSplit.Panel2.Controls.Add(this.ringsPanel);
             this.mainSplit.Size = new System.Drawing.Size(976, 654);
             this.mainSplit.SplitterDistance = 75;
             this.mainSplit.TabIndex = 0;
+            // 
+            // chooseRings
+            // 
+            this.chooseRings.Location = new System.Drawing.Point(577, 42);
+            this.chooseRings.Name = "chooseRings";
+            this.chooseRings.Size = new System.Drawing.Size(174, 23);
+            this.chooseRings.TabIndex = 20;
+            this.chooseRings.Text = "Выбрать звонки";
+            this.chooseRings.UseVisualStyleBackColor = true;
+            this.chooseRings.Click += new System.EventHandler(this.chooseRings_Click);
             // 
             // label3
             // 
@@ -272,6 +290,15 @@
             this.teacherList.Size = new System.Drawing.Size(435, 21);
             this.teacherList.TabIndex = 0;
             // 
+            // viewPanel
+            // 
+            this.viewPanel.Controls.Add(this.wishesView);
+            this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.viewPanel.Location = new System.Drawing.Point(152, 0);
+            this.viewPanel.Name = "viewPanel";
+            this.viewPanel.Size = new System.Drawing.Size(824, 575);
+            this.viewPanel.TabIndex = 1;
+            // 
             // wishesView
             // 
             this.wishesView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -279,10 +306,30 @@
             this.wishesView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.wishesView.Location = new System.Drawing.Point(0, 0);
             this.wishesView.Name = "wishesView";
-            this.wishesView.Size = new System.Drawing.Size(976, 575);
-            this.wishesView.TabIndex = 0;
+            this.wishesView.Size = new System.Drawing.Size(824, 575);
+            this.wishesView.TabIndex = 1;
             this.wishesView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.wishesView_CellValueChanged);
             this.wishesView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.wishesView_KeyDown);
+            // 
+            // ringsPanel
+            // 
+            this.ringsPanel.Controls.Add(this.RingsList);
+            this.ringsPanel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.ringsPanel.Location = new System.Drawing.Point(0, 0);
+            this.ringsPanel.Name = "ringsPanel";
+            this.ringsPanel.Size = new System.Drawing.Size(152, 575);
+            this.ringsPanel.TabIndex = 0;
+            // 
+            // RingsList
+            // 
+            this.RingsList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RingsList.FormattingEnabled = true;
+            this.RingsList.Location = new System.Drawing.Point(0, 0);
+            this.RingsList.Name = "RingsList";
+            this.RingsList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.RingsList.Size = new System.Drawing.Size(152, 575);
+            this.RingsList.TabIndex = 0;
+            this.RingsList.SelectedIndexChanged += new System.EventHandler(this.RingsList_SelectedIndexChanged);
             // 
             // Wishes
             // 
@@ -298,7 +345,9 @@
             this.mainSplit.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainSplit)).EndInit();
             this.mainSplit.ResumeLayout(false);
+            this.viewPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.wishesView)).EndInit();
+            this.ringsPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -307,7 +356,6 @@
 
         private System.Windows.Forms.SplitContainer mainSplit;
         private System.Windows.Forms.ComboBox teacherList;
-        private System.Windows.Forms.DataGridView wishesView;
         private System.Windows.Forms.Button refreshButton;
         private System.Windows.Forms.Button Yes;
         private System.Windows.Forms.Button No;
@@ -326,5 +374,10 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox LessonsLimitPerDay;
         private System.Windows.Forms.CheckBox LessonsLimitedPerDay;
+        private System.Windows.Forms.Button chooseRings;
+        private System.Windows.Forms.Panel viewPanel;
+        private System.Windows.Forms.DataGridView wishesView;
+        private System.Windows.Forms.Panel ringsPanel;
+        private System.Windows.Forms.ListBox RingsList;
     }
 }

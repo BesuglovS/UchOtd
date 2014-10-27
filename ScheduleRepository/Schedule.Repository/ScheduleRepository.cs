@@ -2893,6 +2893,117 @@ namespace Schedule.Repositories
         }
         #endregion
 
+        #region TeacherRingRepository
+        public List<TeacherRing> GetAllTeacherRings()
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.TeacherRings.Include(tr => tr.Teacher).Include(tr => tr.Ring).ToList();
+            }
+        }
+
+        public List<TeacherRing> GetFiltredTeacherRings(Func<TeacherRing, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.TeacherRings.Include(tr => tr.Teacher).Include(tr => tr.Ring).ToList().Where(condition).ToList();
+            }
+        }
+
+        public TeacherRing GetFirstFiltredTeacherRing(Func<TeacherRing, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.TeacherRings.Include(tr => tr.Teacher).Include(tr => tr.Ring).ToList().FirstOrDefault(condition);
+            }
+        }
+
+        public TeacherRing GetTeacherRing(int teacherRingId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.TeacherRings.Include(tr => tr.Teacher).Include(tr => tr.Ring).FirstOrDefault(tr => tr.TeacherRingId == teacherRingId);
+            }
+        }
+
+        public void AddTeacherRing(TeacherRing teacherRing)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                teacherRing.TeacherRingId = 0;
+
+                teacherRing.Teacher = context.Teachers.FirstOrDefault(tr => tr.TeacherId == teacherRing.Teacher.TeacherId);
+                teacherRing.Ring = context.Rings.FirstOrDefault(tr => tr.RingId == teacherRing.Ring.RingId);
+
+                context.TeacherRings.Add(teacherRing);
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateTeacherRing(TeacherRing teacherRing)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var curTeacherRing = context.TeacherRings.FirstOrDefault(tr => tr.TeacherRingId == teacherRing.TeacherRingId);
+
+                curTeacherRing.Teacher = context.Teachers.FirstOrDefault(tr => tr.TeacherId == teacherRing.Teacher.TeacherId);
+                curTeacherRing.Ring = context.Rings.FirstOrDefault(tr => tr.RingId == teacherRing.Ring.RingId);
+
+                context.SaveChanges();
+            }
+        }
+
+        public void RemoveTeacherRing(int teacherRingId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var teacherRing = context.TeacherRings.FirstOrDefault(tr => tr.TeacherRingId == teacherRingId);
+
+                context.TeacherRings.Remove(teacherRing);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddTeacherRingRange(IEnumerable<TeacherRing> teacherRingList)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                foreach (var teacherRing in teacherRingList)
+                {
+                    teacherRing.TeacherRingId = 0;
+
+                    teacherRing.Teacher = context.Teachers.FirstOrDefault(tr => tr.TeacherId == teacherRing.Teacher.TeacherId);
+                    teacherRing.Ring = context.Rings.FirstOrDefault(tr => tr.RingId == teacherRing.Ring.RingId);
+
+                    context.TeacherRings.Add(teacherRing);
+                }
+
+                context.SaveChanges();
+            }
+        }
+
+        public bool TeacherRingExists(Teacher teacher, Ring ring)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return ((context.TeacherRings
+                    .FirstOrDefault(tr =>
+                    tr.Teacher.TeacherId == teacher.TeacherId &&
+                    tr.Ring.RingId == ring.RingId)) != null);
+            }
+        }
+
+        public List<TeacherRing> GetTeacherRings(Teacher teacher)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.TeacherRings
+                    .Include(tr => tr.Teacher).Include(tr => tr.Ring)
+                    .Where(tr => tr.Teacher.TeacherId == teacher.TeacherId).ToList();
+            }
+        }
+        #endregion
+
         #region CustomTeacherWishRepository
         public List<CustomTeacherWish> GetAllCustomTeacherWishes()
         {
