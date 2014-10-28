@@ -3386,7 +3386,7 @@ namespace Schedule.Repositories
             }
         }
 
-        public List<Auditorium> GetFreeAuditoriumAtDOWTime(List<int> calendars, List<int> ringIds)
+        public List<Auditorium> GetFreeAuditoriumAtDOWTime(List<int> calendars, List<int> ringIds, int buildingId)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -3397,9 +3397,22 @@ namespace Schedule.Repositories
                          l.IsActive)
                      .Select(l => l.Auditorium.AuditoriumId)
                      .Distinct()
+                     .ToList();                
+
+                var occupiedAudEventsIds = context.AuditoriumEvents
+                    .Where(e =>
+                        (calendars.Contains(e.Calendar.CalendarId)) &&
+                        (ringIds.Contains(e.Ring.RingId)))
+                     .Select(e => e.Auditorium.AuditoriumId)
+                     .Distinct()
                      .ToList();
 
-                var result = context.Auditoriums.Where(a => !occupiedAudIds.Contains(a.AuditoriumId)).ToList();
+                var result = context.Auditoriums.Where(a => !occupiedAudIds.Contains(a.AuditoriumId) && !occupiedAudEventsIds.Contains(a.AuditoriumId)).ToList();
+
+                if (buildingId != -1)
+                {
+                    result = result.Where(a => a.Building.BuildingId == buildingId).ToList();
+                }
 
                 return result;
             }

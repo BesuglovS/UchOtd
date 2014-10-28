@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Schedule.DomainClasses.Main;
 using Schedule.Core;
+using UchOtd;
 
 namespace Schedule.Forms.DBLists.Lessons
 {
@@ -15,6 +16,8 @@ namespace Schedule.Forms.DBLists.Lessons
     {
         private readonly ScheduleRepository _repo;
         private readonly int tfdId = -1;
+
+        private int selectedBuildingId = -1;
 
         public AddLesson(ScheduleRepository repo)
         {
@@ -32,8 +35,106 @@ namespace Schedule.Forms.DBLists.Lessons
             this.tfdId = tfdId;
         }
 
+        private void radioButtonCheckedChanged(Object sender, EventArgs e)
+        {
+            var radioButton = (sender as RadioButton);
+            if (radioButton.Checked)
+            {
+                selectedBuildingId = (int)(sender as RadioButton).Tag;
+            }
+
+            if (StartupForm.school)
+            {
+                RefreshLists();
+            }
+        }
+
+        private string DetectBuildingByGroupName(string groupName)
+        {
+            if ((groupName.StartsWith("1")))
+            {
+                return "Ярмарочная";
+            }
+
+            if ((groupName.StartsWith("2")) || (groupName.StartsWith("3")) || (groupName.StartsWith("4")) ||
+                (groupName.StartsWith("5")) || (groupName.StartsWith("6")) || (groupName.StartsWith("7")))
+            {
+                return "Чапаевская";
+            }
+
+            if ((groupName.StartsWith("8")) || (groupName.StartsWith("9")) || 
+                (groupName.StartsWith("10")) || (groupName.StartsWith("11")))
+            {
+                return "Молодогвардейская";
+            }
+
+            return "UFO from outer space";
+        }
+
+        private void RefreshLists()
+        {
+            if (selectedBuildingId == -1)
+            {
+                return;
+            }
+
+            var currentBuilding = _repo.GetBuilding(selectedBuildingId);
+
+            // TFD list
+            var AllTfdList = _repo.GetAllTeacherForDiscipline();
+            var tfdList = new List<TeacherForDiscipline>();
+            foreach (var tfd in AllTfdList)
+            {
+                var partBuildingName = DetectBuildingByGroupName(tfd.Discipline.StudentGroup.Name);
+                var building = _repo.GetFirstFiltredBuilding(b => b.Name.Contains(partBuildingName));
+
+                if (building != null && building.BuildingId == selectedBuildingId)
+                {
+                    tfdList.Add(tfd);
+                }
+            }
+
+            var tfdViewList = tfdView.tfdsToView(tfdList);
+            tfdViewList = tfdViewList.OrderBy(tfdv => tfdv.tfdSummary).ToList();
+
+            teacherForDisciplineBox.DisplayMember = "tfdSummary";
+            teacherForDisciplineBox.ValueMember = "TeacherForDisciplineId";
+            teacherForDisciplineBox.DataSource = tfdViewList;
+        }
+
         private void AddLesson_Load(object sender, System.EventArgs e)
         {
+            var buildings = _repo.GetAllBuildings();
+
+            var startingPositionX = 10;
+            var startingPositionY = 5;
+            int buildingCounter = 1;
+            foreach (var building in buildings)
+            { 
+                RadioButton buildingButton = new RadioButton();
+                buildingButton.Name = "bb_" + building.BuildingId;
+                buildingButton.Tag = building.BuildingId;
+                buildingButton.Width = 200;
+                buildingButton.Text = building.Name;
+                buildingButton.Location = new Point(startingPositionX, startingPositionY);
+                buildingButton.CheckedChanged += radioButtonCheckedChanged;
+                BuildingsPanel.Controls.Add(buildingButton);
+                startingPositionX += 200;
+
+                if (buildingCounter % 3 == 0)
+                {
+                    startingPositionX = 10;
+                    startingPositionY += 20;
+                }
+
+                buildingCounter++;
+            }
+
+            var BuildingsRowCount = (buildings.Count / 3) + ((buildings.Count % 3 == 0) ? 0 : 1);
+
+            BuildingsPanel.Height = 8 + 20 * BuildingsRowCount;
+
+
             // TFD load
             var tfdList = _repo.GetAllTeacherForDiscipline();
             var tfdViewList = tfdView.tfdsToView(tfdList);
@@ -50,6 +151,7 @@ namespace Schedule.Forms.DBLists.Lessons
             }
 
             // Rings load
+            /*
             var ringsList = _repo.GetAllRings()                
                 .OrderBy(r => r.Time.TimeOfDay)
                 .ToList();
@@ -58,6 +160,7 @@ namespace Schedule.Forms.DBLists.Lessons
             ringsListBox.DataSource = ringsView;
             ringsListBox.DisplayMember = "Time";
             ringsListBox.ValueMember = "RingId";
+             */
 
             // DOW Local
             var dowList = new List<object>();
@@ -247,14 +350,13 @@ namespace Schedule.Forms.DBLists.Lessons
                 }
             }
 
-            var rings = new List<Ring>();
+            var ringIds = new List<int>();
             foreach (var ringView in ringsListBox.SelectedItems)
             {
-                rings.Add(_repo.GetRing(((RingView)ringView).RingId));
+                ringIds.Add(((RingView)ringView).RingId);
             }
-            var ringIds = rings.Select(r => r.RingId).ToList();
-
-            var res = _repo.GetFreeAuditoriumAtDOWTime(calendarIds, ringIds);
+            
+            var res = _repo.GetFreeAuditoriumAtDOWTime(calendarIds, ringIds, selectedBuildingId);
 
             var c = new Utilities.AudComparer();
             res = res
@@ -271,6 +373,73 @@ namespace Schedule.Forms.DBLists.Lessons
         private void reset_Click(object sender, EventArgs e)
         {
             audList.SelectedIndex = -1;
+        }
+
+        private void deselectBuilding_Click(object sender, EventArgs e)
+        {
+            foreach (var controlObject in BuildingsPanel.Controls)
+            {
+                var button = controlObject as RadioButton;
+
+                button.Checked = false;
+            }
+
+            selectedBuildingId = -1;
+        }
+
+        private void teacherForDisciplineBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateRings();
+        }
+
+        private void UpdateRings()
+        {
+            if (filterRings.Checked)
+            {
+                UpdateTFDRings();
+            }
+            else
+            {
+                var ringsList = _repo.GetAllRings()
+                .OrderBy(r => r.Time.TimeOfDay)
+                .ToList();
+                var ringsView = RingView.RingsToView(ringsList);
+
+                ringsListBox.DataSource = ringsView;
+                ringsListBox.DisplayMember = "Time";
+                ringsListBox.ValueMember = "RingId";
+            }
+        }
+
+        private void UpdateTFDRings()
+        {
+            if (!(teacherForDisciplineBox.SelectedValue is int))
+            {
+                return;
+            }
+
+            var tfdId = (int)teacherForDisciplineBox.SelectedValue;
+            var tfd = _repo.GetTeacherForDiscipline(tfdId);
+
+            var teacher = tfd.Teacher;
+
+            var RingsForTeacher = _repo
+                .GetTeacherRings(teacher)
+                .Select(tr => tr.Ring)
+                .OrderBy(r => r.Time.TimeOfDay)
+                .ToList();
+
+            // Rings load            
+            var ringsView = RingView.RingsToView(RingsForTeacher);
+
+            ringsListBox.DataSource = ringsView;
+            ringsListBox.DisplayMember = "Time";
+            ringsListBox.ValueMember = "RingId";
+        }
+
+        private void filterRings_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateRings();
         }
     }
 }

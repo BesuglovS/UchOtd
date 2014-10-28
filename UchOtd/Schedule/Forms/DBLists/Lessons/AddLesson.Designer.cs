@@ -47,12 +47,17 @@
             this.reset = new System.Windows.Forms.Button();
             this.ringsListBox = new System.Windows.Forms.ListBox();
             this.DayOfWeekListBox = new System.Windows.Forms.ListBox();
+            this.BuildingsPanel = new System.Windows.Forms.Panel();
+            this.MainPanel = new System.Windows.Forms.Panel();
+            this.deselectBuilding = new System.Windows.Forms.Button();
+            this.filterRings = new System.Windows.Forms.CheckBox();
+            this.MainPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // Execute
             // 
             this.Execute.Font = new System.Drawing.Font("Microsoft Sans Serif", 24.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Execute.Location = new System.Drawing.Point(15, 246);
+            this.Execute.Location = new System.Drawing.Point(6, 245);
             this.Execute.Name = "Execute";
             this.Execute.Size = new System.Drawing.Size(213, 61);
             this.Execute.TabIndex = 5;
@@ -63,7 +68,7 @@
             // Cancel
             // 
             this.Cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 24.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Cancel.Location = new System.Drawing.Point(366, 244);
+            this.Cancel.Location = new System.Drawing.Point(357, 243);
             this.Cancel.Name = "Cancel";
             this.Cancel.Size = new System.Drawing.Size(227, 61);
             this.Cancel.TabIndex = 6;
@@ -76,7 +81,7 @@
             this.isActive.AutoSize = true;
             this.isActive.Checked = true;
             this.isActive.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.isActive.Location = new System.Drawing.Point(15, 223);
+            this.isActive.Location = new System.Drawing.Point(6, 222);
             this.isActive.Name = "isActive";
             this.isActive.Size = new System.Drawing.Size(180, 17);
             this.isActive.TabIndex = 25;
@@ -86,7 +91,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Location = new System.Drawing.Point(3, 8);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(227, 13);
             this.label1.TabIndex = 3;
@@ -95,15 +100,16 @@
             // teacherForDisciplineBox
             // 
             this.teacherForDisciplineBox.FormattingEnabled = true;
-            this.teacherForDisciplineBox.Location = new System.Drawing.Point(15, 34);
+            this.teacherForDisciplineBox.Location = new System.Drawing.Point(6, 33);
             this.teacherForDisciplineBox.Name = "teacherForDisciplineBox";
             this.teacherForDisciplineBox.Size = new System.Drawing.Size(574, 21);
             this.teacherForDisciplineBox.TabIndex = 0;
+            this.teacherForDisciplineBox.SelectedIndexChanged += new System.EventHandler(this.teacherForDisciplineBox_SelectedIndexChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(144, 68);
+            this.label2.Location = new System.Drawing.Point(135, 67);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(84, 13);
             this.label2.TabIndex = 6;
@@ -112,7 +118,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 68);
+            this.label3.Location = new System.Drawing.Point(3, 67);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(73, 13);
             this.label3.TabIndex = 8;
@@ -121,7 +127,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(363, 67);
+            this.label4.Location = new System.Drawing.Point(354, 66);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(89, 13);
             this.label4.TabIndex = 10;
@@ -129,7 +135,7 @@
             // 
             // lessonWeeks
             // 
-            this.lessonWeeks.Location = new System.Drawing.Point(366, 84);
+            this.lessonWeeks.Location = new System.Drawing.Point(357, 83);
             this.lessonWeeks.Name = "lessonWeeks";
             this.lessonWeeks.Size = new System.Drawing.Size(223, 20);
             this.lessonWeeks.TabIndex = 3;
@@ -138,7 +144,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(19, 316);
+            this.label5.Location = new System.Drawing.Point(10, 315);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(82, 13);
             this.label5.TabIndex = 14;
@@ -147,7 +153,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(19, 347);
+            this.label6.Location = new System.Drawing.Point(10, 346);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(87, 13);
             this.label6.TabIndex = 15;
@@ -156,7 +162,7 @@
             // publicComment
             // 
             this.publicComment.FormattingEnabled = true;
-            this.publicComment.Location = new System.Drawing.Point(127, 313);
+            this.publicComment.Location = new System.Drawing.Point(118, 312);
             this.publicComment.Name = "publicComment";
             this.publicComment.Size = new System.Drawing.Size(466, 21);
             this.publicComment.TabIndex = 7;
@@ -164,14 +170,14 @@
             // hiddenComment
             // 
             this.hiddenComment.FormattingEnabled = true;
-            this.hiddenComment.Location = new System.Drawing.Point(127, 344);
+            this.hiddenComment.Location = new System.Drawing.Point(118, 343);
             this.hiddenComment.Name = "hiddenComment";
             this.hiddenComment.Size = new System.Drawing.Size(466, 21);
             this.hiddenComment.TabIndex = 8;
             // 
             // auditoriums
             // 
-            this.auditoriums.Location = new System.Drawing.Point(366, 110);
+            this.auditoriums.Location = new System.Drawing.Point(357, 109);
             this.auditoriums.Multiline = true;
             this.auditoriums.Name = "auditoriums";
             this.auditoriums.Size = new System.Drawing.Size(223, 90);
@@ -180,7 +186,7 @@
             // 
             // showAuds
             // 
-            this.showAuds.Location = new System.Drawing.Point(366, 209);
+            this.showAuds.Location = new System.Drawing.Point(357, 208);
             this.showAuds.Name = "showAuds";
             this.showAuds.Size = new System.Drawing.Size(223, 23);
             this.showAuds.TabIndex = 26;
@@ -191,14 +197,14 @@
             // audList
             // 
             this.audList.FormattingEnabled = true;
-            this.audList.Location = new System.Drawing.Point(234, 84);
+            this.audList.Location = new System.Drawing.Point(225, 83);
             this.audList.Name = "audList";
             this.audList.Size = new System.Drawing.Size(126, 225);
             this.audList.TabIndex = 27;
             // 
             // reset
             // 
-            this.reset.Location = new System.Drawing.Point(234, 58);
+            this.reset.Location = new System.Drawing.Point(225, 57);
             this.reset.Name = "reset";
             this.reset.Size = new System.Drawing.Size(126, 23);
             this.reset.TabIndex = 28;
@@ -209,7 +215,7 @@
             // ringsListBox
             // 
             this.ringsListBox.FormattingEnabled = true;
-            this.ringsListBox.Location = new System.Drawing.Point(147, 84);
+            this.ringsListBox.Location = new System.Drawing.Point(138, 83);
             this.ringsListBox.Name = "ringsListBox";
             this.ringsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.ringsListBox.Size = new System.Drawing.Size(81, 134);
@@ -218,36 +224,77 @@
             // DayOfWeekListBox
             // 
             this.DayOfWeekListBox.FormattingEnabled = true;
-            this.DayOfWeekListBox.Location = new System.Drawing.Point(15, 84);
+            this.DayOfWeekListBox.Location = new System.Drawing.Point(6, 83);
             this.DayOfWeekListBox.Name = "DayOfWeekListBox";
             this.DayOfWeekListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.DayOfWeekListBox.Size = new System.Drawing.Size(126, 134);
             this.DayOfWeekListBox.TabIndex = 29;
             // 
+            // BuildingsPanel
+            // 
+            this.BuildingsPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.BuildingsPanel.Location = new System.Drawing.Point(0, 0);
+            this.BuildingsPanel.Name = "BuildingsPanel";
+            this.BuildingsPanel.Size = new System.Drawing.Size(598, 56);
+            this.BuildingsPanel.TabIndex = 30;
+            // 
+            // MainPanel
+            // 
+            this.MainPanel.Controls.Add(this.filterRings);
+            this.MainPanel.Controls.Add(this.deselectBuilding);
+            this.MainPanel.Controls.Add(this.label1);
+            this.MainPanel.Controls.Add(this.Execute);
+            this.MainPanel.Controls.Add(this.DayOfWeekListBox);
+            this.MainPanel.Controls.Add(this.Cancel);
+            this.MainPanel.Controls.Add(this.ringsListBox);
+            this.MainPanel.Controls.Add(this.isActive);
+            this.MainPanel.Controls.Add(this.reset);
+            this.MainPanel.Controls.Add(this.teacherForDisciplineBox);
+            this.MainPanel.Controls.Add(this.audList);
+            this.MainPanel.Controls.Add(this.label2);
+            this.MainPanel.Controls.Add(this.showAuds);
+            this.MainPanel.Controls.Add(this.label3);
+            this.MainPanel.Controls.Add(this.auditoriums);
+            this.MainPanel.Controls.Add(this.label4);
+            this.MainPanel.Controls.Add(this.hiddenComment);
+            this.MainPanel.Controls.Add(this.lessonWeeks);
+            this.MainPanel.Controls.Add(this.publicComment);
+            this.MainPanel.Controls.Add(this.label5);
+            this.MainPanel.Controls.Add(this.label6);
+            this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MainPanel.Location = new System.Drawing.Point(0, 56);
+            this.MainPanel.Name = "MainPanel";
+            this.MainPanel.Size = new System.Drawing.Size(598, 376);
+            this.MainPanel.TabIndex = 31;
+            // 
+            // deselectBuilding
+            // 
+            this.deselectBuilding.Location = new System.Drawing.Point(417, 3);
+            this.deselectBuilding.Name = "deselectBuilding";
+            this.deselectBuilding.Size = new System.Drawing.Size(163, 20);
+            this.deselectBuilding.TabIndex = 30;
+            this.deselectBuilding.Text = "Снять выделение корпуса";
+            this.deselectBuilding.UseVisualStyleBackColor = true;
+            this.deselectBuilding.Click += new System.EventHandler(this.deselectBuilding_Click);
+            // 
+            // filterRings
+            // 
+            this.filterRings.AutoSize = true;
+            this.filterRings.Location = new System.Drawing.Point(236, 6);
+            this.filterRings.Name = "filterRings";
+            this.filterRings.Size = new System.Drawing.Size(134, 17);
+            this.filterRings.TabIndex = 31;
+            this.filterRings.Text = "Фильтровать звонки";
+            this.filterRings.UseVisualStyleBackColor = true;
+            this.filterRings.CheckedChanged += new System.EventHandler(this.filterRings_CheckedChanged);
+            // 
             // AddLesson
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(601, 374);
-            this.Controls.Add(this.DayOfWeekListBox);
-            this.Controls.Add(this.ringsListBox);
-            this.Controls.Add(this.reset);
-            this.Controls.Add(this.audList);
-            this.Controls.Add(this.showAuds);
-            this.Controls.Add(this.auditoriums);
-            this.Controls.Add(this.hiddenComment);
-            this.Controls.Add(this.publicComment);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.lessonWeeks);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.teacherForDisciplineBox);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.isActive);
-            this.Controls.Add(this.Cancel);
-            this.Controls.Add(this.Execute);
+            this.ClientSize = new System.Drawing.Size(598, 432);
+            this.Controls.Add(this.MainPanel);
+            this.Controls.Add(this.BuildingsPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -255,8 +302,9 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Добавить урок(и)";
             this.Load += new System.EventHandler(this.AddLesson_Load);
+            this.MainPanel.ResumeLayout(false);
+            this.MainPanel.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -281,5 +329,9 @@
         private System.Windows.Forms.Button reset;
         private System.Windows.Forms.ListBox ringsListBox;
         private System.Windows.Forms.ListBox DayOfWeekListBox;
+        private System.Windows.Forms.Panel BuildingsPanel;
+        private System.Windows.Forms.Panel MainPanel;
+        private System.Windows.Forms.Button deselectBuilding;
+        private System.Windows.Forms.CheckBox filterRings;
     }
 }

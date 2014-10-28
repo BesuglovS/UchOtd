@@ -38,7 +38,7 @@ namespace UchOtd.Schedule.Forms
                 .Select(tr => tr.Ring.RingId)
                 .ToList();
 
-            var allRingViews = RingView.RingsToView(_repo.GetAllRings());
+            var allRingViews = RingView.RingsToView(_repo.GetAllRings().OrderBy(r => r.Time.TimeOfDay).ToList());
 
             RingsList.ValueMember = "RingId";
             RingsList.DisplayMember = "Time";
@@ -123,20 +123,15 @@ namespace UchOtd.Schedule.Forms
         private void MolRings_Click(object sender, EventArgs e)
         {
             var standard80Rings = new List<string>
-            {"08:00", "09:25", "11:05", "12:35", "14:00", "15:40", "17:05", "18:35"};
-
-            var allRings = _repo.GetAllRings();
-            var allRingViews = RingView.RingsToView(allRings);
-
-            RingsList.ValueMember = "RingId";
-            RingsList.DisplayMember = "Time";
-            RingsList.DataSource = allRingViews;
+            {"8:00", "9:25", "11:05", "12:35", "14:00", "15:40", "17:05", "18:35"};
 
             RingsList.ClearSelected();
 
-            for (int i = 0; i < RingsList.Items.Count; i++)
+            List<RingView> datasource = (List<RingView>)RingsList.DataSource;
+
+            for (int i = 0; i < datasource.Count; i++)
             {
-                RingsList.SetSelected(i, standard80Rings.Contains(allRings[i].Time.ToString("HH:mm")));
+                RingsList.SetSelected(i, standard80Rings.Contains(datasource[i].Time));
             }
         }
     }

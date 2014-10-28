@@ -55,10 +55,10 @@ namespace UchOtd.Schedule.Forms
 
             var teacherRingIds = _repo
                 .GetFiltredTeacherRings(tr => tr.Teacher.TeacherId == teacher.TeacherId)
-                .Select(tr => tr.Ring.RingId)
+                .Select(tr => tr.Ring.RingId)                
                 .ToList();
             
-            var allRingViews = RingView.RingsToView(_repo.GetAllRings());
+            var allRingViews = RingView.RingsToView(_repo.GetAllRings().OrderBy(r => r.Time.TimeOfDay).ToList());
 
             listBoxInitialization = true;
             
