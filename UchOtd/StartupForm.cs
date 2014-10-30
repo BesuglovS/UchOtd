@@ -17,12 +17,17 @@ using UchOtd.Forms.Session;
 using UchOtd.Schedule;
 using Schedule.wnu;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Data.SqlClient;
+using System.Data;
+using System.Security.AccessControl;
 
 namespace UchOtd
 {
     public partial class StartupForm : Form
     {
         public static bool school = false;
+        public static string DefaultDBName = "Schedule14151";
 
         public ScheduleRepository _repo;
         public UchOtdRepository _UOrepo; 
@@ -70,32 +75,46 @@ namespace UchOtd
         {
             InitializeComponent();
 
+            BackupDBLast10Runs(DefaultDBName);
+
             InitRepositories();
 
             // Контингент - Alt-S
             HotKeyManager.RegisterHotKey(Keys.S, (uint)KeyModifiers.Alt);
+
             // Просмотр расписания - Alt-V
             HotKeyManager.RegisterHotKey(Keys.V, (uint)KeyModifiers.Alt);
+
             // Расписание преподавателя - Alt-T
             HotKeyManager.RegisterHotKey(Keys.T, (uint)KeyModifiers.Alt);
+
             // Изменения расписание - Alt-C
             HotKeyManager.RegisterHotKey(Keys.C, (uint)KeyModifiers.Alt);
+
             // Занятость аудиторий - Alt-A
             HotKeyManager.RegisterHotKey(Keys.A, (uint)KeyModifiers.Alt);
+
             // Заметки - Alt-N
             HotKeyManager.RegisterHotKey(Keys.N, (uint)KeyModifiers.Alt);
+
             // Телефоны - Alt-P
             HotKeyManager.RegisterHotKey(Keys.P, (uint)KeyModifiers.Alt);
+
             // Редакторование расписания - Alt-R
             HotKeyManager.RegisterHotKey(Keys.R, (uint)KeyModifiers.Alt);
+
             // Список пар по TFD - Alt-L
             HotKeyManager.RegisterHotKey(Keys.L, (uint)KeyModifiers.Alt);
+
             // Список пар преподавателя - Alt-Shift-T
             HotKeyManager.RegisterHotKey(Keys.T, (uint)(KeyModifiers.Alt | KeyModifiers.Shift));
+
             // Список пар преподавателя - Ctrl-Shift-T
             HotKeyManager.RegisterHotKey(Keys.T, (uint)(KeyModifiers.Control | KeyModifiers.Shift));
+
             // Расписание на день - Alt-D
             HotKeyManager.RegisterHotKey(Keys.D, (uint)KeyModifiers.Alt);
+
             // Расписание сессии - Ctrl-Alt-S
             HotKeyManager.RegisterHotKey(Keys.S, (uint)(KeyModifiers.Control | KeyModifiers.Alt));
 
@@ -125,48 +144,83 @@ namespace UchOtd
             _dailyLessonsFormOpened = false;
             _sessionFormOpened = false;
             
-            //BackupDBEveryXRuns();
-            
             trayIcon.Visible = true;
         }
 
-        private void BackupDBEveryXRuns()
+        private void BackupDBLast10Runs(string dbName)
         {
             try
             {
-                string pathCount = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\RunCount.txt";
-                int count = -1;
-                if (!File.Exists(pathCount))
-                {
-                    var sw = new StreamWriter(pathCount);
-                    sw.WriteLine("1");
-                    count = 1;
-                    sw.Close();
-                }
-                else
-                {
-                    var sr = new StreamReader(pathCount);
-                    int.TryParse(sr.ReadLine(), out count);
+                string AppDataPath = "D:\\UchOtd-DB-Backup";
 
-                    count++;
-
-                    var sw = new StreamWriter(pathCount);
-                    sw.WriteLine(count);
-                    sw.Close();
+                if (!Directory.Exists(AppDataPath))
+                {
+                    Directory.CreateDirectory(AppDataPath);
                 }
 
-                if (count % 10 == 0)
+                var filesInfo = new DirectoryInfo(AppDataPath).GetFiles("*.bak");
+                if (filesInfo.Length >= 10)
                 {
-                    string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                    var dbName = _repo.ExtractDBName(_repo.ConnectionString);
-                    var filename = path + "\\" + dbName + DateTime.Now.ToString("_dd-MMM_HH-mm-ss") + ".bak";
-
-                    _repo.BackupDB(filename);
+                    var extrafiles = new List<FileInfo> (new DirectoryInfo(AppDataPath).EnumerateFiles("*.bak"))
+                        .OrderByDescending(f => f.LastWriteTime)
+                        .Skip(9)
+                        .ToList();
+                    extrafiles.ForEach(f => f.Delete());
                 }
+
+                var filename = AppDataPath + "\\" + dbName + DateTime.Now.ToString("_dd-MMM_HH-mm-ss") + ".bak";
+
+                BackupDB(dbName, filename);
+                
             }
-            catch
+            catch (Exception exc)
             {
+                try
+                {
+                    var sw = new StreamWriter("D:\\UchOtd-errorLog.txt");
+                    sw.WriteLine(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + " - " + exc.Message);
+                    sw.Close();
+                }
+                catch
+                {                                        
+                }
+                
             }
+        }
+
+        private void BackupDB(string dbName, string filename)
+        {
+            SqlConnection sqlConnection1 = new SqlConnection("data source=tcp:127.0.0.1,1433;Database=" + dbName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "BACKUP DATABASE " + dbName + " TO DISK = '" + filename + "' WITH FORMAT, MEDIANAME='" + dbName + "'";
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = sqlConnection1;
+
+            sqlConnection1.Open();
+
+            cmd.ExecuteNonQuery();
+
+            sqlConnection1.Close();
+        }
+
+        // Adds an ACL entry on the specified directory for the specified account. 
+        public static void AddDirectorySecurity(string FileName, string Account, FileSystemRights Rights, AccessControlType ControlType)
+        {
+            // Create a new DirectoryInfo object.
+            DirectoryInfo dInfo = new DirectoryInfo(FileName);
+
+            // Get a DirectorySecurity object that represents the  
+            // current security settings.
+            DirectorySecurity dSecurity = dInfo.GetAccessControl();
+
+            // Add the FileSystemAccessRule to the security settings. 
+            dSecurity.AddAccessRule(new FileSystemAccessRule(Account,
+                                                            Rights,
+                                                            ControlType));
+
+            // Set the new access settings.
+            dInfo.SetAccessControl(dSecurity);
         }
 
         private void InitRepositories()
@@ -197,7 +251,7 @@ namespace UchOtd
              */
 
             //_repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
-            _repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+            _repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=" + DefaultDBName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
             _UOrepo = new UchOtdRepository("data source=tcp:" + ServerList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
 
             if (StartupForm.school)

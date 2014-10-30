@@ -92,12 +92,12 @@ namespace Schedule.Repositories
             ExecuteQuery("use master; RESTORE DATABASE " + DBName + " FROM DISK = '" + filename + "' WITH REPLACE");
         }
 
-        private void ExecuteQuery(string restoreSQL)
+        private void ExecuteQuery(string SQLQuery)
         {
             SqlConnection sqlConnection1 = new SqlConnection(ConnectionString);
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = restoreSQL;
+            cmd.CommandText = SQLQuery;
             cmd.CommandType = CommandType.Text;
             cmd.Connection = sqlConnection1;
 
