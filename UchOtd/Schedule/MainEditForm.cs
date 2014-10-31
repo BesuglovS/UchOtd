@@ -20,6 +20,7 @@ using UchOtd.Schedule.Core;
 using UchOtd.Schedule.Forms;
 using UchOtd.Schedule.wnu.MySQLViews;
 using UchOtd.Schedule.Forms.DBLists;
+using UchOtd.Schedule.Forms.Analysis;
 
 namespace UchOtd.Schedule
 {
@@ -1690,6 +1691,30 @@ namespace UchOtd.Schedule
             var wishesForm = new Wishes(Repo);
             wishesForm.Show();
 
+        }
+
+        private void аудиторииДисциплинToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var discsAudsForm = new DisciplinesAuditoriums(Repo);
+            discsAudsForm.Show();
+        }
+
+        private void нельзяСтавитьПоследнимУрокомToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var NottheLastLessonForm = new DoubledLessons(Repo);
+            NottheLastLessonForm.Show();
+        }
+
+        private void парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var IncompatiblePairsForm = new IncompatiblePairs(Repo);
+            IncompatiblePairsForm.Show();
+        }
+
+        private void дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var DoubledLessonsFrom = new DoubledLessons(Repo);
+            DoubledLessonsFrom.Show();
         }
     }
 }

@@ -206,16 +206,28 @@
     <Compile Include="Schedule\Forms\AllChanges.Designer.cs">
       <DependentUpon>AllChanges.cs</DependentUpon>
     </Compile>
+    <Compile Include="Schedule\Forms\Analysis\IncompatiblePairs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\IncompatiblePairs.Designer.cs">
+      <DependentUpon>IncompatiblePairs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\DoubledLessons.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\DoubledLessons.Designer.cs">
+      <DependentUpon>DoubledLessons.cs</DependentUpon>
+    </Compile>
     <Compile Include="Schedule\Forms\Auditoriums.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Schedule\Forms\Auditoriums.Designer.cs">
       <DependentUpon>Auditoriums.cs</DependentUpon>
     </Compile>
-    <Compile Include="Schedule\Forms\ChooseRings.cs">
+    <Compile Include="Schedule\Forms\Analysis\ChooseRings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Schedule\Forms\ChooseRings.Designer.cs">
+    <Compile Include="Schedule\Forms\Analysis\ChooseRings.Designer.cs">
       <DependentUpon>ChooseRings.cs</DependentUpon>
     </Compile>
     <Compile Include="Schedule\Forms\DBLists\AuditoriumEventsList.cs">
@@ -302,6 +314,18 @@
     <Compile Include="Schedule\Forms\DBLists\TeacherList.Designer.cs">
       <DependentUpon>TeacherList.cs</DependentUpon>
     </Compile>
+    <Compile Include="Schedule\Forms\Analysis\DisciplinesAuditoriums.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\DisciplinesAuditoriums.Designer.cs">
+      <DependentUpon>DisciplinesAuditoriums.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\LastLesson.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\LastLesson.Designer.cs">
+      <DependentUpon>LastLesson.cs</DependentUpon>
+    </Compile>
     <Compile Include="Schedule\Forms\LessonListByTeacher.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -332,10 +356,10 @@
     <Compile Include="Schedule\Forms\teacherHours.Designer.cs">
       <DependentUpon>teacherHours.cs</DependentUpon>
     </Compile>
-    <Compile Include="Schedule\Forms\Wishes.cs">
+    <Compile Include="Schedule\Forms\Analysis\Wishes.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Schedule\Forms\Wishes.Designer.cs">
+    <Compile Include="Schedule\Forms\Analysis\Wishes.Designer.cs">
       <DependentUpon>Wishes.cs</DependentUpon>
     </Compile>
     <Compile Include="Schedule\Forms\WordExportForm.cs">
@@ -357,7 +381,9 @@
     <Compile Include="Schedule\Views\DBListViews\GroupView.cs" />
     <Compile Include="Schedule\Views\DBListViews\RingView.cs" />
     <Compile Include="Schedule\Views\DBListViews\StudentView.cs" />
+    <Compile Include="Schedule\Views\DisciplineTextView.cs" />
     <Compile Include="Schedule\Views\FiveGroupsView.cs" />
+    <Compile Include="Schedule\Views\IncompatiblePairView.cs" />
     <Compile Include="Schedule\Views\LessonLogEventView.cs" />
     <Compile Include="Schedule\Views\LessonViewAtLessonListByTeacher.cs" />
     <Compile Include="Schedule\Views\LessonViewAtLessonListByTFD.cs" />
@@ -429,10 +455,16 @@
     <EmbeddedResource Include="Schedule\Forms\AllChanges.resx">
       <DependentUpon>AllChanges.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\Analysis\IncompatiblePairs.resx">
+      <DependentUpon>IncompatiblePairs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\Analysis\DoubledLessons.resx">
+      <DependentUpon>DoubledLessons.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\Auditoriums.resx">
       <DependentUpon>Auditoriums.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Schedule\Forms\ChooseRings.resx">
+    <EmbeddedResource Include="Schedule\Forms\Analysis\ChooseRings.resx">
       <DependentUpon>ChooseRings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\DBLists\AuditoriumList.resx">
@@ -456,13 +488,19 @@
     <EmbeddedResource Include="Schedule\Forms\DBLists\TeacherList.resx">
       <DependentUpon>TeacherList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\Analysis\DisciplinesAuditoriums.resx">
+      <DependentUpon>DisciplinesAuditoriums.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\Analysis\LastLesson.resx">
+      <DependentUpon>LastLesson.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\LessonListByTFD.resx">
       <DependentUpon>LessonListByTFD.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\teacherHours.resx">
       <DependentUpon>teacherHours.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Schedule\Forms\Wishes.resx">
+    <EmbeddedResource Include="Schedule\Forms\Analysis\Wishes.resx">
       <DependentUpon>Wishes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\WordExportForm.resx">
@@ -653,6 +691,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

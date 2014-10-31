@@ -3124,7 +3124,216 @@ namespace Schedule.Repositories
             }
         }
         #endregion
-        
+
+        #region DisciplineAuditoriumRepository
+        public List<DisciplineAuditorium> GetAllDisciplineAuditorium()
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.DisciplineAuditoriums.Include(da => da.Auditorium).Include(da => da.Discipline.StudentGroup).ToList();
+            }
+        }
+
+        public List<DisciplineAuditorium> GetFiltredDisciplineAuditorium(Func<DisciplineAuditorium, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.DisciplineAuditoriums.Include(da => da.Auditorium).Include(da => da.Discipline.StudentGroup).ToList().Where(condition).ToList();
+            }
+        }
+
+        public DisciplineAuditorium GetFirstFiltredDisciplineAuditorium(Func<DisciplineAuditorium, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.DisciplineAuditoriums.Include(da => da.Auditorium).Include(da => da.Discipline.StudentGroup).ToList().FirstOrDefault(condition);
+            }
+        }
+
+        public DisciplineAuditorium GetDisciplineAuditorium(int disciplineAuditoriumId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.DisciplineAuditoriums.Include(da => da.Auditorium).Include(da => da.Discipline.StudentGroup)
+                    .FirstOrDefault(da => da.DisciplineAuditoriumId == disciplineAuditoriumId);
+            }
+        }
+
+        public DisciplineAuditorium FindDisciplineAuditorium(Auditorium a, Discipline d)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.DisciplineAuditoriums.Include(da => da.Auditorium).Include(da => da.Discipline.StudentGroup)
+                    .FirstOrDefault(da => da.Auditorium.AuditoriumId == a.AuditoriumId && da.Discipline.DisciplineId == d.DisciplineId);
+            }
+        }
+
+        public void AddDisciplineAuditorium(DisciplineAuditorium disciplineAuditorium)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                disciplineAuditorium.DisciplineAuditoriumId = 0;
+
+                disciplineAuditorium.Auditorium = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == disciplineAuditorium.Auditorium.AuditoriumId);
+                disciplineAuditorium.Discipline = context.Disciplines.FirstOrDefault(d => d.DisciplineId == disciplineAuditorium.Discipline.DisciplineId);
+
+                context.DisciplineAuditoriums.Add(disciplineAuditorium);
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateDisciplineAuditorium(DisciplineAuditorium disciplineAuditorium)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var curDisciplineAuditorium = context.DisciplineAuditoriums.FirstOrDefault(da => da.DisciplineAuditoriumId == disciplineAuditorium.DisciplineAuditoriumId);
+
+                curDisciplineAuditorium.Auditorium = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == disciplineAuditorium.Auditorium.AuditoriumId);
+                curDisciplineAuditorium.Discipline = context.Disciplines.FirstOrDefault(d => d.DisciplineId == disciplineAuditorium.Discipline.DisciplineId);
+
+                context.SaveChanges();
+            }
+        }
+
+        public void RemoveDisciplineAuditorium(int disciplineAuditoriumId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var disciplineAuditorium = context.DisciplineAuditoriums.FirstOrDefault(da => da.DisciplineAuditoriumId == disciplineAuditoriumId);
+
+                context.DisciplineAuditoriums.Remove(disciplineAuditorium);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddDisciplineAuditoriumRange(IEnumerable<DisciplineAuditorium> disciplineAuditoriumList)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                foreach (var disciplineAuditorium in disciplineAuditoriumList)
+                {
+                    disciplineAuditorium.DisciplineAuditoriumId = 0;
+                    context.DisciplineAuditoriums.Add(disciplineAuditorium);
+                }
+
+                context.SaveChanges();
+            }
+        }
+
+        public List<Auditorium> GetDisciplinesAuditoriums(Discipline discipline)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.DisciplineAuditoriums.Include(da => da.Auditorium).Include(da => da.Discipline.StudentGroup).ToList()
+                    .Where(da => da.Discipline.DisciplineId == discipline.DisciplineId)
+                    .Select(da => da.Auditorium)
+                    .ToList();
+            }
+        }
+
+
+        #endregion
+
+        #region CustomDisciplineAttributeRepository
+        public List<CustomDisciplineAttribute> GetAllCustomDisciplineAttributes()
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.CustomDisciplineAttributes.Include(cda => cda.Discipline.StudentGroup).ToList();
+            }
+        }
+
+        public List<CustomDisciplineAttribute> GetFiltredCustomDisciplineAttributes(Func<CustomDisciplineAttribute, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.CustomDisciplineAttributes.Include(cda => cda.Discipline.StudentGroup).ToList().Where(condition).ToList();
+            }
+        }
+
+        public CustomDisciplineAttribute GetFirstFiltredCustomDisciplineAttribute(Func<CustomDisciplineAttribute, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.CustomDisciplineAttributes.Include(cda => cda.Discipline.StudentGroup).ToList().FirstOrDefault(condition);
+            }
+        }
+
+        public CustomDisciplineAttribute GetCustomDisciplineAttribute(int customDisciplineAttributeId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.CustomDisciplineAttributes.Include(cda => cda.Discipline.StudentGroup)
+                    .FirstOrDefault(cda => cda.CustomDisciplineAttributeId == customDisciplineAttributeId);
+            }
+        }
+
+        public string GetCustomDisciplineAttribute(Discipline d, string Name)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var attr = context.CustomDisciplineAttributes.Include(cda => cda.Discipline.StudentGroup)
+                    .FirstOrDefault(cda => cda.Discipline.DisciplineId == d.DisciplineId && cda.Key == Name);
+
+                return (attr == null) ? null : attr.Value;
+            }
+        }
+
+        public void AddCustomDisciplineAttribute(CustomDisciplineAttribute customDisciplineAttribute)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                customDisciplineAttribute.CustomDisciplineAttributeId = 0;
+
+                customDisciplineAttribute.Discipline = context.Disciplines.FirstOrDefault(d => d.DisciplineId == customDisciplineAttribute.Discipline.DisciplineId);
+
+                context.CustomDisciplineAttributes.Add(customDisciplineAttribute);
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateCustomDisciplineAttribute(CustomDisciplineAttribute customDisciplineAttribute)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var curCustomDisciplineAttribute = context.CustomDisciplineAttributes
+                    .FirstOrDefault(cda => cda.CustomDisciplineAttributeId == customDisciplineAttribute.CustomDisciplineAttributeId);
+
+                curCustomDisciplineAttribute.Discipline = context.Disciplines.FirstOrDefault(d => d.DisciplineId == curCustomDisciplineAttribute.Discipline.DisciplineId);
+
+                curCustomDisciplineAttribute.Key = customDisciplineAttribute.Key;
+                curCustomDisciplineAttribute.Value = customDisciplineAttribute.Value;
+
+                context.SaveChanges();
+            }
+        }
+
+        public void RemoveCustomDisciplineAttribute(int customDisciplineAttributeId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var customDisciplineAttribute = context.CustomDisciplineAttributes.FirstOrDefault(da => da.CustomDisciplineAttributeId == customDisciplineAttributeId);
+
+                context.CustomDisciplineAttributes.Remove(customDisciplineAttribute);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddCustomDisciplineAttributeRange(IEnumerable<CustomDisciplineAttribute> customDisciplineAttributeList)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                foreach (var сustomDisciplineAttribute in customDisciplineAttributeList)
+                {
+                    сustomDisciplineAttribute.CustomDisciplineAttributeId = 0;
+                    context.CustomDisciplineAttributes.Add(сustomDisciplineAttribute);
+                }
+
+                context.SaveChanges();
+            }
+        }
+        #endregion
+      
         #region CommonFunctions
         public static string CombineWeeks(List<int> list)
         {

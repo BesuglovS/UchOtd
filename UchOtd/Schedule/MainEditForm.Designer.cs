@@ -80,8 +80,12 @@
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.анализToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.пожеланияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.аудиторииДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.нельзяСтавитьПоследнимУрокомToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -571,7 +575,11 @@
             // анализToolStripMenuItem
             // 
             this.анализToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.пожеланияToolStripMenuItem});
+            this.пожеланияToolStripMenuItem,
+            this.аудиторииДисциплинToolStripMenuItem,
+            this.нельзяСтавитьПоследнимУрокомToolStripMenuItem,
+            this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem,
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem});
             this.анализToolStripMenuItem.Name = "анализToolStripMenuItem";
             this.анализToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
             this.анализToolStripMenuItem.Text = "Анализ";
@@ -579,9 +587,30 @@
             // пожеланияToolStripMenuItem
             // 
             this.пожеланияToolStripMenuItem.Name = "пожеланияToolStripMenuItem";
-            this.пожеланияToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.пожеланияToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
             this.пожеланияToolStripMenuItem.Text = "Пожелания";
             this.пожеланияToolStripMenuItem.Click += new System.EventHandler(this.пожеланияToolStripMenuItem_Click);
+            // 
+            // аудиторииДисциплинToolStripMenuItem
+            // 
+            this.аудиторииДисциплинToolStripMenuItem.Name = "аудиторииДисциплинToolStripMenuItem";
+            this.аудиторииДисциплинToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.аудиторииДисциплинToolStripMenuItem.Text = "Аудитории дисциплин";
+            this.аудиторииДисциплинToolStripMenuItem.Click += new System.EventHandler(this.аудиторииДисциплинToolStripMenuItem_Click);
+            // 
+            // нельзяСтавитьПоследнимУрокомToolStripMenuItem
+            // 
+            this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Name = "нельзяСтавитьПоследнимУрокомToolStripMenuItem";
+            this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Text = "Нельзя ставить последним уроком";
+            this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Click += new System.EventHandler(this.нельзяСтавитьПоследнимУрокомToolStripMenuItem_Click);
+            // 
+            // парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem
+            // 
+            this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Name = "парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem";
+            this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Text = "Пары дисциплин нельзя ставить в один день";
+            this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Click += new System.EventHandler(this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem_Click);
             // 
             // viewPanel
             // 
@@ -606,6 +635,13 @@
             this.ScheduleView.Size = new System.Drawing.Size(967, 434);
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
+            // 
+            // дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem
+            // 
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Name = "дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem";
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Text = "Дисциплины лучше ставить по 2 урока";
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Click += new System.EventHandler(this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -686,6 +722,10 @@
         private System.Windows.Forms.ToolStripMenuItem корпусаToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem анализToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem пожеланияToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem аудиторииДисциплинToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem нельзяСтавитьПоследнимУрокомToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem;
     }
 }
 

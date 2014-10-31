@@ -46,7 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analyse\CustomDisciplineAttribute.cs" />
     <Compile Include="Analyse\CustomTeacherWish.cs" />
+    <Compile Include="Analyse\DisciplineAuditorium.cs" />
     <Compile Include="Analyse\TeacherRing.cs" />
     <Compile Include="Analyse\TeacherWish.cs" />
     <Compile Include="Config\ConfigOption.cs" />
