@@ -163,7 +163,7 @@
             this.Controls.Add(this.MainPanel);
             this.Controls.Add(this.labelsPanel);
             this.Name = "DoubledLessons";
-            this.Text = "Нельзя ставить последним уроком";
+            this.Text = "Дисциплины, которые лучше ставить по 2 урока";
             this.Load += new System.EventHandler(this.LastLesson_Load);
             this.labelsPanel.ResumeLayout(false);
             this.labelsPanel.PerformLayout();

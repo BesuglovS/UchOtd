@@ -21,6 +21,7 @@ using UchOtd.Schedule.Forms;
 using UchOtd.Schedule.wnu.MySQLViews;
 using UchOtd.Schedule.Forms.DBLists;
 using UchOtd.Schedule.Forms.Analysis;
+using Schedule.DomainClasses.Analyse;
 
 namespace UchOtd.Schedule
 {
@@ -118,23 +119,29 @@ namespace UchOtd.Schedule
         private void ShowGroupLessonsClick(object sender, EventArgs e)
         {
             var sStarts = Repo.GetSemesterStarts();
-
-            Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>> groupLessons;
+            
+            int weekNum = -1;
             if (weekFiltered.Checked)
-            {
-                int weekNum;
-                int.TryParse(WeekFilter.Text, out weekNum);
+            {                
+                int.TryParse(WeekFilter.Text, out weekNum);                
+            }
 
-                groupLessons = Repo.GetGroupedGroupLessons((int)groupList.SelectedValue, sStarts, weekNum);
+            var groupLessons = Repo.GetGroupedGroupLessons((int)groupList.SelectedValue, sStarts, weekNum);
+            
+            if (!showProposedLessons.Checked)
+            {
+                List<GroupTableView> groupEvents = CreateGroupTableView((int)groupList.SelectedValue, groupLessons);
+
+                ScheduleView.DataSource = groupEvents;
             }
             else
             {
-                groupLessons = Repo.GetGroupedGroupLessons((int)groupList.SelectedValue, sStarts);
-            }
+                var groupProposedLessons = Repo.GetGroupedGroupProposedLessons((int)groupList.SelectedValue, sStarts, weekNum);
 
-            List<GroupTableView> groupEvents = CreateGroupTableView((int)groupList.SelectedValue, groupLessons);
-            
-            ScheduleView.DataSource = groupEvents;
+                List<GroupTableView> groupEvents = CreateGroupTableView2((int)groupList.SelectedValue, groupLessons, groupProposedLessons);
+
+                ScheduleView.DataSource = groupEvents;
+            }
 
             ScheduleView.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             UpdateViewWidth();
@@ -156,6 +163,13 @@ namespace UchOtd.Schedule
                 }
 
             }
+        }
+
+        private List<GroupTableView> CreateGroupTableView2(int groupId, 
+            Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>> groupLessons,
+            Dictionary<string, Dictionary<int, Tuple<string, List<ProposedLesson>>>> proposedGroupLessons)
+        {
+            return null;
         }
 
         public List<GroupTableView> CreateGroupTableView(int groupId, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>> groupLessons)
@@ -1701,7 +1715,7 @@ namespace UchOtd.Schedule
 
         private void нельзяСтавитьПоследнимУрокомToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var NottheLastLessonForm = new DoubledLessons(Repo);
+            var NottheLastLessonForm = new LastLesson(Repo);
             NottheLastLessonForm.Show();
         }
 
@@ -1713,8 +1727,14 @@ namespace UchOtd.Schedule
 
         private void дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var DoubledLessonsFrom = new DoubledLessons(Repo);
-            DoubledLessonsFrom.Show();
+            var DoubledLessonsForm = new DoubledLessons(Repo);
+            DoubledLessonsForm.Show();
+        }
+
+        private void порядокПостановкиДисциплинВРасписаниеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var DisciplineByOrderForm = new DisciplineByOrder(Repo);
+            DisciplineByOrderForm.Show();
         }
     }
 }

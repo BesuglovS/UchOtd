@@ -83,9 +83,11 @@
             this.аудиторииДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.нельзяСтавитьПоследнимУрокомToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showProposedLessons = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -94,6 +96,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.showProposedLessons);
             this.controlsPanel.Controls.Add(this.startSchoolWordExport);
             this.controlsPanel.Controls.Add(this.ToDBName);
             this.controlsPanel.Controls.Add(this.DownloadRestore);
@@ -133,7 +136,7 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(967, 155);
+            this.controlsPanel.Size = new System.Drawing.Size(967, 169);
             this.controlsPanel.TabIndex = 0;
             // 
             // startSchoolWordExport
@@ -165,7 +168,7 @@
             // 
             // FromDBName
             // 
-            this.FromDBName.Location = new System.Drawing.Point(599, 118);
+            this.FromDBName.Location = new System.Drawing.Point(599, 143);
             this.FromDBName.Name = "FromDBName";
             this.FromDBName.Size = new System.Drawing.Size(100, 20);
             this.FromDBName.TabIndex = 59;
@@ -183,7 +186,7 @@
             // cb90
             // 
             this.cb90.AutoSize = true;
-            this.cb90.Location = new System.Drawing.Point(526, 109);
+            this.cb90.Location = new System.Drawing.Point(526, 134);
             this.cb90.Name = "cb90";
             this.cb90.Size = new System.Drawing.Size(71, 17);
             this.cb90.TabIndex = 56;
@@ -192,7 +195,7 @@
             // 
             // OnePageGroupScheduleWordExport
             // 
-            this.OnePageGroupScheduleWordExport.Location = new System.Drawing.Point(94, 115);
+            this.OnePageGroupScheduleWordExport.Location = new System.Drawing.Point(94, 136);
             this.OnePageGroupScheduleWordExport.Name = "OnePageGroupScheduleWordExport";
             this.OnePageGroupScheduleWordExport.Size = new System.Drawing.Size(165, 23);
             this.OnePageGroupScheduleWordExport.TabIndex = 55;
@@ -202,7 +205,7 @@
             // 
             // WordWholeScheduleOneGroupOnePage
             // 
-            this.WordWholeScheduleOneGroupOnePage.Location = new System.Drawing.Point(265, 115);
+            this.WordWholeScheduleOneGroupOnePage.Location = new System.Drawing.Point(265, 136);
             this.WordWholeScheduleOneGroupOnePage.Name = "WordWholeScheduleOneGroupOnePage";
             this.WordWholeScheduleOneGroupOnePage.Size = new System.Drawing.Size(255, 23);
             this.WordWholeScheduleOneGroupOnePage.TabIndex = 54;
@@ -219,7 +222,7 @@
             // 
             // happyBirthday
             // 
-            this.happyBirthday.Location = new System.Drawing.Point(13, 115);
+            this.happyBirthday.Location = new System.Drawing.Point(13, 136);
             this.happyBirthday.Name = "happyBirthday";
             this.happyBirthday.Size = new System.Drawing.Size(75, 23);
             this.happyBirthday.TabIndex = 52;
@@ -298,7 +301,7 @@
             // WordFacultyFilter
             // 
             this.WordFacultyFilter.FormattingEnabled = true;
-            this.WordFacultyFilter.Location = new System.Drawing.Point(571, 82);
+            this.WordFacultyFilter.Location = new System.Drawing.Point(571, 107);
             this.WordFacultyFilter.Name = "WordFacultyFilter";
             this.WordFacultyFilter.Size = new System.Drawing.Size(54, 21);
             this.WordFacultyFilter.TabIndex = 40;
@@ -306,7 +309,7 @@
             // WordOneFaculty
             // 
             this.WordOneFaculty.AutoSize = true;
-            this.WordOneFaculty.Location = new System.Drawing.Point(459, 86);
+            this.WordOneFaculty.Location = new System.Drawing.Point(459, 111);
             this.WordOneFaculty.Name = "WordOneFaculty";
             this.WordOneFaculty.Size = new System.Drawing.Size(106, 17);
             this.WordOneFaculty.TabIndex = 39;
@@ -315,7 +318,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(631, 80);
+            this.button2.Location = new System.Drawing.Point(631, 105);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(68, 23);
             this.button2.TabIndex = 38;
@@ -353,7 +356,7 @@
             // 
             // allChanges
             // 
-            this.allChanges.Location = new System.Drawing.Point(265, 86);
+            this.allChanges.Location = new System.Drawing.Point(265, 107);
             this.allChanges.Name = "allChanges";
             this.allChanges.Size = new System.Drawing.Size(148, 23);
             this.allChanges.TabIndex = 20;
@@ -363,7 +366,7 @@
             // 
             // auditoriums
             // 
-            this.auditoriums.Location = new System.Drawing.Point(148, 86);
+            this.auditoriums.Location = new System.Drawing.Point(148, 107);
             this.auditoriums.Name = "auditoriums";
             this.auditoriums.Size = new System.Drawing.Size(111, 23);
             this.auditoriums.TabIndex = 19;
@@ -373,7 +376,7 @@
             // 
             // oneAuditorium
             // 
-            this.oneAuditorium.Location = new System.Drawing.Point(13, 86);
+            this.oneAuditorium.Location = new System.Drawing.Point(13, 107);
             this.oneAuditorium.Name = "oneAuditorium";
             this.oneAuditorium.Size = new System.Drawing.Size(129, 23);
             this.oneAuditorium.TabIndex = 18;
@@ -394,7 +397,7 @@
             // ActiveLessonsCount
             // 
             this.ActiveLessonsCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ActiveLessonsCount.Location = new System.Drawing.Point(419, 86);
+            this.ActiveLessonsCount.Location = new System.Drawing.Point(419, 107);
             this.ActiveLessonsCount.Name = "ActiveLessonsCount";
             this.ActiveLessonsCount.Size = new System.Drawing.Size(29, 23);
             this.ActiveLessonsCount.TabIndex = 15;
@@ -579,7 +582,8 @@
             this.аудиторииДисциплинToolStripMenuItem,
             this.нельзяСтавитьПоследнимУрокомToolStripMenuItem,
             this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem,
-            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem});
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem,
+            this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem});
             this.анализToolStripMenuItem.Name = "анализToolStripMenuItem";
             this.анализToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
             this.анализToolStripMenuItem.Text = "Анализ";
@@ -587,38 +591,52 @@
             // пожеланияToolStripMenuItem
             // 
             this.пожеланияToolStripMenuItem.Name = "пожеланияToolStripMenuItem";
-            this.пожеланияToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.пожеланияToolStripMenuItem.Size = new System.Drawing.Size(330, 22);
             this.пожеланияToolStripMenuItem.Text = "Пожелания";
             this.пожеланияToolStripMenuItem.Click += new System.EventHandler(this.пожеланияToolStripMenuItem_Click);
             // 
             // аудиторииДисциплинToolStripMenuItem
             // 
             this.аудиторииДисциплинToolStripMenuItem.Name = "аудиторииДисциплинToolStripMenuItem";
-            this.аудиторииДисциплинToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.аудиторииДисциплинToolStripMenuItem.Size = new System.Drawing.Size(330, 22);
             this.аудиторииДисциплинToolStripMenuItem.Text = "Аудитории дисциплин";
             this.аудиторииДисциплинToolStripMenuItem.Click += new System.EventHandler(this.аудиторииДисциплинToolStripMenuItem_Click);
             // 
             // нельзяСтавитьПоследнимУрокомToolStripMenuItem
             // 
             this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Name = "нельзяСтавитьПоследнимУрокомToolStripMenuItem";
-            this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Size = new System.Drawing.Size(330, 22);
             this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Text = "Нельзя ставить последним уроком";
             this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Click += new System.EventHandler(this.нельзяСтавитьПоследнимУрокомToolStripMenuItem_Click);
             // 
             // парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem
             // 
             this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Name = "парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem";
-            this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
+            this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Size = new System.Drawing.Size(330, 22);
             this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Text = "Пары дисциплин нельзя ставить в один день";
             this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Click += new System.EventHandler(this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem_Click);
+            // 
+            // дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem
+            // 
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Name = "дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem";
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Size = new System.Drawing.Size(330, 22);
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Text = "Дисциплины лучше ставить по 2 урока";
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Click += new System.EventHandler(this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem_Click);
+            // 
+            // порядокПостановкиДисциплинВРасписаниеToolStripMenuItem
+            // 
+            this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem.Name = "порядокПостановкиДисциплинВРасписаниеToolStripMenuItem";
+            this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem.Size = new System.Drawing.Size(330, 22);
+            this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem.Text = "Порядок постановки дисциплин в расписание";
+            this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem.Click += new System.EventHandler(this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem_Click);
             // 
             // viewPanel
             // 
             this.viewPanel.Controls.Add(this.ScheduleView);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 155);
+            this.viewPanel.Location = new System.Drawing.Point(0, 169);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(967, 434);
+            this.viewPanel.Size = new System.Drawing.Size(967, 420);
             this.viewPanel.TabIndex = 1;
             // 
             // ScheduleView
@@ -632,16 +650,19 @@
             this.ScheduleView.Name = "ScheduleView";
             this.ScheduleView.ReadOnly = true;
             this.ScheduleView.RowHeadersVisible = false;
-            this.ScheduleView.Size = new System.Drawing.Size(967, 434);
+            this.ScheduleView.Size = new System.Drawing.Size(967, 420);
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem
+            // showProposedLessons
             // 
-            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Name = "дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem";
-            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Size = new System.Drawing.Size(320, 22);
-            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Text = "Дисциплины лучше ставить по 2 урока";
-            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Click += new System.EventHandler(this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem_Click);
+            this.showProposedLessons.AutoSize = true;
+            this.showProposedLessons.Location = new System.Drawing.Point(12, 86);
+            this.showProposedLessons.Name = "showProposedLessons";
+            this.showProposedLessons.Size = new System.Drawing.Size(210, 17);
+            this.showProposedLessons.TabIndex = 63;
+            this.showProposedLessons.Text = "Показывать неутверждённые уроки";
+            this.showProposedLessons.UseVisualStyleBackColor = true;
             // 
             // MainEditForm
             // 
@@ -726,6 +747,8 @@
         private System.Windows.Forms.ToolStripMenuItem нельзяСтавитьПоследнимУрокомToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem порядокПостановкиДисциплинВРасписаниеToolStripMenuItem;
+        private System.Windows.Forms.CheckBox showProposedLessons;
     }
 }
 

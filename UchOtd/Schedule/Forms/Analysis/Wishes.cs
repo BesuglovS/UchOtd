@@ -160,7 +160,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     var wish = new TeacherWish(teacher, calendar, ring, wishAmount);
 
-                    _repo.UpdateOrAddTeacherWish(wish);
+                    _repo.AddOrUpdateTeacherWish(wish);
                 }
             }
         }
@@ -220,7 +220,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     var teacherWish = new TeacherWish(teacher, calendar, ring, simpleWish);
 
-                    _repo.UpdateOrAddTeacherWish(teacherWish);
+                    _repo.AddOrUpdateTeacherWish(teacherWish);
                 }
 
                 RefreshWishes();
@@ -254,7 +254,7 @@ namespace UchOtd.Schedule.Forms
 
                         var teacherWish = new TeacherWish(teacher, calendar, ring, wish);
 
-                        _repo.UpdateOrAddTeacherWish(teacherWish);
+                        _repo.AddOrUpdateTeacherWish(teacherWish);
                     }
 
 	            }
@@ -307,7 +307,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     var teacherWish = new TeacherWish(teacher, calendar, ring, wishValue);
 
-                    _repo.UpdateOrAddTeacherWish(teacherWish);
+                    _repo.AddOrUpdateTeacherWish(teacherWish);
                 }
             }
         }
@@ -362,7 +362,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     var wish = new CustomTeacherWish(teacher, "WindowsPossible", windowSize.ToString());
 
-                    _repo.UpdateOrAddCustomTeacherWish(wish);
+                    _repo.AddOrUpdateCustomTeacherWish(wish);
                 }
                 else
                 {
@@ -391,7 +391,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     var wish = new CustomTeacherWish(teacher, "LessonsLimit", LessonsLimit.ToString());
 
-                    _repo.UpdateOrAddCustomTeacherWish(wish);
+                    _repo.AddOrUpdateCustomTeacherWish(wish);
                 }
                 else
                 {
@@ -420,7 +420,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     var wish = new CustomTeacherWish(teacher, "FitAllLessonsDaysCount", FitAllLessonsDaysInt.ToString());
 
-                    _repo.UpdateOrAddCustomTeacherWish(wish);
+                    _repo.AddOrUpdateCustomTeacherWish(wish);
                 }
                 else
                 {
