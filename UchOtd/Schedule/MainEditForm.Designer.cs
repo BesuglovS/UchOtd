@@ -30,6 +30,10 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.removeAllProposedLessons = new System.Windows.Forms.Button();
+            this.analyseSchool = new System.Windows.Forms.Button();
+            this.analyse = new System.Windows.Forms.Button();
+            this.showProposedLessons = new System.Windows.Forms.CheckBox();
             this.startSchoolWordExport = new System.Windows.Forms.Button();
             this.ToDBName = new System.Windows.Forms.TextBox();
             this.DownloadRestore = new System.Windows.Forms.Button();
@@ -87,7 +91,7 @@
             this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.showProposedLessons = new System.Windows.Forms.CheckBox();
+            this.периодыГруппToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -96,6 +100,9 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.removeAllProposedLessons);
+            this.controlsPanel.Controls.Add(this.analyseSchool);
+            this.controlsPanel.Controls.Add(this.analyse);
             this.controlsPanel.Controls.Add(this.showProposedLessons);
             this.controlsPanel.Controls.Add(this.startSchoolWordExport);
             this.controlsPanel.Controls.Add(this.ToDBName);
@@ -138,6 +145,46 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(967, 169);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // removeAllProposedLessons
+            // 
+            this.removeAllProposedLessons.Location = new System.Drawing.Point(460, 80);
+            this.removeAllProposedLessons.Name = "removeAllProposedLessons";
+            this.removeAllProposedLessons.Size = new System.Drawing.Size(197, 23);
+            this.removeAllProposedLessons.TabIndex = 66;
+            this.removeAllProposedLessons.Text = "Удалить все преполагаемые уроки";
+            this.removeAllProposedLessons.UseVisualStyleBackColor = true;
+            this.removeAllProposedLessons.Click += new System.EventHandler(this.removeAllProposedLessons_Click);
+            // 
+            // analyseSchool
+            // 
+            this.analyseSchool.Location = new System.Drawing.Point(324, 80);
+            this.analyseSchool.Name = "analyseSchool";
+            this.analyseSchool.Size = new System.Drawing.Size(129, 23);
+            this.analyseSchool.TabIndex = 65;
+            this.analyseSchool.Text = "Сделать ВСЁ (ШКОЛА)";
+            this.analyseSchool.UseVisualStyleBackColor = true;
+            this.analyseSchool.Click += new System.EventHandler(this.analyseSchool_Click);
+            // 
+            // analyse
+            // 
+            this.analyse.Location = new System.Drawing.Point(225, 80);
+            this.analyse.Name = "analyse";
+            this.analyse.Size = new System.Drawing.Size(93, 23);
+            this.analyse.TabIndex = 64;
+            this.analyse.Text = "Сделать ВСЁ";
+            this.analyse.UseVisualStyleBackColor = true;
+            this.analyse.Click += new System.EventHandler(this.analyse_Click);
+            // 
+            // showProposedLessons
+            // 
+            this.showProposedLessons.AutoSize = true;
+            this.showProposedLessons.Location = new System.Drawing.Point(12, 86);
+            this.showProposedLessons.Name = "showProposedLessons";
+            this.showProposedLessons.Size = new System.Drawing.Size(210, 17);
+            this.showProposedLessons.TabIndex = 63;
+            this.showProposedLessons.Text = "Показывать неутверждённые уроки";
+            this.showProposedLessons.UseVisualStyleBackColor = true;
             // 
             // startSchoolWordExport
             // 
@@ -425,7 +472,7 @@
             // 
             this.auditoriumKaput.Location = new System.Drawing.Point(324, 54);
             this.auditoriumKaput.Name = "auditoriumKaput";
-            this.auditoriumKaput.Size = new System.Drawing.Size(124, 23);
+            this.auditoriumKaput.Size = new System.Drawing.Size(129, 23);
             this.auditoriumKaput.TabIndex = 9;
             this.auditoriumKaput.Text = "Коллизии аудиторий";
             this.auditoriumKaput.UseVisualStyleBackColor = true;
@@ -583,7 +630,8 @@
             this.нельзяСтавитьПоследнимУрокомToolStripMenuItem,
             this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem,
             this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem,
-            this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem});
+            this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem,
+            this.периодыГруппToolStripMenuItem});
             this.анализToolStripMenuItem.Name = "анализToolStripMenuItem";
             this.анализToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
             this.анализToolStripMenuItem.Text = "Анализ";
@@ -654,15 +702,12 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // showProposedLessons
+            // периодыГруппToolStripMenuItem
             // 
-            this.showProposedLessons.AutoSize = true;
-            this.showProposedLessons.Location = new System.Drawing.Point(12, 86);
-            this.showProposedLessons.Name = "showProposedLessons";
-            this.showProposedLessons.Size = new System.Drawing.Size(210, 17);
-            this.showProposedLessons.TabIndex = 63;
-            this.showProposedLessons.Text = "Показывать неутверждённые уроки";
-            this.showProposedLessons.UseVisualStyleBackColor = true;
+            this.периодыГруппToolStripMenuItem.Name = "периодыГруппToolStripMenuItem";
+            this.периодыГруппToolStripMenuItem.Size = new System.Drawing.Size(330, 22);
+            this.периодыГруппToolStripMenuItem.Text = "Периоды групп";
+            this.периодыГруппToolStripMenuItem.Click += new System.EventHandler(this.периодыГруппToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -749,6 +794,10 @@
         private System.Windows.Forms.ToolStripMenuItem дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem порядокПостановкиДисциплинВРасписаниеToolStripMenuItem;
         private System.Windows.Forms.CheckBox showProposedLessons;
+        private System.Windows.Forms.Button analyseSchool;
+        private System.Windows.Forms.Button analyse;
+        private System.Windows.Forms.Button removeAllProposedLessons;
+        private System.Windows.Forms.ToolStripMenuItem периодыГруппToolStripMenuItem;
     }
 }
 

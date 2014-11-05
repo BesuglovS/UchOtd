@@ -1,5 +1,4 @@
 ﻿using System.Data.Entity;
-using System.Data.SqlClient;
 using Schedule.DomainClasses.Config;
 using Schedule.DomainClasses.Main;
 using Schedule.DomainClasses.Logs;
@@ -11,7 +10,7 @@ namespace Schedule.DataLayer
     public class ScheduleContext : DbContext
     {
         public ScheduleContext()
-            : base("data source=tcp:127.0.0.1,1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
+            :base("data source=tcp:127.0.0.1,1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
         {
         }
 
@@ -53,8 +52,8 @@ namespace Schedule.DataLayer
         public DbSet<TeacherRing> TeacherRings { get; set; }
         public DbSet<DisciplineAuditorium> DisciplineAuditoriums { get; set; }
         public DbSet<CustomDisciplineAttribute> CustomDisciplineAttributes { get; set; }
-        public DbSet<ProposedLesson> ProposedLessons { get; set; }
-
+        public DbSet<GroupPeriod> GroupPeriods { get; set; }
+ 
         // Session
         public DbSet<Exam> Exams { get; set; }
         public DbSet<LogEvent> EventLog { get; set; }

@@ -58,7 +58,7 @@ namespace Schedule.Core
         public static Dictionary<int,string> GetAudWeeksList(string weekAuds)
         {
             var result = new Dictionary<int, string>();
-            var audsArray = weekAuds.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var audsArray = weekAuds.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var auds = new List<string>(audsArray);
 
             if (auds.Count == 1)

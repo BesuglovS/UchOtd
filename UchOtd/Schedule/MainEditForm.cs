@@ -18,6 +18,7 @@ using Schedule.wnu.MySQLViews;
 using UchOtd.Core;
 using UchOtd.Schedule.Core;
 using UchOtd.Schedule.Forms;
+using UchOtd.Schedule.Forms.DBLists.Lessons;
 using UchOtd.Schedule.wnu.MySQLViews;
 using UchOtd.Schedule.Forms.DBLists;
 using UchOtd.Schedule.Forms.Analysis;
@@ -126,22 +127,11 @@ namespace UchOtd.Schedule
                 int.TryParse(WeekFilter.Text, out weekNum);                
             }
 
-            var groupLessons = Repo.GetGroupedGroupLessons((int)groupList.SelectedValue, sStarts, weekNum);
+            var groupLessons = Repo.GetGroupedGroupLessons((int)groupList.SelectedValue, sStarts, weekNum, showProposedLessons.Checked);
             
-            if (!showProposedLessons.Checked)
-            {
-                List<GroupTableView> groupEvents = CreateGroupTableView((int)groupList.SelectedValue, groupLessons);
+            List<GroupTableView> groupEvents = CreateGroupTableView((int)groupList.SelectedValue, groupLessons, showProposedLessons.Checked);
 
-                ScheduleView.DataSource = groupEvents;
-            }
-            else
-            {
-                var groupProposedLessons = Repo.GetGroupedGroupProposedLessons((int)groupList.SelectedValue, sStarts, weekNum);
-
-                List<GroupTableView> groupEvents = CreateGroupTableView2((int)groupList.SelectedValue, groupLessons, groupProposedLessons);
-
-                ScheduleView.DataSource = groupEvents;
-            }
+            ScheduleView.DataSource = groupEvents;
 
             ScheduleView.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             UpdateViewWidth();
@@ -164,19 +154,14 @@ namespace UchOtd.Schedule
 
             }
         }
-
-        private List<GroupTableView> CreateGroupTableView2(int groupId, 
-            Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>> groupLessons,
-            Dictionary<string, Dictionary<int, Tuple<string, List<ProposedLesson>>>> proposedGroupLessons)
-        {
-            return null;
-        }
-
-        public List<GroupTableView> CreateGroupTableView(int groupId, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>> groupLessons)
+        
+        public List<GroupTableView> CreateGroupTableView(
+            int groupId, Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>> groupLessons,
+            bool putProposedLessons)
         {
             var result = new List<GroupTableView>();
 
-            var groupView = CreateGroupView(groupId, groupLessons);
+            var groupView = CreateGroupView(groupId, groupLessons, putProposedLessons);
             foreach (var gv in groupView)
             {
                 var time = gv.Datetime.Substring(2, gv.Datetime.Length - 2);
@@ -268,8 +253,13 @@ namespace UchOtd.Schedule
             return result;
         }
 
-        private IEnumerable<GroupView> CreateGroupView(int groupId, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>> data)
+        private IEnumerable<GroupView> CreateGroupView(
+            int groupId, Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>> data,
+            bool putProposedLessons)
         {
+            var proposedLessonStartToken = "[";
+            var proposedLessonEndToken = "]";
+
             var result = new List<GroupView>();
 
             var group = Repo.GetFirstFiltredStudentGroups(sg => sg.StudentGroupId == groupId);
@@ -292,18 +282,28 @@ namespace UchOtd.Schedule
                 {
                     var item = dt.Value.ElementAt(i);
                     var tfd = item.Value.Item2[0].TeacherForDiscipline;
+                    var state = item.Value.Item2[0].State;
 
-                    eventString += tfd.Discipline.Name;
+
+
+                    var discName = tfd.Discipline.Name;
                     if (tfd.Discipline.StudentGroup.StudentGroupId != groupId &&
                         ((plainGroupName == "") || (tfd.Discipline.StudentGroup.Name != plainGroupName)) &&
                         ((nGroupName == "") || (tfd.Discipline.StudentGroup.Name != nGroupName)))
                     {
-                        eventString += " (" + tfd.Discipline.StudentGroup.Name + ")";
+                        discName += " (" + tfd.Discipline.StudentGroup.Name + ")";
                     }
-                    eventString += Environment.NewLine;
-                    eventString += tfd.Teacher.FIO + Environment.NewLine;
-                    eventString += "(" + item.Value.Item1 + ")" + Environment.NewLine;
 
+                    eventString += IfProposed(discName, state, proposedLessonStartToken, proposedLessonEndToken);
+                    eventString += Environment.NewLine;
+
+                    eventString += IfProposed(tfd.Teacher.FIO, state, proposedLessonStartToken, proposedLessonEndToken);
+                    eventString += Environment.NewLine;
+
+                    eventString += IfProposed("(" + item.Value.Item1 + ")", state, proposedLessonStartToken, proposedLessonEndToken); 
+                    eventString += Environment.NewLine;
+
+                    var audStrings = "";
                     var audWeekList = item.Value.Item2.ToDictionary(l => Repo.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
                     var grouped = audWeekList.GroupBy(a => a.Value);
 
@@ -311,21 +311,23 @@ namespace UchOtd.Schedule
                     var gcount = enumerable.Count();
                     if (gcount == 1)
                     {
-                        eventString += enumerable.ElementAt(0).Key;
+                        audStrings += enumerable.ElementAt(0).Key;
                     }
                     else
                     {
                         for (int j = 0; j < gcount; j++)
                         {
                             var jItem = enumerable.ElementAt(j);
-                            eventString += ScheduleRepository.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
+                            audStrings += ScheduleRepository.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
 
                             if (j != gcount - 1)
                             {
-                                eventString += Environment.NewLine;
+                                audStrings += Environment.NewLine;
                             }
                         }
                     }
+
+                    eventString += IfProposed(audStrings, state, proposedLessonStartToken, proposedLessonEndToken);
 
                     if (i != dt.Value.Count - 1)
                     {
@@ -339,7 +341,12 @@ namespace UchOtd.Schedule
 
             return result;
         }
-        
+
+        private string IfProposed(string text, int state, string startToken, string endToken)
+        {
+            return (state == 2) ? startToken + text + endToken : text;
+        }
+
         private void BigRedButtonClick(object sender, EventArgs e)
         {            
             // Oops
@@ -435,7 +442,7 @@ namespace UchOtd.Schedule
                 var sb = new StringBuilder();
                 sb.Append(tfd.Discipline.Name + '\t' + tfd.Discipline.StudentGroup.Name + '\t');
 
-                var auds = Repo.GetFiltredLessons(l =>
+                var auds = Repo.GetFiltredRealLessons(l =>
                     l.IsActive &&
                     l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
                     .ToList()
@@ -543,7 +550,7 @@ namespace UchOtd.Schedule
                         );
 
 
-                        var lessons = Repo.GetFiltredLessons(l => l.IsActive && l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
+                        var lessons = Repo.GetFiltredRealLessons(l => l.IsActive && l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
 
                         foreach (var lesson in lessons.OrderBy(l => l.Calendar.Date.Date))
                         {
@@ -584,7 +591,7 @@ namespace UchOtd.Schedule
             {
                 if (tfd.Discipline.StudentGroup.Name.Contains("-") && tfd.Discipline.AuditoriumHours != 0)
                 {
-                    var tfdLessons = Repo.GetFiltredLessons(l =>
+                    var tfdLessons = Repo.GetFiltredRealLessons(l =>
                         l.IsActive &&
                         l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
 
@@ -788,7 +795,7 @@ namespace UchOtd.Schedule
         private List<Lesson> SchoolAudLessons()
         {
             var aSchool = Repo.GetFiltredAuditoriums(a => a.Name.Contains("ШКОЛА"))[0];
-            var ll = Repo.GetFiltredLessons(l => l.Auditorium.AuditoriumId == aSchool.AuditoriumId && l.Calendar.Date > DateTime.Now && l.IsActive);
+            var ll = Repo.GetFiltredRealLessons(l => l.Auditorium.AuditoriumId == aSchool.AuditoriumId && l.Calendar.Date > DateTime.Now && l.IsActive);
             return ll;
         }
 
@@ -803,7 +810,7 @@ namespace UchOtd.Schedule
                     .GetFiltredStudentsInGroups(sig => sig.Student.StudentId == student.StudentId)
                     .Select(sig => sig.StudentGroup.StudentGroupId);
 
-                var studentLessons = Repo.GetFiltredLessons(l => l.IsActive && studentGroupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
+                var studentLessons = Repo.GetFiltredRealLessons(l => l.IsActive && studentGroupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
 
                 var grouped = studentLessons
                     .GroupBy(l => l.Calendar.CalendarId + " " + l.Ring.RingId)
@@ -833,7 +840,7 @@ namespace UchOtd.Schedule
         {
             var sw = new StreamWriter(filename);
             var date = new DateTime(2013, 11, 18);
-            var ll = Repo.GetFiltredLessons(l => l.IsActive && l.Calendar.Date == date);
+            var ll = Repo.GetFiltredRealLessons(l => l.IsActive && l.Calendar.Date == date);
             foreach (var l in ll)
             {
                 sw.WriteLine(l.Ring.Time.ToString("H:mm") + "\t" +
@@ -996,7 +1003,7 @@ namespace UchOtd.Schedule
             var source = (List<GroupTableView>)ScheduleView.DataSource;
             var time = source[e.RowIndex].Time;
 
-            var editLessonForm = new EditLesson(Repo, (int)groupList.SelectedValue, e.ColumnIndex, time);
+            var editLessonForm = new EditLesson(Repo, (int)groupList.SelectedValue, e.ColumnIndex, time, showProposedLessons.Checked);
             editLessonForm.ShowDialog();
         }
 
@@ -1022,7 +1029,7 @@ namespace UchOtd.Schedule
                 }
                 var tfd = disctfd;
 
-                var tfdLessons = Repo.GetFiltredLessons(l => l.IsActive && l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId).ToList();
+                var tfdLessons = Repo.GetFiltredRealLessons(l => l.IsActive && l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId).ToList();
 
                 var hoursDiff = disc.AuditoriumHours - tfdLessons.Count * 2;
 
@@ -1432,7 +1439,7 @@ namespace UchOtd.Schedule
 
                 foreach (var tfd in tfds)
                 {
-                    var lessons = Repo.GetFiltredLessons(l =>
+                    var lessons = Repo.GetFiltredRealLessons(l =>
                         l.IsActive &&
                         l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
                         .OrderBy(l => l.Calendar.Date.Date)
@@ -1497,15 +1504,15 @@ namespace UchOtd.Schedule
             var sw = new StreamWriter("AuditoriumPercentage.txt");
             sw.Close();
 
-            var activeLessons = Repo.GetFiltredLessons(l => l.IsActive && l.Ring.RingId <= 8);
+            var activeLessons = Repo.GetFiltredRealLessons(l => l.IsActive && l.Ring.RingId <= 8);
 
             WriteAuditoriumPercentageToFile(activeLessons, "AuditoriumPercentage.txt");
 
-            activeLessons = Repo.GetFiltredLessons(l => l.IsActive && l.Ring.RingId <= 8 && (l.Auditorium.Building.BuildingId == 2));
+            activeLessons = Repo.GetFiltredRealLessons(l => l.IsActive && l.Ring.RingId <= 8 && (l.Auditorium.Building.BuildingId == 2));
 
             WriteAuditoriumPercentageToFile(activeLessons, "AuditoriumPercentage.txt");
 
-            activeLessons = Repo.GetFiltredLessons(l => l.IsActive && l.Ring.RingId <= 8 && (l.Auditorium.Building.BuildingId == 3));
+            activeLessons = Repo.GetFiltredRealLessons(l => l.IsActive && l.Ring.RingId <= 8 && (l.Auditorium.Building.BuildingId == 3));
 
             WriteAuditoriumPercentageToFile(activeLessons, "AuditoriumPercentage.txt");
         }
@@ -1735,6 +1742,37 @@ namespace UchOtd.Schedule
         {
             var DisciplineByOrderForm = new DisciplineByOrder(Repo);
             DisciplineByOrderForm.Show();
+        }
+
+        private void analyse_Click(object sender, EventArgs e)
+        {
+            var analysisForm = new Analysis(Repo);
+            analysisForm.Show();
+        }
+
+        private void analyseSchool_Click(object sender, EventArgs e)
+        {
+            var analysisSchoolForm = new AnalysisSchool(Repo);
+            analysisSchoolForm.Show();
+        }
+
+        private void removeAllProposedLessons_Click(object sender, EventArgs e)
+        {
+            var proposedLessonsIds = Repo
+                .GetFiltredLessons(l => l.State == 2)
+                .Select(l => l.LessonId)
+                .ToList();
+
+            foreach (var lessonId in proposedLessonsIds)
+            {
+                Repo.RemoveLesson(lessonId);
+            }
+        }
+
+        private void периодыГруппToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var groupPeriodsForm = new GroupPeriods(Repo);
+            groupPeriodsForm.Show();
         }
     }
 }

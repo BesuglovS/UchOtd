@@ -44,7 +44,7 @@ namespace Schedule.Views
                      Attestation = Constants.Constants.Attestation[tfd.Discipline.Attestation],
                      ScheduleHours = repo.getTFDHours(tfd.TeacherForDisciplineId),
 
-                     HoursDone = repo.GetFiltredLessons(l => 
+                     HoursDone = repo.GetFiltredRealLessons(l => 
                          l.IsActive &&
                          l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId &&
                          (l.Calendar.Date.Date + l.Ring.Time.TimeOfDay) < DateTime.Now).Count * 2

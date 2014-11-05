@@ -2571,9 +2571,9 @@ namespace UchOtd.Core
                 {
                     var sStarts = repo.GetSemesterStarts();
 
-                    var groupLessons = repo.GetGroupedGroupLessons(group.StudentGroupId, sStarts);
+                    var groupLessons = repo.GetGroupedGroupLessons(group.StudentGroupId, sStarts, -1, false);
 
-                    List<GroupTableView> groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons);
+                    var groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons, false);
 
                     wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
 
@@ -2663,9 +2663,9 @@ namespace UchOtd.Core
 
             var sStarts = repo.GetSemesterStarts();
 
-            var groupLessons = repo.GetGroupedGroupLessons(group.StudentGroupId, sStarts);
+            var groupLessons = repo.GetGroupedGroupLessons(group.StudentGroupId, sStarts, -1, false);
 
-            List<GroupTableView> groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons);
+            List<GroupTableView> groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons, false);
 
             wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
 

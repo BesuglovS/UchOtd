@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using UchOtd.Schedule.Forms.DBLists.Lessons;
 
 namespace Schedule.Forms.DBLists
 {
@@ -137,7 +138,7 @@ namespace Schedule.Forms.DBLists
 
         private void FormatView()
         {
-            //DiscipineListView.Columns["DisciplineId"].Visible = false;
+            DiscipineListView.Columns["DisciplineId"].Visible = false;
             DiscipineListView.Columns["DisciplineId"].Width = 40;
             DiscipineListView.Columns["Name"].Width = 270;
             DiscipineListView.Columns["TeacherFIO"].Width = 80;
@@ -227,8 +228,7 @@ namespace Schedule.Forms.DBLists
                 discipline.LectureHours = int.Parse(LectureHours.Text);
                 discipline.PracticalHours = int.Parse(PracticalHours.Text);
 
-                var disciplineGroup = _repo.GetStudentGroup((int)Group.SelectedValue);
-                discipline.StudentGroup = disciplineGroup;
+                discipline.StudentGroup = _repo.GetStudentGroup((int)Group.SelectedValue);
 
                 _repo.UpdateDiscipline(discipline);
 
@@ -373,7 +373,7 @@ namespace Schedule.Forms.DBLists
                 }
 
                 var lessonIds = _repo
-                    .GetFiltredLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
+                    .GetFiltredRealLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
                     .Select(l => l.LessonId);
 
                 var logEventIds = _repo.GetFiltredLessonLogEvents(lle =>

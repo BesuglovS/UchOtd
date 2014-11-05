@@ -1,13 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Schedule.DomainClasses.Session;
 
 namespace UchOtd.Core
 {
     public static class Utilities
     {
+        public static void Log(string filename, string message)
+        {
+            var sw = new StreamWriter(filename, true);
+            sw.WriteLine(message);
+            sw.Close();
+        }
+
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>
             (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {

@@ -1,48 +1,57 @@
-﻿using Schedule.Core;
-using Schedule.DomainClasses.Logs;
-using Schedule.DomainClasses.Main;
-using Schedule.Repositories;
-using Schedule.Views;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.Core;
+using Schedule.DomainClasses.Logs;
+using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
+using Schedule.Views;
 
-namespace Schedule.Forms.DBLists.Lessons
+namespace UchOtd.Schedule.Forms.DBLists.Lessons
 {
     public partial class EditLesson : Form
     {
         private readonly ScheduleRepository _repo;
+        private readonly int _groupId;
         private readonly int _dow;
+        private readonly string _time;
         private readonly Ring _ring;
+        private readonly bool _putProposedLesson;
 
         int _curTFDIndex;
-        readonly Dictionary<int, Tuple<string, List<Lesson>>> _curLessons;
+        Dictionary<string, Tuple<string, List<Lesson>>> _curLessons;
 
-        public EditLesson(ScheduleRepository repo, int groupId, int dow, string time)
+        public EditLesson(ScheduleRepository repo, int groupId, int dow, string time, bool putProposedLessons)
         {
             InitializeComponent();
 
             _repo = repo;
+            _groupId = groupId;
             _dow = dow;
-            _ring = _repo.FindRing(DateTime.ParseExact(time, "H:mm", CultureInfo.InvariantCulture));
+            _time = time;
+            _ring = _repo.FindRing(DateTime.ParseExact(_time, "H:mm", CultureInfo.InvariantCulture));
+            _putProposedLesson = putProposedLessons;
+        }
 
+        private void EditLesson_Load(object sender, EventArgs e)
+        {
             var sStarts = _repo.GetSemesterStarts();
 
-            var gl = _repo.GetGroupedGroupLessons(groupId, sStarts);
+            var gl = _repo.GetGroupedGroupLessons(_groupId, sStarts, -1, _putProposedLesson);
 
-            _curLessons = new Dictionary<int, Tuple<string, List<Lesson>>>();
-            if (gl.ContainsKey(dow + " " + time))
+            _curLessons = new Dictionary<string, Tuple<string, List<Lesson>>>();
+            if (gl.ContainsKey(_dow + " " + _time))
             {
-                _curLessons = gl[dow + " " + time];
+                _curLessons = gl[_dow + " " + _time];
                 _curTFDIndex = 0;
             }
             else
             {
                 _curTFDIndex = -1;
                 tfdIndex.Text = "Пусто тут барин!";
-            }            
+            }
 
             DisplayTFD(_curTFDIndex);
         }
@@ -60,7 +69,7 @@ namespace Schedule.Forms.DBLists.Lessons
             tfdIndex.Text = (curTFDIndex + 1) + " / " + (_curLessons.Keys.Count);
 
             // tfd Summary
-            tfd.Text = (new tfdView(_repo.GetTeacherForDiscipline(curTfd))).tfdSummary;
+            tfd.Text = (new tfdView(_repo.GetTeacherForDiscipline(int.Parse(curTfd.Split('+')[0])))).tfdSummary;
 
             // Weeks
             lessonWeeks.Text = _curLessons[curTfd].Item1;
@@ -89,6 +98,21 @@ namespace Schedule.Forms.DBLists.Lessons
                 }
             }
             auditoriums.Text = audString;            
+
+            // isProposed
+            if (_curLessons[curTfd].Item2[0].State == 2)
+            {
+                proposedLessons.Checked = true;
+                acceptLessons.Enabled = true;
+                saveChanges.Enabled = false;
+            }
+            else
+            {
+                proposedLessons.Checked = false;
+                acceptLessons.Enabled = false;
+                saveChanges.Enabled = true;
+            }
+
         }
 
         private void NextTFDClick(object sender, EventArgs e)
@@ -169,7 +193,7 @@ namespace Schedule.Forms.DBLists.Lessons
 
                     var newLesson = new Lesson
                     {
-                        TeacherForDiscipline = _repo.GetTeacherForDiscipline(_curLessons.Keys.ElementAt(_curTFDIndex)),
+                        TeacherForDiscipline = _repo.GetTeacherForDiscipline(int.Parse(_curLessons.Keys.ElementAt(_curTFDIndex).Split('+')[0])),
                         Ring = _ring,
                         Auditorium = _repo.FindAuditorium(newAuds[weekNumber]),
                         IsActive = true
@@ -177,7 +201,7 @@ namespace Schedule.Forms.DBLists.Lessons
 
                     // lesson.Calendar
                     var date = _repo.GetDateFromDowAndWeek(_dow, weekNumber);
-                    var calendar = _repo.FindCalendar(date) ?? new DomainClasses.Main.Calendar(date);
+                    var calendar = _repo.FindCalendar(date) ?? new global::Schedule.DomainClasses.Main.Calendar(date);
                     newLesson.Calendar = calendar;
 
                     _repo.AddLessonWOLog(newLesson);
@@ -213,7 +237,7 @@ namespace Schedule.Forms.DBLists.Lessons
                 _repo.RemoveLesson(lessonId);
             }
 
-            var curTfd = _repo.GetTeacherForDiscipline(_curLessons.Keys.ElementAt(_curTFDIndex));
+            var curTfd = _repo.GetTeacherForDiscipline(int.Parse(_curLessons.Keys.ElementAt(_curTFDIndex).Split('+')[0]));
             foreach (var week in newWeeks)
             {
                 var lesson = new Lesson { 
@@ -225,10 +249,32 @@ namespace Schedule.Forms.DBLists.Lessons
 
                 // lesson.Calendar
                 var date = _repo.GetDateFromDowAndWeek(_dow, week);
-                var calendar = _repo.FindCalendar(date) ?? new DomainClasses.Main.Calendar(date);
+                var calendar = _repo.FindCalendar(date) ?? new global::Schedule.DomainClasses.Main.Calendar(date);
                 lesson.Calendar = calendar;
 
                 _repo.AddLesson(lesson);
+            }
+
+            Close();
+        } 
+
+        private void acceptLessons_Click(object sender, EventArgs e)
+        {
+            foreach (var lesson in _curLessons[_curLessons.Keys.ElementAt(_curTFDIndex)].Item2)
+            {
+                lesson.State = 0;
+                lesson.IsActive = true;
+
+                _repo.UpdateLesson(lesson);
+
+                var acceptEvent = new LessonLogEvent
+                {
+                    DateTime = DateTime.Now,
+                    OldLesson = null,
+                    NewLesson = lesson,
+                    PublicComment = "Утверждён проект"
+                };
+                _repo.AddLessonLogEvent(acceptEvent);
             }
 
             Close();

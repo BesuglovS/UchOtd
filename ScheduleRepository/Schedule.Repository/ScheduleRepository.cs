@@ -379,6 +379,7 @@ namespace Schedule.Repositories
                 var curCalendar = context.Calendars.FirstOrDefault(c => c.CalendarId == calendar.CalendarId);
 
                 curCalendar.Date = calendar.Date;
+                curCalendar.State = calendar.State;
 
                 context.SaveChanges();
             }
@@ -1157,6 +1158,21 @@ namespace Schedule.Repositories
             }
         }
 
+        public List<Lesson> GetAllRealLessons()
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Lessons
+                    .Include(l => l.TeacherForDiscipline.Teacher)
+                    .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
+                    .Include(l => l.Calendar)
+                    .Include(l => l.Ring)
+                    .Include(l => l.Auditorium)
+                    .Where(l => (l.State == 0) || (l. State == 1))
+                    .ToList();
+            }
+        }
+
         public List<Lesson> GetAllActiveLessons()
         {
             using (var context = new ScheduleContext(ConnectionString))
@@ -1183,6 +1199,21 @@ namespace Schedule.Repositories
             }
         }
 
+
+        public List<Lesson> GetFiltredRealLessons(Func<Lesson, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Lessons.Include(l => l.TeacherForDiscipline.Teacher)
+                .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
+                .Include(l => l.Calendar)
+                .Include(l => l.Ring)
+                .Include(l => l.Auditorium)
+                .Where(l => (l.State == 0) || (l.State == 1))
+                .ToList().Where(condition).ToList();
+            }
+        }
+        
         public Lesson GetFirstFiltredLesson(Func<Lesson, bool> condition)
         {
             using (var context = new ScheduleContext(ConnectionString))
@@ -1193,6 +1224,21 @@ namespace Schedule.Repositories
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
                     .Include(l => l.Auditorium)
+                    .ToList().FirstOrDefault(condition);
+            }
+        }
+
+        public Lesson GetFirstFiltredRealLesson(Func<Lesson, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Lessons
+                    .Include(l => l.TeacherForDiscipline.Teacher)
+                    .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
+                    .Include(l => l.Calendar)
+                    .Include(l => l.Ring)
+                    .Include(l => l.Auditorium)
+                    .Where(l => (l.State == 0) || (l.State == 1))
                     .ToList().FirstOrDefault(condition);
             }
         }
@@ -1241,16 +1287,19 @@ namespace Schedule.Repositories
 
                 context.Lessons.Add(lesson);
 
-                context.LessonLog.Add(
-                    new LessonLogEvent
-                    {
-                        OldLesson = null,
-                        NewLesson = lesson,
-                        DateTime = DateTime.Now,
-                        PublicComment = publicComment,
-                        HiddenComment = hiddenComment
-                    }
-                );
+                if (lesson.State != 2)
+                {
+                    context.LessonLog.Add(
+                        new LessonLogEvent
+                        {
+                            OldLesson = null,
+                            NewLesson = lesson,
+                            DateTime = DateTime.Now,
+                            PublicComment = publicComment,
+                            HiddenComment = hiddenComment
+                        }
+                        );
+                }
                 context.SaveChanges();
             }
         }
@@ -1261,11 +1310,15 @@ namespace Schedule.Repositories
             {
                 var curLesson = context.Lessons.FirstOrDefault(l => l.LessonId == lesson.LessonId);
 
-                curLesson.Auditorium = lesson.Auditorium;
-                curLesson.Calendar = lesson.Calendar;
+                curLesson.Auditorium = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == lesson.Auditorium.AuditoriumId);
+                curLesson.Calendar = context.Calendars.FirstOrDefault(c => c.CalendarId == lesson.Calendar.CalendarId);
+                curLesson.Ring = context.Rings.FirstOrDefault(r => r.RingId == lesson.Ring.RingId);
+                curLesson.TeacherForDiscipline =
+                    context.TeacherForDiscipline.FirstOrDefault(
+                        tfd => tfd.TeacherForDisciplineId == lesson.TeacherForDiscipline.TeacherForDisciplineId);
+
                 curLesson.IsActive = lesson.IsActive;
-                curLesson.Ring = lesson.Ring;
-                curLesson.TeacherForDiscipline = lesson.TeacherForDiscipline;
+                curLesson.State = lesson.State;
 
                 context.SaveChanges();
             }
@@ -1301,19 +1354,25 @@ namespace Schedule.Repositories
             {
                 var lesson = context.Lessons.FirstOrDefault(l => l.LessonId == lessonId);
 
-                //_context.Lessons.Remove(lesson);
-                lesson.IsActive = false;
+                if (lesson.State == 2)
+                {
+                    context.Lessons.Remove(lesson);
+                }
+                else
+                {
+                    lesson.IsActive = false;
 
-                context.LessonLog.Add(
-                    new LessonLogEvent
-                    {
-                        OldLesson = lesson,
-                        NewLesson = null,
-                        DateTime = DateTime.Now,
-                        PublicComment = publicComment,
-                        HiddenComment = hiddenComment
-                    }
-                );
+                    context.LessonLog.Add(
+                        new LessonLogEvent
+                        {
+                            OldLesson = lesson,
+                            NewLesson = null,
+                            DateTime = DateTime.Now,
+                            PublicComment = publicComment,
+                            HiddenComment = hiddenComment
+                        }
+                        );
+                }
 
                 context.SaveChanges();
             }
@@ -1339,26 +1398,13 @@ namespace Schedule.Repositories
             }
         }
 
-        public List<Lesson> GetGroupLessons(string groupName)
+        public Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>> GetGroupedGroupLessons
+            (int groupId, DateTime semesterStarts, int weekfilter, bool putProposedLessons)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Lessons
-                    .Include(l => l.TeacherForDiscipline.Teacher)
-                    .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
-                    .Include(l => l.Calendar)
-                    .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
-                    .Where(l => l.TeacherForDiscipline.Discipline.StudentGroup.Name == groupName && l.IsActive).ToList();
-            }
-        }
-
-        public Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>> GetGroupedGroupLessons(int groupId, DateTime semesterStarts, int weekfilter = -1)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                // Понедельник 08:00 - {tfdId - {weeks + List<Lesson>}}
-                var result = new Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>();
+                // Понедельник 08:00 - {tfdId+State - {weeks + List<Lesson>}}
+                var result = new Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>>();
 
                 var studentIds = context.StudentsInGroups
                     .Where(sig => sig.StudentGroup.StudentGroupId == groupId)
@@ -1375,8 +1421,15 @@ namespace Schedule.Repositories
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
                     .Include(l => l.Auditorium)
-                    .Where(l => groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) && l.IsActive)
+                    .Where(l => 
+                        groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) && 
+                        l.IsActive)
                     .ToList();
+
+                if (!putProposedLessons)
+                {
+                    primaryList = primaryList.Where(l => l.State != 2).ToList();
+                }
 
                 if (weekfilter != -1)
                 {
@@ -1385,18 +1438,19 @@ namespace Schedule.Repositories
                         .ToList();
                 }
 
-                var groupedLessons = primaryList.GroupBy(l => Constants.Constants.DOWRemap[(int)(l.Calendar.Date).DayOfWeek] * 2000 +
+                var groupedLessons = primaryList
+                    .GroupBy(l => Constants.Constants.DOWRemap[(int)(l.Calendar.Date).DayOfWeek] * 2000 +
                     l.Ring.Time.Hour * 60 + l.Ring.Time.Minute,
-                    (dow, lessons) =>
+                    (dowTime, lessons) =>
                     new
                     {
-                        DOW = dow / 2000,
-                        time = ((dow - (dow / 2000) * 2000) / 60).ToString("D2") + ":" + ((dow - (dow / 2000) * 2000) - ((dow - (dow / 2000) * 2000) / 60) * 60).ToString("D2"),
-                        Groups = lessons.GroupBy(ls => ls.TeacherForDiscipline,
-                            (tfd, tfdLessons) =>
+                        DOW = dowTime / 2000,
+                        time = ((dowTime - (dowTime / 2000) * 2000) / 60).ToString("D2") + ":" + ((dowTime - (dowTime / 2000) * 2000) - ((dowTime - (dowTime / 2000) * 2000) / 60) * 60).ToString("D2"),
+                        Groups = lessons.GroupBy(ls => ls.TeacherForDiscipline.TeacherForDisciplineId.ToString() + "+" + ls.State,
+                            (tfdAndState, tfdLessons) =>
                             new
                             {
-                                TFDForLessonGroup = tfd,
+                                TFDAndStateForLessonGroup = tfdAndState,
                                 Weeks = "",
                                 Lessons = tfdLessons
                             }
@@ -1408,7 +1462,7 @@ namespace Schedule.Repositories
                 {
                     var dowLocal = dateTimeLessons.DOW;
 
-                    result.Add(dowLocal + " " + dateTimeLessons.time, new Dictionary<int, Tuple<string, List<Lesson>>>());
+                    result.Add(dowLocal + " " + dateTimeLessons.time, new Dictionary<string, Tuple<string, List<Lesson>>>());
 
                     foreach (var lessonGroup in dateTimeLessons.Groups)
                     {
@@ -1418,11 +1472,11 @@ namespace Schedule.Repositories
 
                         var weekString = CombineWeeks(weekList);
 
-                        result[dowLocal + " " + dateTimeLessons.time].Add(lessonGroup.TFDForLessonGroup.TeacherForDisciplineId, new Tuple<string, List<Lesson>>(weekString, new List<Lesson>()));
+                        result[dowLocal + " " + dateTimeLessons.time].Add(lessonGroup.TFDAndStateForLessonGroup, new Tuple<string, List<Lesson>>(weekString, new List<Lesson>()));
 
                         foreach (var lesson in lessonGroup.Lessons)
                         {
-                            result[dowLocal + " " + dateTimeLessons.time][lessonGroup.TFDForLessonGroup.TeacherForDisciplineId].Item2.Add(lesson);
+                            result[dowLocal + " " + dateTimeLessons.time][lessonGroup.TFDAndStateForLessonGroup].Item2.Add(lesson);
                         }
                     }
                 }
@@ -1470,6 +1524,7 @@ namespace Schedule.Repositories
                         .Where(
                             l =>
                             l.IsActive &&
+                            (l.State == 0) || (l.State == 1) &&
                             groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId)
                             )
                         .ToList();
@@ -1521,319 +1576,6 @@ namespace Schedule.Repositories
                             result[groupId][dateTimeLessons.time].Add(
                                 lessonGroup.TFDForLessonGroup.TeacherForDisciplineId,
                                 new Tuple<string, List<Lesson>>(weekString, new List<Lesson>()));
-
-                            foreach (var lesson in lessonGroup.Lessons)
-                            {
-                                result[groupId][dateTimeLessons.time][
-                                    lessonGroup.TFDForLessonGroup.TeacherForDisciplineId].Item2.Add(lesson);
-                            }
-                        }
-                    }
-                }
-
-                return result;
-            }
-        }
-        #endregion
-
-        #region ProposedLessonRepository
-        public List<ProposedLesson> GetAllProposedLessons()
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.ProposedLessons
-                    .Include(l => l.TeacherForDiscipline.Teacher)
-                    .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
-                    .Include(l => l.Calendar)
-                    .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
-                    .ToList();
-            }
-        }
-
-        public List<ProposedLesson> GetFiltredProposedLessons(Func<ProposedLesson, bool> condition)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.ProposedLessons.Include(l => l.TeacherForDiscipline.Teacher)
-                    .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
-                    .Include(l => l.Calendar)
-                    .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
-                    .ToList().Where(condition).ToList();
-            }
-        }
-
-        public ProposedLesson GetFirstFiltredProposedLesson(Func<ProposedLesson, bool> condition)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.ProposedLessons
-                    .Include(l => l.TeacherForDiscipline.Teacher)
-                    .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
-                    .Include(l => l.Calendar)
-                    .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
-                    .ToList().FirstOrDefault(condition);
-            }
-        }
-
-        public ProposedLesson GetProposedLesson(int proposedLessonId)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.ProposedLessons
-                    .Include(l => l.TeacherForDiscipline.Teacher)
-                    .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
-                    .Include(l => l.Calendar)
-                    .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
-                    .FirstOrDefault(l => l.ProposedLessonId == proposedLessonId);
-            }
-        }
-
-        public void AddProposedLesson(ProposedLesson lesson)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                lesson.ProposedLessonId = 0;
-
-                lesson.TeacherForDiscipline = context.TeacherForDiscipline.FirstOrDefault(tfd => tfd.TeacherForDisciplineId == lesson.TeacherForDiscipline.TeacherForDisciplineId);
-                lesson.Calendar = context.Calendars.FirstOrDefault(c => c.CalendarId == lesson.Calendar.CalendarId);
-                lesson.Ring = context.Rings.FirstOrDefault(r => r.RingId == lesson.Ring.RingId);
-                lesson.Auditorium = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == lesson.Auditorium.AuditoriumId);
-
-                context.ProposedLessons.Add(lesson);                
-                context.SaveChanges();
-            }
-        }
-
-        public void UpdateProposedLesson(ProposedLesson lesson)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                var curLesson = context.ProposedLessons.FirstOrDefault(l => l.ProposedLessonId == lesson.ProposedLessonId);
-
-                curLesson.Auditorium = lesson.Auditorium;
-                curLesson.Calendar = lesson.Calendar;
-                curLesson.IsActive = lesson.IsActive;
-                curLesson.Ring = lesson.Ring;
-                curLesson.TeacherForDiscipline = lesson.TeacherForDiscipline;
-
-                context.SaveChanges();
-            }
-        }
-
-        public void RemoveProposedLesson(int lessonId)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                var lesson = context.ProposedLessons.FirstOrDefault(l => l.ProposedLessonId == lessonId);
-
-                context.ProposedLessons.Remove(lesson);
-                
-                context.SaveChanges();
-            }
-        }
-
-        public void AddProposedLessonRange(IEnumerable<ProposedLesson> lessonList)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                foreach (var lesson in lessonList)
-                {
-                    lesson.ProposedLessonId = 0;
-
-                    lesson.TeacherForDiscipline = context.TeacherForDiscipline.FirstOrDefault(tfd => tfd.TeacherForDisciplineId == lesson.TeacherForDiscipline.TeacherForDisciplineId);
-                    lesson.Calendar = context.Calendars.FirstOrDefault(c => c.CalendarId == lesson.Calendar.CalendarId);
-                    lesson.Ring = context.Rings.FirstOrDefault(r => r.RingId == lesson.Ring.RingId);
-                    lesson.Auditorium = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == lesson.Auditorium.AuditoriumId);
-
-                    context.ProposedLessons.Add(lesson);
-                }
-
-                context.SaveChanges();
-            }
-        }
-
-        public List<ProposedLesson> GetGroupProposedLessons(int groupId)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.ProposedLessons
-                    .Include(l => l.TeacherForDiscipline.Teacher)
-                    .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
-                    .Include(l => l.Calendar)
-                    .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
-                    .Where(l => l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == groupId).ToList();
-            }
-        }
-
-        public Dictionary<string, Dictionary<int, Tuple<string, List<ProposedLesson>>>> GetGroupedGroupProposedLessons(int groupId, DateTime semesterStarts, int weekfilter = -1)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                // Понедельник 08:00 - {tfdId - {weeks + List<Lesson>}}
-                var result = new Dictionary<string, Dictionary<int, Tuple<string, List<ProposedLesson>>>>();
-
-                var studentIds = context.StudentsInGroups
-                    .Where(sig => sig.StudentGroup.StudentGroupId == groupId)
-                    .ToList()
-                    .Select(stig => stig.Student.StudentId);
-                var groupsListIds = context.StudentsInGroups
-                    .Where(sig => studentIds.Contains(sig.Student.StudentId))
-                    .ToList()
-                    .Select(stig => stig.StudentGroup.StudentGroupId);
-
-                var primaryList = context.ProposedLessons
-                    .Include(l => l.TeacherForDiscipline.Teacher)
-                    .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
-                    .Include(l => l.Calendar)
-                    .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
-                    .Where(l => groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId))
-                    .ToList();
-
-                if (weekfilter != -1)
-                {
-                    primaryList = primaryList
-                        .Where(l => CalculateWeekNumber(l.Calendar.Date) == weekfilter)
-                        .ToList();
-                }
-
-                var groupedLessons = primaryList.GroupBy(l => Constants.Constants.DOWRemap[(int)(l.Calendar.Date).DayOfWeek] * 2000 +
-                    l.Ring.Time.Hour * 60 + l.Ring.Time.Minute,
-                    (dow, lessons) =>
-                    new
-                    {
-                        DOW = dow / 2000,
-                        time = ((dow - (dow / 2000) * 2000) / 60).ToString("D2") + ":" + ((dow - (dow / 2000) * 2000) - ((dow - (dow / 2000) * 2000) / 60) * 60).ToString("D2"),
-                        Groups = lessons.GroupBy(ls => ls.TeacherForDiscipline,
-                            (tfd, tfdLessons) =>
-                            new
-                            {
-                                TFDForLessonGroup = tfd,
-                                Weeks = "",
-                                Lessons = tfdLessons
-                            }
-                        )
-                    }
-                ).OrderBy(l => l.DOW * 2000 + int.Parse(l.time.Split(':')[0]) * 60 + int.Parse(l.time.Split(':')[1]));
-
-                foreach (var dateTimeLessons in groupedLessons)
-                {
-                    var dowLocal = dateTimeLessons.DOW;
-
-                    result.Add(dowLocal + " " + dateTimeLessons.time, new Dictionary<int, Tuple<string, List<ProposedLesson>>>());
-
-                    foreach (var lessonGroup in dateTimeLessons.Groups)
-                    {
-                        var weekList = lessonGroup.Lessons
-                            .Select(lesson => CalculateWeekNumber(lesson.Calendar.Date.Date))
-                            .ToList();
-
-                        var weekString = CombineWeeks(weekList);
-
-                        result[dowLocal + " " + dateTimeLessons.time].Add(lessonGroup.TFDForLessonGroup.TeacherForDisciplineId, new Tuple<string, List<ProposedLesson>>(weekString, new List<ProposedLesson>()));
-
-                        foreach (var lesson in lessonGroup.Lessons)
-                        {
-                            result[dowLocal + " " + dateTimeLessons.time][lessonGroup.TFDForLessonGroup.TeacherForDisciplineId].Item2.Add(lesson);
-                        }
-                    }
-                }
-
-                return result;
-            }
-        }
-
-        public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<ProposedLesson>>>>>
-            GetFacultyDOWProposedSchedule(int facultyId, int dowRU, bool weekFiltered, int weekFilter)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                // GroupId - 08:00 - {tfdId - {weeks + List<Lesson>}}
-                var result = new Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<ProposedLesson>>>>>();
-
-                var listGroupIds = context
-                    .GroupsInFaculties
-                    .Where(gif => gif.Faculty.FacultyId == facultyId)
-                    .Select(gif => gif.StudentGroup.StudentGroupId)
-                    .ToList();
-
-                foreach (var gId in listGroupIds)
-                {
-                    var groupId = gId;
-
-                    result.Add(groupId, new Dictionary<string, Dictionary<int, Tuple<string, List<ProposedLesson>>>>());
-
-                    var studentIds = context.StudentsInGroups
-                        .Where(sig => sig.StudentGroup.StudentGroupId == groupId)
-                        .Select(stig => stig.Student.StudentId)
-                        .ToList();
-                    var groupsListIds = context.StudentsInGroups
-                        .Where(sig => studentIds.Contains(sig.Student.StudentId))
-                        .Select(sig => sig.StudentGroup.StudentGroupId)
-                        .ToList();
-
-                    var primaryList =
-                        context.ProposedLessons
-                        .Include(l => l.TeacherForDiscipline.Teacher)
-                        .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
-                        .Include(l => l.Calendar)
-                        .Include(l => l.Ring)
-                        .Include(l => l.Auditorium)
-                        .Where(l => groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId))
-                        .ToList();
-
-
-                    primaryList = primaryList
-                        .Where(l => Constants.Constants.DOWRemap[(int)(l.Calendar.Date).DayOfWeek] == dowRU)
-                        .ToList();
-
-                    if (weekFiltered)
-                    {
-                        primaryList = primaryList
-                            .Where(l => CalculateWeekNumber(l.Calendar.Date) == weekFilter)
-                            .ToList();
-                    }
-
-                    var groupedLessons = primaryList.GroupBy(
-                        l => l.Ring.Time.Hour * 60 + l.Ring.Time.Minute,
-                        (lTime, lessons) =>
-                        new
-                        {
-                            time = (lTime / 60).ToString("D2") + ":" + (lTime % 60).ToString("D2"),
-                            Groups = lessons.GroupBy(ls => ls.TeacherForDiscipline,
-                                                       (tfd, tfdLessons) =>
-                                                       new
-                                                       {
-                                                           TFDForLessonGroup = tfd,
-                                                           Weeks = "",
-                                                           Lessons = tfdLessons
-                                                       }
-                                                     )
-                        }
-                        ).OrderBy(l => int.Parse(l.time.Split(':')[0]) * 60 + int.Parse(l.time.Split(':')[1]));
-
-
-                    foreach (var dateTimeLessons in groupedLessons)
-                    {
-
-                        result[groupId].Add(dateTimeLessons.time, new Dictionary<int, Tuple<string, List<ProposedLesson>>>());
-
-                        foreach (var lessonGroup in dateTimeLessons.Groups)
-                        {
-                            var weekList = lessonGroup.Lessons
-                                .Select(lesson => CalculateWeekNumber(lesson.Calendar.Date.Date))
-                                .ToList();
-
-                            var weekString = CombineWeeks(weekList);
-
-                            result[groupId][dateTimeLessons.time].Add(
-                                lessonGroup.TFDForLessonGroup.TeacherForDisciplineId,
-                                new Tuple<string, List<ProposedLesson>>(weekString, new List<ProposedLesson>()));
 
                             foreach (var lesson in lessonGroup.Lessons)
                             {
@@ -1931,8 +1673,16 @@ namespace Schedule.Repositories
             using (var context = new ScheduleContext(ConnectionString))
             {
                 lessonLogEvent.LessonLogEventId = 0;
-                lessonLogEvent.OldLesson = context.Lessons.FirstOrDefault(l => l.LessonId == lessonLogEvent.OldLesson.LessonId);
-                lessonLogEvent.NewLesson = context.Lessons.FirstOrDefault(l => l.LessonId == lessonLogEvent.NewLesson.LessonId);
+                if (lessonLogEvent.OldLesson != null)
+                {
+                    lessonLogEvent.OldLesson =
+                        context.Lessons.FirstOrDefault(l => l.LessonId == lessonLogEvent.OldLesson.LessonId);
+                }
+                if (lessonLogEvent.NewLesson != null)
+                {
+                    lessonLogEvent.NewLesson =
+                        context.Lessons.FirstOrDefault(l => l.LessonId == lessonLogEvent.NewLesson.LessonId);
+                }
 
                 context.LessonLog.Add(lessonLogEvent);
                 context.SaveChanges();
@@ -3669,7 +3419,107 @@ namespace Schedule.Repositories
             }
         }
         #endregion
-      
+        
+        #region GroupPeriodRepository
+        public List<GroupPeriod> GetAllGroupPeriods()
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.GroupPeriods.Include(gp => gp.StudentGroup).ToList();
+            }
+        }
+
+        public List<GroupPeriod> GetFiltredGroupPeriods(Func<GroupPeriod, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.GroupPeriods.Include(gp => gp.StudentGroup).ToList().Where(condition).ToList();
+            }
+        }
+
+        public List<GroupPeriod> GetGroupPeriods(StudentGroup studentGroup)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.GroupPeriods
+                    .Where(gp => gp.StudentGroup.StudentGroupId == studentGroup.StudentGroupId)
+                    .Include(gp => gp.StudentGroup).ToList();
+            }
+        }
+
+        public GroupPeriod GetFirstFiltredGroupPeriod(Func<GroupPeriod, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.GroupPeriods.Include(gp => gp.StudentGroup).ToList().FirstOrDefault(condition);
+            }
+        }
+
+        public GroupPeriod GetGroupPeriod(int groupPeriodId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.GroupPeriods.Include(gp => gp.StudentGroup)
+                    .FirstOrDefault(d => d.GroupPeriodId == groupPeriodId);
+            }
+        }
+
+        public void AddGroupPeriod(GroupPeriod groupPeriod)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                groupPeriod.StudentGroup = context.StudentGroups
+                    .FirstOrDefault(sg => sg.StudentGroupId == groupPeriod.StudentGroup.StudentGroupId);
+                context.GroupPeriods.Add(groupPeriod);
+
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateGroupPeriod(GroupPeriod groupPeriod)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var curGroupPeriod = context.GroupPeriods
+                    .FirstOrDefault(gp => gp.GroupPeriodId == groupPeriod.GroupPeriodId);
+
+                curGroupPeriod.Name = groupPeriod.Name;
+                curGroupPeriod.StudentGroup = context.StudentGroups
+                    .FirstOrDefault(sg => sg.StudentGroupId == groupPeriod.StudentGroup.StudentGroupId); ;
+                curGroupPeriod.Start = groupPeriod.Start;
+                curGroupPeriod.End = groupPeriod.End;
+
+                context.SaveChanges();
+            }
+        }
+
+        public void RemoveGroupPeriod(int groupPeriodId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var groupPeriod = context.GroupPeriods.FirstOrDefault(gp => gp.GroupPeriodId == groupPeriodId);
+
+                context.GroupPeriods.Remove(groupPeriod);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddGroupPeriodRange(IEnumerable<GroupPeriod> groupPeriodList)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                foreach (var groupPeriod in groupPeriodList)
+                {
+                    groupPeriod.StudentGroup = context.StudentGroups
+                        .FirstOrDefault(sg => sg.StudentGroupId == groupPeriod.StudentGroup.StudentGroupId);
+                    context.GroupPeriods.Add(groupPeriod);
+                }
+
+                context.SaveChanges();
+            }
+        }
+        #endregion
+
         #region CommonFunctions
         public static string CombineWeeks(List<int> list)
         {
@@ -3931,7 +3781,7 @@ namespace Schedule.Repositories
             }
         }
 
-        public List<Auditorium> GetFreeAuditoriumAtDOWTime(List<int> calendars, List<int> ringIds, int buildingId)
+        public List<Auditorium> GetFreeAuditoriumAtDOWTime(List<int> calendars, List<int> ringIds, int buildingId, bool proposedIncluded)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -3939,7 +3789,8 @@ namespace Schedule.Repositories
                     .Where(l =>
                         ((calendars.Contains(l.Calendar.CalendarId)) &&
                          (ringIds.Contains(l.Ring.RingId))) &&
-                         l.IsActive)
+                         l.IsActive &&
+                         (proposedIncluded || l.State != 2))
                      .Select(l => l.Auditorium.AuditoriumId)
                      .Distinct()
                      .ToList();                
@@ -4061,11 +3912,11 @@ namespace Schedule.Repositories
             {
                 if (buildingId == -1)
                 {
-                    dowLessons = GetFiltredLessons(l => l.Calendar.Date.DayOfWeek == dow && l.IsActive).ToList();
+                    dowLessons = GetFiltredRealLessons(l => l.Calendar.Date.DayOfWeek == dow && l.IsActive).ToList();
                 }
                 else
                 {
-                    dowLessons = GetFiltredLessons(l => l.Calendar.Date.DayOfWeek == dow && l.IsActive && 
+                    dowLessons = GetFiltredRealLessons(l => l.Calendar.Date.DayOfWeek == dow && l.IsActive && 
                         l.Auditorium.Building.BuildingId == buildingId).ToList();
                 }
             }
@@ -4073,7 +3924,7 @@ namespace Schedule.Repositories
             {
                 if (buildingId == -1)
                 {
-                    dowLessons = GetFiltredLessons(l =>
+                    dowLessons = GetFiltredRealLessons(l =>
                             l.Calendar.Date.DayOfWeek == dow &&
                             l.IsActive &&
                             CalculateWeekNumber(l.Calendar.Date) == weekNumber)
@@ -4081,7 +3932,7 @@ namespace Schedule.Repositories
                 }
                 else
                 {
-                    dowLessons = GetFiltredLessons(l =>
+                    dowLessons = GetFiltredRealLessons(l =>
                             l.Calendar.Date.DayOfWeek == dow &&
                             l.IsActive &&
                             CalculateWeekNumber(l.Calendar.Date) == weekNumber &&
@@ -4243,7 +4094,7 @@ namespace Schedule.Repositories
         {
             var data = new Dictionary<int, Dictionary<int, Dictionary<int, List<Lesson>>>>();
 
-            var audLessons = GetFiltredLessons(l => l.Auditorium.AuditoriumId == auditoriumId && l.IsActive)
+            var audLessons = GetFiltredRealLessons(l => l.Auditorium.AuditoriumId == auditoriumId && l.IsActive)
                 .ToList();
 
             foreach (var lesson in audLessons)
@@ -4419,6 +4270,23 @@ namespace Schedule.Repositories
                 return context.Lessons.Count(l => l.IsActive && l.TeacherForDiscipline.TeacherForDisciplineId == tfdId) * 2;
             }
         }
+
+        public int getTFDLessonCount(int tfdId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Lessons.Count(l => l.IsActive && l.TeacherForDiscipline.TeacherForDisciplineId == tfdId);
+            }
+        }
+
+        public void PropagateIsActiveToState()
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                context.Database.ExecuteSqlCommand("UPDATE dbo.Lessons SET State = IsActive"); 
+            }
+        }
         #endregion
+        
     }
 }

@@ -1,4 +1,5 @@
-﻿using Schedule.DomainClasses.Analyse;
+﻿using Schedule.Constants;
+using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using System;
@@ -30,8 +31,10 @@ namespace UchOtd.Schedule.Views
                     new
                     {
                         RingId = ringId,
-                        RingWishes = ringWishes.GroupBy(rw => rw.Calendar.Date.DayOfWeek, (dow, wishes) =>
-                        new { dayOfWeek = dow, wishes = wishes })
+                        RingWishes = ringWishes
+                        .GroupBy(rw => Constants.DOWRemap[(int)rw.Calendar.Date.DayOfWeek],
+                        (dow, wishes) =>
+                            new { dayOfWeek = dow, wishes })
                     }
                 );
 
@@ -42,28 +45,28 @@ namespace UchOtd.Schedule.Views
 
                 foreach (var dowWishes in ringWishes.RingWishes)
                 {
-                    switch((int)dowWishes.dayOfWeek)
+                    switch(dowWishes.dayOfWeek)
                     {
                         case 1:
-                            ringWeekView.MonWishes = RingWeekView.WishesToString(repo, dowWishes.wishes);
+                            ringWeekView.MonWishes = WishesToString(repo, dowWishes.wishes);
                             break;
                         case 2:
-                            ringWeekView.TueWishes = RingWeekView.WishesToString(repo, dowWishes.wishes);
+                            ringWeekView.TueWishes = WishesToString(repo, dowWishes.wishes);
                             break;
                         case 3:
-                            ringWeekView.WedWishes = RingWeekView.WishesToString(repo, dowWishes.wishes);
+                            ringWeekView.WedWishes = WishesToString(repo, dowWishes.wishes);
                             break;
                         case 4:
-                            ringWeekView.ThuWishes = RingWeekView.WishesToString(repo, dowWishes.wishes);
+                            ringWeekView.ThuWishes = WishesToString(repo, dowWishes.wishes);
                             break;
                         case 5:
-                            ringWeekView.FriWishes = RingWeekView.WishesToString(repo, dowWishes.wishes);
+                            ringWeekView.FriWishes = WishesToString(repo, dowWishes.wishes);
                             break;
                         case 6:
-                            ringWeekView.SatWishes = RingWeekView.WishesToString(repo, dowWishes.wishes);
+                            ringWeekView.SatWishes = WishesToString(repo, dowWishes.wishes);
                             break;
                         case 7:
-                            ringWeekView.SunWishes = RingWeekView.WishesToString(repo, dowWishes.wishes);
+                            ringWeekView.SunWishes = WishesToString(repo, dowWishes.wishes);
                             break;
                     }
                 }
@@ -80,14 +83,13 @@ namespace UchOtd.Schedule.Views
 
         private static string WishesToString(ScheduleRepository repo, IEnumerable<TeacherWish> list)
         {
-            String result = "";
+            var groupedWishes = list
+                .GroupBy(w => w.Wish, 
+                (wish, wishes) => 
+                    new {wish, weeks = repo.GetWeekStringFromWishes(wishes) });
 
-            var groupedWishes = list.GroupBy(w => w.Wish, (wish, wishes) => new { wish = wish, weeks = repo.GetWeekStringFromWishes(wishes) });
-
-            foreach (var wish in groupedWishes)                
-            {
-                result += wish.weeks + "@" + wish.wish + "; ";
-            }
+            var result = groupedWishes
+                .Aggregate("", (current, wish) => current + (wish.weeks + "@" + wish.wish + "; "));
 
             result = result.Substring(0, result.Length - 2);
 

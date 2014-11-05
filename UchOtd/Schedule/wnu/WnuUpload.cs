@@ -141,7 +141,7 @@ namespace Schedule.wnu
             json = jsonSerializer.Serialize(wud);
             WnuUpload.UploadTableData(json);
 
-            var lessons = Repo.GetAllLessons();
+            var lessons = Repo.GetAllRealLessons();
             var mySqlLessons = MySQLLesson.FromLessonList(lessons);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "lessons", data = jsonSerializer.Serialize(mySqlLessons) };
             json = jsonSerializer.Serialize(wud);

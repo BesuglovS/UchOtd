@@ -1,4 +1,4 @@
-﻿namespace Schedule.Forms.DBLists.Lessons
+﻿namespace UchOtd.Schedule.Forms.DBLists.Lessons
 {
     partial class EditLesson
     {
@@ -29,18 +29,20 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.removeLessons = new System.Windows.Forms.Button();
             this.saveChanges = new System.Windows.Forms.Button();
             this.nextTFD = new System.Windows.Forms.Button();
             this.prevTFD = new System.Windows.Forms.Button();
             this.tfdIndex = new System.Windows.Forms.TextBox();
             this.lessonsPanel = new System.Windows.Forms.Panel();
+            this.proposedLessons = new System.Windows.Forms.CheckBox();
             this.tfd = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.auditoriums = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lessonWeeks = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.removeLessons = new System.Windows.Forms.Button();
+            this.acceptLessons = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.lessonsPanel.SuspendLayout();
             this.SuspendLayout();
@@ -57,6 +59,16 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(608, 49);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // removeLessons
+            // 
+            this.removeLessons.Location = new System.Drawing.Point(280, 9);
+            this.removeLessons.Name = "removeLessons";
+            this.removeLessons.Size = new System.Drawing.Size(107, 23);
+            this.removeLessons.TabIndex = 4;
+            this.removeLessons.Text = "Удалить уроки";
+            this.removeLessons.UseVisualStyleBackColor = true;
+            this.removeLessons.Click += new System.EventHandler(this.RemoveLessonsClick);
             // 
             // saveChanges
             // 
@@ -97,6 +109,8 @@
             // 
             // lessonsPanel
             // 
+            this.lessonsPanel.Controls.Add(this.acceptLessons);
+            this.lessonsPanel.Controls.Add(this.proposedLessons);
             this.lessonsPanel.Controls.Add(this.tfd);
             this.lessonsPanel.Controls.Add(this.label2);
             this.lessonsPanel.Controls.Add(this.auditoriums);
@@ -108,6 +122,17 @@
             this.lessonsPanel.Name = "lessonsPanel";
             this.lessonsPanel.Size = new System.Drawing.Size(608, 214);
             this.lessonsPanel.TabIndex = 1;
+            // 
+            // proposedLessons
+            // 
+            this.proposedLessons.AutoCheck = false;
+            this.proposedLessons.AutoSize = true;
+            this.proposedLessons.Location = new System.Drawing.Point(268, 14);
+            this.proposedLessons.Name = "proposedLessons";
+            this.proposedLessons.Size = new System.Drawing.Size(146, 17);
+            this.proposedLessons.TabIndex = 18;
+            this.proposedLessons.Text = "Неутверждённые уроки";
+            this.proposedLessons.UseVisualStyleBackColor = true;
             // 
             // tfd
             // 
@@ -158,15 +183,15 @@
             this.label4.TabIndex = 15;
             this.label4.Text = "Недели занятий";
             // 
-            // removeLessons
+            // acceptLessons
             // 
-            this.removeLessons.Location = new System.Drawing.Point(280, 9);
-            this.removeLessons.Name = "removeLessons";
-            this.removeLessons.Size = new System.Drawing.Size(107, 23);
-            this.removeLessons.TabIndex = 4;
-            this.removeLessons.Text = "Удалить уроки";
-            this.removeLessons.UseVisualStyleBackColor = true;
-            this.removeLessons.Click += new System.EventHandler(this.RemoveLessonsClick);
+            this.acceptLessons.Location = new System.Drawing.Point(420, 10);
+            this.acceptLessons.Name = "acceptLessons";
+            this.acceptLessons.Size = new System.Drawing.Size(75, 23);
+            this.acceptLessons.TabIndex = 19;
+            this.acceptLessons.Text = "Утвердить";
+            this.acceptLessons.UseVisualStyleBackColor = true;
+            this.acceptLessons.Click += new System.EventHandler(this.acceptLessons_Click);
             // 
             // EditLesson
             // 
@@ -178,6 +203,7 @@
             this.Name = "EditLesson";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Edit lessons";
+            this.Load += new System.EventHandler(this.EditLesson_Load);
             this.controlsPanel.ResumeLayout(false);
             this.controlsPanel.PerformLayout();
             this.lessonsPanel.ResumeLayout(false);
@@ -201,5 +227,7 @@
         private System.Windows.Forms.TextBox lessonWeeks;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button removeLessons;
+        private System.Windows.Forms.CheckBox proposedLessons;
+        private System.Windows.Forms.Button acceptLessons;
     }
 }

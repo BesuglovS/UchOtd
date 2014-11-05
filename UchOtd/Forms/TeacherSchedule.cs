@@ -75,14 +75,14 @@ namespace UchOtd.Forms
                 int.TryParse(weekFilter.Text, out weekNum);
 
                 lessonList = _repo
-                    .GetFiltredLessons(l => l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
+                    .GetFiltredRealLessons(l => l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
                                             l.IsActive && _repo.CalculateWeekNumber(l.Calendar.Date.Date) == weekNum)
                     .ToList();
             }
             else
             {
                 lessonList = _repo
-                    .GetFiltredLessons(l => l.TeacherForDiscipline.Teacher.TeacherId == teacherId && l.IsActive)
+                    .GetFiltredRealLessons(l => l.TeacherForDiscipline.Teacher.TeacherId == teacherId && l.IsActive)
                     .ToList();
             }
 

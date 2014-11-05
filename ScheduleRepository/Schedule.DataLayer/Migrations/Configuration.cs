@@ -9,7 +9,8 @@ namespace Schedule.DataLayer.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;                        
+            AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
         }        
 
         protected override void Seed(Schedule.DataLayer.ScheduleContext context)

@@ -1,4 +1,4 @@
-﻿namespace Schedule.Forms.DBLists.Lessons
+﻿namespace UchOtd.Schedule.Forms.DBLists.Lessons
 {
     partial class AddLesson
     {
@@ -49,15 +49,17 @@
             this.DayOfWeekListBox = new System.Windows.Forms.ListBox();
             this.BuildingsPanel = new System.Windows.Forms.Panel();
             this.MainPanel = new System.Windows.Forms.Panel();
-            this.deselectBuilding = new System.Windows.Forms.Button();
+            this.ProposedLesson = new System.Windows.Forms.CheckBox();
             this.filterRings = new System.Windows.Forms.CheckBox();
+            this.deselectBuilding = new System.Windows.Forms.Button();
+            this.proposedIncluded = new System.Windows.Forms.CheckBox();
             this.MainPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // Execute
             // 
             this.Execute.Font = new System.Drawing.Font("Microsoft Sans Serif", 24.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Execute.Location = new System.Drawing.Point(6, 245);
+            this.Execute.Location = new System.Drawing.Point(6, 270);
             this.Execute.Name = "Execute";
             this.Execute.Size = new System.Drawing.Size(213, 61);
             this.Execute.TabIndex = 5;
@@ -68,7 +70,7 @@
             // Cancel
             // 
             this.Cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 24.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Cancel.Location = new System.Drawing.Point(357, 243);
+            this.Cancel.Location = new System.Drawing.Point(357, 268);
             this.Cancel.Name = "Cancel";
             this.Cancel.Size = new System.Drawing.Size(227, 61);
             this.Cancel.TabIndex = 6;
@@ -144,7 +146,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(10, 315);
+            this.label5.Location = new System.Drawing.Point(10, 340);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(82, 13);
             this.label5.TabIndex = 14;
@@ -153,7 +155,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(10, 346);
+            this.label6.Location = new System.Drawing.Point(10, 371);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(87, 13);
             this.label6.TabIndex = 15;
@@ -162,7 +164,7 @@
             // publicComment
             // 
             this.publicComment.FormattingEnabled = true;
-            this.publicComment.Location = new System.Drawing.Point(118, 312);
+            this.publicComment.Location = new System.Drawing.Point(118, 337);
             this.publicComment.Name = "publicComment";
             this.publicComment.Size = new System.Drawing.Size(466, 21);
             this.publicComment.TabIndex = 7;
@@ -170,7 +172,7 @@
             // hiddenComment
             // 
             this.hiddenComment.FormattingEnabled = true;
-            this.hiddenComment.Location = new System.Drawing.Point(118, 343);
+            this.hiddenComment.Location = new System.Drawing.Point(118, 368);
             this.hiddenComment.Name = "hiddenComment";
             this.hiddenComment.Size = new System.Drawing.Size(466, 21);
             this.hiddenComment.TabIndex = 8;
@@ -180,13 +182,13 @@
             this.auditoriums.Location = new System.Drawing.Point(357, 109);
             this.auditoriums.Multiline = true;
             this.auditoriums.Name = "auditoriums";
-            this.auditoriums.Size = new System.Drawing.Size(223, 90);
+            this.auditoriums.Size = new System.Drawing.Size(223, 118);
             this.auditoriums.TabIndex = 4;
             this.auditoriums.Text = "Ауд. ";
             // 
             // showAuds
             // 
-            this.showAuds.Location = new System.Drawing.Point(357, 208);
+            this.showAuds.Location = new System.Drawing.Point(357, 233);
             this.showAuds.Name = "showAuds";
             this.showAuds.Size = new System.Drawing.Size(223, 23);
             this.showAuds.TabIndex = 26;
@@ -240,6 +242,8 @@
             // 
             // MainPanel
             // 
+            this.MainPanel.Controls.Add(this.proposedIncluded);
+            this.MainPanel.Controls.Add(this.ProposedLesson);
             this.MainPanel.Controls.Add(this.filterRings);
             this.MainPanel.Controls.Add(this.deselectBuilding);
             this.MainPanel.Controls.Add(this.label1);
@@ -264,18 +268,18 @@
             this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainPanel.Location = new System.Drawing.Point(0, 56);
             this.MainPanel.Name = "MainPanel";
-            this.MainPanel.Size = new System.Drawing.Size(598, 376);
+            this.MainPanel.Size = new System.Drawing.Size(598, 396);
             this.MainPanel.TabIndex = 31;
             // 
-            // deselectBuilding
+            // ProposedLesson
             // 
-            this.deselectBuilding.Location = new System.Drawing.Point(417, 3);
-            this.deselectBuilding.Name = "deselectBuilding";
-            this.deselectBuilding.Size = new System.Drawing.Size(163, 20);
-            this.deselectBuilding.TabIndex = 30;
-            this.deselectBuilding.Text = "Снять выделение корпуса";
-            this.deselectBuilding.UseVisualStyleBackColor = true;
-            this.deselectBuilding.Click += new System.EventHandler(this.deselectBuilding_Click);
+            this.ProposedLesson.AutoSize = true;
+            this.ProposedLesson.Location = new System.Drawing.Point(6, 245);
+            this.ProposedLesson.Name = "ProposedLesson";
+            this.ProposedLesson.Size = new System.Drawing.Size(186, 17);
+            this.ProposedLesson.TabIndex = 32;
+            this.ProposedLesson.Text = "Предполагаемый урок (анализ)";
+            this.ProposedLesson.UseVisualStyleBackColor = true;
             // 
             // filterRings
             // 
@@ -288,11 +292,35 @@
             this.filterRings.UseVisualStyleBackColor = true;
             this.filterRings.CheckedChanged += new System.EventHandler(this.filterRings_CheckedChanged);
             // 
+            // deselectBuilding
+            // 
+            this.deselectBuilding.Location = new System.Drawing.Point(417, 3);
+            this.deselectBuilding.Name = "deselectBuilding";
+            this.deselectBuilding.Size = new System.Drawing.Size(163, 20);
+            this.deselectBuilding.TabIndex = 30;
+            this.deselectBuilding.Text = "Снять выделение корпуса";
+            this.deselectBuilding.UseVisualStyleBackColor = true;
+            this.deselectBuilding.Click += new System.EventHandler(this.deselectBuilding_Click);
+            // 
+            // proposedIncluded
+            // 
+            this.proposedIncluded.AutoSize = true;
+            this.proposedIncluded.Checked = true;
+            this.proposedIncluded.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.proposedIncluded.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.proposedIncluded.Location = new System.Drawing.Point(225, 314);
+            this.proposedIncluded.Name = "proposedIncluded";
+            this.proposedIncluded.Size = new System.Drawing.Size(117, 14);
+            this.proposedIncluded.TabIndex = 33;
+            this.proposedIncluded.Text = "Учитывая преполагаемые";
+            this.proposedIncluded.UseVisualStyleBackColor = true;
+            this.proposedIncluded.CheckedChanged += new System.EventHandler(this.proposedIncluded_CheckedChanged);
+            // 
             // AddLesson
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(598, 432);
+            this.ClientSize = new System.Drawing.Size(598, 452);
             this.Controls.Add(this.MainPanel);
             this.Controls.Add(this.BuildingsPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -333,5 +361,7 @@
         private System.Windows.Forms.Panel MainPanel;
         private System.Windows.Forms.Button deselectBuilding;
         private System.Windows.Forms.CheckBox filterRings;
+        private System.Windows.Forms.CheckBox ProposedLesson;
+        private System.Windows.Forms.CheckBox proposedIncluded;
     }
 }

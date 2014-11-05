@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Config;
 using Schedule.Repositories;
 using UchOtd.Forms;
 using UchOtd.NUDS;
@@ -254,9 +255,23 @@ namespace UchOtd
             _repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=" + DefaultDBName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
             _UOrepo = new UchOtdRepository("data source=tcp:" + ServerList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
 
-            if (StartupForm.school)
+            PropagateIsActiveToStateIfNeeded();
+
+            if (school)
             {
                 uploadTimer.Enabled = true;
+            }
+        }
+
+        private void PropagateIsActiveToStateIfNeeded()
+        {
+            var propagateOption = _repo.GetFirstFiltredConfigOption(co => co.Key == "_IsActivePropagatedToState");
+
+            if (propagateOption == null)
+            {
+                _repo.PropagateIsActiveToState();
+                propagateOption = new ConfigOption { Key = "_IsActivePropagatedToState", Value = "" };
+                _repo.AddConfigOption(propagateOption);
             }
         }
 

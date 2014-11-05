@@ -37,6 +37,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.optionValue = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.showInternalOptions = new System.Windows.Forms.CheckBox();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OptionsListView)).BeginInit();
             this.SuspendLayout();
@@ -129,11 +130,23 @@
             this.label2.TabIndex = 15;
             this.label2.Text = "Value";
             // 
-            // ConfigOptions
+            // showInternalOptions
+            // 
+            this.showInternalOptions.AutoSize = true;
+            this.showInternalOptions.Location = new System.Drawing.Point(14, 166);
+            this.showInternalOptions.Name = "showInternalOptions";
+            this.showInternalOptions.Size = new System.Drawing.Size(232, 17);
+            this.showInternalOptions.TabIndex = 17;
+            this.showInternalOptions.Text = "Показывать скрытые/системные опции";
+            this.showInternalOptions.UseVisualStyleBackColor = true;
+            this.showInternalOptions.CheckedChanged += new System.EventHandler(this.showInternalOptions_CheckedChanged);
+            // 
+            // ConfigOptionsList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(562, 451);
+            this.Controls.Add(this.showInternalOptions);
             this.Controls.Add(this.optionValue);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.ListPanel);
@@ -142,7 +155,7 @@
             this.Controls.Add(this.add);
             this.Controls.Add(this.optionKey);
             this.Controls.Add(this.label1);
-            this.Name = "ConfigOptions";
+            this.Name = "ConfigOptionsList";
             this.Text = "Опции чёрт побери";
             this.Load += new System.EventHandler(this.ConfigOptionsLoad);
             this.ListPanel.ResumeLayout(false);
@@ -163,5 +176,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox optionValue;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox showInternalOptions;
     }
 }

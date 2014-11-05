@@ -50,14 +50,7 @@ namespace Schedule.Views.DBListViews
 
         public static List<DisciplineView> DisciplinesToView(ScheduleRepository repo, List<Discipline> list)
         {
-            var result = new List<DisciplineView>();
-
-            foreach (var disc in list)
-            {
-                result.Add(new DisciplineView(repo, disc));
-            }
-
-            return result;
-        }     
+            return list.Select(disc => new DisciplineView(repo, disc)).ToList();
+        }
     }
 }

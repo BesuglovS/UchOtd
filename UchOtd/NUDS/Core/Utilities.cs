@@ -28,7 +28,7 @@ namespace UchOtd.NUDS.Core
             if (limitToExactGroup)
             {
                 result = repo
-                    .GetFiltredLessons(l =>
+                    .GetFiltredRealLessons(l =>
                         (l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == groupId) &&
                         (l.Calendar.Date == date))
                     .OrderBy(l => l.Ring.Time.TimeOfDay)
@@ -48,7 +48,7 @@ namespace UchOtd.NUDS.Core
                     .ToList();
 
                 result = repo
-                    .GetFiltredLessons(l =>
+                    .GetFiltredRealLessons(l =>
                         (groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId)) &&
                         (l.Calendar.Date.Date == date.Date) &&
                         (l.IsActive))

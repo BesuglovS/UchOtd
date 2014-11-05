@@ -206,11 +206,29 @@
     <Compile Include="Schedule\Forms\AllChanges.Designer.cs">
       <DependentUpon>AllChanges.cs</DependentUpon>
     </Compile>
+    <Compile Include="Schedule\Forms\Analysis\Analysis.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\Analysis.Designer.cs">
+      <DependentUpon>Analysis.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\AnalysisSchool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\AnalysisSchool.Designer.cs">
+      <DependentUpon>AnalysisSchool.cs</DependentUpon>
+    </Compile>
     <Compile Include="Schedule\Forms\Analysis\DisciplineByOrder.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Schedule\Forms\Analysis\DisciplineByOrder.Designer.cs">
       <DependentUpon>DisciplineByOrder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\GroupPeriods.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\GroupPeriods.Designer.cs">
+      <DependentUpon>GroupPeriods.cs</DependentUpon>
     </Compile>
     <Compile Include="Schedule\Forms\Analysis\IncompatiblePairs.cs">
       <SubType>Form</SubType>
@@ -382,6 +400,7 @@
     </Compile>
     <Compile Include="Schedule\Views\DBListViews\AuditoriumEventView.cs" />
     <Compile Include="Schedule\Views\DBListViews\AuditoriumView.cs" />
+    <Compile Include="Schedule\Views\DBListViews\CalendarView.cs" />
     <Compile Include="Schedule\Views\DBListViews\DisciplineView.cs" />
     <Compile Include="Schedule\Views\DBListViews\GroupTableView.cs" />
     <Compile Include="Schedule\Views\DBListViews\GroupView.cs" />
@@ -389,6 +408,7 @@
     <Compile Include="Schedule\Views\DBListViews\StudentView.cs" />
     <Compile Include="Schedule\Views\DisciplineTextView.cs" />
     <Compile Include="Schedule\Views\FiveGroupsView.cs" />
+    <Compile Include="Schedule\Views\GroupPeriodView.cs" />
     <Compile Include="Schedule\Views\IncompatiblePairView.cs" />
     <Compile Include="Schedule\Views\LessonLogEventView.cs" />
     <Compile Include="Schedule\Views\LessonViewAtLessonListByTeacher.cs" />
@@ -461,8 +481,17 @@
     <EmbeddedResource Include="Schedule\Forms\AllChanges.resx">
       <DependentUpon>AllChanges.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\Analysis\Analysis.resx">
+      <DependentUpon>Analysis.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\Analysis\AnalysisSchool.resx">
+      <DependentUpon>AnalysisSchool.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\Analysis\DisciplineByOrder.resx">
       <DependentUpon>DisciplineByOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\Analysis\GroupPeriods.resx">
+      <DependentUpon>GroupPeriods.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\Analysis\IncompatiblePairs.resx">
       <DependentUpon>IncompatiblePairs.cs</DependentUpon>
@@ -482,6 +511,12 @@
     <EmbeddedResource Include="Schedule\Forms\DBLists\BuildingList.resx">
       <DependentUpon>BuildingList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\DBLists\CalendarList.resx">
+      <DependentUpon>CalendarList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\DBLists\ConfigOptionsList.resx">
+      <DependentUpon>ConfigOptionsList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\DBLists\DisciplineList.resx">
       <DependentUpon>DisciplineList.cs</DependentUpon>
     </EmbeddedResource>
@@ -490,6 +525,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\DBLists\Lessons\AddLesson.resx">
       <DependentUpon>AddLesson.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\DBLists\Lessons\EditLesson.resx">
+      <DependentUpon>EditLesson.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\DBLists\StudentList.resx">
       <DependentUpon>StudentList.cs</DependentUpon>

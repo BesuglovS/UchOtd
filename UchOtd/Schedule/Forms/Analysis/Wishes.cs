@@ -3,11 +3,7 @@ using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Schedule.Views.DBListViews;
 using UchOtd.Schedule.Views;
@@ -127,8 +123,9 @@ namespace UchOtd.Schedule.Forms
             wishesView.Columns[5].HeaderText = "Четверг";
             wishesView.Columns[6].HeaderText = "Пятница";
             wishesView.Columns[7].HeaderText = "Суббота";
+            wishesView.Columns[8].HeaderText = "Воскресенье";
 
-            wishesView.Columns[8].Visible = false;
+            //wishesView.Columns[8].Visible = false;
         }
 
         private void Yes_Click(object sender, EventArgs e)

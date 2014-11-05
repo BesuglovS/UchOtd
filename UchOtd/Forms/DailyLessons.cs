@@ -127,7 +127,7 @@ namespace UchOtd.Forms
                         .ToList()
                         .Select(stig => stig.StudentGroup.StudentGroupId);
 
-                    var dailyLessons = repo.GetFiltredLessons(l =>
+                    var dailyLessons = repo.GetFiltredRealLessons(l =>
                         l.IsActive &&
                         l.Calendar.Date == lessonsDate.Value &&
                         groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));

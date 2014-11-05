@@ -38,7 +38,7 @@ namespace Schedule.Forms
         private void teacherBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             var lessons = _repo
-                .GetFiltredLessons(l =>
+                .GetFiltredRealLessons(l =>
                     l.IsActive &&
                     l.TeacherForDiscipline.Teacher.TeacherId == (int)teacherBox.SelectedValue)
                 .OrderBy(l => l.Calendar.Date)

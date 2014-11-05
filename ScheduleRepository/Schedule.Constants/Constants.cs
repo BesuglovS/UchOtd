@@ -47,11 +47,11 @@ namespace Schedule.Constants
             "Добавление занятий для соответствия учебному плану"
         };
 
-        public class Building
+        // Calendar State Description Dictionary
+        public static Dictionary<int, string> CalendarStateDescription = new Dictionary<int, string>()
         {
-            public int id { get; set; }
-            public string Name { get; set; }
-        }
-                       
+            {0, "Обычный"},
+            {1, "Праздник"}
+        };
     }
 }

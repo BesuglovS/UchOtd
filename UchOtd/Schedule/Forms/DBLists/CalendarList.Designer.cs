@@ -41,6 +41,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.finishDate = new System.Windows.Forms.DateTimePicker();
             this.button1 = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.calendarState = new System.Windows.Forms.ComboBox();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CalendarListView)).BeginInit();
             this.SuspendLayout();
@@ -88,7 +90,7 @@
             // 
             // deletewithlessons
             // 
-            this.deletewithlessons.Location = new System.Drawing.Point(22, 144);
+            this.deletewithlessons.Location = new System.Drawing.Point(21, 144);
             this.deletewithlessons.Name = "deletewithlessons";
             this.deletewithlessons.Size = new System.Drawing.Size(171, 23);
             this.deletewithlessons.TabIndex = 10;
@@ -98,9 +100,9 @@
             // 
             // remove
             // 
-            this.remove.Location = new System.Drawing.Point(22, 115);
+            this.remove.Location = new System.Drawing.Point(172, 115);
             this.remove.Name = "remove";
-            this.remove.Size = new System.Drawing.Size(75, 23);
+            this.remove.Size = new System.Drawing.Size(58, 23);
             this.remove.TabIndex = 9;
             this.remove.Text = "Удалить";
             this.remove.UseVisualStyleBackColor = true;
@@ -108,9 +110,9 @@
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(22, 86);
+            this.update.Location = new System.Drawing.Point(97, 115);
             this.update.Name = "update";
-            this.update.Size = new System.Drawing.Size(75, 23);
+            this.update.Size = new System.Drawing.Size(69, 23);
             this.update.TabIndex = 8;
             this.update.Text = "Изменить";
             this.update.UseVisualStyleBackColor = true;
@@ -118,9 +120,9 @@
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(21, 57);
+            this.add.Location = new System.Drawing.Point(22, 115);
             this.add.Name = "add";
-            this.add.Size = new System.Drawing.Size(75, 23);
+            this.add.Size = new System.Drawing.Size(69, 23);
             this.add.TabIndex = 7;
             this.add.Text = "Добавить";
             this.add.UseVisualStyleBackColor = true;
@@ -128,7 +130,7 @@
             // 
             // startDate
             // 
-            this.startDate.Location = new System.Drawing.Point(69, 234);
+            this.startDate.Location = new System.Drawing.Point(69, 225);
             this.startDate.Name = "startDate";
             this.startDate.Size = new System.Drawing.Size(162, 20);
             this.startDate.TabIndex = 11;
@@ -137,7 +139,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(19, 240);
+            this.label3.Location = new System.Drawing.Point(19, 231);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(44, 13);
             this.label3.TabIndex = 13;
@@ -146,7 +148,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(19, 266);
+            this.label4.Location = new System.Drawing.Point(19, 257);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(38, 13);
             this.label4.TabIndex = 15;
@@ -154,7 +156,7 @@
             // 
             // finishDate
             // 
-            this.finishDate.Location = new System.Drawing.Point(69, 260);
+            this.finishDate.Location = new System.Drawing.Point(69, 251);
             this.finishDate.Name = "finishDate";
             this.finishDate.Size = new System.Drawing.Size(162, 20);
             this.finishDate.TabIndex = 14;
@@ -162,7 +164,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(21, 205);
+            this.button1.Location = new System.Drawing.Point(21, 196);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(210, 23);
             this.button1.TabIndex = 16;
@@ -170,11 +172,31 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(22, 54);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(41, 13);
+            this.label2.TabIndex = 17;
+            this.label2.Text = "Статус";
+            // 
+            // calendarState
+            // 
+            this.calendarState.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.calendarState.FormattingEnabled = true;
+            this.calendarState.Location = new System.Drawing.Point(22, 72);
+            this.calendarState.Name = "calendarState";
+            this.calendarState.Size = new System.Drawing.Size(161, 21);
+            this.calendarState.TabIndex = 18;
+            // 
             // CalendarList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(523, 485);
+            this.Controls.Add(this.calendarState);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.finishDate);
@@ -215,5 +237,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DateTimePicker finishDate;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox calendarState;
     }
 }

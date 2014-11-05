@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Linq;
+using System.Windows.Forms;
 using Schedule.DomainClasses.Config;
 using Schedule.Repositories;
 using System.Collections.Generic;
@@ -24,6 +25,13 @@ namespace Schedule.Forms.DBLists
         private void RefreshView()
         {
             var optList = _repo.GetAllConfigOptions();
+
+            if (!showInternalOptions.Checked)
+            {
+                optList = optList
+                    .Where(o => !o.Key.StartsWith("_"))
+                    .ToList();
+            }
 
             OptionsListView.DataSource = optList;
 
@@ -80,6 +88,11 @@ namespace Schedule.Forms.DBLists
 
                 RefreshView();
             }
+        }
+
+        private void showInternalOptions_CheckedChanged(object sender, System.EventArgs e)
+        {
+            RefreshView();
         }
     }
 }

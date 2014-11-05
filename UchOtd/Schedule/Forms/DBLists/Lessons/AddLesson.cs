@@ -1,16 +1,16 @@
-﻿using System.Linq;
-using Schedule.Repositories;
-using System.Windows.Forms;
-using Schedule.Views;
-using Schedule.Views.DBListViews;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Schedule.DomainClasses.Main;
+using System.Linq;
+using System.Windows.Forms;
 using Schedule.Core;
-using UchOtd;
+using Schedule.DomainClasses.Main;
+using Schedule.Forms;
+using Schedule.Repositories;
+using Schedule.Views;
+using Schedule.Views.DBListViews;
 
-namespace Schedule.Forms.DBLists.Lessons
+namespace UchOtd.Schedule.Forms.DBLists.Lessons
 {
     public partial class AddLesson : Form
     {
@@ -164,7 +164,7 @@ namespace Schedule.Forms.DBLists.Lessons
 
             // DOW Local
             var dowList = new List<object>();
-            foreach (var dow in Constants.Constants.DOWLocal)
+            foreach (var dow in global::Schedule.Constants.Constants.DOWLocal)
             {
                 dowList.Add(new { Value = dow.Key, Text = dow.Value });
             }
@@ -174,7 +174,7 @@ namespace Schedule.Forms.DBLists.Lessons
             DayOfWeekListBox.DataSource = dowList;            
 
             // Public comment
-            publicComment.Items.AddRange(Constants.Constants.LessonAddPublicComment.ToArray());
+            publicComment.Items.AddRange(global::Schedule.Constants.Constants.LessonAddPublicComment.ToArray());
             publicComment.SelectedIndex = 0;
 
             this.Top = (Screen.PrimaryScreen.WorkingArea.Height - this.Height) / 2;
@@ -203,7 +203,6 @@ namespace Schedule.Forms.DBLists.Lessons
             var studentIdsInGroup = sigFromGroup.Select(studentsInGroupse => studentsInGroupse.Student.StudentId).ToList();
             var studentGroupsIds = _repo.GetFiltredStudentsInGroups(sig => studentIdsInGroup.Contains(sig.Student.StudentId)).Select(sing => sing.StudentGroup.StudentGroupId).Distinct();
                                     
-            //var ring = _repo.GetRing((int)ringsBox.SelectedValue);
             var rings = new List<Ring>();
             foreach (var ringView in ringsListBox.SelectedItems)
             {
@@ -224,43 +223,39 @@ namespace Schedule.Forms.DBLists.Lessons
             }
             
             var groupsLessons = _repo
-                .GetFiltredLessons(
+                .GetFiltredRealLessons(
                     l => studentGroupsIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) && 
                          calendarIdsList.Contains(l.Calendar.CalendarId) && 
-                         //l.Ring.RingId == ring.RingId &&
                          ringIds.Contains(l.Ring.RingId) &&
                          l.IsActive);
 
 
             if (groupsLessons.Count != 0)
             {                
-                DialogResult OutOfMind = MessageBox.Show("У студентов группы есть занятия. Всё равно добавить?", "ЕГГОГ", MessageBoxButtons.YesNo);
-                if (OutOfMind == System.Windows.Forms.DialogResult.No)
+                var outOfMind = MessageBox.Show("У студентов группы есть занятия. Всё равно добавить?", "ЕГГОГ", MessageBoxButtons.YesNo);
+                if (outOfMind == DialogResult.No)
                 {
                     return;
                 }
             }
             
                         
-            Dictionary<int, string> audWeekList = new Dictionary<int,string>();
-            audWeekList = Utilities.GetAudWeeksList(auditoriums.Text);
+            var audWeekList = Utilities.GetAudWeeksList(auditoriums.Text);
 
             for (int i = 0; i < weekList.Count; i++)
             {
                 foreach (var ring in rings)
                 {
-                    var lesson = new Lesson();
-
-                    lesson.IsActive = isActive.Checked;
-                    lesson.TeacherForDiscipline = tfd;
-                    lesson.Ring = ring;
+                    var lesson = new Lesson
+                    {
+                        IsActive = isActive.Checked, 
+                        State = ProposedLesson.Checked ? 2 : 0,
+                        TeacherForDiscipline = tfd, 
+                        Ring = ring
+                    };
 
                     var date = _repo.GetDateFromDowAndWeek((int)DayOfWeekListBox.SelectedValue, weekList[i]);
-                    var calendar = _repo.FindCalendar(date);
-                    if (calendar == null)
-                    {
-                        calendar = new Calendar(date);
-                    }
+                    var calendar = _repo.FindCalendar(date) ?? new Calendar(date);
                     lesson.Calendar = calendar;
 
                     // Auditorium
@@ -290,11 +285,17 @@ namespace Schedule.Forms.DBLists.Lessons
                     }
                     lesson.Auditorium = aud;
 
+                    // State
+                    if (ProposedLesson.Checked)
+                    {
+                        lesson.State = 2;
+                    }
+
                     _repo.AddLesson(lesson, publicComment.Text, hiddenComment.Text);
                 }
             }
 
-            this.Close();
+            Close();
         }
 
         private void showAuds_Click(object sender, EventArgs e)
@@ -340,7 +341,7 @@ namespace Schedule.Forms.DBLists.Lessons
             var calendarIds = new List<int>();
             foreach (var cal in _repo.GetAllCalendars())
             {
-                if (Constants.Constants.DOWRemap[(int)cal.Date.DayOfWeek] - 1 == DayOfWeekListBox.SelectedIndex)
+                if (global::Schedule.Constants.Constants.DOWRemap[(int)cal.Date.DayOfWeek] - 1 == DayOfWeekListBox.SelectedIndex)
                 {
                     var week = _repo.CalculateWeekNumber(cal.Date);
                     if (weekList.Contains(week))
@@ -355,8 +356,8 @@ namespace Schedule.Forms.DBLists.Lessons
             {
                 ringIds.Add(((RingView)ringView).RingId);
             }
-            
-            var res = _repo.GetFreeAuditoriumAtDOWTime(calendarIds, ringIds, selectedBuildingId);
+
+            var res = _repo.GetFreeAuditoriumAtDOWTime(calendarIds, ringIds, selectedBuildingId, proposedIncluded.Checked);
 
             var c = new Utilities.AudComparer();
             res = res
@@ -440,6 +441,11 @@ namespace Schedule.Forms.DBLists.Lessons
         private void filterRings_CheckedChanged(object sender, EventArgs e)
         {
             UpdateRings();
+        }
+
+        private void proposedIncluded_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateFreeAuds();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Schedule.DomainClasses.Main;
+﻿using System.Linq;
+using Schedule.DomainClasses.Main;
 using System.Collections.Generic;
 
 namespace Schedule.Views.DBListViews
@@ -20,14 +21,7 @@ namespace Schedule.Views.DBListViews
 
         public static List<RingView> RingsToView(List<Ring> list)
         {
-            var result = new List<RingView>();
-
-            foreach (var ring in list)
-            {
-                result.Add(new RingView(ring));
-            }
-
-            return result;
-        }       
+            return list.Select(ring => new RingView(ring)).ToList();
+        }
     }
 }
