@@ -43,6 +43,7 @@
             this.Mon = new System.Windows.Forms.Button();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.audView = new System.Windows.Forms.DataGridView();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.weekNumber)).BeginInit();
             this.viewPanel.SuspendLayout();
@@ -51,6 +52,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.PlusTeacherFIO);
             this.controlsPanel.Controls.Add(this.ExportInWord);
             this.controlsPanel.Controls.Add(this.buildingList);
@@ -221,6 +223,16 @@
             this.audView.Size = new System.Drawing.Size(870, 395);
             this.audView.TabIndex = 0;
             // 
+            // showProposed
+            // 
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(648, 12);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(211, 17);
+            this.showProposed.TabIndex = 12;
+            this.showProposed.Text = "Показывать предполагаемые уроки";
+            this.showProposed.UseVisualStyleBackColor = true;
+            // 
             // Auditoriums
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -258,5 +270,6 @@
         private System.Windows.Forms.CheckBox oneBuilding;
         private System.Windows.Forms.CheckBox ExportInWord;
         private System.Windows.Forms.CheckBox PlusTeacherFIO;
+        private System.Windows.Forms.CheckBox showProposed;
     }
 }

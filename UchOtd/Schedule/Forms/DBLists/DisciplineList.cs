@@ -140,13 +140,21 @@ namespace Schedule.Forms.DBLists
         {
             DiscipineListView.Columns["DisciplineId"].Visible = false;
             DiscipineListView.Columns["DisciplineId"].Width = 40;
+
             DiscipineListView.Columns["Name"].Width = 270;
+
             DiscipineListView.Columns["TeacherFIO"].Width = 80;
+
             DiscipineListView.Columns["ScheduleHours"].Width = 30;
+
             DiscipineListView.Columns["Attestation"].Width = 80;
+
             DiscipineListView.Columns["AuditoriumHours"].Width = 80;
+
             DiscipineListView.Columns["LectureHours"].Width = 80;
+
             DiscipineListView.Columns["PracticalHours"].Width = 80;
+
             DiscipineListView.Columns["StudentGroupName"].Width = 120;
         }
 
@@ -373,7 +381,7 @@ namespace Schedule.Forms.DBLists
                 }
 
                 var lessonIds = _repo
-                    .GetFiltredRealLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
+                    .GetFiltredLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
                     .Select(l => l.LessonId);
 
                 var logEventIds = _repo.GetFiltredLessonLogEvents(lle =>

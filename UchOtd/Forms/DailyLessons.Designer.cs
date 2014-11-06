@@ -39,6 +39,7 @@
             this.viewPanel = new System.Windows.Forms.Panel();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.view = new System.Windows.Forms.DataGridView();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view)).BeginInit();
@@ -46,6 +47,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.studentGroupsFiltered);
             this.controlsPanel.Controls.Add(this.studentGroupList);
             this.controlsPanel.Controls.Add(this.refresh);
@@ -82,9 +84,9 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(437, 28);
+            this.refresh.Location = new System.Drawing.Point(437, 51);
             this.refresh.Name = "refresh";
-            this.refresh.Size = new System.Drawing.Size(180, 70);
+            this.refresh.Size = new System.Drawing.Size(180, 47);
             this.refresh.TabIndex = 8;
             this.refresh.Text = "Обновить";
             this.refresh.UseVisualStyleBackColor = true;
@@ -162,6 +164,16 @@
             this.view.TabIndex = 0;
             this.view.SelectionChanged += new System.EventHandler(this.view_SelectionChanged);
             // 
+            // showProposed
+            // 
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(437, 28);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(223, 17);
+            this.showProposed.TabIndex = 11;
+            this.showProposed.Text = "Показывать предполагаемые занятия";
+            this.showProposed.UseVisualStyleBackColor = true;
+            // 
             // DailyLessons
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -195,5 +207,6 @@
         private System.Windows.Forms.Label loadingLabel;
         private System.Windows.Forms.ListBox studentGroupList;
         private System.Windows.Forms.CheckBox studentGroupsFiltered;
+        private System.Windows.Forms.CheckBox showProposed;
     }
 }

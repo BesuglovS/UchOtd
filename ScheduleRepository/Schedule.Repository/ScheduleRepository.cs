@@ -1153,22 +1153,7 @@ namespace Schedule.Repositories
                     .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
-                    .ToList();
-            }
-        }
-
-        public List<Lesson> GetAllRealLessons()
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.Lessons
-                    .Include(l => l.TeacherForDiscipline.Teacher)
-                    .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
-                    .Include(l => l.Calendar)
-                    .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
-                    .Where(l => (l.State == 0) || (l. State == 1))
+                    .Include(l => l.Auditorium.Building)
                     .ToList();
             }
         }
@@ -1181,8 +1166,8 @@ namespace Schedule.Repositories
                     .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
-                    .Where(l => l.IsActive).ToList();
+                    .Include(l => l.Auditorium.Building)
+                    .Where(l => l.State == 1).ToList();
             }
         }
 
@@ -1194,23 +1179,8 @@ namespace Schedule.Repositories
                     .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
+                    .Include(l => l.Auditorium.Building)
                     .ToList().Where(condition).ToList();
-            }
-        }
-
-
-        public List<Lesson> GetFiltredRealLessons(Func<Lesson, bool> condition)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.Lessons.Include(l => l.TeacherForDiscipline.Teacher)
-                .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
-                .Include(l => l.Calendar)
-                .Include(l => l.Ring)
-                .Include(l => l.Auditorium)
-                .Where(l => (l.State == 0) || (l.State == 1))
-                .ToList().Where(condition).ToList();
             }
         }
         
@@ -1223,7 +1193,7 @@ namespace Schedule.Repositories
                     .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
+                    .Include(l => l.Auditorium.Building)
                     .ToList().FirstOrDefault(condition);
             }
         }
@@ -1237,7 +1207,7 @@ namespace Schedule.Repositories
                     .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
+                    .Include(l => l.Auditorium.Building)
                     .Where(l => (l.State == 0) || (l.State == 1))
                     .ToList().FirstOrDefault(condition);
             }
@@ -1252,7 +1222,7 @@ namespace Schedule.Repositories
                     .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
+                    .Include(l => l.Auditorium.Building)
                     .FirstOrDefault(l => l.LessonId == lessonId);
             }
         }
@@ -1315,9 +1285,7 @@ namespace Schedule.Repositories
                 curLesson.Ring = context.Rings.FirstOrDefault(r => r.RingId == lesson.Ring.RingId);
                 curLesson.TeacherForDiscipline =
                     context.TeacherForDiscipline.FirstOrDefault(
-                        tfd => tfd.TeacherForDisciplineId == lesson.TeacherForDiscipline.TeacherForDisciplineId);
-
-                curLesson.IsActive = lesson.IsActive;
+                        tfd => tfd.TeacherForDisciplineId == lesson.TeacherForDiscipline.TeacherForDisciplineId);                
                 curLesson.State = lesson.State;
 
                 context.SaveChanges();
@@ -1342,7 +1310,7 @@ namespace Schedule.Repositories
             {
                 var curLesson = context.Lessons.FirstOrDefault(l => l.LessonId == lessonId);
 
-                curLesson.IsActive = false;
+                curLesson.State = 0;
 
                 context.SaveChanges();
             }
@@ -1360,7 +1328,7 @@ namespace Schedule.Repositories
                 }
                 else
                 {
-                    lesson.IsActive = false;
+                    lesson.State = 0;
 
                     context.LessonLog.Add(
                         new LessonLogEvent
@@ -1420,10 +1388,10 @@ namespace Schedule.Repositories
                     .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
+                    .Include(l => l.Auditorium.Building)
                     .Where(l => 
                         groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) && 
-                        l.IsActive)
+                        (l.State == 1))
                     .ToList();
 
                 if (!putProposedLessons)
@@ -1486,7 +1454,7 @@ namespace Schedule.Repositories
         }
 
         public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>>
-            GetFacultyDOWSchedule(int facultyId, int dowRU, bool weekFiltered, int weekFilter)
+            GetFacultyDOWSchedule(int facultyId, int dowRU, bool weekFiltered, int weekFilter, bool includeProposed = false)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -1520,11 +1488,10 @@ namespace Schedule.Repositories
                         .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
                         .Include(l => l.Calendar)
                         .Include(l => l.Ring)
-                        .Include(l => l.Auditorium)
+                        .Include(l => l.Auditorium.Building)
                         .Where(
                             l =>
-                            l.IsActive &&
-                            (l.State == 0) || (l.State == 1) &&
+                            ((l.State == 1) || ((l.State == 2) && (includeProposed))) &&
                             groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId)
                             )
                         .ToList();
@@ -1965,7 +1932,7 @@ namespace Schedule.Repositories
                 return context.AuditoriumEvents
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
+                    .Include(l => l.Auditorium.Building)
                     .ToList();
             }
         }
@@ -1977,7 +1944,7 @@ namespace Schedule.Repositories
                 return context.AuditoriumEvents
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
+                    .Include(l => l.Auditorium.Building)
                     .ToList().Where(condition).ToList();
             }
         }
@@ -1989,7 +1956,7 @@ namespace Schedule.Repositories
                 return context.AuditoriumEvents
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
+                    .Include(l => l.Auditorium.Building)
                     .ToList().FirstOrDefault(condition);
             }
         }
@@ -2001,7 +1968,7 @@ namespace Schedule.Repositories
                 return context.AuditoriumEvents
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
-                    .Include(l => l.Auditorium)
+                    .Include(l => l.Auditorium.Building)
                     .FirstOrDefault(ae => ae.AuditoriumEventId == auditoriumEventId);
             }
         }
@@ -3193,7 +3160,10 @@ namespace Schedule.Repositories
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.DisciplineAuditoriums.Include(da => da.Auditorium).Include(da => da.Discipline.StudentGroup).ToList();
+                return context.DisciplineAuditoriums
+                    .Include(da => da.Auditorium.Building)
+                    .Include(da => da.Discipline.StudentGroup)
+                    .ToList();
             }
         }
 
@@ -3201,7 +3171,7 @@ namespace Schedule.Repositories
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.DisciplineAuditoriums.Include(da => da.Auditorium).Include(da => da.Discipline.StudentGroup).ToList().Where(condition).ToList();
+                return context.DisciplineAuditoriums.Include(da => da.Auditorium.Building).Include(da => da.Discipline.StudentGroup).ToList().Where(condition).ToList();
             }
         }
 
@@ -3209,7 +3179,7 @@ namespace Schedule.Repositories
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.DisciplineAuditoriums.Include(da => da.Auditorium).Include(da => da.Discipline.StudentGroup).ToList().FirstOrDefault(condition);
+                return context.DisciplineAuditoriums.Include(da => da.Auditorium.Building).Include(da => da.Discipline.StudentGroup).ToList().FirstOrDefault(condition);
             }
         }
 
@@ -3217,7 +3187,7 @@ namespace Schedule.Repositories
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.DisciplineAuditoriums.Include(da => da.Auditorium).Include(da => da.Discipline.StudentGroup)
+                return context.DisciplineAuditoriums.Include(da => da.Auditorium.Building).Include(da => da.Discipline.StudentGroup)
                     .FirstOrDefault(da => da.DisciplineAuditoriumId == disciplineAuditoriumId);
             }
         }
@@ -3226,7 +3196,7 @@ namespace Schedule.Repositories
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.DisciplineAuditoriums.Include(da => da.Auditorium).Include(da => da.Discipline.StudentGroup)
+                return context.DisciplineAuditoriums.Include(da => da.Auditorium.Building).Include(da => da.Discipline.StudentGroup)
                     .FirstOrDefault(da => da.Auditorium.AuditoriumId == a.AuditoriumId && da.Discipline.DisciplineId == d.DisciplineId);
             }
         }
@@ -3520,6 +3490,121 @@ namespace Schedule.Repositories
         }
         #endregion
 
+        #region GroupBuildingAuditoriumRepository
+        public List<GroupBuildingAuditorium> GetAllGroupBuildingAuditoriums()
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.GroupBuildingAuditoriums
+                    .Include(gba => gba.StudentGroup)
+                    .Include(gba => gba.Building)
+                    .Include(gba => gba.Auditorium.Building)
+                    .ToList();
+            }
+        }
+
+        public List<GroupBuildingAuditorium> GetFilteredGroupBuildingAuditoriums(Func<GroupBuildingAuditorium, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.GroupBuildingAuditoriums
+                    .Include(gba => gba.StudentGroup)
+                    .Include(gba => gba.Building)
+                    .Include(gba => gba.Auditorium.Building)
+                    .ToList().Where(condition).ToList();
+            }
+        }
+
+        public GroupBuildingAuditorium GetFirstFiltredGroupBuildingAuditorium(Func<GroupBuildingAuditorium, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.GroupBuildingAuditoriums
+                    .Include(gba => gba.StudentGroup)
+                    .Include(gba => gba.Building)
+                    .Include(gba => gba.Auditorium.Building)
+                    .ToList().FirstOrDefault(condition);
+            }
+        }
+
+        public GroupBuildingAuditorium GetGroupBuildingAuditorium(int groupBuildingAuditoriumId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.GroupBuildingAuditoriums
+                    .Include(gba => gba.StudentGroup)
+                    .Include(gba => gba.Building)
+                    .Include(gba => gba.Auditorium.Building)
+                    .FirstOrDefault(gba => gba.GroupBuildingAuditoriumId == groupBuildingAuditoriumId);
+            }
+        }
+
+        public void AddGroupBuildingAuditorium(GroupBuildingAuditorium groupBuildingAuditorium)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                groupBuildingAuditorium.StudentGroup = context.StudentGroups
+                    .FirstOrDefault(sg => sg.StudentGroupId == groupBuildingAuditorium.StudentGroup.StudentGroupId);
+                groupBuildingAuditorium.Building = context.Buildings
+                    .FirstOrDefault(b => b.BuildingId == groupBuildingAuditorium.Building.BuildingId);
+                groupBuildingAuditorium.Auditorium = context.Auditoriums
+                    .FirstOrDefault(a => a.AuditoriumId == groupBuildingAuditorium.Auditorium.AuditoriumId);
+                context.GroupBuildingAuditoriums.Add(groupBuildingAuditorium);
+
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateGroupBuildingAuditorium(GroupBuildingAuditorium groupBuildingAuditorium)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var curGroupBuildingAuditorium = context.GroupBuildingAuditoriums
+                    .FirstOrDefault(gpa => gpa.GroupBuildingAuditoriumId == groupBuildingAuditorium.GroupBuildingAuditoriumId);
+
+                curGroupBuildingAuditorium.StudentGroup = context.StudentGroups
+                    .FirstOrDefault(sg => sg.StudentGroupId == groupBuildingAuditorium.StudentGroup.StudentGroupId);
+                curGroupBuildingAuditorium.Building = context.Buildings
+                    .FirstOrDefault(b => b.BuildingId == groupBuildingAuditorium.Building.BuildingId);
+                curGroupBuildingAuditorium.Auditorium = context.Auditoriums
+                    .FirstOrDefault(a => a.AuditoriumId == groupBuildingAuditorium.Auditorium.AuditoriumId);
+                
+                context.SaveChanges();
+            }
+        }
+
+        public void RemoveGroupBuildingAuditorium(int groupBuildingAuditoriumId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var groupBuildingAuditorium = context.GroupBuildingAuditoriums.FirstOrDefault(gpa => gpa.GroupBuildingAuditoriumId == groupBuildingAuditoriumId);
+
+                context.GroupBuildingAuditoriums.Remove(groupBuildingAuditorium);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddGroupBuildingAuditoriumRange(IEnumerable<GroupBuildingAuditorium> groupBuildingAuditoriumList)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                foreach (var groupBuildingAuditorium in groupBuildingAuditoriumList)
+                {
+                    groupBuildingAuditorium.StudentGroup = context.StudentGroups
+                    .FirstOrDefault(sg => sg.StudentGroupId == groupBuildingAuditorium.StudentGroup.StudentGroupId);
+                    groupBuildingAuditorium.Building = context.Buildings
+                        .FirstOrDefault(b => b.BuildingId == groupBuildingAuditorium.Building.BuildingId);
+                    groupBuildingAuditorium.Auditorium = context.Auditoriums
+                        .FirstOrDefault(a => a.AuditoriumId == groupBuildingAuditorium.Auditorium.AuditoriumId);
+
+                    context.GroupBuildingAuditoriums.Add(groupBuildingAuditorium);
+                }
+
+                context.SaveChanges();
+            }
+        }
+        #endregion
+        
         #region CommonFunctions
         public static string CombineWeeks(List<int> list)
         {
@@ -3789,8 +3874,8 @@ namespace Schedule.Repositories
                     .Where(l =>
                         ((calendars.Contains(l.Calendar.CalendarId)) &&
                          (ringIds.Contains(l.Ring.RingId))) &&
-                         l.IsActive &&
-                         (proposedIncluded || l.State != 2))
+                        ((l.State == 1) || 
+                         ((l.State == 2) && proposedIncluded)))
                      .Select(l => l.Auditorium.AuditoriumId)
                      .Distinct()
                      .ToList();                
@@ -3824,7 +3909,7 @@ namespace Schedule.Repositories
             return (dateTime - ssWeeksMonday).Days / 7 + 1;
         }
 
-        public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> GetGroupedGroupsLessons(List<int> groupListIds)
+        public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> GetGroupedGroupsLessons(List<int> groupListIds, bool showProposed)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -3850,7 +3935,8 @@ namespace Schedule.Repositories
                         .Include(l => l.Calendar)
                         .Include(l => l.Ring)
                         .Include(l => l.Auditorium)
-                        .Where(l => groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) && l.IsActive)
+                        .Where(l => groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) && 
+                            ((l.State == 1) || ((l.State == 2) && showProposed)))
                         .ToList();
 
                     var groupedLessons = primaryList.GroupBy(l => Constants.Constants.DOWRemap[(int)(l.Calendar.Date).DayOfWeek] * 2000 +
@@ -3903,7 +3989,7 @@ namespace Schedule.Repositories
         
         // data   - Dictionary<RingId, Dictionary <AuditoriumId, List<Dictionary<tfd, List<Lesson>>>>>
         // result - Dictionary<RingId, Dictionary <AuditoriumId, List<tfd/Event-string>>>
-        public Dictionary<int, Dictionary<int, List<string>>> getDOWAuds(DayOfWeek dow, int weekNumber, int buildingId)
+        public Dictionary<int, Dictionary<int, List<string>>> getDOWAuds(DayOfWeek dow, int weekNumber, int buildingId, bool showProposed)
         {
             var data = new Dictionary<int, Dictionary<int, Dictionary<int, List<Lesson>>>>();
 
@@ -3912,29 +3998,35 @@ namespace Schedule.Repositories
             {
                 if (buildingId == -1)
                 {
-                    dowLessons = GetFiltredRealLessons(l => l.Calendar.Date.DayOfWeek == dow && l.IsActive).ToList();
+                    dowLessons = GetFiltredLessons(l => 
+                        l.Calendar.Date.DayOfWeek == dow && 
+                        ((l.State == 1) || ((l.State == 2) && showProposed)))
+                        .ToList();
                 }
                 else
                 {
-                    dowLessons = GetFiltredRealLessons(l => l.Calendar.Date.DayOfWeek == dow && l.IsActive && 
-                        l.Auditorium.Building.BuildingId == buildingId).ToList();
+                    dowLessons = GetFiltredLessons(l => 
+                        l.Calendar.Date.DayOfWeek == dow && 
+                        ((l.State == 1) || ((l.State == 2) && showProposed)) && 
+                        l.Auditorium.Building.BuildingId == buildingId)
+                        .ToList();
                 }
             }
             else
             {
                 if (buildingId == -1)
                 {
-                    dowLessons = GetFiltredRealLessons(l =>
+                    dowLessons = GetFiltredLessons(l =>
                             l.Calendar.Date.DayOfWeek == dow &&
-                            l.IsActive &&
+                            ((l.State == 1) || ((l.State == 2) && showProposed)) &&
                             CalculateWeekNumber(l.Calendar.Date) == weekNumber)
                         .ToList();
                 }
                 else
                 {
-                    dowLessons = GetFiltredRealLessons(l =>
+                    dowLessons = GetFiltredLessons(l =>
                             l.Calendar.Date.DayOfWeek == dow &&
-                            l.IsActive &&
+                            ((l.State == 1) || ((l.State == 2) && showProposed)) &&
                             CalculateWeekNumber(l.Calendar.Date) == weekNumber &&
                             l.Auditorium.Building.BuildingId == buildingId)
                         .ToList();
@@ -4090,11 +4182,13 @@ namespace Schedule.Repositories
 
         // data   - Dictionary<RingId, Dictionary <dow, List<Dictionary<tfd, List<Lesson>>>>>
         // result - Dictionary<RingId, Dictionary <dow, List<tfd/Event-string>>>
-        public Dictionary<int, Dictionary<int, List<string>>> getAud(int auditoriumId)
+        public Dictionary<int, Dictionary<int, List<string>>> getAud(int auditoriumId, bool showProposed)
         {
             var data = new Dictionary<int, Dictionary<int, Dictionary<int, List<Lesson>>>>();
 
-            var audLessons = GetFiltredRealLessons(l => l.Auditorium.AuditoriumId == auditoriumId && l.IsActive)
+            var audLessons = GetFiltredLessons(l => 
+                l.Auditorium.AuditoriumId == auditoriumId && 
+                ((l.State == 1) || ((l.State == 2) && showProposed)))
                 .ToList();
 
             foreach (var lesson in audLessons)
@@ -4263,19 +4357,23 @@ namespace Schedule.Repositories
             return result;
         }
 
-        public int getTFDHours(int tfdId)
+        public int getTFDHours(int tfdId, bool includeProposed = false)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Lessons.Count(l => l.IsActive && l.TeacherForDiscipline.TeacherForDisciplineId == tfdId) * 2;
+                return context.Lessons.Count(l =>
+                    ((l.State == 1) || ((l.State == 2) && includeProposed)) && 
+                    l.TeacherForDiscipline.TeacherForDisciplineId == tfdId) * 2;
             }
         }
 
-        public int getTFDLessonCount(int tfdId)
+        public int getTFDLessonCount(int tfdId, bool includeProposed = false)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Lessons.Count(l => l.IsActive && l.TeacherForDiscipline.TeacherForDisciplineId == tfdId);
+                return context.Lessons.Count(l => 
+                    ((l.State == 1) || ((l.State == 2) && includeProposed)) && 
+                    l.TeacherForDiscipline.TeacherForDisciplineId == tfdId);
             }
         }
 

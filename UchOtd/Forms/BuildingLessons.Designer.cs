@@ -35,8 +35,9 @@
             this.building = new System.Windows.Forms.ComboBox();
             this.label175 = new System.Windows.Forms.Label();
             this.viewPanel = new System.Windows.Forms.Panel();
-            this.auditoriumsView = new System.Windows.Forms.DataGridView();
             this.loadingLabel = new System.Windows.Forms.Label();
+            this.auditoriumsView = new System.Windows.Forms.DataGridView();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.auditoriumsView)).BeginInit();
@@ -44,6 +45,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.lessonsDate);
             this.controlsPanel.Controls.Add(this.label1);
             this.controlsPanel.Controls.Add(this.building);
@@ -100,6 +102,18 @@
             this.viewPanel.Size = new System.Drawing.Size(875, 494);
             this.viewPanel.TabIndex = 1;
             // 
+            // loadingLabel
+            // 
+            this.loadingLabel.AutoSize = true;
+            this.loadingLabel.BackColor = System.Drawing.SystemColors.AppWorkspace;
+            this.loadingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 48.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.loadingLabel.Location = new System.Drawing.Point(12, 3);
+            this.loadingLabel.Name = "loadingLabel";
+            this.loadingLabel.Size = new System.Drawing.Size(376, 74);
+            this.loadingLabel.TabIndex = 3;
+            this.loadingLabel.Text = "Загрузка ...";
+            this.loadingLabel.Visible = false;
+            // 
             // auditoriumsView
             // 
             this.auditoriumsView.AllowUserToAddRows = false;
@@ -116,17 +130,15 @@
             this.auditoriumsView.Size = new System.Drawing.Size(875, 494);
             this.auditoriumsView.TabIndex = 0;
             // 
-            // loadingLabel
+            // showProposed
             // 
-            this.loadingLabel.AutoSize = true;
-            this.loadingLabel.BackColor = System.Drawing.SystemColors.AppWorkspace;
-            this.loadingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 48.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.loadingLabel.Location = new System.Drawing.Point(12, 3);
-            this.loadingLabel.Name = "loadingLabel";
-            this.loadingLabel.Size = new System.Drawing.Size(376, 74);
-            this.loadingLabel.TabIndex = 3;
-            this.loadingLabel.Text = "Загрузка ...";
-            this.loadingLabel.Visible = false;
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(496, 11);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(217, 17);
+            this.showProposed.TabIndex = 4;
+            this.showProposed.Text = "Показывать преполагаемые занятия";
+            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // BuildingLessons
             // 
@@ -158,5 +170,6 @@
         private System.Windows.Forms.Panel viewPanel;
         private System.Windows.Forms.DataGridView auditoriumsView;
         private System.Windows.Forms.Label loadingLabel;
+        private System.Windows.Forms.CheckBox showProposed;
     }
 }

@@ -17,6 +17,7 @@ namespace Schedule.Views
         public int PlanHours { get; set; }
         public int HoursDone { get; set; }
         public int ScheduleHours { get; set; }
+        public int PlannedHours { get; set; }
         public string Attestation { get; set; }
 
         public TeacherForDisciplineView()
@@ -44,10 +45,15 @@ namespace Schedule.Views
                      Attestation = Constants.Constants.Attestation[tfd.Discipline.Attestation],
                      ScheduleHours = repo.getTFDHours(tfd.TeacherForDisciplineId),
 
-                     HoursDone = repo.GetFiltredRealLessons(l => 
-                         l.IsActive &&
+                     HoursDone = repo.GetFiltredLessons(l => 
+                         (l.State == 1) &&
                          l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId &&
-                         (l.Calendar.Date.Date + l.Ring.Time.TimeOfDay) < DateTime.Now).Count * 2
+                         (l.Calendar.Date.Date + l.Ring.Time.TimeOfDay) < DateTime.Now).Count * 2,
+
+                    PlannedHours = repo.GetFiltredLessons(l =>
+                        l.State == 2 &&
+                        l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId &&
+                        (l.Calendar.Date.Date + l.Ring.Time.TimeOfDay) > DateTime.Now).Count * 2                    
                 });
             }
 

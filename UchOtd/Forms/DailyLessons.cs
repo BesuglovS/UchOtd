@@ -127,8 +127,8 @@ namespace UchOtd.Forms
                         .ToList()
                         .Select(stig => stig.StudentGroup.StudentGroupId);
 
-                    var dailyLessons = repo.GetFiltredRealLessons(l =>
-                        l.IsActive &&
+                    var dailyLessons = repo.GetFiltredLessons(l =>
+                        ((l.State == 1) || ((l.State == 2) && showProposed.Checked)) &&
                         l.Calendar.Date == lessonsDate.Value &&
                         groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
 
@@ -224,10 +224,11 @@ namespace UchOtd.Forms
         private List<StudentGroup> MainGroups()
         {
             return repo
-                                .GetFiltredStudentGroups(sg =>
-                                    !(sg.Name.Contains("-") || sg.Name.Contains("+") || sg.Name.Contains("I") ||
-                                      sg.Name.Length == 1 || sg.Name.Contains("(Н)") || sg.Name.Contains(".")))
-                                .ToList();
+                .GetFiltredStudentGroups(sg =>
+                    !(sg.Name.Contains("-") || sg.Name.Contains("+") || sg.Name.Contains("I") ||
+                    sg.Name.Length == 1 || sg.Name.Contains("(Н)") || sg.Name.Contains(".")))
+                .OrderBy(sg => sg.Name)
+                .ToList();
         }
 
         private string LessonToString(Lesson lesson, bool groupsNotEqual)

@@ -30,14 +30,15 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TeacherSchedule));
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.ExportInWordLandscape = new System.Windows.Forms.Button();
+            this.ExportInWordPortrait = new System.Windows.Forms.Button();
             this.weekFilter = new System.Windows.Forms.ComboBox();
             this.refresh = new System.Windows.Forms.Button();
             this.weekFiltered = new System.Windows.Forms.CheckBox();
             this.teacherList = new System.Windows.Forms.ComboBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.scheduleView = new System.Windows.Forms.DataGridView();
-            this.ExportInWordPortrait = new System.Windows.Forms.Button();
-            this.ExportInWordLandscape = new System.Windows.Forms.Button();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scheduleView)).BeginInit();
@@ -45,6 +46,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.ExportInWordLandscape);
             this.controlsPanel.Controls.Add(this.ExportInWordPortrait);
             this.controlsPanel.Controls.Add(this.weekFilter);
@@ -54,22 +56,42 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(945, 56);
+            this.controlsPanel.Size = new System.Drawing.Size(974, 56);
             this.controlsPanel.TabIndex = 2;
+            // 
+            // ExportInWordLandscape
+            // 
+            this.ExportInWordLandscape.Location = new System.Drawing.Point(779, 10);
+            this.ExportInWordLandscape.Name = "ExportInWordLandscape";
+            this.ExportInWordLandscape.Size = new System.Drawing.Size(90, 35);
+            this.ExportInWordLandscape.TabIndex = 38;
+            this.ExportInWordLandscape.Text = "Word (ландшафтная)";
+            this.ExportInWordLandscape.UseVisualStyleBackColor = true;
+            this.ExportInWordLandscape.Click += new System.EventHandler(this.ExportInWordLandscape_Click);
+            // 
+            // ExportInWordPortrait
+            // 
+            this.ExportInWordPortrait.Location = new System.Drawing.Point(876, 10);
+            this.ExportInWordPortrait.Name = "ExportInWordPortrait";
+            this.ExportInWordPortrait.Size = new System.Drawing.Size(87, 35);
+            this.ExportInWordPortrait.TabIndex = 37;
+            this.ExportInWordPortrait.Text = "Word (портретная)";
+            this.ExportInWordPortrait.UseVisualStyleBackColor = true;
+            this.ExportInWordPortrait.Click += new System.EventHandler(this.WordExport_Click);
             // 
             // weekFilter
             // 
             this.weekFilter.FormattingEnabled = true;
-            this.weekFilter.Location = new System.Drawing.Point(592, 16);
+            this.weekFilter.Location = new System.Drawing.Point(581, 6);
             this.weekFilter.Name = "weekFilter";
             this.weekFilter.Size = new System.Drawing.Size(60, 21);
             this.weekFilter.TabIndex = 36;
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(658, 16);
+            this.refresh.Location = new System.Drawing.Point(688, 7);
             this.refresh.Name = "refresh";
-            this.refresh.Size = new System.Drawing.Size(85, 23);
+            this.refresh.Size = new System.Drawing.Size(85, 43);
             this.refresh.TabIndex = 2;
             this.refresh.Text = "Обновить";
             this.refresh.UseVisualStyleBackColor = true;
@@ -78,7 +100,7 @@
             // weekFiltered
             // 
             this.weekFiltered.AutoSize = true;
-            this.weekFiltered.Location = new System.Drawing.Point(466, 20);
+            this.weekFiltered.Location = new System.Drawing.Point(460, 7);
             this.weekFiltered.Name = "weekFiltered";
             this.weekFiltered.Size = new System.Drawing.Size(120, 17);
             this.weekFiltered.TabIndex = 1;
@@ -102,7 +124,7 @@
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 56);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(945, 624);
+            this.viewPanel.Size = new System.Drawing.Size(974, 624);
             this.viewPanel.TabIndex = 4;
             // 
             // scheduleView
@@ -115,36 +137,26 @@
             this.scheduleView.Location = new System.Drawing.Point(0, 0);
             this.scheduleView.Name = "scheduleView";
             this.scheduleView.ReadOnly = true;
-            this.scheduleView.Size = new System.Drawing.Size(945, 624);
+            this.scheduleView.Size = new System.Drawing.Size(974, 624);
             this.scheduleView.TabIndex = 0;
             this.scheduleView.TabStop = false;
             this.scheduleView.SelectionChanged += new System.EventHandler(this.ScheduleViewSelectionChanged);
             // 
-            // ExportInWordPortrait
+            // showProposed
             // 
-            this.ExportInWordPortrait.Location = new System.Drawing.Point(846, 10);
-            this.ExportInWordPortrait.Name = "ExportInWordPortrait";
-            this.ExportInWordPortrait.Size = new System.Drawing.Size(87, 35);
-            this.ExportInWordPortrait.TabIndex = 37;
-            this.ExportInWordPortrait.Text = "Word (портретная)";
-            this.ExportInWordPortrait.UseVisualStyleBackColor = true;
-            this.ExportInWordPortrait.Click += new System.EventHandler(this.WordExport_Click);
-            // 
-            // ExportInWordLandscape
-            // 
-            this.ExportInWordLandscape.Location = new System.Drawing.Point(749, 10);
-            this.ExportInWordLandscape.Name = "ExportInWordLandscape";
-            this.ExportInWordLandscape.Size = new System.Drawing.Size(90, 35);
-            this.ExportInWordLandscape.TabIndex = 38;
-            this.ExportInWordLandscape.Text = "Word (ландшафтная)";
-            this.ExportInWordLandscape.UseVisualStyleBackColor = true;
-            this.ExportInWordLandscape.Click += new System.EventHandler(this.ExportInWordLandscape_Click);
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(460, 30);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(217, 17);
+            this.showProposed.TabIndex = 39;
+            this.showProposed.Text = "Показывать преполагаемые занятия";
+            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // TeacherSchedule
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(945, 680);
+            this.ClientSize = new System.Drawing.Size(974, 680);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -172,5 +184,6 @@
         private System.Windows.Forms.ComboBox weekFilter;
         private System.Windows.Forms.Button ExportInWordPortrait;
         private System.Windows.Forms.Button ExportInWordLandscape;
+        private System.Windows.Forms.CheckBox showProposed;
     }
 }

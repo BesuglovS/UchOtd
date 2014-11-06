@@ -196,7 +196,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                         TeacherForDiscipline = _repo.GetTeacherForDiscipline(int.Parse(_curLessons.Keys.ElementAt(_curTFDIndex).Split('+')[0])),
                         Ring = _ring,
                         Auditorium = _repo.FindAuditorium(newAuds[weekNumber]),
-                        IsActive = true
+                        State = 1
                     };
 
                     // lesson.Calendar
@@ -244,7 +244,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                     TeacherForDiscipline = curTfd,
                     Ring = _ring,       
                     Auditorium = _repo.FindAuditorium(newAuds[week]),
-                    IsActive = true
+                    State = 1
                 };
 
                 // lesson.Calendar
@@ -262,8 +262,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
         {
             foreach (var lesson in _curLessons[_curLessons.Keys.ElementAt(_curTFDIndex)].Item2)
             {
-                lesson.State = 0;
-                lesson.IsActive = true;
+                lesson.State = 1;
 
                 _repo.UpdateLesson(lesson);
 

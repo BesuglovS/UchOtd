@@ -38,8 +38,8 @@ namespace Schedule.Forms
         private void tfdBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             var lessons = _repo
-                .GetFiltredRealLessons(l =>
-                    l.IsActive &&
+                .GetFiltredLessons(l =>
+                    ((l.State == 1) || ((l.State == 2) && showProposed.Checked)) &&
                     l.TeacherForDiscipline.TeacherForDisciplineId == (int)tfdBox.SelectedValue)
                 .OrderBy(l => l.Calendar.Date)
                 .ThenBy(l => l.Ring.Time.TimeOfDay)

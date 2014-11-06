@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Constants;
 using Schedule.Repositories;
+using Schedule.DomainClasses.Main;
 
 namespace UchOtd.Schedule.Forms.Analysis
 {
@@ -192,7 +193,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             foreach (var calendar in repo.GetAllCalendars())
             {
-                if (calendar.State == 0)
+                if (calendar.State == Calendar.Normal)
                 {
                     result[Constants.DOWRemap[(int) calendar.Date.DayOfWeek]]++;
                 }

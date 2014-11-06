@@ -92,8 +92,8 @@ namespace UchOtd.Forms
             var calculateAudsTask = Task.Factory.StartNew(() =>
             {
                 var lessons = _repo
-                    .GetFiltredRealLessons(l =>
-                        l.IsActive &&
+                    .GetFiltredLessons(l =>
+                        ((l.State == 1) || ((l.State == 2) && showProposed.Checked)) &&
                         l.Auditorium.Building.BuildingId == buildingId &&
                         l.Calendar.Date.Date == viewDate);
                 cToken.ThrowIfCancellationRequested();

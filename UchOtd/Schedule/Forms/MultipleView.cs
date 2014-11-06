@@ -77,7 +77,7 @@ namespace Schedule.Forms
             }
             var groupNames = GetGroupNames(groupsList);
 
-            var groupsLessons = _repo.GetGroupedGroupsLessons(groupsList);
+            var groupsLessons = _repo.GetGroupedGroupsLessons(groupsList, showProposed.Checked);
 
             List<FiveGroupsView> groupsEvents = CreateGroupsTableView(groupsLessons);
 

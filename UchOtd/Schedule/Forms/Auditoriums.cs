@@ -31,7 +31,7 @@ namespace Schedule.Forms
             {
                 buildingId = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Monday, weekNum, buildingId);
+            auds = _repo.getDOWAuds(DayOfWeek.Monday, weekNum, buildingId, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -55,7 +55,7 @@ namespace Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Tuesday, weekNum, buildingNum);
+            auds = _repo.getDOWAuds(DayOfWeek.Tuesday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -79,7 +79,7 @@ namespace Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Wednesday, weekNum, buildingNum);
+            auds = _repo.getDOWAuds(DayOfWeek.Wednesday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -103,7 +103,7 @@ namespace Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Thursday, weekNum, buildingNum);
+            auds = _repo.getDOWAuds(DayOfWeek.Thursday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -127,7 +127,7 @@ namespace Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Friday, weekNum, buildingNum);
+            auds = _repo.getDOWAuds(DayOfWeek.Friday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -151,7 +151,7 @@ namespace Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Saturday, weekNum, buildingNum);
+            auds = _repo.getDOWAuds(DayOfWeek.Saturday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {

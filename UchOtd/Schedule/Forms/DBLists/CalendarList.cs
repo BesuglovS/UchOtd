@@ -98,7 +98,7 @@ namespace Schedule.Forms.DBLists
             {
                 var cl = ((List<CalendarView>)CalendarListView.DataSource)[CalendarListView.SelectedCells[0].RowIndex];
 
-                if (_repo.GetFiltredRealLessons(l => l.Calendar.CalendarId == cl.CalendarId).Count > 0)
+                if (_repo.GetFiltredLessons(l => l.Calendar.CalendarId == cl.CalendarId).Count > 0)
                 {
                     MessageBox.Show("Дата есть в расписании.");
                     return;
@@ -116,7 +116,7 @@ namespace Schedule.Forms.DBLists
             {
                 var cl = ((List<CalendarView>)CalendarListView.DataSource)[CalendarListView.SelectedCells[0].RowIndex];
 
-                var clLessons = _repo.GetFiltredRealLessons(l => l.Calendar.CalendarId == cl.CalendarId);
+                var clLessons = _repo.GetFiltredLessons(l => l.Calendar.CalendarId == cl.CalendarId);
 
                 if (clLessons.Count > 0)
                 {

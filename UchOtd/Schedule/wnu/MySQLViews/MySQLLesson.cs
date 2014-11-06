@@ -16,7 +16,7 @@ namespace Schedule.wnu.MySQLViews
         public MySQLLesson(Lesson lesson)
         {
             LessonId = lesson.LessonId;
-            IsActive = lesson.IsActive ? 1 : 0;
+            IsActive = lesson.State;
             TeacherForDisciplineId = lesson.TeacherForDiscipline.TeacherForDisciplineId;
             CalendarId = lesson.Calendar.CalendarId;
             RingId = lesson.Ring.RingId;

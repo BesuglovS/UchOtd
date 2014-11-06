@@ -92,7 +92,7 @@ namespace Schedule.Forms.DBLists
             {
                 var ringView = ((List<RingView>)RingListView.DataSource)[RingListView.SelectedCells[0].RowIndex];
 
-                if (_repo.GetFiltredRealLessons(l => l.Ring.RingId == ringView.RingId).Count > 0)
+                if (_repo.GetFiltredLessons(l => l.Ring.RingId == ringView.RingId).Count > 0)
                 {
                     MessageBox.Show("На данное время есть занятия.");
                     return;
@@ -110,7 +110,7 @@ namespace Schedule.Forms.DBLists
             {
                 var ringView = ((List<RingView>)RingListView.DataSource)[RingListView.SelectedCells[0].RowIndex];
 
-                var ringLessons = _repo.GetFiltredRealLessons(l => l.Ring.RingId == ringView.RingId);
+                var ringLessons = _repo.GetFiltredLessons(l => l.Ring.RingId == ringView.RingId);
 
                 if (ringLessons.Count > 0)
                 {
@@ -140,7 +140,7 @@ namespace Schedule.Forms.DBLists
                     _repo.AddRing(replaceRing);
                 }
 
-                var ringLessons = _repo.GetFiltredRealLessons(l => l.Ring.RingId == ringView.RingId);
+                var ringLessons = _repo.GetFiltredLessons(l => l.Ring.RingId == ringView.RingId);
 
                 if (ringLessons.Count > 0)
                 {

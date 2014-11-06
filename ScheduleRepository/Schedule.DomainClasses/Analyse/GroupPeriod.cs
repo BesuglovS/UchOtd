@@ -10,7 +10,7 @@ namespace Schedule.DomainClasses.Analyse
     {
         public int GroupPeriodId { get; set; } 
         public string Name { get; set; }
-        public StudentGroup StudentGroup { get; set; }
+        public virtual StudentGroup StudentGroup { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
     }

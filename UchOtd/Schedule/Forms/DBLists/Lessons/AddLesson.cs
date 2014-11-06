@@ -223,11 +223,11 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             }
             
             var groupsLessons = _repo
-                .GetFiltredRealLessons(
+                .GetFiltredLessons(
                     l => studentGroupsIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) && 
                          calendarIdsList.Contains(l.Calendar.CalendarId) && 
                          ringIds.Contains(l.Ring.RingId) &&
-                         l.IsActive);
+                         (l.State == 1));
 
 
             if (groupsLessons.Count != 0)
@@ -248,8 +248,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 {
                     var lesson = new Lesson
                     {
-                        IsActive = isActive.Checked, 
-                        State = ProposedLesson.Checked ? 2 : 0,
+                        State = ProposedLesson.Checked ? 2 : (isActive.Checked ? 1 : 0),
                         TeacherForDiscipline = tfd, 
                         Ring = ring
                     };
@@ -279,8 +278,13 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                         aud = _repo.FindAuditorium(audWeekList[weekList[i]]);
                         if (aud == null)
                         {
-                            _repo.AddAuditorium(new Auditorium(audWeekList[weekList[i]]));
-                            aud = _repo.FindAuditorium(audWeekList[weekList[i]]);
+                            var firstBuilding = _repo.GetFirstFiltredBuilding(b => true);
+
+                            if (firstBuilding != null)
+                            {
+                                _repo.AddAuditorium(new Auditorium(audWeekList[weekList[i]], firstBuilding));
+                                aud = _repo.FindAuditorium(audWeekList[weekList[i]]);
+                            }
                         }
                     }
                     lesson.Auditorium = aud;

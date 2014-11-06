@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.checkForDoubleDiscsOnAdding = new System.Windows.Forms.CheckBox();
             this.reloadGroupList = new System.Windows.Forms.Button();
             this.CompletelyDelete = new System.Windows.Forms.Button();
             this.Paste = new System.Windows.Forms.Button();
@@ -63,7 +64,6 @@
             this.groupnameFilter = new System.Windows.Forms.CheckBox();
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.filter = new System.Windows.Forms.TextBox();
-            this.checkForDoubleDiscsOnAdding = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -95,8 +95,18 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(233, 506);
+            this.controlsPanel.Size = new System.Drawing.Size(233, 630);
             this.controlsPanel.TabIndex = 27;
+            // 
+            // checkForDoubleDiscsOnAdding
+            // 
+            this.checkForDoubleDiscsOnAdding.AutoSize = true;
+            this.checkForDoubleDiscsOnAdding.Location = new System.Drawing.Point(8, 247);
+            this.checkForDoubleDiscsOnAdding.Name = "checkForDoubleDiscsOnAdding";
+            this.checkForDoubleDiscsOnAdding.Size = new System.Drawing.Size(160, 17);
+            this.checkForDoubleDiscsOnAdding.TabIndex = 104;
+            this.checkForDoubleDiscsOnAdding.Text = "Проверка при добавлении";
+            this.checkForDoubleDiscsOnAdding.UseVisualStyleBackColor = true;
             // 
             // reloadGroupList
             // 
@@ -270,7 +280,7 @@
             this.ListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ListPanel.Location = new System.Drawing.Point(233, 0);
             this.ListPanel.Name = "ListPanel";
-            this.ListPanel.Size = new System.Drawing.Size(999, 506);
+            this.ListPanel.Size = new System.Drawing.Size(999, 630);
             this.ListPanel.TabIndex = 28;
             // 
             // viewPanel
@@ -279,7 +289,7 @@
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 67);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(999, 439);
+            this.viewPanel.Size = new System.Drawing.Size(999, 563);
             this.viewPanel.TabIndex = 2;
             // 
             // DiscipineListView
@@ -294,7 +304,7 @@
             this.DiscipineListView.Location = new System.Drawing.Point(0, 0);
             this.DiscipineListView.Name = "DiscipineListView";
             this.DiscipineListView.ReadOnly = true;
-            this.DiscipineListView.Size = new System.Drawing.Size(999, 439);
+            this.DiscipineListView.Size = new System.Drawing.Size(999, 563);
             this.DiscipineListView.TabIndex = 0;
             this.DiscipineListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DiscipineListViewCellClick);
             this.DiscipineListView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DiscipineListView_CellFormatting);
@@ -431,21 +441,11 @@
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
             // 
-            // checkForDoubleDiscsOnAdding
-            // 
-            this.checkForDoubleDiscsOnAdding.AutoSize = true;
-            this.checkForDoubleDiscsOnAdding.Location = new System.Drawing.Point(8, 247);
-            this.checkForDoubleDiscsOnAdding.Name = "checkForDoubleDiscsOnAdding";
-            this.checkForDoubleDiscsOnAdding.Size = new System.Drawing.Size(160, 17);
-            this.checkForDoubleDiscsOnAdding.TabIndex = 104;
-            this.checkForDoubleDiscsOnAdding.Text = "Проверка при добавлении";
-            this.checkForDoubleDiscsOnAdding.UseVisualStyleBackColor = true;
-            // 
             // DisciplineList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1232, 506);
+            this.ClientSize = new System.Drawing.Size(1232, 630);
             this.Controls.Add(this.ListPanel);
             this.Controls.Add(this.controlsPanel);
             this.Name = "DisciplineList";

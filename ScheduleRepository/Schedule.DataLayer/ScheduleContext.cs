@@ -53,7 +53,8 @@ namespace Schedule.DataLayer
         public DbSet<DisciplineAuditorium> DisciplineAuditoriums { get; set; }
         public DbSet<CustomDisciplineAttribute> CustomDisciplineAttributes { get; set; }
         public DbSet<GroupPeriod> GroupPeriods { get; set; }
- 
+        public DbSet<GroupBuildingAuditorium> GroupBuildingAuditoriums { get; set; }
+         
         // Session
         public DbSet<Exam> Exams { get; set; }
         public DbSet<LogEvent> EventLog { get; set; }

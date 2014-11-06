@@ -234,7 +234,7 @@ namespace Schedule.Forms.DBLists
             
             var tfd = _repo.FindTeacherForDiscipline(teacher, discipline);
 
-            if (_repo.GetFiltredRealLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId).Count != 0)
+            if (_repo.GetFiltredLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId).Count != 0)
             {
                 MessageBox.Show("У преподавателя по данной дисциплине есть занятия в расписании.");
                 return;
@@ -268,7 +268,7 @@ namespace Schedule.Forms.DBLists
 
             var tfd = _repo.FindTeacherForDiscipline(teacher, discipline);
 
-            var tfdLessons = _repo.GetFiltredRealLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
+            var tfdLessons = _repo.GetFiltredLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
 
             var lessonIds = tfdLessons.Select(l => l.LessonId).ToList();
 

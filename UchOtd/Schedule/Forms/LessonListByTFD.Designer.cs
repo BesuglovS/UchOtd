@@ -32,6 +32,7 @@
             this.tfdBox = new System.Windows.Forms.ComboBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.view = new System.Windows.Forms.DataGridView();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view)).BeginInit();
@@ -39,11 +40,12 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.tfdBox);
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(673, 60);
+            this.controlsPanel.Size = new System.Drawing.Size(949, 46);
             this.controlsPanel.TabIndex = 0;
             // 
             // tfdBox
@@ -59,9 +61,9 @@
             // 
             this.viewPanel.Controls.Add(this.view);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 60);
+            this.viewPanel.Location = new System.Drawing.Point(0, 46);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(673, 520);
+            this.viewPanel.Size = new System.Drawing.Size(949, 534);
             this.viewPanel.TabIndex = 1;
             // 
             // view
@@ -74,14 +76,24 @@
             this.view.Name = "view";
             this.view.ReadOnly = true;
             this.view.RowHeadersVisible = false;
-            this.view.Size = new System.Drawing.Size(673, 520);
+            this.view.Size = new System.Drawing.Size(949, 534);
             this.view.TabIndex = 0;
+            // 
+            // showProposed
+            // 
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(667, 14);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(223, 17);
+            this.showProposed.TabIndex = 1;
+            this.showProposed.Text = "Показывать предполагаемые занятия";
+            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // LessonListByTFD
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(673, 580);
+            this.ClientSize = new System.Drawing.Size(949, 580);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.Name = "LessonListByTFD";
@@ -89,6 +101,7 @@
             this.Load += new System.EventHandler(this.LessonListByTFD_Load);
             this.ResizeEnd += new System.EventHandler(this.LessonListByTFD_ResizeEnd);
             this.controlsPanel.ResumeLayout(false);
+            this.controlsPanel.PerformLayout();
             this.viewPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.view)).EndInit();
             this.ResumeLayout(false);
@@ -101,5 +114,6 @@
         private System.Windows.Forms.ComboBox tfdBox;
         private System.Windows.Forms.Panel viewPanel;
         private System.Windows.Forms.DataGridView view;
+        private System.Windows.Forms.CheckBox showProposed;
     }
 }

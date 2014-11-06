@@ -6,7 +6,7 @@
         {
         }
 
-        public Auditorium(string name)
+        public Auditorium(string name, Building building)
         {
             Name = name;
         }

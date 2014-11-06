@@ -106,7 +106,7 @@ namespace Schedule.Forms.DBLists
             {
                 var AudView = ((List<AuditoriumView>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
 
-                if (_repo.GetFiltredRealLessons(l => l.Auditorium.AuditoriumId == AudView.AuditoriumId).Count > 0)
+                if (_repo.GetFiltredLessons(l => l.Auditorium.AuditoriumId == AudView.AuditoriumId).Count > 0)
                 {
                     MessageBox.Show("Аудитория есть в расписании.");
                     return;
@@ -126,7 +126,7 @@ namespace Schedule.Forms.DBLists
 
                 var Aud = _repo.GetAuditorium(AudView.AuditoriumId);
 
-                var audLessons = _repo.GetFiltredRealLessons(l => l.Auditorium.AuditoriumId == Aud.AuditoriumId);
+                var audLessons = _repo.GetFiltredLessons(l => l.Auditorium.AuditoriumId == Aud.AuditoriumId);
 
                 if (audLessons.Count > 0)
                 {
@@ -158,7 +158,7 @@ namespace Schedule.Forms.DBLists
                     _repo.AddAuditorium(replaceAud);
                 }
 
-                var audLessons = _repo.GetFiltredRealLessons(l => l.Auditorium.AuditoriumId == Aud.AuditoriumId);
+                var audLessons = _repo.GetFiltredLessons(l => l.Auditorium.AuditoriumId == Aud.AuditoriumId);
 
                 if (audLessons.Count > 0)
                 {

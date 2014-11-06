@@ -146,5 +146,10 @@ namespace UchOtd.Schedule.Forms.Analysis
                 RefreshView();
             }
         }
+
+        private void refresh_Click(object sender, EventArgs e)
+        {
+            RefreshView();
+        }
     }
 }

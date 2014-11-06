@@ -50,10 +50,10 @@
             this.PeriodName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.controlsPanel = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.startOfPeriod = new System.Windows.Forms.DateTimePicker();
             this.endOfPeriod = new System.Windows.Forms.DateTimePicker();
+            this.startOfPeriod = new System.Windows.Forms.DateTimePicker();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.filterPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PeriodsListView)).BeginInit();
             this.viewPanel.SuspendLayout();
@@ -121,6 +121,7 @@
             this.refresh.TabIndex = 6;
             this.refresh.Text = "Обновить";
             this.refresh.UseVisualStyleBackColor = true;
+            this.refresh.Click += new System.EventHandler(this.refresh_Click);
             // 
             // remove
             // 
@@ -285,14 +286,19 @@
             this.controlsPanel.Size = new System.Drawing.Size(233, 659);
             this.controlsPanel.TabIndex = 29;
             // 
-            // label2
+            // endOfPeriod
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(5, 102);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 13);
-            this.label2.TabIndex = 104;
-            this.label2.Text = "Начало периода";
+            this.endOfPeriod.Location = new System.Drawing.Point(8, 177);
+            this.endOfPeriod.Name = "endOfPeriod";
+            this.endOfPeriod.Size = new System.Drawing.Size(200, 20);
+            this.endOfPeriod.TabIndex = 107;
+            // 
+            // startOfPeriod
+            // 
+            this.startOfPeriod.Location = new System.Drawing.Point(8, 122);
+            this.startOfPeriod.Name = "startOfPeriod";
+            this.startOfPeriod.Size = new System.Drawing.Size(200, 20);
+            this.startOfPeriod.TabIndex = 106;
             // 
             // label3
             // 
@@ -303,19 +309,14 @@
             this.label3.TabIndex = 105;
             this.label3.Text = "Конец периода";
             // 
-            // startOfPeriod
+            // label2
             // 
-            this.startOfPeriod.Location = new System.Drawing.Point(8, 122);
-            this.startOfPeriod.Name = "startOfPeriod";
-            this.startOfPeriod.Size = new System.Drawing.Size(200, 20);
-            this.startOfPeriod.TabIndex = 106;
-            // 
-            // endOfPeriod
-            // 
-            this.endOfPeriod.Location = new System.Drawing.Point(8, 177);
-            this.endOfPeriod.Name = "endOfPeriod";
-            this.endOfPeriod.Size = new System.Drawing.Size(200, 20);
-            this.endOfPeriod.TabIndex = 107;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 102);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(89, 13);
+            this.label2.TabIndex = 104;
+            this.label2.Text = "Начало периода";
             // 
             // GroupPeriods
             // 

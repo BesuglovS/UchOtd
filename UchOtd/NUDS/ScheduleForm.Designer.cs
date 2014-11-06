@@ -41,6 +41,7 @@
             this.scheduleView = new System.Windows.Forms.DataGridView();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.loadingLabel = new System.Windows.Forms.Label();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scheduleView)).BeginInit();
             this.viewPanel.SuspendLayout();
@@ -58,6 +59,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.teacherSchedule);
             this.controlsPanel.Controls.Add(this.changes);
             this.controlsPanel.Controls.Add(this.tomorrow);
@@ -107,7 +109,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(177, 17);
+            this.label2.Location = new System.Drawing.Point(177, 6);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(33, 13);
             this.label2.TabIndex = 3;
@@ -124,7 +126,7 @@
             // 
             // datePicker
             // 
-            this.datePicker.Location = new System.Drawing.Point(216, 11);
+            this.datePicker.Location = new System.Drawing.Point(216, 5);
             this.datePicker.Name = "datePicker";
             this.datePicker.Size = new System.Drawing.Size(173, 20);
             this.datePicker.TabIndex = 1;
@@ -178,6 +180,16 @@
             this.loadingLabel.Text = "Загрузка ...";
             this.loadingLabel.Visible = false;
             // 
+            // showProposed
+            // 
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(198, 26);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(173, 17);
+            this.showProposed.TabIndex = 11;
+            this.showProposed.Text = "Показывать преполагаемые";
+            this.showProposed.UseVisualStyleBackColor = true;
+            // 
             // ScheduleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -213,5 +225,6 @@
         private System.Windows.Forms.DataGridView scheduleView;
         private System.Windows.Forms.Panel viewPanel;
         private System.Windows.Forms.Label loadingLabel;
+        private System.Windows.Forms.CheckBox showProposed;
     }
 }

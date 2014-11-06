@@ -29,10 +29,11 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
-            this.viewPanel = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
             this.auditoriumList = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.viewPanel = new System.Windows.Forms.Panel();
             this.view = new System.Windows.Forms.DataGridView();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view)).BeginInit();
@@ -40,6 +41,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.auditoriumList);
             this.controlsPanel.Controls.Add(this.label1);
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
@@ -48,14 +50,14 @@
             this.controlsPanel.Size = new System.Drawing.Size(611, 44);
             this.controlsPanel.TabIndex = 0;
             // 
-            // viewPanel
+            // auditoriumList
             // 
-            this.viewPanel.Controls.Add(this.view);
-            this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 44);
-            this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(611, 439);
-            this.viewPanel.TabIndex = 1;
+            this.auditoriumList.FormattingEnabled = true;
+            this.auditoriumList.Location = new System.Drawing.Point(78, 9);
+            this.auditoriumList.Name = "auditoriumList";
+            this.auditoriumList.Size = new System.Drawing.Size(168, 21);
+            this.auditoriumList.TabIndex = 1;
+            this.auditoriumList.SelectedIndexChanged += new System.EventHandler(this.auditoriumList_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -66,14 +68,14 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Аудитория";
             // 
-            // auditoriumList
+            // viewPanel
             // 
-            this.auditoriumList.FormattingEnabled = true;
-            this.auditoriumList.Location = new System.Drawing.Point(78, 9);
-            this.auditoriumList.Name = "auditoriumList";
-            this.auditoriumList.Size = new System.Drawing.Size(168, 21);
-            this.auditoriumList.TabIndex = 1;
-            this.auditoriumList.SelectedIndexChanged += new System.EventHandler(this.auditoriumList_SelectedIndexChanged);
+            this.viewPanel.Controls.Add(this.view);
+            this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.viewPanel.Location = new System.Drawing.Point(0, 44);
+            this.viewPanel.Name = "viewPanel";
+            this.viewPanel.Size = new System.Drawing.Size(611, 439);
+            this.viewPanel.TabIndex = 1;
             // 
             // view
             // 
@@ -86,6 +88,16 @@
             this.view.ReadOnly = true;
             this.view.Size = new System.Drawing.Size(611, 439);
             this.view.TabIndex = 0;
+            // 
+            // showProposed
+            // 
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(252, 11);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(217, 17);
+            this.showProposed.TabIndex = 2;
+            this.showProposed.Text = "Показывать преполагаемые занятия";
+            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // OneAuditorium
             // 
@@ -112,5 +124,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel viewPanel;
         private System.Windows.Forms.DataGridView view;
+        private System.Windows.Forms.CheckBox showProposed;
     }
 }
