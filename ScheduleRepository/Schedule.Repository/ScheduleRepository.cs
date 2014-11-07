@@ -3288,7 +3288,221 @@ namespace Schedule.Repositories
             }
         }
         #endregion
-        
+
+        #region ShiftRepository
+        public List<Shift> GetAllShifts()
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Shifts.ToList();
+            }
+        }
+
+        public List<Shift> GetFiltredShifts(Func<Shift, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Shifts.ToList().Where(condition).ToList();
+            }
+        }
+
+        public Shift GetFirstFiltredShift(Func<Shift, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Shifts.ToList().FirstOrDefault(condition);
+            }
+        }
+
+        public Shift GetShift(int shiftId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Shifts.FirstOrDefault(s => s.ShiftId == shiftId);
+            }
+        }
+
+        public Shift FindShift(string name)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Shifts.FirstOrDefault(s => s.Name == name);
+            }
+        }
+
+        public void AddShift(Shift shift)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                shift.ShiftId = 0;
+
+                context.Shifts.Add(shift);
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateShift(Shift shift)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var curShift = context.Shifts.FirstOrDefault(s => s.ShiftId == shift.ShiftId);
+
+                curShift.Name = shift.Name;
+
+                context.SaveChanges();
+            }
+        }
+
+        public void RemoveShift(int shiftId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var shift = context.Shifts.FirstOrDefault(s => s.ShiftId == shiftId);
+
+                context.Shifts.Remove(shift);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddShiftRange(IEnumerable<Shift> shiftList)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                foreach (var shift in shiftList)
+                {
+                    shift.ShiftId = 0;
+                    context.Shifts.Add(shift);
+                }
+
+                context.SaveChanges();
+            }
+        }
+        #endregion
+
+        #region ShiftRingRepository
+        public List<ShiftRing> GetAllShiftRings()
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.ShiftRings
+                    .Include(rs => rs.Ring)
+                    .Include(rs => rs.Shift)
+                    .ToList();
+            }
+        }
+
+        public List<ShiftRing> GetFiltredShiftRings(Func<ShiftRing, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.ShiftRings
+                    .Include(rs => rs.Ring)
+                    .Include(rs => rs.Shift)
+                    .ToList().Where(condition).ToList();
+            }
+        }
+
+        public ShiftRing GetFirstFiltredShiftRing(Func<ShiftRing, bool> condition)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.ShiftRings
+                    .Include(rs => rs.Ring)
+                    .Include(rs => rs.Shift)
+                    .ToList().FirstOrDefault(condition);
+            }
+        }
+
+        public ShiftRing GetShiftRing(int shiftRingId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.ShiftRings
+                    .Include(rs => rs.Ring)
+                    .Include(rs => rs.Shift)
+                    .FirstOrDefault(rs => rs.ShiftRingId == shiftRingId);
+            }
+        }
+
+        public List<Ring> GetShiftRings(Shift shift)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.ShiftRings
+                    .Include(rs => rs.Ring)
+                    .Include(rs => rs.Shift)
+                    .Where(rs => rs.Shift.ShiftId == shift.ShiftId)
+                    .Select(rs => rs.Ring)
+                    .ToList();
+            }
+        }
+
+        public List<Ring> GetShiftRings(int shiftId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.ShiftRings
+                    .Include(rs => rs.Ring)
+                    .Include(rs => rs.Shift)
+                    .Where(rs => rs.Shift.ShiftId == shiftId)
+                    .Select(rs => rs.Ring)
+                    .ToList();
+            }
+        }
+
+        public void AddShiftRing(ShiftRing shiftRing)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                shiftRing.ShiftRingId = 0;
+
+                shiftRing.Ring = context.Rings.FirstOrDefault(r => r.RingId == shiftRing.Ring.RingId);
+                shiftRing.Shift = context.Shifts.FirstOrDefault(s => s.ShiftId == shiftRing.Shift.ShiftId);
+
+                context.ShiftRings.Add(shiftRing);
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateShiftRing(ShiftRing shiftRing)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var curShiftRing = context.ShiftRings.FirstOrDefault(rs => rs.ShiftRingId == shiftRing.ShiftRingId);
+
+                curShiftRing.Ring = context.Rings.FirstOrDefault(r => r.RingId == shiftRing.Ring.RingId);
+                curShiftRing.Shift = context.Shifts.FirstOrDefault(s => s.ShiftId == shiftRing.Shift.ShiftId);
+
+                context.SaveChanges();
+            }
+        }
+
+        public void RemoveRingShift(int shiftRingId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var shiftRing = context.ShiftRings.FirstOrDefault(rs => rs.ShiftRingId == shiftRingId);
+
+                context.ShiftRings.Remove(shiftRing);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddShiftRingRange(IEnumerable<ShiftRing> shiftRingList)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                foreach (var shiftRing in shiftRingList)
+                {
+                    shiftRing.ShiftRingId = 0;
+                    context.ShiftRings.Add(shiftRing);
+                }
+
+                context.SaveChanges();
+            }
+        }
+        #endregion
+
         #region CommonFunctions
         public static string CombineWeeks(List<int> list)
         {

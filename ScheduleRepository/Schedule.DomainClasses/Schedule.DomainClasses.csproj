@@ -49,6 +49,8 @@
     <Compile Include="Analyse\CustomDisciplineAttribute.cs" />
     <Compile Include="Analyse\CustomStudentGroupAttribute.cs" />
     <Compile Include="Analyse\CustomTeacherAttribute.cs" />
+    <Compile Include="Analyse\ShiftRing.cs" />
+    <Compile Include="Analyse\Shift.cs" />
     <Compile Include="Analyse\TeacherWish.cs" />
     <Compile Include="Config\ConfigOption.cs" />
     <Compile Include="Logs\LessonLogEvent.cs" />
