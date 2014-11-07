@@ -429,8 +429,10 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             var teacher = tfd.Teacher;
 
             var RingsForTeacher = _repo
-                .GetTeacherRings(teacher)
-                .Select(tr => tr.Ring)
+                .GetFiltredCustomTeacherAttributes(cta => 
+                    cta.Teacher.TeacherId == teacher.TeacherId &&
+                    cta.Key == "TeacherRing")
+                .Select(cta => _repo.GetRing(int.Parse(cta.Value)))
                 .OrderBy(r => r.Time.TimeOfDay)
                 .ToList();
 

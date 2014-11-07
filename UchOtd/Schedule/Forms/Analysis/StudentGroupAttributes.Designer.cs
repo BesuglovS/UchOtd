@@ -1,6 +1,6 @@
 ﻿namespace UchOtd.Schedule.Forms.Analysis
 {
-    partial class StudentGroupBuildingAuditorium
+    partial class StudentGroupAttributes
     {
         /// <summary>
         /// Required designer variable.
@@ -38,10 +38,12 @@
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ListPanel = new System.Windows.Forms.Panel();
             this.controlsPanel = new System.Windows.Forms.Panel();
-            this.building = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.auditorium = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.building = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.shift = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.itemsListView)).BeginInit();
             this.viewPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
@@ -50,7 +52,7 @@
             // 
             // reloadGroupList
             // 
-            this.reloadGroupList.Location = new System.Drawing.Point(88, 162);
+            this.reloadGroupList.Location = new System.Drawing.Point(88, 206);
             this.reloadGroupList.Name = "reloadGroupList";
             this.reloadGroupList.Size = new System.Drawing.Size(115, 81);
             this.reloadGroupList.TabIndex = 103;
@@ -77,7 +79,7 @@
             // 
             // remove
             // 
-            this.remove.Location = new System.Drawing.Point(8, 220);
+            this.remove.Location = new System.Drawing.Point(8, 264);
             this.remove.Name = "remove";
             this.remove.Size = new System.Drawing.Size(75, 23);
             this.remove.TabIndex = 31;
@@ -87,7 +89,7 @@
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(8, 191);
+            this.update.Location = new System.Drawing.Point(8, 235);
             this.update.Name = "update";
             this.update.Size = new System.Drawing.Size(75, 23);
             this.update.TabIndex = 30;
@@ -97,7 +99,7 @@
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(7, 162);
+            this.add.Location = new System.Drawing.Point(7, 206);
             this.add.Name = "add";
             this.add.Size = new System.Drawing.Size(75, 23);
             this.add.TabIndex = 6;
@@ -141,6 +143,8 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.shift);
+            this.controlsPanel.Controls.Add(this.label3);
             this.controlsPanel.Controls.Add(this.auditorium);
             this.controlsPanel.Controls.Add(this.label2);
             this.controlsPanel.Controls.Add(this.building);
@@ -156,24 +160,6 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(218, 702);
             this.controlsPanel.TabIndex = 29;
-            // 
-            // building
-            // 
-            this.building.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.building.FormattingEnabled = true;
-            this.building.Location = new System.Drawing.Point(8, 70);
-            this.building.Name = "building";
-            this.building.Size = new System.Drawing.Size(197, 21);
-            this.building.TabIndex = 104;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(5, 54);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(43, 13);
-            this.label1.TabIndex = 105;
-            this.label1.Text = "Корпус";
             // 
             // auditorium
             // 
@@ -193,15 +179,51 @@
             this.label2.TabIndex = 107;
             this.label2.Text = "Преимущественная аудитория";
             // 
-            // StudentGroupBuildingAuditorium
+            // building
+            // 
+            this.building.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.building.FormattingEnabled = true;
+            this.building.Location = new System.Drawing.Point(8, 70);
+            this.building.Name = "building";
+            this.building.Size = new System.Drawing.Size(197, 21);
+            this.building.TabIndex = 104;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(5, 54);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(43, 13);
+            this.label1.TabIndex = 105;
+            this.label1.Text = "Корпус";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 142);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(40, 13);
+            this.label3.TabIndex = 108;
+            this.label3.Text = "Смена";
+            // 
+            // shift
+            // 
+            this.shift.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.shift.FormattingEnabled = true;
+            this.shift.Location = new System.Drawing.Point(8, 161);
+            this.shift.Name = "shift";
+            this.shift.Size = new System.Drawing.Size(198, 21);
+            this.shift.TabIndex = 109;
+            // 
+            // StudentGroupAttributes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(633, 702);
             this.Controls.Add(this.ListPanel);
             this.Controls.Add(this.controlsPanel);
-            this.Name = "StudentGroupBuildingAuditorium";
-            this.Text = "Корпус и преимущественная аудитория для группы";
+            this.Name = "StudentGroupAttributes";
+            this.Text = "Параметры групп";
             this.Load += new System.EventHandler(this.StudentGroupBuildingAuditorium_Load);
             ((System.ComponentModel.ISupportInitialize)(this.itemsListView)).EndInit();
             this.viewPanel.ResumeLayout(false);
@@ -228,5 +250,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox building;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox shift;
     }
 }

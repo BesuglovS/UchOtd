@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Schedule.DomainClasses.Analyse;
+using Schedule.Repositories;
 
 namespace UchOtd.Schedule.Views
 {
     public class GroupPeriodView
     {
-        public int GroupPeriodId { get; set; }
+        public int CustomStudentGroupAttributeId { get; set; }
         public string Name { get; set; }
         public string StudentGroup { get; set; }
         public string Start { get; set; }
@@ -16,18 +17,19 @@ namespace UchOtd.Schedule.Views
         {
         }
 
-        public GroupPeriodView(GroupPeriod groupPeriod)
+        public GroupPeriodView(ScheduleRepository repo, CustomStudentGroupAttribute attr)
         {
-            GroupPeriodId = groupPeriod.GroupPeriodId;
-            Name = groupPeriod.Name;
-            StudentGroup = groupPeriod.StudentGroup.Name;
-            Start = groupPeriod.Start.ToString("dd.MM.yyyy");
-            End = groupPeriod.End.ToString("dd.MM.yyyy");
+            CustomStudentGroupAttributeId = attr.CustomStudentGroupAttributeId;
+            var valueParts = attr.Value.Split('@');
+            StudentGroup = attr.StudentGroup.Name;
+            Name = valueParts[0];            
+            Start = valueParts[1];
+            End = valueParts[2];
         }
 
-        public static List<GroupPeriodView> GroupPeriodsToView(List<GroupPeriod> list)
+        public static List<GroupPeriodView> GroupPeriodsToView(ScheduleRepository repo, List<CustomStudentGroupAttribute> list)
         {
-            return list.Select(gp => new GroupPeriodView(gp)).ToList();
+            return list.Select(csga => new GroupPeriodView(repo, csga)).ToList();
         }
     }
 }

@@ -6,18 +6,18 @@ using System.Text;
 
 namespace Schedule.DomainClasses.Analyse
 {
-    public class CustomTeacherWish
+    public class CustomTeacherAttribute
     {
-        public int CustomTeacherWishId { get; set; }
+        public int CustomTeacherAttributeId { get; set; }
         public virtual Teacher Teacher { get; set; }
         public string Key { get; set; }
         public string Value { get; set; }
 
-        public CustomTeacherWish()
+        public CustomTeacherAttribute()
         {
         }
 
-        public CustomTeacherWish(Teacher teacher, string key, string value)
+        public CustomTeacherAttribute(Teacher teacher, string key, string value)
         {
             Teacher = teacher;
             Key = key;

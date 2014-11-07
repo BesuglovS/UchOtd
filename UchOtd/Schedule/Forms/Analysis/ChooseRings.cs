@@ -34,8 +34,8 @@ namespace UchOtd.Schedule.Forms
         private void RefreshRings()
         {
             var teacherRingIds = _repo
-                .GetFiltredTeacherRings(tr => tr.Teacher.TeacherId == teacher.TeacherId)
-                .Select(tr => tr.Ring.RingId)
+                .GetFiltredCustomTeacherAttributes(cta => (cta.Teacher.TeacherId == teacher.TeacherId) && (cta.Key == "TeacherRing"))
+                .Select(cta => int.Parse(cta.Value))
                 .ToList();
 
             var allRingViews = RingView.RingsToView(_repo.GetAllRings().OrderBy(r => r.Time.TimeOfDay).ToList());
@@ -65,10 +65,9 @@ namespace UchOtd.Schedule.Forms
         private void OK_Click(object sender, EventArgs e)
         {
             var teacherRingIds = _repo
-                .GetFiltredTeacherRings(tr => tr.Teacher.TeacherId == teacher.TeacherId)
-                .Select(tr => tr.Ring.RingId)
+                .GetFiltredCustomTeacherAttributes(cta => (cta.Teacher.TeacherId == teacher.TeacherId) && (cta.Key == "TeacherRing"))
+                .Select(cta => int.Parse(cta.Value))
                 .ToList();
-
 
             for (int i = 0; i < RingsList.Items.Count; i++)
             {
@@ -80,17 +79,14 @@ namespace UchOtd.Schedule.Forms
                 {
                     Wishes.NeedsUpdateAfterChoosingRings = true;
 
-                    var newTeacherRing = new TeacherRing(teacher, _repo.GetRing(ringId));
-                    _repo.AddTeacherRing(newTeacherRing);
+                    var newTeacherRingAttribute = new CustomTeacherAttribute(teacher, "TeacherRing", ringId.ToString());
+                    _repo.AddCustomTeacherAttribute(newTeacherRingAttribute);
 
                     var newTeacherWishList = new List<TeacherWish>();
 
-                    for (int dow = 1; dow <= 6; dow++)
-                    {
-                        newTeacherWishList.AddRange(
-                            _repo.GetDOWCalendars(dow)
+                    newTeacherWishList.AddRange(
+                        _repo.GetAllCalendars()
                             .Select(calendar => new TeacherWish(teacher, calendar, ring, 0)));
-                    }
 
                     _repo.AddTeacherWishRange(newTeacherWishList);
                 }
@@ -99,11 +95,13 @@ namespace UchOtd.Schedule.Forms
                 {
                     Wishes.NeedsUpdateAfterChoosingRings = true;
 
-                    var teacherRing = _repo.GetFirstFiltredTeacherRing(tr =>
-                        tr.Teacher.TeacherId == teacher.TeacherId &&
-                        tr.Ring.RingId == ringId);
+                    var teacherRingAttribute = _repo
+                        .GetFirstFiltredCustomTeacherAttribute( cta =>
+                        cta.Teacher.TeacherId == teacher.TeacherId &&
+                        cta.Key == "TeacherRing" &&
+                        cta.Value == ringId.ToString());
 
-                    _repo.RemoveTeacherRing(teacherRing.TeacherRingId);
+                    _repo.RemoveCustomTeacherAttribute(teacherRingAttribute.CustomTeacherAttributeId);
 
                     var teacherWishes = _repo
                         .GetFiltredTeacherWishes(tw =>

@@ -48,12 +48,10 @@ namespace Schedule.DataLayer
 
         // Analyse
         public DbSet<TeacherWish> TeacherWishes { get; set; }
-        public DbSet<CustomTeacherWish> CustomTeacherWishes { get; set; }
-        public DbSet<TeacherRing> TeacherRings { get; set; }
-        public DbSet<DisciplineAuditorium> DisciplineAuditoriums { get; set; }
+
+        public DbSet<CustomTeacherAttribute> CustomTeacherAttributes { get; set; }        
         public DbSet<CustomDisciplineAttribute> CustomDisciplineAttributes { get; set; }
-        public DbSet<GroupPeriod> GroupPeriods { get; set; }
-        public DbSet<GroupBuildingAuditorium> GroupBuildingAuditoriums { get; set; }
+        public DbSet<CustomStudentGroupAttribute> CustomStudentGroupAttributes { get; set; }
          
         // Session
         public DbSet<Exam> Exams { get; set; }

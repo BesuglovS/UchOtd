@@ -54,9 +54,8 @@ namespace UchOtd.Schedule.Forms
 
         private void RefreshAudsList()
         {
-            var auds = GetAudsFromSelectedTeacher();
-            var discAudIds = auds.Select(a => a.AuditoriumId).ToList();
-
+            var discAudIds = GetAudIdsFromSelectedDiscipline();
+            
 
             var allAuds = _repo.GetAllAuditoriums().OrderBy(a => a.Name).ToList();
 
@@ -75,7 +74,7 @@ namespace UchOtd.Schedule.Forms
             }            
         }
 
-        private List<Auditorium> GetAudsFromSelectedTeacher()
+        private List<int> GetAudIdsFromSelectedDiscipline()
         {
             var datasource = (List<DisciplineTextView>)discList.DataSource;
             var discView = datasource[discList.SelectedIndex];
@@ -83,15 +82,18 @@ namespace UchOtd.Schedule.Forms
 
             selectedDiscipline = _repo.GetDiscipline(dicsId);
 
-            var auds = _repo.GetDisciplinesAuditoriums(selectedDiscipline);
-            return auds;
+            var audIds = _repo.GetFiltredCustomDisciplineAttributes(cda =>
+                    cda.Discipline.DisciplineId == selectedDiscipline.DisciplineId &&
+                    cda.Key == "DisciplineAuditorium")
+                .Select(cda => int.Parse(cda.Value))
+                .ToList();
+            return audIds;
         }
 
         private void audList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var auds = GetAudsFromSelectedTeacher();
-            var discAudIds = auds.Select(a => a.AuditoriumId).ToList();
-
+            var discAudIds = GetAudIdsFromSelectedDiscipline();
+            
             for (int i = 0; i < audList.Items.Count; i++)
             {
                 bool selected = audList.GetSelected(i);
@@ -100,9 +102,9 @@ namespace UchOtd.Schedule.Forms
 
                 if (selected && !discAudIds.Contains(audId))
                 {
-                    var newDiscAud = new DisciplineAuditorium(selectedDiscipline, aud);
+                    var newDiscAudAttribute = new CustomDisciplineAttribute(selectedDiscipline, "DisciplineAuditorium", audId.ToString());
 
-                    _repo.AddDisciplineAuditorium(newDiscAud);
+                    _repo.AddCustomDisciplineAttribute(newDiscAudAttribute);
 
                     break;
                 }
@@ -110,11 +112,14 @@ namespace UchOtd.Schedule.Forms
                 if (!selected && discAudIds.Contains(audId))
                 {
                     
-                    var discAud = _repo.FindDisciplineAuditorium(aud, selectedDiscipline);
+                    var discAudAttribute = _repo
+                        .GetFirstFiltredCustomDisciplineAttribute(cda => 
+                            cda.Discipline.DisciplineId == selectedDiscipline.DisciplineId &&
+                            cda.Key == "DisciplineAuditorium");
 
-                    if (discAud != null)
+                    if (discAudAttribute != null)
                     {
-                        _repo.RemoveDisciplineAuditorium(discAud.DisciplineAuditoriumId);
+                        _repo.RemoveCustomDisciplineAttribute(discAudAttribute.CustomDisciplineAttributeId);
                     }
 
                     break;
@@ -128,9 +133,9 @@ namespace UchOtd.Schedule.Forms
 
             foreach (var aud in allAuds)
             {
-                var newDiscAud = new DisciplineAuditorium(selectedDiscipline, aud);
+                var newDiscAudAttribute = new CustomDisciplineAttribute(selectedDiscipline, "DisciplineAuditorium", aud.AuditoriumId.ToString());
 
-                _repo.AddDisciplineAuditorium(newDiscAud);
+                _repo.AddCustomDisciplineAttribute(newDiscAudAttribute);
             }
 
             RefreshAudsList();
@@ -138,13 +143,16 @@ namespace UchOtd.Schedule.Forms
 
         private void None_Click(object sender, EventArgs e)
         {
-            var daIds = _repo.GetFiltredDisciplineAuditorium(da => da.Discipline.DisciplineId == selectedDiscipline.DisciplineId)
-                .Select(da => da.DisciplineAuditoriumId)
+            var cdaIds = _repo
+                .GetFiltredCustomDisciplineAttributes(cda => 
+                    cda.Discipline.DisciplineId == selectedDiscipline.DisciplineId &&
+                    cda.Key == "DisciplineAuditorium")
+                .Select(cda => cda.CustomDisciplineAttributeId)
                 .ToList();
 
-            foreach (var daId in daIds)
+            foreach (var cdaId in cdaIds)
             {
-                _repo.RemoveDisciplineAuditorium(daId);
+                _repo.RemoveCustomDisciplineAttribute(cdaId);
             }
 
             RefreshAudsList();

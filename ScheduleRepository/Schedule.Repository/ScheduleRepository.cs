@@ -2923,176 +2923,65 @@ namespace Schedule.Repositories
         }
         #endregion
 
-        #region TeacherRingRepository
-        public List<TeacherRing> GetAllTeacherRings()
+        #region CustomTeacherAttributeRepository
+        public List<CustomTeacherAttribute> GetAllCustomTeacherAttributes()
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.TeacherRings.Include(tr => tr.Teacher).Include(tr => tr.Ring).ToList();
+                return context.CustomTeacherAttributes.Include(w => w.Teacher).ToList();
             }
         }
 
-        public List<TeacherRing> GetFiltredTeacherRings(Func<TeacherRing, bool> condition)
+        public List<CustomTeacherAttribute> GetFiltredCustomTeacherAttributes(Func<CustomTeacherAttribute, bool> condition)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.TeacherRings.Include(tr => tr.Teacher).Include(tr => tr.Ring).ToList().Where(condition).ToList();
+                return context.CustomTeacherAttributes.Include(w => w.Teacher).ToList().Where(condition).ToList();
             }
         }
 
-        public TeacherRing GetFirstFiltredTeacherRing(Func<TeacherRing, bool> condition)
+        public CustomTeacherAttribute GetFirstFiltredCustomTeacherAttribute(Func<CustomTeacherAttribute, bool> condition)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.TeacherRings.Include(tr => tr.Teacher).Include(tr => tr.Ring).ToList().FirstOrDefault(condition);
+                return context.CustomTeacherAttributes.Include(w => w.Teacher).ToList().FirstOrDefault(condition);
             }
         }
 
-        public TeacherRing GetTeacherRing(int teacherRingId)
+        public CustomTeacherAttribute GetCustomTeacherAttribute(int teacherWishId)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.TeacherRings.Include(tr => tr.Teacher).Include(tr => tr.Ring).FirstOrDefault(tr => tr.TeacherRingId == teacherRingId);
+                return context.CustomTeacherAttributes.Include(w => w.Teacher).FirstOrDefault(w => w.CustomTeacherAttributeId == teacherWishId);
             }
         }
 
-        public void AddTeacherRing(TeacherRing teacherRing)
+        public CustomTeacherAttribute GetCustomTeacherAttribute(Teacher teacher, string key)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                teacherRing.TeacherRingId = 0;
-
-                teacherRing.Teacher = context.Teachers.FirstOrDefault(tr => tr.TeacherId == teacherRing.Teacher.TeacherId);
-                teacherRing.Ring = context.Rings.FirstOrDefault(tr => tr.RingId == teacherRing.Ring.RingId);
-
-                context.TeacherRings.Add(teacherRing);
-                context.SaveChanges();
+                return context.CustomTeacherAttributes.Include(w => w.Teacher).FirstOrDefault(w => w.Teacher.TeacherId == teacher.TeacherId && w.Key == key);
             }
         }
 
-        public void UpdateTeacherRing(TeacherRing teacherRing)
+        public void AddCustomTeacherAttribute(CustomTeacherAttribute wish)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                var curTeacherRing = context.TeacherRings.FirstOrDefault(tr => tr.TeacherRingId == teacherRing.TeacherRingId);
-
-                curTeacherRing.Teacher = context.Teachers.FirstOrDefault(tr => tr.TeacherId == teacherRing.Teacher.TeacherId);
-                curTeacherRing.Ring = context.Rings.FirstOrDefault(tr => tr.RingId == teacherRing.Ring.RingId);
-
-                context.SaveChanges();
-            }
-        }
-
-        public void RemoveTeacherRing(int teacherRingId)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                var teacherRing = context.TeacherRings.FirstOrDefault(tr => tr.TeacherRingId == teacherRingId);
-
-                context.TeacherRings.Remove(teacherRing);
-                context.SaveChanges();
-            }
-        }
-
-        public void AddTeacherRingRange(IEnumerable<TeacherRing> teacherRingList)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                foreach (var teacherRing in teacherRingList)
-                {
-                    teacherRing.TeacherRingId = 0;
-
-                    teacherRing.Teacher = context.Teachers.FirstOrDefault(tr => tr.TeacherId == teacherRing.Teacher.TeacherId);
-                    teacherRing.Ring = context.Rings.FirstOrDefault(tr => tr.RingId == teacherRing.Ring.RingId);
-
-                    context.TeacherRings.Add(teacherRing);
-                }
-
-                context.SaveChanges();
-            }
-        }
-
-        public bool TeacherRingExists(Teacher teacher, Ring ring)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return ((context.TeacherRings
-                    .FirstOrDefault(tr =>
-                    tr.Teacher.TeacherId == teacher.TeacherId &&
-                    tr.Ring.RingId == ring.RingId)) != null);
-            }
-        }
-
-        public List<TeacherRing> GetTeacherRings(Teacher teacher)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.TeacherRings
-                    .Include(tr => tr.Teacher).Include(tr => tr.Ring)
-                    .Where(tr => tr.Teacher.TeacherId == teacher.TeacherId).ToList();
-            }
-        }
-        #endregion
-
-        #region CustomTeacherWishRepository
-        public List<CustomTeacherWish> GetAllCustomTeacherWishes()
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.CustomTeacherWishes.Include(w => w.Teacher).ToList();
-            }
-        }
-
-        public List<CustomTeacherWish> GetFiltredCustomTeacherWishes(Func<CustomTeacherWish, bool> condition)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.CustomTeacherWishes.Include(w => w.Teacher).ToList().Where(condition).ToList();
-            }
-        }
-
-        public CustomTeacherWish GetFirstFiltredCustomTeacherWish(Func<CustomTeacherWish, bool> condition)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.CustomTeacherWishes.Include(w => w.Teacher).ToList().FirstOrDefault(condition);
-            }
-        }
-
-        public CustomTeacherWish GetCustomTeacherWish(int teacherWishId)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.CustomTeacherWishes.Include(w => w.Teacher).FirstOrDefault(w => w.CustomTeacherWishId == teacherWishId);
-            }
-        }
-
-        public CustomTeacherWish GetCustomTeacherWish(Teacher teacher, string key)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.CustomTeacherWishes.Include(w => w.Teacher).FirstOrDefault(w => w.Teacher.TeacherId == teacher.TeacherId && w.Key == key);
-            }
-        }
-
-        public void AddCustomTeacherWish(CustomTeacherWish wish)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                wish.CustomTeacherWishId = 0;
+                wish.CustomTeacherAttributeId = 0;
 
                 wish.Teacher = context.Teachers.FirstOrDefault(t => t.TeacherId == wish.Teacher.TeacherId);
 
-                context.CustomTeacherWishes.Add(wish);
+                context.CustomTeacherAttributes.Add(wish);
                 context.SaveChanges();
             }
         }
 
-        public void UpdateCustomTeacherWish(CustomTeacherWish wish)
+        public void UpdateCustomTeacherAttribute(CustomTeacherAttribute wish)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                var curWish = context.CustomTeacherWishes.FirstOrDefault(w => w.CustomTeacherWishId == wish.CustomTeacherWishId);
+                var curWish = context.CustomTeacherAttributes.FirstOrDefault(w => w.CustomTeacherAttributeId == wish.CustomTeacherAttributeId);
 
                 curWish.Teacher = context.Teachers.FirstOrDefault(t => t.TeacherId == wish.Teacher.TeacherId);
 
@@ -3103,43 +2992,43 @@ namespace Schedule.Repositories
             }
         }
 
-        public void RemoveCustomTeacherWish(int customTeacherWishId)
+        public void RemoveCustomTeacherAttribute(int customTeacherWishId)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                var wish = context.CustomTeacherWishes.FirstOrDefault(w => w.CustomTeacherWishId == customTeacherWishId);
+                var wish = context.CustomTeacherAttributes.FirstOrDefault(w => w.CustomTeacherAttributeId == customTeacherWishId);
 
-                context.CustomTeacherWishes.Remove(wish);
+                context.CustomTeacherAttributes.Remove(wish);
                 context.SaveChanges();
             }
         }
 
-        public void AddCustomTeacherWishRange(IEnumerable<CustomTeacherWish> teacherWishList)
+        public void AddCustomTeacherAttributeRange(IEnumerable<CustomTeacherAttribute> teacherWishList)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
                 foreach (var wish in teacherWishList)
                 {
-                    wish.CustomTeacherWishId = 0;
+                    wish.CustomTeacherAttributeId = 0;
 
                     wish.Teacher = context.Teachers.FirstOrDefault(t => t.TeacherId == wish.Teacher.TeacherId);
 
-                    context.CustomTeacherWishes.Add(wish);
+                    context.CustomTeacherAttributes.Add(wish);
                 }
 
                 context.SaveChanges();
             }
         }
 
-        public void AddOrUpdateCustomTeacherWish(CustomTeacherWish wish)
+        public void AddOrUpdateCustomTeacherAttribute(CustomTeacherAttribute wish)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                CustomTeacherWish targetWish = GetCustomTeacherWish(wish.Teacher, wish.Key);
+                CustomTeacherAttribute targetWish = GetCustomTeacherAttribute(wish.Teacher, wish.Key);
 
                 if (targetWish == null)
                 {
-                    AddCustomTeacherWish(wish);
+                    AddCustomTeacherAttribute(wish);
                 }
                 else
                 {
@@ -3147,124 +3036,12 @@ namespace Schedule.Repositories
                     {
                         targetWish.Value = wish.Value;
 
-                        UpdateCustomTeacherWish(targetWish);
+                        UpdateCustomTeacherAttribute(targetWish);
                     }
                 }
 
             }
         }
-        #endregion
-
-        #region DisciplineAuditoriumRepository
-        public List<DisciplineAuditorium> GetAllDisciplineAuditorium()
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.DisciplineAuditoriums
-                    .Include(da => da.Auditorium.Building)
-                    .Include(da => da.Discipline.StudentGroup)
-                    .ToList();
-            }
-        }
-
-        public List<DisciplineAuditorium> GetFiltredDisciplineAuditorium(Func<DisciplineAuditorium, bool> condition)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.DisciplineAuditoriums.Include(da => da.Auditorium.Building).Include(da => da.Discipline.StudentGroup).ToList().Where(condition).ToList();
-            }
-        }
-
-        public DisciplineAuditorium GetFirstFiltredDisciplineAuditorium(Func<DisciplineAuditorium, bool> condition)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.DisciplineAuditoriums.Include(da => da.Auditorium.Building).Include(da => da.Discipline.StudentGroup).ToList().FirstOrDefault(condition);
-            }
-        }
-
-        public DisciplineAuditorium GetDisciplineAuditorium(int disciplineAuditoriumId)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.DisciplineAuditoriums.Include(da => da.Auditorium.Building).Include(da => da.Discipline.StudentGroup)
-                    .FirstOrDefault(da => da.DisciplineAuditoriumId == disciplineAuditoriumId);
-            }
-        }
-
-        public DisciplineAuditorium FindDisciplineAuditorium(Auditorium a, Discipline d)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.DisciplineAuditoriums.Include(da => da.Auditorium.Building).Include(da => da.Discipline.StudentGroup)
-                    .FirstOrDefault(da => da.Auditorium.AuditoriumId == a.AuditoriumId && da.Discipline.DisciplineId == d.DisciplineId);
-            }
-        }
-
-        public void AddDisciplineAuditorium(DisciplineAuditorium disciplineAuditorium)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                disciplineAuditorium.DisciplineAuditoriumId = 0;
-
-                disciplineAuditorium.Auditorium = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == disciplineAuditorium.Auditorium.AuditoriumId);
-                disciplineAuditorium.Discipline = context.Disciplines.FirstOrDefault(d => d.DisciplineId == disciplineAuditorium.Discipline.DisciplineId);
-
-                context.DisciplineAuditoriums.Add(disciplineAuditorium);
-                context.SaveChanges();
-            }
-        }
-
-        public void UpdateDisciplineAuditorium(DisciplineAuditorium disciplineAuditorium)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                var curDisciplineAuditorium = context.DisciplineAuditoriums.FirstOrDefault(da => da.DisciplineAuditoriumId == disciplineAuditorium.DisciplineAuditoriumId);
-
-                curDisciplineAuditorium.Auditorium = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == disciplineAuditorium.Auditorium.AuditoriumId);
-                curDisciplineAuditorium.Discipline = context.Disciplines.FirstOrDefault(d => d.DisciplineId == disciplineAuditorium.Discipline.DisciplineId);
-
-                context.SaveChanges();
-            }
-        }
-
-        public void RemoveDisciplineAuditorium(int disciplineAuditoriumId)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                var disciplineAuditorium = context.DisciplineAuditoriums.FirstOrDefault(da => da.DisciplineAuditoriumId == disciplineAuditoriumId);
-
-                context.DisciplineAuditoriums.Remove(disciplineAuditorium);
-                context.SaveChanges();
-            }
-        }
-
-        public void AddDisciplineAuditoriumRange(IEnumerable<DisciplineAuditorium> disciplineAuditoriumList)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                foreach (var disciplineAuditorium in disciplineAuditoriumList)
-                {
-                    disciplineAuditorium.DisciplineAuditoriumId = 0;
-                    context.DisciplineAuditoriums.Add(disciplineAuditorium);
-                }
-
-                context.SaveChanges();
-            }
-        }
-
-        public List<Auditorium> GetDisciplinesAuditoriums(Discipline discipline)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.DisciplineAuditoriums.Include(da => da.Auditorium).Include(da => da.Discipline.StudentGroup).ToList()
-                    .Where(da => da.Discipline.DisciplineId == discipline.DisciplineId)
-                    .Select(da => da.Auditorium)
-                    .ToList();
-            }
-        }
-
-
         #endregion
 
         #region CustomDisciplineAttributeRepository
@@ -3389,218 +3166,125 @@ namespace Schedule.Repositories
             }
         }
         #endregion
-        
-        #region GroupPeriodRepository
-        public List<GroupPeriod> GetAllGroupPeriods()
+
+        #region CustomStudentGroupAttributeRepository
+        public List<CustomStudentGroupAttribute> CustomTeacherAttributes()
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.GroupPeriods.Include(gp => gp.StudentGroup).ToList();
+                return context.CustomStudentGroupAttributes.Include(w => w.StudentGroup).ToList();
             }
         }
 
-        public List<GroupPeriod> GetFiltredGroupPeriods(Func<GroupPeriod, bool> condition)
+        public List<CustomStudentGroupAttribute> GetFiltredCustomStudentGroupAttributes(Func<CustomStudentGroupAttribute, bool> condition)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.GroupPeriods.Include(gp => gp.StudentGroup).ToList().Where(condition).ToList();
+                return context.CustomStudentGroupAttributes.Include(w => w.StudentGroup).ToList().Where(condition).ToList();
             }
         }
 
-        public List<GroupPeriod> GetGroupPeriods(StudentGroup studentGroup)
+        public CustomStudentGroupAttribute GetFirstFiltredCustomStudentGroupAttribute(Func<CustomStudentGroupAttribute, bool> condition)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.GroupPeriods
-                    .Where(gp => gp.StudentGroup.StudentGroupId == studentGroup.StudentGroupId)
-                    .Include(gp => gp.StudentGroup).ToList();
+                return context.CustomStudentGroupAttributes.Include(w => w.StudentGroup).ToList().FirstOrDefault(condition);
             }
         }
 
-        public GroupPeriod GetFirstFiltredGroupPeriod(Func<GroupPeriod, bool> condition)
+        public CustomStudentGroupAttribute GetCustomStudentGroupAttribute(int customStudentGroupAttributeId)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.GroupPeriods.Include(gp => gp.StudentGroup).ToList().FirstOrDefault(condition);
+                return context.CustomStudentGroupAttributes.Include(w => w.StudentGroup).FirstOrDefault(w => w.CustomStudentGroupAttributeId == customStudentGroupAttributeId);
             }
         }
 
-        public GroupPeriod GetGroupPeriod(int groupPeriodId)
+        public CustomStudentGroupAttribute GetCustomStudentGroupAttribute(StudentGroup studentGroup, string key)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.GroupPeriods.Include(gp => gp.StudentGroup)
-                    .FirstOrDefault(d => d.GroupPeriodId == groupPeriodId);
+                return context.CustomStudentGroupAttributes.Include(w => w.StudentGroup)
+                    .FirstOrDefault(w => w.StudentGroup.StudentGroupId == studentGroup.StudentGroupId && w.Key == key);
             }
         }
 
-        public void AddGroupPeriod(GroupPeriod groupPeriod)
+        public void AddCustomStudentGroupAttribute(CustomStudentGroupAttribute attr)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                groupPeriod.StudentGroup = context.StudentGroups
-                    .FirstOrDefault(sg => sg.StudentGroupId == groupPeriod.StudentGroup.StudentGroupId);
-                context.GroupPeriods.Add(groupPeriod);
+                attr.CustomStudentGroupAttributeId = 0;
+
+                attr.StudentGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == attr.StudentGroup.StudentGroupId);
+
+                context.CustomStudentGroupAttributes.Add(attr);
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateCustomStudentGroupAttribute(CustomStudentGroupAttribute attr)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var curAttr = context.CustomStudentGroupAttributes.FirstOrDefault(w => w.CustomStudentGroupAttributeId == attr.CustomStudentGroupAttributeId);
+
+                curAttr.StudentGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == attr.StudentGroup.StudentGroupId);
+
+                curAttr.Key = attr.Key;
+                curAttr.Value = attr.Value;
 
                 context.SaveChanges();
             }
         }
 
-        public void UpdateGroupPeriod(GroupPeriod groupPeriod)
+        public void RemoveCustomStudentGroupAttribute(int customStudentGroupAttributeId)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                var curGroupPeriod = context.GroupPeriods
-                    .FirstOrDefault(gp => gp.GroupPeriodId == groupPeriod.GroupPeriodId);
+                var attr = context.CustomStudentGroupAttributes.FirstOrDefault(w => w.CustomStudentGroupAttributeId == customStudentGroupAttributeId);
 
-                curGroupPeriod.Name = groupPeriod.Name;
-                curGroupPeriod.StudentGroup = context.StudentGroups
-                    .FirstOrDefault(sg => sg.StudentGroupId == groupPeriod.StudentGroup.StudentGroupId); ;
-                curGroupPeriod.Start = groupPeriod.Start;
-                curGroupPeriod.End = groupPeriod.End;
-
+                context.CustomStudentGroupAttributes.Remove(attr);
                 context.SaveChanges();
             }
         }
 
-        public void RemoveGroupPeriod(int groupPeriodId)
+        public void AddCustomStudentGroupAttributeRange(IEnumerable<CustomStudentGroupAttribute> customStudentGroupAttributeList)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                var groupPeriod = context.GroupPeriods.FirstOrDefault(gp => gp.GroupPeriodId == groupPeriodId);
-
-                context.GroupPeriods.Remove(groupPeriod);
-                context.SaveChanges();
-            }
-        }
-
-        public void AddGroupPeriodRange(IEnumerable<GroupPeriod> groupPeriodList)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                foreach (var groupPeriod in groupPeriodList)
+                foreach (var attr in customStudentGroupAttributeList)
                 {
-                    groupPeriod.StudentGroup = context.StudentGroups
-                        .FirstOrDefault(sg => sg.StudentGroupId == groupPeriod.StudentGroup.StudentGroupId);
-                    context.GroupPeriods.Add(groupPeriod);
+                    attr.CustomStudentGroupAttributeId = 0;
+
+                    attr.StudentGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == attr.StudentGroup.StudentGroupId);
+
+                    context.CustomStudentGroupAttributes.Add(attr);
                 }
 
                 context.SaveChanges();
             }
         }
-        #endregion
 
-        #region GroupBuildingAuditoriumRepository
-        public List<GroupBuildingAuditorium> GetAllGroupBuildingAuditoriums()
+        public void AddOrUpdateCustomStudentGroupAttribute(CustomStudentGroupAttribute attr)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.GroupBuildingAuditoriums
-                    .Include(gba => gba.StudentGroup)
-                    .Include(gba => gba.Building)
-                    .Include(gba => gba.Auditorium.Building)
-                    .ToList();
-            }
-        }
+                CustomStudentGroupAttribute targetAttr = GetCustomStudentGroupAttribute(attr.StudentGroup, attr.Key);
 
-        public List<GroupBuildingAuditorium> GetFilteredGroupBuildingAuditoriums(Func<GroupBuildingAuditorium, bool> condition)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.GroupBuildingAuditoriums
-                    .Include(gba => gba.StudentGroup)
-                    .Include(gba => gba.Building)
-                    .Include(gba => gba.Auditorium.Building)
-                    .ToList().Where(condition).ToList();
-            }
-        }
-
-        public GroupBuildingAuditorium GetFirstFiltredGroupBuildingAuditorium(Func<GroupBuildingAuditorium, bool> condition)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.GroupBuildingAuditoriums
-                    .Include(gba => gba.StudentGroup)
-                    .Include(gba => gba.Building)
-                    .Include(gba => gba.Auditorium.Building)
-                    .ToList().FirstOrDefault(condition);
-            }
-        }
-
-        public GroupBuildingAuditorium GetGroupBuildingAuditorium(int groupBuildingAuditoriumId)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.GroupBuildingAuditoriums
-                    .Include(gba => gba.StudentGroup)
-                    .Include(gba => gba.Building)
-                    .Include(gba => gba.Auditorium.Building)
-                    .FirstOrDefault(gba => gba.GroupBuildingAuditoriumId == groupBuildingAuditoriumId);
-            }
-        }
-
-        public void AddGroupBuildingAuditorium(GroupBuildingAuditorium groupBuildingAuditorium)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                groupBuildingAuditorium.StudentGroup = context.StudentGroups
-                    .FirstOrDefault(sg => sg.StudentGroupId == groupBuildingAuditorium.StudentGroup.StudentGroupId);
-                groupBuildingAuditorium.Building = context.Buildings
-                    .FirstOrDefault(b => b.BuildingId == groupBuildingAuditorium.Building.BuildingId);
-                groupBuildingAuditorium.Auditorium = context.Auditoriums
-                    .FirstOrDefault(a => a.AuditoriumId == groupBuildingAuditorium.Auditorium.AuditoriumId);
-                context.GroupBuildingAuditoriums.Add(groupBuildingAuditorium);
-
-                context.SaveChanges();
-            }
-        }
-
-        public void UpdateGroupBuildingAuditorium(GroupBuildingAuditorium groupBuildingAuditorium)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                var curGroupBuildingAuditorium = context.GroupBuildingAuditoriums
-                    .FirstOrDefault(gpa => gpa.GroupBuildingAuditoriumId == groupBuildingAuditorium.GroupBuildingAuditoriumId);
-
-                curGroupBuildingAuditorium.StudentGroup = context.StudentGroups
-                    .FirstOrDefault(sg => sg.StudentGroupId == groupBuildingAuditorium.StudentGroup.StudentGroupId);
-                curGroupBuildingAuditorium.Building = context.Buildings
-                    .FirstOrDefault(b => b.BuildingId == groupBuildingAuditorium.Building.BuildingId);
-                curGroupBuildingAuditorium.Auditorium = context.Auditoriums
-                    .FirstOrDefault(a => a.AuditoriumId == groupBuildingAuditorium.Auditorium.AuditoriumId);
-                
-                context.SaveChanges();
-            }
-        }
-
-        public void RemoveGroupBuildingAuditorium(int groupBuildingAuditoriumId)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                var groupBuildingAuditorium = context.GroupBuildingAuditoriums.FirstOrDefault(gpa => gpa.GroupBuildingAuditoriumId == groupBuildingAuditoriumId);
-
-                context.GroupBuildingAuditoriums.Remove(groupBuildingAuditorium);
-                context.SaveChanges();
-            }
-        }
-
-        public void AddGroupBuildingAuditoriumRange(IEnumerable<GroupBuildingAuditorium> groupBuildingAuditoriumList)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                foreach (var groupBuildingAuditorium in groupBuildingAuditoriumList)
+                if (targetAttr == null)
                 {
-                    groupBuildingAuditorium.StudentGroup = context.StudentGroups
-                    .FirstOrDefault(sg => sg.StudentGroupId == groupBuildingAuditorium.StudentGroup.StudentGroupId);
-                    groupBuildingAuditorium.Building = context.Buildings
-                        .FirstOrDefault(b => b.BuildingId == groupBuildingAuditorium.Building.BuildingId);
-                    groupBuildingAuditorium.Auditorium = context.Auditoriums
-                        .FirstOrDefault(a => a.AuditoriumId == groupBuildingAuditorium.Auditorium.AuditoriumId);
+                    AddCustomStudentGroupAttribute(attr);
+                }
+                else
+                {
+                    if (targetAttr.Value != attr.Value)
+                    {
+                        targetAttr.Value = attr.Value;
 
-                    context.GroupBuildingAuditoriums.Add(groupBuildingAuditorium);
+                        UpdateCustomStudentGroupAttribute(targetAttr);
+                    }
                 }
 
-                context.SaveChanges();
             }
         }
         #endregion

@@ -50,14 +50,12 @@ namespace UchOtd.Schedule.Forms
             var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
 
             var teacherRingIds = _repo
-                .GetFiltredTeacherRings(tr => tr.Teacher.TeacherId == teacher.TeacherId)
-                .Select(tr => tr.Ring.RingId)                
+                .GetFiltredCustomTeacherAttributes(cta => (cta.Teacher.TeacherId == teacher.TeacherId) && (cta.Key == "TeacherRing"))
+                .Select(cta => int.Parse(cta.Value))
                 .ToList();
-            
+
             var allRingViews = RingView.RingsToView(_repo.GetAllRings().OrderBy(r => r.Time.TimeOfDay).ToList());
 
-            listBoxInitialization = true;
-            
             RingsList.ValueMember = "RingId";
             RingsList.DisplayMember = "Time";
             RingsList.DataSource = allRingViews;
@@ -85,23 +83,23 @@ namespace UchOtd.Schedule.Forms
 
             wishesView.DataSource = wishView;
 
-            CustomTeacherWish wish;
+            CustomTeacherAttribute wish;
 
-            wish = _repo.GetCustomTeacherWish(teacher, "WindowsPossible");
+            wish = _repo.GetCustomTeacherAttribute(teacher, "WindowsPossible");
             if (wish != null)
             {
                 windowsPossible.Checked = true;
                 windowsPossibleSize.Text = wish.Value.ToString();
             }
 
-            wish = _repo.GetCustomTeacherWish(teacher, "LessonsLimit");
+            wish = _repo.GetCustomTeacherAttribute(teacher, "LessonsLimit");
             if (wish != null)
             {
                 LessonsLimitedPerDay.Checked = true;
                 LessonsLimitPerDay.Text = wish.Value.ToString();
             }
 
-            wish = _repo.GetCustomTeacherWish(teacher, "FitAllLessonsDaysCount");
+            wish = _repo.GetCustomTeacherAttribute(teacher, "FitAllLessonsDaysCount");
             if (wish != null)
             {
                 FitAllLessonsInXDays.Checked = true;
@@ -150,8 +148,11 @@ namespace UchOtd.Schedule.Forms
         {
             foreach (var calendar in _repo.GetAllCalendars())
             {
-                var teacherRings = _repo.GetTeacherRings(teacher);
-                var rings = teacherRings.Select(tr => tr.Ring);
+                var rings = _repo
+                    .GetFiltredCustomTeacherAttributes(cta =>
+                        cta.Teacher.TeacherId == teacher.TeacherId &&
+                        cta.Key == "TeacherRing")
+                    .Select(cta => _repo.GetRing(int.Parse(cta.Value)));
 
                 foreach (var ring in rings)
                 {
@@ -357,9 +358,9 @@ namespace UchOtd.Schedule.Forms
                 int windowSize;
                 if (int.TryParse(windowsPossibleSize.Text, out windowSize))
                 {
-                    var wish = new CustomTeacherWish(teacher, "WindowsPossible", windowSize.ToString());
+                    var wish = new CustomTeacherAttribute(teacher, "WindowsPossible", windowSize.ToString());
 
-                    _repo.AddOrUpdateCustomTeacherWish(wish);
+                    _repo.AddOrUpdateCustomTeacherAttribute(wish);
                 }
                 else
                 {
@@ -368,11 +369,11 @@ namespace UchOtd.Schedule.Forms
             }
             else
             {
-                var wish = _repo.GetCustomTeacherWish(teacher, "WindowsPossible");
+                var wish = _repo.GetCustomTeacherAttribute(teacher, "WindowsPossible");
 
                 if (wish != null)
                 {
-                    _repo.RemoveCustomTeacherWish(wish.CustomTeacherWishId);
+                    _repo.RemoveCustomTeacherAttribute(wish.CustomTeacherAttributeId);
                 }
             }            
         }
@@ -386,9 +387,9 @@ namespace UchOtd.Schedule.Forms
                 int LessonsLimit;
                 if (int.TryParse(LessonsLimitPerDay.Text, out LessonsLimit))
                 {
-                    var wish = new CustomTeacherWish(teacher, "LessonsLimit", LessonsLimit.ToString());
+                    var wish = new CustomTeacherAttribute(teacher, "LessonsLimit", LessonsLimit.ToString());
 
-                    _repo.AddOrUpdateCustomTeacherWish(wish);
+                    _repo.AddOrUpdateCustomTeacherAttribute(wish);
                 }
                 else
                 {
@@ -397,11 +398,11 @@ namespace UchOtd.Schedule.Forms
             }
             else
             {
-                var wish = _repo.GetCustomTeacherWish(teacher, "LessonsLimit");
+                var wish = _repo.GetCustomTeacherAttribute(teacher, "LessonsLimit");
 
                 if (wish != null)
                 {
-                    _repo.RemoveCustomTeacherWish(wish.CustomTeacherWishId);
+                    _repo.RemoveCustomTeacherAttribute(wish.CustomTeacherAttributeId);
                 }
             }  
         }
@@ -415,9 +416,9 @@ namespace UchOtd.Schedule.Forms
                 int FitAllLessonsDaysInt;
                 if (int.TryParse(FitAllLessonsDaysCount.Text, out FitAllLessonsDaysInt))
                 {
-                    var wish = new CustomTeacherWish(teacher, "FitAllLessonsDaysCount", FitAllLessonsDaysInt.ToString());
+                    var wish = new CustomTeacherAttribute(teacher, "FitAllLessonsDaysCount", FitAllLessonsDaysInt.ToString());
 
-                    _repo.AddOrUpdateCustomTeacherWish(wish);
+                    _repo.AddOrUpdateCustomTeacherAttribute(wish);
                 }
                 else
                 {
@@ -426,11 +427,11 @@ namespace UchOtd.Schedule.Forms
             }
             else
             {
-                var wish = _repo.GetCustomTeacherWish(teacher, "FitAllLessonsDaysCount");
+                var wish = _repo.GetCustomTeacherAttribute(teacher, "FitAllLessonsDaysCount");
 
                 if (wish != null)
                 {
-                    _repo.RemoveCustomTeacherWish(wish.CustomTeacherWishId);
+                    _repo.RemoveCustomTeacherAttribute(wish.CustomTeacherAttributeId);
                 }
             }  
         }
@@ -445,8 +446,8 @@ namespace UchOtd.Schedule.Forms
             var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
 
             var teacherRingIds = _repo
-                .GetFiltredTeacherRings(tr => tr.Teacher.TeacherId == teacher.TeacherId)
-                .Select(tr => tr.Ring.RingId)
+                .GetFiltredCustomTeacherAttributes(cta => cta.Teacher.TeacherId == teacher.TeacherId && cta.Key == "TeacherRing")
+                .Select(cta => int.Parse(cta.Value))
                 .ToList();
 
 
@@ -458,12 +459,13 @@ namespace UchOtd.Schedule.Forms
 
                 if (selected && !teacherRingIds.Contains(ringId))
                 {
-                    var newTeacherRing = new TeacherRing(teacher, _repo.GetRing(ringId));
-                    _repo.AddTeacherRing(newTeacherRing);
+                    var newTeacherRingAttribute = 
+                        new CustomTeacherAttribute(teacher, "TeacherRing", ringId.ToString());
+                    _repo.AddCustomTeacherAttribute(newTeacherRingAttribute);
 
                     var newTeacherWishList = new List<TeacherWish>();
 
-                    for (int dow = 1; dow <= 6; dow++)
+                    for (int dow = 1; dow <= 7; dow++)
                     {
                         newTeacherWishList.AddRange(
                             _repo.GetDOWCalendars(dow)
@@ -479,11 +481,13 @@ namespace UchOtd.Schedule.Forms
 
                 if (!selected && teacherRingIds.Contains(ringId))
                 {
-                    var teacherRing = _repo.GetFirstFiltredTeacherRing(tr =>
-                        tr.Teacher.TeacherId == teacher.TeacherId &&
-                        tr.Ring.RingId == ringId);
+                    var teacherRingAttribute = _repo
+                        .GetFirstFiltredCustomTeacherAttribute(cta =>
+                        cta.Teacher.TeacherId == teacher.TeacherId &&
+                        cta.Key == "TeacherRing" &&
+                        cta.Value == ringId.ToString());
 
-                    _repo.RemoveTeacherRing(teacherRing.TeacherRingId);
+                    _repo.RemoveCustomTeacherAttribute(teacherRingAttribute.CustomTeacherAttributeId);
 
                     var teacherWishes = _repo
                         .GetFiltredTeacherWishes(tw =>

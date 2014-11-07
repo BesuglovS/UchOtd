@@ -224,6 +224,12 @@
     <Compile Include="Schedule\Forms\Analysis\DisciplineByOrder.Designer.cs">
       <DependentUpon>DisciplineByOrder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Schedule\Forms\Analysis\DisciplinesWithAud.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\DisciplinesWithAud.Designer.cs">
+      <DependentUpon>DisciplinesWithAud.cs</DependentUpon>
+    </Compile>
     <Compile Include="Schedule\Forms\Analysis\GroupPeriods.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -242,11 +248,11 @@
     <Compile Include="Schedule\Forms\Analysis\DoubledLessons.Designer.cs">
       <DependentUpon>DoubledLessons.cs</DependentUpon>
     </Compile>
-    <Compile Include="Schedule\Forms\Analysis\StudentGroupBuildingAuditorium.cs">
+    <Compile Include="Schedule\Forms\Analysis\StudentGroupAttributes.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Schedule\Forms\Analysis\StudentGroupBuildingAuditorium.Designer.cs">
-      <DependentUpon>StudentGroupBuildingAuditorium.cs</DependentUpon>
+    <Compile Include="Schedule\Forms\Analysis\StudentGroupAttributes.Designer.cs">
+      <DependentUpon>StudentGroupAttributes.cs</DependentUpon>
     </Compile>
     <Compile Include="Schedule\Forms\Auditoriums.cs">
       <SubType>Form</SubType>
@@ -497,6 +503,9 @@
     <EmbeddedResource Include="Schedule\Forms\Analysis\DisciplineByOrder.resx">
       <DependentUpon>DisciplineByOrder.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\Analysis\DisciplinesWithAud.resx">
+      <DependentUpon>DisciplinesWithAud.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\Analysis\GroupPeriods.resx">
       <DependentUpon>GroupPeriods.cs</DependentUpon>
     </EmbeddedResource>
@@ -506,8 +515,8 @@
     <EmbeddedResource Include="Schedule\Forms\Analysis\DoubledLessons.resx">
       <DependentUpon>DoubledLessons.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Schedule\Forms\Analysis\StudentGroupBuildingAuditorium.resx">
-      <DependentUpon>StudentGroupBuildingAuditorium.cs</DependentUpon>
+    <EmbeddedResource Include="Schedule\Forms\Analysis\StudentGroupAttributes.resx">
+      <DependentUpon>StudentGroupAttributes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\Auditoriums.resx">
       <DependentUpon>Auditoriums.cs</DependentUpon>

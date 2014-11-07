@@ -1777,8 +1777,14 @@ namespace UchOtd.Schedule
 
         private void корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var groupBuildingAuditoriumForm = new StudentGroupBuildingAuditorium(Repo);
+            var groupBuildingAuditoriumForm = new StudentGroupAttributes(Repo);
             groupBuildingAuditoriumForm.Show();
+        }
+
+        private void дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var DisciplinesWithAudForm = new DisciplinesWithAud(Repo);
+            DisciplinesWithAudForm.Show();
         }
     }
 }

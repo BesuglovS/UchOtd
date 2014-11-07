@@ -80,6 +80,7 @@
             // 
             // Group
             // 
+            this.Group.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.Group.FormattingEnabled = true;
             this.Group.Location = new System.Drawing.Point(8, 70);
             this.Group.Name = "Group";

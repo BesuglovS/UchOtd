@@ -93,6 +93,7 @@
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -633,7 +634,8 @@
             this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem,
             this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem,
             this.периодыГруппToolStripMenuItem,
-            this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem});
+            this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem,
+            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem});
             this.анализToolStripMenuItem.Name = "анализToolStripMenuItem";
             this.анализToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
             this.анализToolStripMenuItem.Text = "Анализ";
@@ -717,6 +719,13 @@
             this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem.Size = new System.Drawing.Size(339, 22);
             this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem.Text = "Корпус и преимущественная аудитория группы";
             this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem.Click += new System.EventHandler(this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem_Click);
+            // 
+            // дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem
+            // 
+            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem.Name = "дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem";
+            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem.Size = new System.Drawing.Size(380, 22);
+            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem.Text = "Дисциплины с гарантированной наружней аудиторией";
+            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem.Click += new System.EventHandler(this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -808,6 +817,7 @@
         private System.Windows.Forms.Button removeAllProposedLessons;
         private System.Windows.Forms.ToolStripMenuItem периодыГруппToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem;
     }
 }
 
