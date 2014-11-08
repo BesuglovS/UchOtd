@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UchOtd.Schedule.Analysis;
 
 namespace Schedule.Constants
 {
@@ -52,6 +53,13 @@ namespace Schedule.Constants
         {
             {0, "Обычный"},
             {1, "Праздник"}
+        };
+
+        public static List<LogLevel> LogLevels = new List<LogLevel> { 
+            LogLevel.ErrorsOnly, 
+            LogLevel.ErrorsAndWarnings,
+            LogLevel.Normal,
+            LogLevel.Max
         };
     }
 }

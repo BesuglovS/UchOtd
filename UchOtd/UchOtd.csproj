@@ -113,6 +113,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\LogMessage.cs" />
     <Compile Include="Core\BuildingLessonsData.cs" />
     <Compile Include="Core\DailyLessonsData.cs" />
     <Compile Include="Core\LayoutSupport.cs" />

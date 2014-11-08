@@ -1391,7 +1391,7 @@ namespace Schedule.Repositories
                     .Include(l => l.Auditorium.Building)
                     .Where(l => 
                         groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) && 
-                        (l.State == 1))
+                        (l.State == 1) || (l.State == 2))
                     .ToList();
 
                 if (!putProposedLessons)

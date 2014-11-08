@@ -7,41 +7,18 @@ using System.Windows.Forms;
 using Schedule.Constants;
 using Schedule.Repositories;
 using Schedule.DomainClasses.Main;
+using UchOtd.Schedule.Analysis;
+using UchOtd.Analysis;
 
 namespace UchOtd.Schedule.Forms.Analysis
 {
     public partial class Analysis : Form
     {
-        public class LogLevel
-        {
-            public int Level { get; set; }
-            public string Description { get; set; }
-            
-            public static int ErrorsOnly = 1;
-            public static int ErrorsAndWarnings = 2;
-            public static int Normal = 3;
-            public static int Max = 4;
-        }
-
-        private void FillLogLevels()
-        {
-            var ll1 = new LogLevel() { Level = 1, Description = "Только ошибки" }; LogLevels.Add(ll1);
-            var ll2 = new LogLevel() { Level = 2, Description = "Ошибки и предупреждения" }; LogLevels.Add(ll2);
-            var ll3 = new LogLevel() { Level = 3, Description = "Нормальный" }; LogLevels.Add(ll3);
-            var ll4 = new LogLevel() { Level = 4, Description = "Максимальный" }; LogLevels.Add(ll4);
-
-            logLevel.DisplayMember = "Description";
-            logLevel.ValueMember = "Level";
-            logLevel.DataSource = LogLevels;
-
-            logLevel.SelectedValue = InitialLogLevel;
-        }
-
-        public List<LogLevel> LogLevels = new List<LogLevel> ();
-        public int CurrentLogLevel;
-
+        public LogLevel CurrentLogLevel;
         // InitialLogLevel
-        public int InitialLogLevel = LogLevel.Normal;
+        public LogLevel InitialLogLevel = LogLevel.Normal;
+
+        public List<LogMessage> log = new List<LogMessage>();
         
         private readonly ScheduleRepository _repo;
 
@@ -56,12 +33,36 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             FillLogLevels();
         }
-        
-        private void M(string messageLine, int messageLogLevel)
+
+        private void FillLogLevels()
         {
-            if (CurrentLogLevel >= messageLogLevel)
+            logLevel.DisplayMember = "Description";
+            logLevel.ValueMember = "Level";
+            logLevel.DataSource = Constants.LogLevels;
+                        
+            SetLogLevel(InitialLogLevel);
+        }
+
+        private void SetLogLevel(LogLevel LogLevel)
+        {
+            
+            for(var i = 0; i < logLevel.Items.Count; i++)
             {
-                messages.BeginInvoke(new Action(() => messages.AppendText(messageLine + "\r\n")));
+                if (((LogLevel)logLevel.Items[i]).Level == LogLevel.Level)
+                {
+                    logLevel.SelectedIndex = i;
+                }
+            }
+        }
+
+        private void M(string messageText, LogLevel messageLogLevel)
+        {
+            var message = new LogMessage { Time = DateTime.Now, Level = messageLogLevel, Text = messageText };
+            log.Add(message);
+
+            if (CurrentLogLevel.Level >= messageLogLevel.Level)
+            {
+                messages.BeginInvoke(new Action(() => messages.AppendText(message.Time.ToString("dd.MM.yyyy hh:mm:ss - ") +  messageText + "\r\n")));
             }
         }
 
@@ -91,6 +92,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 {
                     M("ОШИБКА - Не определён порядок дисциплин.", LogLevel.ErrorsOnly);
 
+                    start.Enabled = true;
                     return;
                 }
 
@@ -241,7 +243,17 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void logLevel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentLogLevel = ((LogLevel) logLevel.SelectedItem).Level;
+            messages.Clear();
+
+            foreach (var message in log.OrderBy(m => m.Time))
+            {
+                if (CurrentLogLevel.Level >= message.Level.Level)
+                {
+                    messages.AppendText(message.Time.ToString("dd.MM.yyyy hh:mm:ss - ") + message.Text + "\r\n");
+                }
+            }
+            
+            CurrentLogLevel = (LogLevel) logLevel.SelectedItem;
         }
     }
 }

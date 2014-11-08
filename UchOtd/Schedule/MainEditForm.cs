@@ -17,12 +17,12 @@ using Schedule.wnu;
 using Schedule.wnu.MySQLViews;
 using UchOtd.Core;
 using UchOtd.Schedule.Core;
-using UchOtd.Schedule.Forms;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
 using UchOtd.Schedule.wnu.MySQLViews;
 using UchOtd.Schedule.Forms.DBLists;
 using UchOtd.Schedule.Forms.Analysis;
 using Schedule.DomainClasses.Analyse;
+using UchOtd.Schedule.Forms;
 
 namespace UchOtd.Schedule
 {
@@ -1746,7 +1746,7 @@ namespace UchOtd.Schedule
 
         private void analyse_Click(object sender, EventArgs e)
         {
-            var analysisForm = new Analysis(Repo);
+            var analysisForm = new Schedule.Forms.Analysis.Analysis(Repo);
             analysisForm.Show();
         }
 
