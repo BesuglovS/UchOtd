@@ -1786,5 +1786,11 @@ namespace UchOtd.Schedule
             var DisciplinesWithAudForm = new DisciplinesWithAud(Repo);
             DisciplinesWithAudForm.Show();
         }
+
+        private void сменыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var ShiftsForm = new Shifts(Repo);
+            ShiftsForm.Show();
+        }
     }
 }

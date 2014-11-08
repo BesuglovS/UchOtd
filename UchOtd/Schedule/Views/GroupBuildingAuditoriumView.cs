@@ -13,6 +13,7 @@ namespace UchOtd.Schedule.Views
         public string StudentGroup { get; set; }
         public string Building { get; set; }
         public string Auditorium { get; set; }
+        public string Shift { get; set; }
 
         public GroupAttributesView()
         {
@@ -30,7 +31,10 @@ namespace UchOtd.Schedule.Views
                 Building = (building != null) ? repo.GetBuilding(int.Parse(building.Value)).Name : "";
 
                 var auditorium = attrList.FirstOrDefault(csga => csga.Key == "Auditorium");
-                Auditorium = (auditorium != null) ? repo.GetAuditorium(int.Parse(auditorium.Value)).Name : "";                
+                Auditorium = (auditorium != null) ? repo.GetAuditorium(int.Parse(auditorium.Value)).Name : "";
+
+                var shift = attrList.FirstOrDefault(csga => csga.Key == "Shift");
+                Shift = (shift != null) ? repo.GetShift(int.Parse(shift.Value)).Name : "";
             }
         }
 

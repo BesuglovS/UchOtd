@@ -38,12 +38,12 @@
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ListPanel = new System.Windows.Forms.Panel();
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.shift = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.auditorium = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.building = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.shift = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.itemsListView)).BeginInit();
             this.viewPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
@@ -119,7 +119,7 @@
             this.itemsListView.Name = "itemsListView";
             this.itemsListView.ReadOnly = true;
             this.itemsListView.RowHeadersVisible = false;
-            this.itemsListView.Size = new System.Drawing.Size(415, 702);
+            this.itemsListView.Size = new System.Drawing.Size(502, 702);
             this.itemsListView.TabIndex = 0;
             this.itemsListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.itemsListView_CellClick);
             // 
@@ -129,7 +129,7 @@
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 0);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(415, 702);
+            this.viewPanel.Size = new System.Drawing.Size(502, 702);
             this.viewPanel.TabIndex = 2;
             // 
             // ListPanel
@@ -138,7 +138,7 @@
             this.ListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ListPanel.Location = new System.Drawing.Point(218, 0);
             this.ListPanel.Name = "ListPanel";
-            this.ListPanel.Size = new System.Drawing.Size(415, 702);
+            this.ListPanel.Size = new System.Drawing.Size(502, 702);
             this.ListPanel.TabIndex = 30;
             // 
             // controlsPanel
@@ -160,6 +160,24 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(218, 702);
             this.controlsPanel.TabIndex = 29;
+            // 
+            // shift
+            // 
+            this.shift.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.shift.FormattingEnabled = true;
+            this.shift.Location = new System.Drawing.Point(8, 161);
+            this.shift.Name = "shift";
+            this.shift.Size = new System.Drawing.Size(198, 21);
+            this.shift.TabIndex = 109;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 142);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(40, 13);
+            this.label3.TabIndex = 108;
+            this.label3.Text = "Смена";
             // 
             // auditorium
             // 
@@ -197,29 +215,11 @@
             this.label1.TabIndex = 105;
             this.label1.Text = "Корпус";
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 142);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(40, 13);
-            this.label3.TabIndex = 108;
-            this.label3.Text = "Смена";
-            // 
-            // shift
-            // 
-            this.shift.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.shift.FormattingEnabled = true;
-            this.shift.Location = new System.Drawing.Point(8, 161);
-            this.shift.Name = "shift";
-            this.shift.Size = new System.Drawing.Size(198, 21);
-            this.shift.TabIndex = 109;
-            // 
             // StudentGroupAttributes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(633, 702);
+            this.ClientSize = new System.Drawing.Size(720, 702);
             this.Controls.Add(this.ListPanel);
             this.Controls.Add(this.controlsPanel);
             this.Name = "StudentGroupAttributes";

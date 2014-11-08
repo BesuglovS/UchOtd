@@ -3477,7 +3477,7 @@ namespace Schedule.Repositories
             }
         }
 
-        public void RemoveRingShift(int shiftRingId)
+        public void RemoveShiftRing(int shiftRingId)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {

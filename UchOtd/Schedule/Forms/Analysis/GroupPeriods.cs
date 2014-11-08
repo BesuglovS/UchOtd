@@ -51,7 +51,10 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             if ((filter.Text != "") && discnameFilter.Checked)
             {
-                periodsList = _repo.GetFiltredCustomStudentGroupAttributes(csga => csga.Key == "StudentGroupPeriod" && csga.Value.Split('@')[1].Contains(filter.Text));
+                periodsList = _repo
+                    .GetFiltredCustomStudentGroupAttributes(csga => 
+                        csga.Key == "StudentGroupPeriod" && 
+                        csga.Value.Split('@')[0].Contains(filter.Text));
             }
             else
             {

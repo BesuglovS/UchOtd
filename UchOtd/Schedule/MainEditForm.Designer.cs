@@ -90,10 +90,11 @@
             this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.периодыГруппToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewPanel = new System.Windows.Forms.Panel();
-            this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.сменыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewPanel = new System.Windows.Forms.Panel();
+            this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -635,7 +636,8 @@
             this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem,
             this.периодыГруппToolStripMenuItem,
             this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem,
-            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem});
+            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem,
+            this.сменыToolStripMenuItem});
             this.анализToolStripMenuItem.Name = "анализToolStripMenuItem";
             this.анализToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
             this.анализToolStripMenuItem.Text = "Анализ";
@@ -643,51 +645,72 @@
             // пожеланияToolStripMenuItem
             // 
             this.пожеланияToolStripMenuItem.Name = "пожеланияToolStripMenuItem";
-            this.пожеланияToolStripMenuItem.Size = new System.Drawing.Size(339, 22);
+            this.пожеланияToolStripMenuItem.Size = new System.Drawing.Size(380, 22);
             this.пожеланияToolStripMenuItem.Text = "Пожелания";
             this.пожеланияToolStripMenuItem.Click += new System.EventHandler(this.пожеланияToolStripMenuItem_Click);
             // 
             // аудиторииДисциплинToolStripMenuItem
             // 
             this.аудиторииДисциплинToolStripMenuItem.Name = "аудиторииДисциплинToolStripMenuItem";
-            this.аудиторииДисциплинToolStripMenuItem.Size = new System.Drawing.Size(339, 22);
+            this.аудиторииДисциплинToolStripMenuItem.Size = new System.Drawing.Size(380, 22);
             this.аудиторииДисциплинToolStripMenuItem.Text = "Аудитории дисциплин";
             this.аудиторииДисциплинToolStripMenuItem.Click += new System.EventHandler(this.аудиторииДисциплинToolStripMenuItem_Click);
             // 
             // нельзяСтавитьПоследнимУрокомToolStripMenuItem
             // 
             this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Name = "нельзяСтавитьПоследнимУрокомToolStripMenuItem";
-            this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Size = new System.Drawing.Size(339, 22);
+            this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Size = new System.Drawing.Size(380, 22);
             this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Text = "Нельзя ставить последним уроком";
             this.нельзяСтавитьПоследнимУрокомToolStripMenuItem.Click += new System.EventHandler(this.нельзяСтавитьПоследнимУрокомToolStripMenuItem_Click);
             // 
             // парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem
             // 
             this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Name = "парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem";
-            this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Size = new System.Drawing.Size(339, 22);
+            this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Size = new System.Drawing.Size(380, 22);
             this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Text = "Пары дисциплин нельзя ставить в один день";
             this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem.Click += new System.EventHandler(this.парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem_Click);
             // 
             // дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem
             // 
             this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Name = "дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem";
-            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Size = new System.Drawing.Size(339, 22);
+            this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Size = new System.Drawing.Size(380, 22);
             this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Text = "Дисциплины лучше ставить по 2 урока";
             this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem.Click += new System.EventHandler(this.дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem_Click);
             // 
             // порядокПостановкиДисциплинВРасписаниеToolStripMenuItem
             // 
             this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem.Name = "порядокПостановкиДисциплинВРасписаниеToolStripMenuItem";
-            this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem.Size = new System.Drawing.Size(339, 22);
+            this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem.Size = new System.Drawing.Size(380, 22);
             this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem.Text = "Порядок постановки дисциплин в расписание";
             this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem.Click += new System.EventHandler(this.порядокПостановкиДисциплинВРасписаниеToolStripMenuItem_Click);
             // 
             // периодыГруппToolStripMenuItem
             // 
             this.периодыГруппToolStripMenuItem.Name = "периодыГруппToolStripMenuItem";
-            this.периодыГруппToolStripMenuItem.Size = new System.Drawing.Size(339, 22);
+            this.периодыГруппToolStripMenuItem.Size = new System.Drawing.Size(380, 22);
             this.периодыГруппToolStripMenuItem.Text = "Периоды групп";
             this.периодыГруппToolStripMenuItem.Click += new System.EventHandler(this.периодыГруппToolStripMenuItem_Click);
+            // 
+            // корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem
+            // 
+            this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem.Name = "корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem";
+            this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem.Size = new System.Drawing.Size(380, 22);
+            this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem.Text = "Параметры групп";
+            this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem.Click += new System.EventHandler(this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem_Click);
+            // 
+            // дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem
+            // 
+            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem.Name = "дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem";
+            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem.Size = new System.Drawing.Size(380, 22);
+            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem.Text = "Дисциплины с гарантированной наружней аудиторией";
+            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem.Click += new System.EventHandler(this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem_Click);
+            // 
+            // сменыToolStripMenuItem
+            // 
+            this.сменыToolStripMenuItem.Name = "сменыToolStripMenuItem";
+            this.сменыToolStripMenuItem.Size = new System.Drawing.Size(380, 22);
+            this.сменыToolStripMenuItem.Text = "Смены";
+            this.сменыToolStripMenuItem.Click += new System.EventHandler(this.сменыToolStripMenuItem_Click);
             // 
             // viewPanel
             // 
@@ -712,20 +735,6 @@
             this.ScheduleView.Size = new System.Drawing.Size(967, 420);
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
-            // 
-            // корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem
-            // 
-            this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem.Name = "корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem";
-            this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem.Size = new System.Drawing.Size(339, 22);
-            this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem.Text = "Корпус и преимущественная аудитория группы";
-            this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem.Click += new System.EventHandler(this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem_Click);
-            // 
-            // дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem
-            // 
-            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem.Name = "дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem";
-            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem.Size = new System.Drawing.Size(380, 22);
-            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem.Text = "Дисциплины с гарантированной наружней аудиторией";
-            this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem.Click += new System.EventHandler(this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -818,6 +827,7 @@
         private System.Windows.Forms.ToolStripMenuItem периодыГруппToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem сменыToolStripMenuItem;
     }
 }
 

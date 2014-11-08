@@ -26,7 +26,9 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void RefreshView()
         {
-            var items = _repo.GetFiltredCustomStudentGroupAttributes(csga => csga.Key == "Building" || csga.Key == "Auditorium");
+            var attributeNames = new List<string> { "Building", "Auditorium", "Shift" };
+
+            var items = _repo.GetFiltredCustomStudentGroupAttributes(csga => attributeNames.Contains(csga.Key));
             var views = GroupAttributesView.ItemsToView(_repo, items);
 
             itemsListView.DataSource = views;
@@ -66,6 +68,12 @@ namespace UchOtd.Schedule.Forms.Analysis
             auditorium.ValueMember = "AuditoriumId";
             auditorium.DisplayMember = "Name";
             auditorium.DataSource = auditoriums;
+
+            var shifts = _repo.GetAllShifts();
+
+            shift.ValueMember = "ShiftId";
+            shift.DisplayMember = "Name";
+            shift.DataSource = shifts;
         }
 
         private void FormatView()
@@ -80,6 +88,9 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             itemsListView.Columns["Auditorium"].Width = 80;
             itemsListView.Columns["Auditorium"].HeaderText = "Аудитория";
+
+            itemsListView.Columns["Shift"].Width = 80;
+            itemsListView.Columns["Shift"].HeaderText = "Смена";
         }
         
         private void itemsListView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -99,7 +110,13 @@ namespace UchOtd.Schedule.Forms.Analysis
             if (auditoriumAttribute != null)
             {
                 auditorium.SelectedValue = int.Parse(auditoriumAttribute.Value);
-            }            
+            }
+
+            var shiftAttribute = items.FirstOrDefault(csga => csga.Key == "State");
+            if (shiftAttribute != null)
+            {
+                shift.SelectedValue = int.Parse(shiftAttribute.Value);
+            }
         }
 
         private void add_Click(object sender, EventArgs e)
@@ -129,6 +146,14 @@ namespace UchOtd.Schedule.Forms.Analysis
             };
             _repo.AddOrUpdateCustomStudentGroupAttribute(newAuditoriumAttrbute);
 
+            var newShiftAttrbute = new CustomStudentGroupAttribute
+            {
+                StudentGroup = (StudentGroup)group.SelectedItem,
+                Key = "Shift",
+                Value = ((int)shift.SelectedValue).ToString()
+            };
+            _repo.AddOrUpdateCustomStudentGroupAttribute(newShiftAttrbute);
+
             RefreshView();
         }
 
@@ -151,6 +176,14 @@ namespace UchOtd.Schedule.Forms.Analysis
                     Value = ((int)auditorium.SelectedValue).ToString()
                 };
                 _repo.AddOrUpdateCustomStudentGroupAttribute(newAuditoriumAttrbute);
+
+                var newShiftAttrbute = new CustomStudentGroupAttribute
+                {
+                    StudentGroup = (StudentGroup)group.SelectedItem,
+                    Key = "Shift",
+                    Value = ((int)shift.SelectedValue).ToString()
+                };
+                _repo.AddOrUpdateCustomStudentGroupAttribute(newShiftAttrbute);
 
                 RefreshView();
             }
