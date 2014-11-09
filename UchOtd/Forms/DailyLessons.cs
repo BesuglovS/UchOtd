@@ -80,11 +80,11 @@ namespace UchOtd.Forms
 
             var data = new DailyLessonsData();
 
-            data.groups = MainGroups();
+            data.Groups = MainGroups();
 
             if (isfacultyFiltered)
             {
-                data.groups = repo
+                data.Groups = repo
                     .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == facultyFilterSelectedValue)
                     .Select(gif => gif.StudentGroup)
                     .ToList();
@@ -94,12 +94,12 @@ namespace UchOtd.Forms
             {
                 var groupIds = groups.Select(g => g.StudentGroupId).ToList();
 
-                data.groups = data.groups
+                data.Groups = data.Groups
                     .Where(g => groupIds.Contains(g.StudentGroupId))
                     .ToList();
             }
 
-            if (data.groups.Count == 0)
+            if (data.Groups.Count == 0)
             {
                 MessageBox.Show("В итоговом списке нет ни одной группы.", "Незадача");                
                 return;
@@ -110,12 +110,12 @@ namespace UchOtd.Forms
             var calculateTask = Task.Factory.StartNew(() =>
             {   
                 // Dictionary<StudentGroupId,Dictionary<ringId, List<Lessons>>>
-                data.lessonsData = new Dictionary<int, Dictionary<int, List<Lesson>>>();
-                data.rings = new List<Ring>();
+                data.LessonsData = new Dictionary<int, Dictionary<int, List<Lesson>>>();
+                data.Rings = new List<Ring>();
 
-                foreach (var group in data.groups)
+                foreach (var group in data.Groups)
                 {
-                    data.lessonsData.Add(group.StudentGroupId, new Dictionary<int, List<Lesson>>());
+                    data.LessonsData.Add(group.StudentGroupId, new Dictionary<int, List<Lesson>>());
 
                     var studentIds = repo
                         .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
@@ -134,20 +134,20 @@ namespace UchOtd.Forms
 
                     foreach (var lesson in dailyLessons)
                     {
-                        if (!data.lessonsData[group.StudentGroupId].ContainsKey(lesson.Ring.RingId))
+                        if (!data.LessonsData[group.StudentGroupId].ContainsKey(lesson.Ring.RingId))
                         {
-                            data.lessonsData[group.StudentGroupId].Add(lesson.Ring.RingId, new List<Lesson>());
+                            data.LessonsData[group.StudentGroupId].Add(lesson.Ring.RingId, new List<Lesson>());
                         }
-                        if (!data.rings.Select(r => r.RingId).ToList().Contains(lesson.Ring.RingId))
+                        if (!data.Rings.Select(r => r.RingId).ToList().Contains(lesson.Ring.RingId))
                         {
-                            data.rings.Add(lesson.Ring);
+                            data.Rings.Add(lesson.Ring);
                         }
 
-                        data.lessonsData[group.StudentGroupId][lesson.Ring.RingId].Add(lesson);
+                        data.LessonsData[group.StudentGroupId][lesson.Ring.RingId].Add(lesson);
                     }
                 }
 
-                data.rings = data.rings.OrderBy(r => r.Time.TimeOfDay).ToList();
+                data.Rings = data.Rings.OrderBy(r => r.Time.TimeOfDay).ToList();
 
                 return data;
             }, cToken);
@@ -167,11 +167,11 @@ namespace UchOtd.Forms
                         return;
                     }
 
-                    view.RowCount = LessonsData.rings.Count + 1;
-                    view.ColumnCount = LessonsData.lessonsData.Count + 1;
+                    view.RowCount = LessonsData.Rings.Count + 1;
+                    view.ColumnCount = LessonsData.LessonsData.Count + 1;
 
                     int columnIndex1 = 1;
-                    foreach (var group in LessonsData.lessonsData)
+                    foreach (var group in LessonsData.LessonsData)
                     {
                         view.Rows[0].Cells[columnIndex1].Value = repo.GetStudentGroup(group.Key).Name;
 
@@ -179,18 +179,18 @@ namespace UchOtd.Forms
                     }
 
                     int rowIndex = 1;
-                    foreach (var ring in LessonsData.rings)
+                    foreach (var ring in LessonsData.Rings)
                     {
-                        view.Rows[rowIndex].Cells[0].Value = LessonsData.rings[rowIndex - 1].Time.ToString("H:mm");
+                        view.Rows[rowIndex].Cells[0].Value = LessonsData.Rings[rowIndex - 1].Time.ToString("H:mm");
 
                         //foreach (var group in result[ring.RingId])
                         for (int columnIndex = 1; columnIndex < view.Columns.Count; columnIndex++)
                         {
-                            var group = repo.GetStudentGroup(LessonsData.groups[columnIndex - 1].StudentGroupId);
+                            var group = repo.GetStudentGroup(LessonsData.Groups[columnIndex - 1].StudentGroupId);
 
-                            if (LessonsData.lessonsData[group.StudentGroupId].ContainsKey(ring.RingId))
+                            if (LessonsData.LessonsData[group.StudentGroupId].ContainsKey(ring.RingId))
                             {
-                                var lesson = LessonsData.lessonsData[group.StudentGroupId][ring.RingId][0];
+                                var lesson = LessonsData.LessonsData[group.StudentGroupId][ring.RingId][0];
 
                                 bool groupsNotEqual = lesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId != group.StudentGroupId;
 

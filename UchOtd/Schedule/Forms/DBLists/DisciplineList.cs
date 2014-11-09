@@ -1,19 +1,15 @@
-﻿using Schedule.DomainClasses.Main;
-using Schedule.Forms.DBLists.Lessons;
-using Schedule.Repositories;
-using Schedule.Views.DBListViews;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Schedule.Constants;
+using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
+using UchOtd.Schedule.Views.DBListViews;
 
-namespace Schedule.Forms.DBLists
+namespace UchOtd.Schedule.Forms.DBLists
 {
     public partial class DisciplineList : Form
     {
@@ -29,7 +25,7 @@ namespace Schedule.Forms.DBLists
         private void DisciplineListLoad(object sender, EventArgs e)
         {
             Attestation.Items.Clear();
-            foreach (var attestationForm in Constants.Constants.Attestation)
+            foreach (var attestationForm in Constants.Attestation)
             {
                 Attestation.Items.Add(attestationForm.Value);
             }
@@ -151,6 +147,8 @@ namespace Schedule.Forms.DBLists
 
             DiscipineListView.Columns["AuditoriumHours"].Width = 80;
 
+            DiscipineListView.Columns["AuditoriumHoursPerWeek"].Width = 80;
+
             DiscipineListView.Columns["LectureHours"].Width = 80;
 
             DiscipineListView.Columns["PracticalHours"].Width = 80;
@@ -166,6 +164,7 @@ namespace Schedule.Forms.DBLists
             DisciplineName.Text = discipline.Name;
             Attestation.SelectedIndex = discipline.Attestation;
             AuditoriumHours.Text = discipline.AuditoriumHours.ToString();
+            AuditoriumHoursPerWeek.Text = discipline.AuditoriumHoursPerWeek.ToString();
             LectureHours.Text = discipline.LectureHours.ToString();
             PracticalHours.Text = discipline.PracticalHours.ToString();
 
@@ -176,6 +175,8 @@ namespace Schedule.Forms.DBLists
         {
             int audHours;
             int.TryParse(AuditoriumHours.Text, out audHours);
+            int audHoursPerWeek;
+            int.TryParse(AuditoriumHoursPerWeek.Text, out audHoursPerWeek);
             int lecHours;
             int.TryParse(LectureHours.Text, out lecHours);
             int practHours;
@@ -198,7 +199,7 @@ namespace Schedule.Forms.DBLists
 
             if (Attestation.SelectedIndex == -1)
             {
-                Attestation.SelectedIndex = Constants.Constants.Attestation.Where(a => a.Value == "-").FirstOrDefault().Key;
+                Attestation.SelectedIndex = Constants.Attestation.FirstOrDefault(a => a.Value == "-").Key;
             }
 
             var disciplineGroup = _repo.FindStudentGroup(Group.Text);

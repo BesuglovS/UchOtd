@@ -5,9 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Constants;
+using Schedule.Constants.Analysis;
 using Schedule.Repositories;
 using Schedule.DomainClasses.Main;
-using UchOtd.Schedule.Analysis;
 using UchOtd.Analysis;
 
 namespace UchOtd.Schedule.Forms.Analysis
@@ -43,16 +43,19 @@ namespace UchOtd.Schedule.Forms.Analysis
             SetLogLevel(InitialLogLevel);
         }
 
-        private void SetLogLevel(LogLevel LogLevel)
+        private bool SetLogLevel(LogLevel LogLevel)
         {
-            
             for(var i = 0; i < logLevel.Items.Count; i++)
             {
                 if (((LogLevel)logLevel.Items[i]).Level == LogLevel.Level)
                 {
                     logLevel.SelectedIndex = i;
+
+                    return true;
                 }
             }
+
+            return false;
         }
 
         private void M(string messageText, LogLevel messageLogLevel)
@@ -118,7 +121,8 @@ namespace UchOtd.Schedule.Forms.Analysis
                     if (disciplineTFD == null)
                     {
                         // Дисциплина не назначена преподавателю => пропускаем
-                        M("~ \"" + discipline.Name + "\" " + discipline.StudentGroup.Name + " - нет преподавателя.", LogLevel.ErrorsAndWarnings);
+                        M("~ \"" + discipline.Name + "\" " + discipline.StudentGroup.Name + " - нет преподавателя.", 
+                            LogLevel.ErrorsAndWarnings);
 
                         continue;
                     }
@@ -169,7 +173,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                     M("p < \"" + discipline.Name + "\" - " + groupName + " " + lessonsLeftToSet + " / " + lessonsProposedCount + " = " + proposedDiff, LogLevel.Normal);
 
-                    // Поставить proposedDiff занятий
+                    // TODO:Поставить proposedDiff занятий
 
 
 
@@ -197,7 +201,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             {
                 if (calendar.State == Calendar.Normal)
                 {
-                    result[Constants.DOWRemap[(int) calendar.Date.DayOfWeek]]++;
+                    result[Constants.DowRemap[(int) calendar.Date.DayOfWeek]]++;
                 }
             }
 
@@ -205,7 +209,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             {
                 for (int i = 1; i <= 7; i++)
                 {
-                    M(Constants.DOWLocal[i] + " - " + result[i], LogLevel.ErrorsOnly);
+                    M(Constants.DowLocal[i] + " - " + result[i], LogLevel.ErrorsOnly);
                 }
             }
 
@@ -243,6 +247,8 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void logLevel_SelectedIndexChanged(object sender, EventArgs e)
         {
+            CurrentLogLevel = (LogLevel)logLevel.SelectedItem;
+
             messages.Clear();
 
             foreach (var message in log.OrderBy(m => m.Time))
@@ -252,8 +258,6 @@ namespace UchOtd.Schedule.Forms.Analysis
                     messages.AppendText(message.Time.ToString("dd.MM.yyyy hh:mm:ss - ") + message.Text + "\r\n");
                 }
             }
-            
-            CurrentLogLevel = (LogLevel) logLevel.SelectedItem;
         }
     }
 }

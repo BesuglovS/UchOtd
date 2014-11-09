@@ -1,12 +1,12 @@
-﻿using Schedule.DomainClasses.Main;
-using Schedule.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
+using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
 using UchOtd.Schedule.Views.DBListViews;
 
-namespace Schedule.Forms.DBLists
+namespace UchOtd.Schedule.Forms.DBLists
 {
     public partial class AuditoriumList : Form
     {

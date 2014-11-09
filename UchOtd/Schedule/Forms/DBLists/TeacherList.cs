@@ -1,14 +1,13 @@
-﻿using Schedule.DomainClasses.Main;
-using Schedule.Forms.DBLists.Lessons;
-using Schedule.Repositories;
-using Schedule.Views.DBListViews;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
+using UchOtd.Schedule.Views.DBListViews;
 
-namespace Schedule.Forms.DBLists
+namespace UchOtd.Schedule.Forms.DBLists
 {
     public partial class TeacherList : Form
     {

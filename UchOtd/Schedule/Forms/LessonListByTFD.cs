@@ -1,16 +1,10 @@
-﻿using Schedule.Repositories;
-using Schedule.Views;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Schedule.Repositories;
+using UchOtd.Schedule.Views;
 
-namespace Schedule.Forms
+namespace UchOtd.Schedule.Forms
 {
     public partial class LessonListByTFD : Form
     {

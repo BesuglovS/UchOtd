@@ -327,12 +327,6 @@
     <Compile Include="Schedule\Forms\DBLists\Lessons\EditLesson.Designer.cs">
       <DependentUpon>EditLesson.cs</DependentUpon>
     </Compile>
-    <Compile Include="Schedule\Forms\DBLists\Lessons\RemoveLesson.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Schedule\Forms\DBLists\Lessons\RemoveLesson.Designer.cs">
-      <DependentUpon>RemoveLesson.cs</DependentUpon>
-    </Compile>
     <Compile Include="Schedule\Forms\DBLists\RingList.cs">
       <SubType>Form</SubType>
     </Compile>

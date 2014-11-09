@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using Schedule.Core;
 using Schedule.DomainClasses.Logs;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
-using Schedule.Views;
+using UchOtd.Schedule.Core;
+using UchOtd.Schedule.Views;
 
 namespace UchOtd.Schedule.Forms.DBLists.Lessons
 {

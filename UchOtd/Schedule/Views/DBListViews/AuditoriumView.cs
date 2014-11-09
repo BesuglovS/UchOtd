@@ -1,9 +1,5 @@
 ﻿using Schedule.DomainClasses.Main;
-using Schedule.Repositories;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace UchOtd.Schedule.Views.DBListViews
 {

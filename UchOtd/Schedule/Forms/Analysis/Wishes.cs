@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Schedule.Views.DBListViews;
 using UchOtd.Schedule.Views;
+using UchOtd.Schedule.Views.DBListViews;
 
 namespace UchOtd.Schedule.Forms
 {

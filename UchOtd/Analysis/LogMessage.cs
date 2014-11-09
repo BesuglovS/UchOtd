@@ -1,5 +1,5 @@
 ﻿using System;
-using UchOtd.Schedule.Analysis;
+using Schedule.Constants.Analysis;
 
 namespace UchOtd.Analysis
 {

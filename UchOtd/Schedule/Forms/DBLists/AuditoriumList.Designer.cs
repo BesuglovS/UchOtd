@@ -1,4 +1,4 @@
-﻿namespace Schedule.Forms.DBLists
+﻿namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class AuditoriumList
     {

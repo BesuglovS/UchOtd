@@ -19,16 +19,16 @@ namespace UchOtd.Core
 
         public static string ConvertEnRU(string input)
         {
-            string result = "";
-            for (int i = 0; i < input.Length; i++)
+            var result = "";
+            foreach (var с in input)
             {
-                if (match.ContainsKey(input[i]))
+                if (match.ContainsKey(с))
                 {
-                    result += match[input[i]];
+                    result += match[с];
                 }
                 else
                 {
-                    result += input[i];
+                    result += с;
                 }
             }
 

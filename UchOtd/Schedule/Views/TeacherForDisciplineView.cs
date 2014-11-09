@@ -1,12 +1,9 @@
-﻿using Schedule.DomainClasses.Main;
-using Schedule.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
 
-namespace Schedule.Views
+namespace UchOtd.Schedule.Views
 {
     public class TeacherForDisciplineView
     {
@@ -42,7 +39,7 @@ namespace Schedule.Views
                      DisciplineName = tfd.Discipline.Name,
                      GroupName = tfd.Discipline.StudentGroup.Name,
                      PlanHours = tfd.Discipline.AuditoriumHours,
-                     Attestation = Constants.Constants.Attestation[tfd.Discipline.Attestation],
+                     Attestation = global::Schedule.Constants.Constants.Attestation[tfd.Discipline.Attestation],
                      ScheduleHours = repo.getTFDHours(tfd.TeacherForDisciplineId),
 
                      HoursDone = repo.GetFiltredLessons(l => 

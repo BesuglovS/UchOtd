@@ -1,12 +1,9 @@
-﻿using Schedule.DomainClasses.Main;
-using Schedule.Repositories;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
 
-namespace Schedule.Views.DBListViews
+namespace UchOtd.Schedule.Views.DBListViews
 {
     class DisciplineView
     {
@@ -17,6 +14,7 @@ namespace Schedule.Views.DBListViews
         public int ScheduleHours { get; set; }
         public string Attestation { get; set; } // 0 - ничего; 1 - зачёт; 2 - экзамен; 3 - зачёт и экзамен
         public int AuditoriumHours { get; set; }
+        public int AuditoriumHoursPerWeek { get; set; }
         public int LectureHours { get; set; }
         public int PracticalHours { get; set; }        
 
@@ -29,8 +27,9 @@ namespace Schedule.Views.DBListViews
         {
             DisciplineId = discipline.DisciplineId;
             Name = discipline.Name;
-            Attestation = Constants.Constants.Attestation.ContainsKey(discipline.Attestation) ? Constants.Constants.Attestation[discipline.Attestation] : "";
+            Attestation = global::Schedule.Constants.Constants.Attestation.ContainsKey(discipline.Attestation) ? global::Schedule.Constants.Constants.Attestation[discipline.Attestation] : "";
             AuditoriumHours = discipline.AuditoriumHours;
+            AuditoriumHoursPerWeek = discipline.AuditoriumHoursPerWeek;
             LectureHours = discipline.LectureHours;
             PracticalHours = discipline.PracticalHours;
             StudentGroupName = discipline.StudentGroup.Name;

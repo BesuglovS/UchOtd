@@ -8,21 +8,16 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Main;
-using Schedule.Forms;
-using Schedule.Forms.DBLists;
-using Schedule.Forms.DBLists.Lessons;
 using Schedule.Repositories;
-using Schedule.Views.DBListViews;
 using Schedule.wnu;
-using Schedule.wnu.MySQLViews;
 using UchOtd.Core;
 using UchOtd.Schedule.Core;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
-using UchOtd.Schedule.wnu.MySQLViews;
+using UchOtd.Schedule.Views.DBListViews;
 using UchOtd.Schedule.Forms.DBLists;
 using UchOtd.Schedule.Forms.Analysis;
-using Schedule.DomainClasses.Analyse;
 using UchOtd.Schedule.Forms;
+using Utilities = UchOtd.Core.Utilities;
 
 namespace UchOtd.Schedule
 {
@@ -45,7 +40,7 @@ namespace UchOtd.Schedule
 
             if (Repo != null)
             {
-                Text = "Расписание (" + Utilities.ExtractDBOrConnectionName(Repo.ConnectionString) + ")";
+                Text = "Расписание (" + Utilities.ExtractDbOrConnectionName(Repo.ConnectionString) + ")";
             }
 
             if (StartupForm.school)
@@ -91,7 +86,7 @@ namespace UchOtd.Schedule
             
 
             DOWList.Items.Clear();
-            foreach (var dow in global::Schedule.Constants.Constants.DOWLocal.Values)
+            foreach (var dow in global::Schedule.Constants.Constants.DowLocal.Values)
             {
                 DOWList.Items.Add(dow);
             }
@@ -146,7 +141,7 @@ namespace UchOtd.Schedule
 
             for (int i = 1; i <= 7; i++)
             {
-                ScheduleView.Columns[i].HeaderText = global::Schedule.Constants.Constants.DOWLocal[i];
+                ScheduleView.Columns[i].HeaderText = global::Schedule.Constants.Constants.DowLocal[i];
                 if (i < 7)
                 {
                     ScheduleView.Columns[i].Width = (ScheduleView.Width - ScheduleView.Columns[0].Width - 20) / 6;
@@ -992,12 +987,6 @@ namespace UchOtd.Schedule
             WnuUpload.UploadSchedule(Repo, "");
         }
 
-        private void RemovelessonClick(object sender, EventArgs e)
-        {
-            var removeLessonForm = new RemoveLesson(Repo);
-            removeLessonForm.Show();
-        }
-
         private void MainViewCellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             var source = (List<GroupTableView>)ScheduleView.DataSource;
@@ -1262,7 +1251,7 @@ namespace UchOtd.Schedule
 
             foreach (var dowFac in result.OrderBy(df => df.Item1).ThenBy(df => df.Item2))
             {
-                messageString += Repo.GetFaculty(dowFac.Item1).Letter + " - " + global::Schedule.Constants.Constants.DOWLocal[global::Schedule.Constants.Constants.DOWRemap[(int)dowFac.Item2]] + Environment.NewLine;
+                messageString += Repo.GetFaculty(dowFac.Item1).Letter + " - " + global::Schedule.Constants.Constants.DowLocal[global::Schedule.Constants.Constants.DowRemap[(int)dowFac.Item2]] + Environment.NewLine;
             }
 
             MessageBox.Show(messageString, "Изменения на сегодня");
@@ -1556,7 +1545,7 @@ namespace UchOtd.Schedule
 
             for (int i = 1; i <= 7; i++)
             {
-                sw.Write(global::Schedule.Constants.Constants.DOWLocal[i] + "\t");
+                sw.Write(global::Schedule.Constants.Constants.DowLocal[i] + "\t");
                 foreach (var ring in rings)
                 {
                     sw.Write(result[i][ring.Time.ToString("H:mm")] + "\t");

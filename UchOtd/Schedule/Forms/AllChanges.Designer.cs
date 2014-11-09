@@ -1,4 +1,4 @@
-﻿namespace Schedule.Forms
+﻿namespace UchOtd.Schedule.Forms
 {
     partial class AllChanges
     {

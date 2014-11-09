@@ -1,10 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Config;
 using Schedule.Repositories;
-using System.Collections.Generic;
 
-namespace Schedule.Forms.DBLists
+namespace UchOtd.Schedule.Forms.DBLists
 {
     public partial class ConfigOptionsList : Form
     {

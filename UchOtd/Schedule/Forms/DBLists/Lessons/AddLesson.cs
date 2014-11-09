@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Schedule.Core;
 using Schedule.DomainClasses.Main;
-using Schedule.Forms;
 using Schedule.Repositories;
-using Schedule.Views;
-using Schedule.Views.DBListViews;
+using UchOtd.Schedule.Core;
+using UchOtd.Schedule.Views;
+using UchOtd.Schedule.Views.DBListViews;
 
 namespace UchOtd.Schedule.Forms.DBLists.Lessons
 {
@@ -164,7 +163,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
             // DOW Local
             var dowList = new List<object>();
-            foreach (var dow in global::Schedule.Constants.Constants.DOWLocal)
+            foreach (var dow in global::Schedule.Constants.Constants.DowLocal)
             {
                 dowList.Add(new { Value = dow.Key, Text = dow.Value });
             }
@@ -345,7 +344,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             var calendarIds = new List<int>();
             foreach (var cal in _repo.GetAllCalendars())
             {
-                if (global::Schedule.Constants.Constants.DOWRemap[(int)cal.Date.DayOfWeek] - 1 == DayOfWeekListBox.SelectedIndex)
+                if (global::Schedule.Constants.Constants.DowRemap[(int)cal.Date.DayOfWeek] - 1 == DayOfWeekListBox.SelectedIndex)
                 {
                     var week = _repo.CalculateWeekNumber(cal.Date);
                     if (weekList.Contains(week))

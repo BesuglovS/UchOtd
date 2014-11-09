@@ -111,7 +111,7 @@ namespace UchOtd.Forms
                     .OrderBy(r => r.Time.TimeOfDay)
                     .ToList();
 
-                data.rings = lessons
+                data.Rings = lessons
                     .Select(l => l.Ring)
                     .Concat(evtsRings)
                     .OrderBy(r => r.Time.TimeOfDay)
@@ -136,16 +136,16 @@ namespace UchOtd.Forms
                     .DistinctBy(a => a.AuditoriumId)
                     .ToList();
 
-                data.sortedAuditoriums = SortAuditoriums(totalAuds, buildingId);
+                data.SortedAuditoriums = SortAuditoriums(totalAuds, buildingId);
 
-                data.buildingAuditoriums = new Dictionary<int, Dictionary<int, string>>();
+                data.BuildingAuditoriums = new Dictionary<int, Dictionary<int, string>>();
                 // Занятия
-                foreach (Ring ring in data.rings)
+                foreach (Ring ring in data.Rings)
                 {
                     cToken.ThrowIfCancellationRequested();
-                    data.buildingAuditoriums.Add(ring.RingId, new Dictionary<int, string>());
+                    data.BuildingAuditoriums.Add(ring.RingId, new Dictionary<int, string>());
 
-                    foreach (Auditorium aud in data.sortedAuditoriums)
+                    foreach (Auditorium aud in data.SortedAuditoriums)
                     {
                         var ll = lessons
                             .Where(l => l.Ring.RingId == ring.RingId &&
@@ -153,13 +153,13 @@ namespace UchOtd.Forms
                             .ToList();
                         if (ll.Any())
                         {
-                            if (data.buildingAuditoriums[ring.RingId].ContainsKey(aud.AuditoriumId))
+                            if (data.BuildingAuditoriums[ring.RingId].ContainsKey(aud.AuditoriumId))
                             {
-                                data.buildingAuditoriums[ring.RingId][aud.AuditoriumId] += Environment.NewLine + LessonToString(ll[0]);
+                                data.BuildingAuditoriums[ring.RingId][aud.AuditoriumId] += Environment.NewLine + LessonToString(ll[0]);
                             }
                             else
                             {
-                                data.buildingAuditoriums[ring.RingId].Add(aud.AuditoriumId, LessonToString(ll[0]));
+                                data.BuildingAuditoriums[ring.RingId].Add(aud.AuditoriumId, LessonToString(ll[0]));
                             }
                         }
 
@@ -170,16 +170,16 @@ namespace UchOtd.Forms
 
                         if (curEvents.Any())
                         {
-                            if (!data.buildingAuditoriums[ring.RingId].ContainsKey(aud.AuditoriumId))
+                            if (!data.BuildingAuditoriums[ring.RingId].ContainsKey(aud.AuditoriumId))
                             {
-                                data.buildingAuditoriums[ring.RingId].Add(aud.AuditoriumId, "");
+                                data.BuildingAuditoriums[ring.RingId].Add(aud.AuditoriumId, "");
                             }
 
-                            if (data.buildingAuditoriums[ring.RingId][aud.AuditoriumId] != "")
+                            if (data.BuildingAuditoriums[ring.RingId][aud.AuditoriumId] != "")
                             {
-                                data.buildingAuditoriums[ring.RingId][aud.AuditoriumId] += Environment.NewLine;
+                                data.BuildingAuditoriums[ring.RingId][aud.AuditoriumId] += Environment.NewLine;
                             }
-                            data.buildingAuditoriums[ring.RingId][aud.AuditoriumId] += curEvents[0].Name;
+                            data.BuildingAuditoriums[ring.RingId][aud.AuditoriumId] += curEvents[0].Name;
                         }
 
                     }
@@ -197,29 +197,29 @@ namespace UchOtd.Forms
                 antecedent =>
                 {
                     var auditoriumsData = antecedent.Result;
-                    auditoriumsView.RowCount = data.rings.Count + 1;
-                    auditoriumsView.ColumnCount = auditoriumsData.sortedAuditoriums.Count + 1;
+                    auditoriumsView.RowCount = data.Rings.Count + 1;
+                    auditoriumsView.ColumnCount = auditoriumsData.SortedAuditoriums.Count + 1;
 
                     auditoriumsView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                     auditoriumsView.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
 
-                    for (int i = 0; i < auditoriumsData.rings.Count; i++)
+                    for (int i = 0; i < auditoriumsData.Rings.Count; i++)
                     {
-                        auditoriumsView.Rows[i + 1].Cells[0].Value = auditoriumsData.rings[i].Time.ToString("H:mm");
+                        auditoriumsView.Rows[i + 1].Cells[0].Value = auditoriumsData.Rings[i].Time.ToString("H:mm");
                     }
-                    for (int j = 0; j < auditoriumsData.sortedAuditoriums.Count; j++)
+                    for (int j = 0; j < auditoriumsData.SortedAuditoriums.Count; j++)
                     {
-                        auditoriumsView.Rows[0].Cells[j + 1].Value = auditoriumsData.sortedAuditoriums[j].Name;
+                        auditoriumsView.Rows[0].Cells[j + 1].Value = auditoriumsData.SortedAuditoriums[j].Name;
                     }
-                    for (int i = 0; i < auditoriumsData.rings.Count; i++)
+                    for (int i = 0; i < auditoriumsData.Rings.Count; i++)
                     {
-                        for (int j = 0; j < auditoriumsData.sortedAuditoriums.Count; j++)
+                        for (int j = 0; j < auditoriumsData.SortedAuditoriums.Count; j++)
                         {
-                            if (auditoriumsData.buildingAuditoriums[auditoriumsData.rings[i].RingId]
-                                .ContainsKey(auditoriumsData.sortedAuditoriums[j].AuditoriumId))
+                            if (auditoriumsData.BuildingAuditoriums[auditoriumsData.Rings[i].RingId]
+                                .ContainsKey(auditoriumsData.SortedAuditoriums[j].AuditoriumId))
                             {
-                                var evt = auditoriumsData.buildingAuditoriums[auditoriumsData.rings[i].RingId]
-                                    [auditoriumsData.sortedAuditoriums[j].AuditoriumId];
+                                var evt = auditoriumsData.BuildingAuditoriums[auditoriumsData.Rings[i].RingId]
+                                    [auditoriumsData.SortedAuditoriums[j].AuditoriumId];
                                 auditoriumsView.Rows[i + 1].Cells[j + 1].Value = evt;
                             }
                             else

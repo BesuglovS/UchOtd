@@ -1,11 +1,8 @@
-﻿using Schedule.DomainClasses.Main;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Schedule.DomainClasses.Main;
 
-namespace Schedule.Views
+namespace UchOtd.Schedule.Views
 {
     public class LessonViewAtLessonListByTFD
     {

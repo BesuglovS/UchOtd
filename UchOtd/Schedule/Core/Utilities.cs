@@ -1,10 +1,10 @@
-﻿using Schedule.DomainClasses.Main;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Schedule.DomainClasses.Main;
 
-namespace Schedule.Core
+namespace UchOtd.Schedule.Core
 {
     public static class Utilities
     {

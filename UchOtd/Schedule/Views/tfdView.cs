@@ -1,7 +1,7 @@
-﻿using Schedule.DomainClasses.Main;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Schedule.DomainClasses.Main;
 
-namespace Schedule.Views
+namespace UchOtd.Schedule.Views
 {
     public class tfdView
     {
@@ -15,7 +15,7 @@ namespace Schedule.Views
             tfdSummary = tfd.Teacher.FIO + " " + tfd.Discipline.Name + " " +
                 tfd.Discipline.AuditoriumHours + "@" +
                 tfd.Discipline.LectureHours + "/" + tfd.Discipline.PracticalHours + " " +
-                Constants.Constants.Attestation[tfd.Discipline.Attestation] + " " + 
+                global::Schedule.Constants.Constants.Attestation[tfd.Discipline.Attestation] + " " + 
                 tfd.Discipline.StudentGroup.Name;
         }
 

@@ -8,8 +8,8 @@ namespace UchOtd.Core
 {
     public class BuildingLessonsData
     {
-        public List<Auditorium> sortedAuditoriums;
-        public List<Ring> rings;
-        public Dictionary<int, Dictionary<int, string>> buildingAuditoriums;
+        public List<Auditorium> SortedAuditoriums;
+        public List<Ring> Rings;
+        public Dictionary<int, Dictionary<int, string>> BuildingAuditoriums;
     }
 }

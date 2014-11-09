@@ -1,13 +1,13 @@
-﻿using Schedule.Repositories;
-using Schedule.Views;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.Repositories;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
+using UchOtd.Schedule.Views;
 
-namespace Schedule.Forms
+namespace UchOtd.Schedule.Forms
 {
     public partial class teacherHours : Form
     {
@@ -125,7 +125,7 @@ namespace Schedule.Forms
 
         private void view_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            var discId = ((List<Schedule.Views.TeacherForDisciplineView>)view.DataSource)[e.RowIndex].DisciplineId;
+            var discId = ((List<TeacherForDisciplineView>)view.DataSource)[e.RowIndex].DisciplineId;
             var tefd = _repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
             if (tefd != null)
             {

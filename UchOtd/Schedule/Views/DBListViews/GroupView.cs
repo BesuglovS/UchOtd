@@ -1,4 +1,4 @@
-﻿namespace Schedule.Views.DBListViews
+﻿namespace UchOtd.Schedule.Views.DBListViews
 {
     public class GroupView
     {

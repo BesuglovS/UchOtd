@@ -1,4 +1,4 @@
-﻿namespace Schedule.Forms.DBLists
+﻿namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class DisciplineList
     {
@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.AuditoriumHoursPerWeek = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.checkForDoubleDiscsOnAdding = new System.Windows.Forms.CheckBox();
             this.reloadGroupList = new System.Windows.Forms.Button();
             this.CompletelyDelete = new System.Windows.Forms.Button();
@@ -73,6 +75,8 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.AuditoriumHoursPerWeek);
+            this.controlsPanel.Controls.Add(this.label9);
             this.controlsPanel.Controls.Add(this.checkForDoubleDiscsOnAdding);
             this.controlsPanel.Controls.Add(this.reloadGroupList);
             this.controlsPanel.Controls.Add(this.CompletelyDelete);
@@ -98,10 +102,26 @@
             this.controlsPanel.Size = new System.Drawing.Size(233, 630);
             this.controlsPanel.TabIndex = 27;
             // 
+            // AuditoriumHoursPerWeek
+            // 
+            this.AuditoriumHoursPerWeek.Location = new System.Drawing.Point(6, 151);
+            this.AuditoriumHoursPerWeek.Name = "AuditoriumHoursPerWeek";
+            this.AuditoriumHoursPerWeek.Size = new System.Drawing.Size(198, 20);
+            this.AuditoriumHoursPerWeek.TabIndex = 105;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(5, 132);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(194, 13);
+            this.label9.TabIndex = 106;
+            this.label9.Text = "Аудиторные часы в неделю (ШКОЛА)";
+            // 
             // checkForDoubleDiscsOnAdding
             // 
             this.checkForDoubleDiscsOnAdding.AutoSize = true;
-            this.checkForDoubleDiscsOnAdding.Location = new System.Drawing.Point(8, 247);
+            this.checkForDoubleDiscsOnAdding.Location = new System.Drawing.Point(8, 299);
             this.checkForDoubleDiscsOnAdding.Name = "checkForDoubleDiscsOnAdding";
             this.checkForDoubleDiscsOnAdding.Size = new System.Drawing.Size(160, 17);
             this.checkForDoubleDiscsOnAdding.TabIndex = 104;
@@ -110,7 +130,7 @@
             // 
             // reloadGroupList
             // 
-            this.reloadGroupList.Location = new System.Drawing.Point(88, 280);
+            this.reloadGroupList.Location = new System.Drawing.Point(88, 332);
             this.reloadGroupList.Name = "reloadGroupList";
             this.reloadGroupList.Size = new System.Drawing.Size(115, 81);
             this.reloadGroupList.TabIndex = 103;
@@ -120,7 +140,7 @@
             // 
             // CompletelyDelete
             // 
-            this.CompletelyDelete.Location = new System.Drawing.Point(8, 367);
+            this.CompletelyDelete.Location = new System.Drawing.Point(8, 419);
             this.CompletelyDelete.Name = "CompletelyDelete";
             this.CompletelyDelete.Size = new System.Drawing.Size(195, 57);
             this.CompletelyDelete.TabIndex = 102;
@@ -150,7 +170,7 @@
             // Group
             // 
             this.Group.FormattingEnabled = true;
-            this.Group.Location = new System.Drawing.Point(7, 220);
+            this.Group.Location = new System.Drawing.Point(7, 272);
             this.Group.Name = "Group";
             this.Group.Size = new System.Drawing.Size(197, 21);
             this.Group.TabIndex = 5;
@@ -158,7 +178,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(4, 204);
+            this.label6.Location = new System.Drawing.Point(4, 256);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(42, 13);
             this.label6.TabIndex = 39;
@@ -166,7 +186,7 @@
             // 
             // PracticalHours
             // 
-            this.PracticalHours.Location = new System.Drawing.Point(6, 181);
+            this.PracticalHours.Location = new System.Drawing.Point(6, 233);
             this.PracticalHours.Name = "PracticalHours";
             this.PracticalHours.Size = new System.Drawing.Size(198, 20);
             this.PracticalHours.TabIndex = 4;
@@ -175,7 +195,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(4, 165);
+            this.label5.Location = new System.Drawing.Point(4, 217);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(165, 13);
             this.label5.TabIndex = 37;
@@ -183,7 +203,7 @@
             // 
             // LectureHours
             // 
-            this.LectureHours.Location = new System.Drawing.Point(6, 142);
+            this.LectureHours.Location = new System.Drawing.Point(6, 194);
             this.LectureHours.Name = "LectureHours";
             this.LectureHours.Size = new System.Drawing.Size(198, 20);
             this.LectureHours.TabIndex = 3;
@@ -192,7 +212,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(4, 126);
+            this.label4.Location = new System.Drawing.Point(4, 178);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(99, 13);
             this.label4.TabIndex = 35;
@@ -227,7 +247,7 @@
             // 
             // remove
             // 
-            this.remove.Location = new System.Drawing.Point(8, 338);
+            this.remove.Location = new System.Drawing.Point(8, 390);
             this.remove.Name = "remove";
             this.remove.Size = new System.Drawing.Size(75, 23);
             this.remove.TabIndex = 31;
@@ -237,7 +257,7 @@
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(8, 309);
+            this.update.Location = new System.Drawing.Point(8, 361);
             this.update.Name = "update";
             this.update.Size = new System.Drawing.Size(75, 23);
             this.update.TabIndex = 30;
@@ -247,7 +267,7 @@
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(7, 280);
+            this.add.Location = new System.Drawing.Point(7, 332);
             this.add.Name = "add";
             this.add.Size = new System.Drawing.Size(75, 23);
             this.add.TabIndex = 6;
@@ -500,5 +520,7 @@
         private System.Windows.Forms.CheckBox orderByGroupname;
         private System.Windows.Forms.Button zeroHours;
         private System.Windows.Forms.CheckBox checkForDoubleDiscsOnAdding;
+        private System.Windows.Forms.TextBox AuditoriumHoursPerWeek;
+        private System.Windows.Forms.Label label9;
     }
 }

@@ -45,7 +45,7 @@ namespace UchOtd.Core
             }
         }
 
-        internal static string ExtractDBOrConnectionName(string connectionString)
+        internal static string ExtractDbOrConnectionName(string connectionString)
         {
             if (connectionString.StartsWith("Name="))
             {

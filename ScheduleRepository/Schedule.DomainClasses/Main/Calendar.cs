@@ -11,9 +11,10 @@ namespace Schedule.DomainClasses.Main
         {
         }
 
-        public Calendar(DateTime date, int State = 0)
+        public Calendar(DateTime date, int state = 0)
         {
             Date = date;
+            State = state;
         }
 
         public int CalendarId { get; set; }

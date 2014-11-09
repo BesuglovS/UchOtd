@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using UchOtd.Schedule.Analysis;
+using Schedule.Constants.Analysis;
 
 namespace Schedule.Constants
 {
@@ -9,10 +9,10 @@ namespace Schedule.Constants
 
         public static DateTime DefaultEmptyDateForEvent = new DateTime(2020, 1, 1);
 
-        public static Dictionary<int, int> DOWRemap = new Dictionary<int, int> 
+        public static Dictionary<int, int> DowRemap = new Dictionary<int, int> 
         { { 0, 7 }, { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 } };
 
-        public static Dictionary<int, string> DOWLocal = new Dictionary<int, string> { 
+        public static Dictionary<int, string> DowLocal = new Dictionary<int, string> { 
             { 1, "Понедельник" }, 
             { 2, "Вторник" }, 
             { 3, "Среда" }, 
@@ -22,7 +22,7 @@ namespace Schedule.Constants
             { 7, "Воскресенье" } 
         };
 
-        public static Dictionary<string, int> DOWLocalReverse = new Dictionary<string, int> { 
+        public static Dictionary<string, int> DowLocalReverse = new Dictionary<string, int> { 
             { "Понедельник", 1 }, 
             { "Вторник", 2 }, 
             { "Среда", 3 }, 
@@ -49,7 +49,7 @@ namespace Schedule.Constants
         };
 
         // Calendar State Description Dictionary
-        public static Dictionary<int, string> CalendarStateDescription = new Dictionary<int, string>()
+        public static Dictionary<int, string> CalendarStateDescription = new Dictionary<int, string>
         {
             {0, "Обычный"},
             {1, "Праздник"}

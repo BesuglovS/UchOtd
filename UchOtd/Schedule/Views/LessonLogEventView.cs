@@ -1,8 +1,8 @@
-﻿using Schedule.DomainClasses.Logs;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Schedule.DomainClasses.Logs;
 
-namespace Schedule.Views
+namespace UchOtd.Schedule.Views
 {
     public class LessonLogEventView
     {

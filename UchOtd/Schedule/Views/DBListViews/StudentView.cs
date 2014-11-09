@@ -1,11 +1,7 @@
-﻿using Schedule.DomainClasses.Main;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Schedule.DomainClasses.Main;
 
-namespace Schedule.Views.DBListViews
+namespace UchOtd.Schedule.Views.DBListViews
 {
     public class StudentView
     {

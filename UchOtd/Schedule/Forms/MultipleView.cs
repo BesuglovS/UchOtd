@@ -1,14 +1,13 @@
-﻿using Schedule.DomainClasses.Main;
-using Schedule.Repositories;
-using Schedule.Views;
-using Schedule.Views.DBListViews;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
+using UchOtd.Schedule.Views;
+using UchOtd.Schedule.Views.DBListViews;
 
-namespace Schedule.Forms
+namespace UchOtd.Schedule.Forms
 {
     public partial class MultipleView : Form
     {
@@ -247,7 +246,7 @@ namespace Schedule.Forms
                 
                 foreach (var gv in groupView)
                 {
-                    var dowString = Constants.Constants.DOWLocal[int.Parse(gv.Datetime.Substring(0,1))] + gv.Datetime.Substring(1);
+                    var dowString = global::Schedule.Constants.Constants.DowLocal[int.Parse(gv.Datetime.Substring(0,1))] + gv.Datetime.Substring(1);
 
                     var item = result.FirstOrDefault(ri => ri.DOWTime == dowString);
                     if (item == null)
@@ -278,7 +277,7 @@ namespace Schedule.Forms
                 }
 
                 result = result
-                    .OrderBy(g => Constants.Constants.DOWLocalReverse[g.DOWTime.Split(' ')[0]] * 2000 + int.Parse(g.DOWTime.Split(' ')[1].Split(':')[0]) * 60 + int.Parse(g.DOWTime.Split(' ')[1].Split(':')[1]))
+                    .OrderBy(g => global::Schedule.Constants.Constants.DowLocalReverse[g.DOWTime.Split(' ')[0]] * 2000 + int.Parse(g.DOWTime.Split(' ')[1].Split(':')[0]) * 60 + int.Parse(g.DOWTime.Split(' ')[1].Split(':')[1]))
                     .ToList();
                 i++;
             }

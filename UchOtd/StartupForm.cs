@@ -9,11 +9,9 @@ using UchOtd.Forms.Notes;
 using UchOtd.Repositories;
 using System.IO;
 using UchOtd.Core;
-using Schedule;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Collections.Generic;
-using Schedule.Forms;
 using UchOtd.Forms.Session;
 using UchOtd.Schedule;
 using Schedule.wnu;
@@ -22,6 +20,7 @@ using System.Linq;
 using System.Data.SqlClient;
 using System.Data;
 using System.Security.AccessControl;
+using UchOtd.Schedule.Forms;
 
 namespace UchOtd
 {
@@ -313,7 +312,7 @@ namespace UchOtd
         {
             if (_repo != null)
             {
-                openDBToolStripMenuItem.Text = "Сменить базу данных (" + Utilities.ExtractDBOrConnectionName(_repo.ConnectionString) + ")";
+                openDBToolStripMenuItem.Text = "Сменить базу данных (" + Utilities.ExtractDbOrConnectionName(_repo.ConnectionString) + ")";
             }
             else
             {

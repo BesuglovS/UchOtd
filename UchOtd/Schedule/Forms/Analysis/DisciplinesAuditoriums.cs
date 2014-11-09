@@ -1,7 +1,6 @@
 ﻿using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
-using Schedule.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

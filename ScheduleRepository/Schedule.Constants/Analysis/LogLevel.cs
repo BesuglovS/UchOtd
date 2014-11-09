@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace UchOtd.Schedule.Analysis
+﻿namespace Schedule.Constants.Analysis
 {
     public class LogLevel
     {

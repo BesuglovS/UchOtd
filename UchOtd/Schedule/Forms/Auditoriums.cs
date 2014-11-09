@@ -1,11 +1,11 @@
-﻿using Schedule.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
+using Schedule.Repositories;
 using UchOtd.Core;
 
-namespace Schedule.Forms
+namespace UchOtd.Schedule.Forms
 {
     public partial class Auditoriums : Form
     {

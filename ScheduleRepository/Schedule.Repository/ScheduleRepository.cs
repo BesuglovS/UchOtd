@@ -415,7 +415,7 @@ namespace Schedule.Repositories
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.Calendars.ToList()
-                    .Where(c => Constants.Constants.DOWRemap[(int)c.Date.Date.DayOfWeek] == dow)
+                    .Where(c => Constants.Constants.DowRemap[(int)c.Date.Date.DayOfWeek] == dow)
                     .ToList();
             }
         }
@@ -1407,7 +1407,7 @@ namespace Schedule.Repositories
                 }
 
                 var groupedLessons = primaryList
-                    .GroupBy(l => Constants.Constants.DOWRemap[(int)(l.Calendar.Date).DayOfWeek] * 2000 +
+                    .GroupBy(l => Constants.Constants.DowRemap[(int)(l.Calendar.Date).DayOfWeek] * 2000 +
                     l.Ring.Time.Hour * 60 + l.Ring.Time.Minute,
                     (dowTime, lessons) =>
                     new
@@ -1498,7 +1498,7 @@ namespace Schedule.Repositories
                     
 
                     primaryList = primaryList
-                        .Where(l => Constants.Constants.DOWRemap[(int)(l.Calendar.Date).DayOfWeek] == dowRU)
+                        .Where(l => Constants.Constants.DowRemap[(int)(l.Calendar.Date).DayOfWeek] == dowRU)
                         .ToList();
 
                     if (weekFiltered)
@@ -3837,7 +3837,7 @@ namespace Schedule.Repositories
                             ((l.State == 1) || ((l.State == 2) && showProposed)))
                         .ToList();
 
-                    var groupedLessons = primaryList.GroupBy(l => Constants.Constants.DOWRemap[(int)(l.Calendar.Date).DayOfWeek] * 2000 +
+                    var groupedLessons = primaryList.GroupBy(l => Constants.Constants.DowRemap[(int)(l.Calendar.Date).DayOfWeek] * 2000 +
                         l.Ring.Time.Hour * 60 + l.Ring.Time.Minute,
                         (dow, lessons) =>
                         new
@@ -4096,17 +4096,17 @@ namespace Schedule.Repositories
                     data.Add(lesson.Ring.RingId, new Dictionary<int, Dictionary<int, List<Lesson>>>());
                 }
 
-                if (!data[lesson.Ring.RingId].ContainsKey(Constants.Constants.DOWRemap[(int)lesson.Calendar.Date.DayOfWeek]))
+                if (!data[lesson.Ring.RingId].ContainsKey(Constants.Constants.DowRemap[(int)lesson.Calendar.Date.DayOfWeek]))
                 {
-                    data[lesson.Ring.RingId].Add(Constants.Constants.DOWRemap[(int)lesson.Calendar.Date.DayOfWeek], new Dictionary<int, List<Lesson>>());
+                    data[lesson.Ring.RingId].Add(Constants.Constants.DowRemap[(int)lesson.Calendar.Date.DayOfWeek], new Dictionary<int, List<Lesson>>());
                 }
 
-                if (!data[lesson.Ring.RingId][Constants.Constants.DOWRemap[(int)lesson.Calendar.Date.DayOfWeek]].ContainsKey(lesson.TeacherForDiscipline.TeacherForDisciplineId))
+                if (!data[lesson.Ring.RingId][Constants.Constants.DowRemap[(int)lesson.Calendar.Date.DayOfWeek]].ContainsKey(lesson.TeacherForDiscipline.TeacherForDisciplineId))
                 {
-                    data[lesson.Ring.RingId][Constants.Constants.DOWRemap[(int)lesson.Calendar.Date.DayOfWeek]].Add(lesson.TeacherForDiscipline.TeacherForDisciplineId, new List<Lesson>());
+                    data[lesson.Ring.RingId][Constants.Constants.DowRemap[(int)lesson.Calendar.Date.DayOfWeek]].Add(lesson.TeacherForDiscipline.TeacherForDisciplineId, new List<Lesson>());
                 }
 
-                data[lesson.Ring.RingId][Constants.Constants.DOWRemap[(int)lesson.Calendar.Date.DayOfWeek]][lesson.TeacherForDiscipline.TeacherForDisciplineId].Add(lesson);
+                data[lesson.Ring.RingId][Constants.Constants.DowRemap[(int)lesson.Calendar.Date.DayOfWeek]][lesson.TeacherForDiscipline.TeacherForDisciplineId].Add(lesson);
             }
 
             var rings = GetAllRings().ToDictionary(r => r.RingId, r => r.Time);
@@ -4153,9 +4153,9 @@ namespace Schedule.Repositories
                     eventsData.Add(evt.Ring.RingId, new Dictionary<int, Dictionary<int, List<AuditoriumEvent>>>());
                 }
 
-                if (!eventsData[evt.Ring.RingId].ContainsKey(Constants.Constants.DOWRemap[(int)evt.Calendar.Date.DayOfWeek]))
+                if (!eventsData[evt.Ring.RingId].ContainsKey(Constants.Constants.DowRemap[(int)evt.Calendar.Date.DayOfWeek]))
                 {
-                    eventsData[evt.Ring.RingId].Add(Constants.Constants.DOWRemap[(int)evt.Calendar.Date.DayOfWeek], new Dictionary<int, List<AuditoriumEvent>>());
+                    eventsData[evt.Ring.RingId].Add(Constants.Constants.DowRemap[(int)evt.Calendar.Date.DayOfWeek], new Dictionary<int, List<AuditoriumEvent>>());
                 }
 
                 var eventFound = (eventsIds.Count(e => e.Value == evt.Name) > 0) ? true : false;
@@ -4170,12 +4170,12 @@ namespace Schedule.Repositories
                     eventId++;
                 }
 
-                if (!eventsData[evt.Ring.RingId][Constants.Constants.DOWRemap[(int)evt.Calendar.Date.DayOfWeek]].ContainsKey(curEventId))
+                if (!eventsData[evt.Ring.RingId][Constants.Constants.DowRemap[(int)evt.Calendar.Date.DayOfWeek]].ContainsKey(curEventId))
                 {
-                    eventsData[evt.Ring.RingId][Constants.Constants.DOWRemap[(int)evt.Calendar.Date.DayOfWeek]].Add(curEventId, new List<AuditoriumEvent>());
+                    eventsData[evt.Ring.RingId][Constants.Constants.DowRemap[(int)evt.Calendar.Date.DayOfWeek]].Add(curEventId, new List<AuditoriumEvent>());
                 }
 
-                eventsData[evt.Ring.RingId][Constants.Constants.DOWRemap[(int)evt.Calendar.Date.DayOfWeek]][curEventId].Add(evt);
+                eventsData[evt.Ring.RingId][Constants.Constants.DowRemap[(int)evt.Calendar.Date.DayOfWeek]][curEventId].Add(evt);
             }
 
             foreach (var ring in eventsData)

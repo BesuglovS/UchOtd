@@ -1,15 +1,10 @@
-﻿using Schedule.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Schedule.Repositories;
 
-namespace Schedule.Forms
+namespace UchOtd.Schedule.Forms
 {
     public partial class OneAuditorium : Form
     {
@@ -59,7 +54,7 @@ namespace Schedule.Forms
             }
             for (int j = 0; j < 7; j++)
             {
-                view.Columns[j].HeaderText = Constants.Constants.DOWLocal[j+1];
+                view.Columns[j].HeaderText = global::Schedule.Constants.Constants.DowLocal[j+1];
             }
 
             for (int i = 0; i < data.Count; i++)

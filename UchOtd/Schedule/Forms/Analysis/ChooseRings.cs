@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
-using Schedule.Views.DBListViews;
+using UchOtd.Schedule.Views.DBListViews;
 
 namespace UchOtd.Schedule.Forms
 {

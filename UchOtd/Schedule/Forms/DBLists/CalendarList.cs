@@ -1,12 +1,12 @@
-﻿using Schedule.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
 using UchOtd.Schedule.Views.DBListViews;
-using Calendar = Schedule.DomainClasses.Main.Calendar;
 
-namespace Schedule.Forms.DBLists
+namespace UchOtd.Schedule.Forms.DBLists
 {
     public partial class CalendarList : Form
     {
@@ -47,9 +47,9 @@ namespace Schedule.Forms.DBLists
         {
             int index = 0;
 
-            while (Constants.Constants.CalendarStateDescription.ContainsKey(index))
+            while (global::Schedule.Constants.Constants.CalendarStateDescription.ContainsKey(index))
             {
-                calendarState.Items.Add(Constants.Constants.CalendarStateDescription[index]);
+                calendarState.Items.Add(global::Schedule.Constants.Constants.CalendarStateDescription[index]);
 
                 index++;
             }

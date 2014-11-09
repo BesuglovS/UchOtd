@@ -1,8 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Schedule.DomainClasses.Main;
-using System.Collections.Generic;
 
-namespace Schedule.Views.DBListViews
+namespace UchOtd.Schedule.Views.DBListViews
 {
     public class RingView
     {

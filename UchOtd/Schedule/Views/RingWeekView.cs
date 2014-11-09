@@ -2,10 +2,8 @@
 using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace UchOtd.Schedule.Views
 {
@@ -32,7 +30,7 @@ namespace UchOtd.Schedule.Views
                     {
                         RingId = ringId,
                         RingWishes = ringWishes
-                        .GroupBy(rw => Constants.DOWRemap[(int)rw.Calendar.Date.DayOfWeek],
+                        .GroupBy(rw => Constants.DowRemap[(int)rw.Calendar.Date.DayOfWeek],
                         (dow, wishes) =>
                             new { dayOfWeek = dow, wishes })
                     }

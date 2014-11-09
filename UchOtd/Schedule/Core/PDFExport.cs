@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 namespace UchOtd.Schedule.Core
 {
@@ -411,7 +410,7 @@ namespace UchOtd.Schedule.Core
                 {
                     //var i = 4;
                     var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, i, false, -1);
-                    PDFExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.pdf", Constants.DOWLocal[i], _repo, false, false, true);
+                    PDFExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.pdf", Constants.DowLocal[i], _repo, false, false, true);
                 }
             //}
         }

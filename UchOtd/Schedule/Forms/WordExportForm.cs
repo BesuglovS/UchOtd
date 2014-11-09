@@ -2,11 +2,8 @@
 using Schedule.Repositories;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using UchOtd.Core;
 
@@ -38,7 +35,7 @@ namespace UchOtd.Schedule.Forms
                     var checkBox = new CheckBox();
                     checkBox.Parent = this;
                     checkBox.Name = "cb_" + faculties[i].FacultyId + "_" + j;
-                    checkBox.Text = faculties[i].Letter + " " + Constants.DOWLocal[j].Substring(0,3);
+                    checkBox.Text = faculties[i].Letter + " " + Constants.DowLocal[j].Substring(0,3);
                     checkBox.Bounds = new Rectangle(-50 + j * 80, 10 + i * 25, 75, 25);
                     this.Controls.Add(checkBox);
 
