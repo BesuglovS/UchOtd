@@ -409,7 +409,7 @@ namespace UchOtd.Schedule.Core
                 for (int i = 1; i <= 6; i++)
                 {
                     //var i = 4;
-                    var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, i, false, -1);
+                    var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, i, false, -1, false, false);
                     PDFExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.pdf", Constants.DowLocal[i], _repo, false, false, true);
                 }
             //}

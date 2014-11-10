@@ -95,6 +95,7 @@
             this.сменыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
+            this.OnlyFutureDatesExportInWord = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -103,6 +104,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.OnlyFutureDatesExportInWord);
             this.controlsPanel.Controls.Add(this.removeAllProposedLessons);
             this.controlsPanel.Controls.Add(this.analyseSchool);
             this.controlsPanel.Controls.Add(this.analyse);
@@ -282,7 +284,7 @@
             // 
             // WordSchool2
             // 
-            this.WordSchool2.Location = new System.Drawing.Point(709, 86);
+            this.WordSchool2.Location = new System.Drawing.Point(709, 99);
             this.WordSchool2.Name = "WordSchool2";
             this.WordSchool2.Size = new System.Drawing.Size(124, 23);
             this.WordSchool2.TabIndex = 51;
@@ -736,6 +738,16 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
+            // OnlyFutureDatesExportInWord
+            // 
+            this.OnlyFutureDatesExportInWord.AutoSize = true;
+            this.OnlyFutureDatesExportInWord.Location = new System.Drawing.Point(668, 82);
+            this.OnlyFutureDatesExportInWord.Name = "OnlyFutureDatesExportInWord";
+            this.OnlyFutureDatesExportInWord.Size = new System.Drawing.Size(155, 17);
+            this.OnlyFutureDatesExportInWord.TabIndex = 67;
+            this.OnlyFutureDatesExportInWord.Text = "только последующие дни";
+            this.OnlyFutureDatesExportInWord.UseVisualStyleBackColor = true;
+            // 
             // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -828,6 +840,7 @@
         private System.Windows.Forms.ToolStripMenuItem корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem сменыToolStripMenuItem;
+        private System.Windows.Forms.CheckBox OnlyFutureDatesExportInWord;
     }
 }
 

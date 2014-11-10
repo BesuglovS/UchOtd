@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.logLevel = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.cancel = new System.Windows.Forms.Button();
             this.start = new System.Windows.Forms.Button();
             this.viewPanel = new System.Windows.Forms.Panel();
@@ -39,13 +41,34 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.logLevel);
+            this.controlsPanel.Controls.Add(this.label1);
             this.controlsPanel.Controls.Add(this.cancel);
             this.controlsPanel.Controls.Add(this.start);
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(920, 100);
+            this.controlsPanel.Size = new System.Drawing.Size(920, 130);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // logLevel
+            // 
+            this.logLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.logLevel.FormattingEnabled = true;
+            this.logLevel.Location = new System.Drawing.Point(127, 91);
+            this.logLevel.Name = "logLevel";
+            this.logLevel.Size = new System.Drawing.Size(341, 21);
+            this.logLevel.TabIndex = 5;
+            this.logLevel.SelectedIndexChanged += new System.EventHandler(this.logLevel_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(2, 94);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(119, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Уровень логирования";
             // 
             // cancel
             // 
@@ -73,9 +96,9 @@
             // 
             this.viewPanel.Controls.Add(this.messages);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 100);
+            this.viewPanel.Location = new System.Drawing.Point(0, 130);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(920, 621);
+            this.viewPanel.Size = new System.Drawing.Size(920, 591);
             this.viewPanel.TabIndex = 1;
             // 
             // messages
@@ -83,7 +106,7 @@
             this.messages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.messages.Location = new System.Drawing.Point(0, 0);
             this.messages.Name = "messages";
-            this.messages.Size = new System.Drawing.Size(920, 621);
+            this.messages.Size = new System.Drawing.Size(920, 591);
             this.messages.TabIndex = 0;
             this.messages.Text = "";
             // 
@@ -99,6 +122,7 @@
             this.Load += new System.EventHandler(this.AnalysisSchool_Load);
             this.Resize += new System.EventHandler(this.AnalysisSchool_Resize);
             this.controlsPanel.ResumeLayout(false);
+            this.controlsPanel.PerformLayout();
             this.viewPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -111,5 +135,7 @@
         private System.Windows.Forms.Button cancel;
         private System.Windows.Forms.Button start;
         private System.Windows.Forms.RichTextBox messages;
+        private System.Windows.Forms.ComboBox logLevel;
+        private System.Windows.Forms.Label label1;
     }
 }

@@ -19,7 +19,8 @@ namespace UchOtd.Core
         public static void ExportSchedulePage(
             ScheduleRepository repo, string filename, bool save, bool quit,
             int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek,
-            bool weekFiltered, int weekFilter, bool weeksMarksVisible)
+            bool weekFiltered, int weekFilter, bool weeksMarksVisible,
+            bool onlyFutureDates)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
@@ -38,7 +39,7 @@ namespace UchOtd.Core
 
             var dow = Constants.DowLocal[dayOfWeek];
 
-            var schedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter);
+            var schedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, onlyFutureDates);
 
             Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
             oPara1.Range.Text = "Расписание";
@@ -385,7 +386,7 @@ namespace UchOtd.Core
 
             var faculty = repo.GetFaculty(facultyId);
 
-            var firstDaySchedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter);
+            var firstDaySchedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
 
             var firstDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, firstDaySchedule, oDoc, oEndOfDoc, oWord, null, dayOfWeek);
 
@@ -393,7 +394,7 @@ namespace UchOtd.Core
 
             if (dayOfWeek != 7)
             {
-                var secondDaySchedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter);
+                var secondDaySchedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter, false, false);
                 secondDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, secondDaySchedule, oDoc, oEndOfDoc, oWord, firstDayTable, dayOfWeek + 1);
             }
 
@@ -673,7 +674,8 @@ namespace UchOtd.Core
             int lessonLength,
             int facultyFilter,
             int daysOfWeek,
-            bool schoolHeader)
+            bool schoolHeader,
+            bool futureDatesOnly)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
@@ -707,7 +709,7 @@ namespace UchOtd.Core
                 {
                     string dow = Constants.DowLocal[dayOfWeek];
 
-                    var schedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, false, -1);
+                    var schedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, false, -1, false, futureDatesOnly);
 
                     Paragraph oPara1;
                     oPara1 = oDoc.Content.Paragraphs.Add();
@@ -1045,7 +1047,8 @@ namespace UchOtd.Core
             bool quit,
             int lessonLength,
             int daysOfWeek,
-            bool schoolHeader)
+            bool schoolHeader,
+            bool onlyFutureDates)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
@@ -1082,7 +1085,7 @@ namespace UchOtd.Core
 
                     string dow = Constants.DowLocal[dayOfWeek];
 
-                    var schedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, false, -1);
+                    var schedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, false, -1, false, onlyFutureDates);
 
                     Paragraph oPara1;
                     oPara1 = oDoc.Content.Paragraphs.Add();
@@ -1449,14 +1452,14 @@ namespace UchOtd.Core
 
             for (int dayOfWeek = 1; dayOfWeek <= 5; dayOfWeek += 2)
             {
-                var firstDaySchedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter);
+                var firstDaySchedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
 
                 var firstDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, firstDaySchedule, oDoc, oEndOfDoc, oWord, null, dayOfWeek);
 
                 Table secondDayTable = null;
 
 
-                var secondDaySchedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter);
+                var secondDaySchedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter, false, false);
                 secondDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, secondDaySchedule, oDoc, oEndOfDoc, oWord, firstDayTable, dayOfWeek + 1);
 
                 var fontSize = 10.5F;
@@ -1989,7 +1992,7 @@ namespace UchOtd.Core
             Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord,
             Table tableToContinue)
         {
-            var schedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter);
+            var schedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
 
             var timeList = new List<string>();
             foreach (var group in schedule)
@@ -2243,7 +2246,7 @@ namespace UchOtd.Core
             Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord,
             Table tableToContinue)
         {
-            var schedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter);
+            var schedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
 
             var timeList = new List<string>();
             foreach (var group in schedule)

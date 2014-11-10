@@ -1365,7 +1365,7 @@ namespace UchOtd.Schedule
             var facultyName = Repo.GetFaculty(facultyId).Name;
             var ruDow = DOWList.SelectedIndex + 1;
 
-            var facultyDowLessons = Repo.GetFacultyDOWSchedule(facultyId, ruDow, false, -1);
+            var facultyDowLessons = Repo.GetFacultyDOWSchedule(facultyId, ruDow, false, -1, false, false);
             PDFExport.ExportSchedulePage(facultyDowLessons, facultyName, "Export.pdf", DOWList.Text, Repo, true, false, false);
 
             Process.Start("Export.pdf");
@@ -1466,11 +1466,11 @@ namespace UchOtd.Schedule
         {
             if (WordOneFaculty.Checked)
             {
-                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, 90, (int)WordFacultyFilter.SelectedValue, 6, SchoolHeader);
+                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, 90, (int)WordFacultyFilter.SelectedValue, 6, SchoolHeader, OnlyFutureDatesExportInWord.Checked);
             }
             else
             {
-                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, 90, -1, 6, SchoolHeader);
+                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, 90, -1, 6, SchoolHeader, OnlyFutureDatesExportInWord.Checked);
             }
             
         }
@@ -1479,11 +1479,11 @@ namespace UchOtd.Schedule
         {
             if (WordOneFaculty.Checked)
             {
-                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, cb90.Checked ? 90 : 80, (int)WordFacultyFilter.SelectedValue, 6, SchoolHeader);
+                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, cb90.Checked ? 90 : 80, (int)WordFacultyFilter.SelectedValue, 6, SchoolHeader, OnlyFutureDatesExportInWord.Checked);
             }
             else
             {
-                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, cb90.Checked ? 90 : 80, -1, 6, SchoolHeader);
+                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, cb90.Checked ? 90 : 80, -1, 6, SchoolHeader, OnlyFutureDatesExportInWord.Checked);
             }
         }
                 
@@ -1567,7 +1567,7 @@ namespace UchOtd.Schedule
 
             WordExport.ExportSchedulePage(
                 Repo, "Расписание.docx", false, false, cb90.Checked ? 90 : 80, facultyId, ruDow, 6,
-                wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
+                wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked, OnlyFutureDatesExportInWord.Checked);
         }
 
         private void WordCustom_Click(object sender, EventArgs e)
@@ -1603,7 +1603,7 @@ namespace UchOtd.Schedule
         {
             //dayDelta_Click(sender, e);            
             //setLayout_Click(sender, e);
-            ExportGroupDisciplines("Oops\\Discs.txt");
+            //ExportGroupDisciplines("Oops\\Discs.txt");
 
             /*
             foreach (var disc in Repo.GetAllDisciplines())

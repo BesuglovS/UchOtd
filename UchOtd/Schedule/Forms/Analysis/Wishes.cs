@@ -4,6 +4,8 @@ using Schedule.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using UchOtd.Schedule.Views;
 using UchOtd.Schedule.Views.DBListViews;
@@ -18,6 +20,9 @@ namespace UchOtd.Schedule.Forms
 
         public static bool NeedsUpdateAfterChoosingRings = false;
 
+        CancellationTokenSource tokenSource;
+        CancellationToken cToken;
+
         public Wishes(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -27,6 +32,7 @@ namespace UchOtd.Schedule.Forms
 
         private void Wishes_Load(object sender, EventArgs e)
         {
+            listBoxInitialization = true;
             var teachers = _repo.GetAllTeachers()
                 .OrderBy(t => t.FIO)
                 .ToList();
@@ -47,6 +53,8 @@ namespace UchOtd.Schedule.Forms
 
         private void RefreshRings()
         {
+            listBoxInitialization = true;
+
             var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
 
             var teacherRingIds = _repo
@@ -105,8 +113,7 @@ namespace UchOtd.Schedule.Forms
                 FitAllLessonsInXDays.Checked = true;
                 FitAllLessonsDaysCount.Text = wish.Value.ToString();
             }
-
-
+            
             FormatView();
         }
 
@@ -521,6 +528,74 @@ namespace UchOtd.Schedule.Forms
             }
 
             NeedsUpdateAfterChoosingRings = false;
-        }        
+        }
+
+        private void removeAllWishes_Click(object sender, EventArgs e)
+        {
+            foreach (var wish in _repo.GetAllTeacherWishes())
+            {
+                _repo.RemoveTeacherWish(wish.TeacherWishId);
+            }
+
+            foreach (var ring in _repo.GetFiltredCustomTeacherAttributes(attr => attr.Key == "TeacherRing"))
+            {
+                _repo.RemoveCustomTeacherAttribute(ring.CustomTeacherAttributeId);
+            }
+        }
+
+        private void FillAllWishesAsEmpty_Click(object sender, EventArgs e)
+        {
+            if (tokenSource != null)
+            {
+                tokenSource.Cancel();
+            }
+
+            tokenSource = new CancellationTokenSource();
+            cToken = tokenSource.Token;
+
+            var fillTask = Task.Factory.StartNew(() =>
+            {
+                progress.BeginInvoke(new Action(() => progress.Text = "Удаление"));
+                foreach (var wish in _repo.GetAllTeacherWishes())
+                {
+                    _repo.RemoveTeacherWish(wish.TeacherWishId);
+                }
+
+                foreach (var ring in _repo.GetFiltredCustomTeacherAttributes(attr => attr.Key == "TeacherRing"))
+                {
+                    _repo.RemoveCustomTeacherAttribute(ring.CustomTeacherAttributeId);
+                }
+
+                var standard80RingsStrings = new List<string>
+                {"8:00", "9:25", "11:05", "12:35", "14:00", "15:40", "17:05", "18:35"};
+
+                var rings = _repo.GetFiltredRings(r => standard80RingsStrings.Contains(r.Time.ToString("H:mm"))).ToList();
+
+
+                foreach (var teacher in _repo.GetAllTeachers().OrderBy(t => t.FIO))
+                {                
+                    progress.BeginInvoke(new Action(() => progress.Text = teacher.FIO));                
+
+                    foreach (var ring in rings)
+                    {
+                        var newRing = new CustomTeacherAttribute(teacher, "TeacherRing", ring.RingId.ToString());
+
+                        _repo.AddCustomTeacherAttribute(newRing);
+                    }
+
+                    foreach (var calendar in _repo.GetAllCalendars().OrderBy(c => c.Date.Date))
+                    {
+                        foreach (var ring in rings)
+                        {
+                            var newWish = new TeacherWish(teacher, calendar, ring, 0);
+
+                            _repo.AddTeacherWish(newWish);
+                        }
+                    }
+                }
+
+                progress.BeginInvoke(new Action(() => progress.Text = ""));
+            });            
+        }       
     }
 }

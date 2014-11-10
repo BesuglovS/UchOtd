@@ -319,7 +319,6 @@
             this.DiscipineListView.AllowUserToResizeColumns = false;
             this.DiscipineListView.AllowUserToResizeRows = false;
             this.DiscipineListView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.DiscipineListView.ColumnHeadersVisible = false;
             this.DiscipineListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DiscipineListView.Location = new System.Drawing.Point(0, 0);
             this.DiscipineListView.Name = "DiscipineListView";

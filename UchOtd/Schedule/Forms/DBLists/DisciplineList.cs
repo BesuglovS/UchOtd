@@ -138,22 +138,31 @@ namespace UchOtd.Schedule.Forms.DBLists
             DiscipineListView.Columns["DisciplineId"].Width = 40;
 
             DiscipineListView.Columns["Name"].Width = 270;
+            DiscipineListView.Columns["Name"].HeaderText = "Наименование дисциплины";
 
             DiscipineListView.Columns["TeacherFIO"].Width = 80;
+            DiscipineListView.Columns["TeacherFIO"].HeaderText = "ФИО преподавателя";
 
             DiscipineListView.Columns["ScheduleHours"].Width = 30;
+            DiscipineListView.Columns["ScheduleHours"].HeaderText = "Часов в расписании";
 
             DiscipineListView.Columns["Attestation"].Width = 80;
+            DiscipineListView.Columns["Attestation"].HeaderText = "Форма отчётности";
 
             DiscipineListView.Columns["AuditoriumHours"].Width = 80;
+            DiscipineListView.Columns["AuditoriumHours"].HeaderText = "Аудиторные часы";
 
             DiscipineListView.Columns["AuditoriumHoursPerWeek"].Width = 80;
+            DiscipineListView.Columns["AuditoriumHoursPerWeek"].HeaderText = "Аудиторные часы (в неделю / ШКОЛА)";
 
             DiscipineListView.Columns["LectureHours"].Width = 80;
+            DiscipineListView.Columns["LectureHours"].HeaderText = "Лекции";
 
             DiscipineListView.Columns["PracticalHours"].Width = 80;
+            DiscipineListView.Columns["PracticalHours"].HeaderText = "Практические / Семинары";
 
             DiscipineListView.Columns["StudentGroupName"].Width = 120;
+            DiscipineListView.Columns["StudentGroupName"].HeaderText = "Группа";
         }
 
         private void DiscipineListViewCellClick(object sender, DataGridViewCellEventArgs e)
@@ -213,6 +222,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 Attestation = Attestation.SelectedIndex,
                 AuditoriumHours = audHours,
+                AuditoriumHoursPerWeek = audHoursPerWeek,
                 LectureHours = lecHours,
                 PracticalHours = practHours,
                 Name = DisciplineName.Text,
@@ -234,6 +244,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 discipline.Name = DisciplineName.Text;
                 discipline.Attestation = Attestation.SelectedIndex;
                 discipline.AuditoriumHours = int.Parse(AuditoriumHours.Text);
+                discipline.AuditoriumHoursPerWeek = int.Parse(AuditoriumHoursPerWeek.Text);
                 discipline.LectureHours = int.Parse(LectureHours.Text);
                 discipline.PracticalHours = int.Parse(PracticalHours.Text);
 

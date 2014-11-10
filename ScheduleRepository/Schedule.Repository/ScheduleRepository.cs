@@ -890,6 +890,7 @@ namespace Schedule.Repositories
 
                 curDiscipline.Attestation = discipline.Attestation;
                 curDiscipline.AuditoriumHours = discipline.AuditoriumHours;
+                curDiscipline.AuditoriumHoursPerWeek = discipline.AuditoriumHoursPerWeek;
                 curDiscipline.LectureHours = discipline.LectureHours;
                 curDiscipline.Name = discipline.Name;
                 curDiscipline.PracticalHours = discipline.PracticalHours;
@@ -1454,7 +1455,7 @@ namespace Schedule.Repositories
         }
 
         public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>>
-            GetFacultyDOWSchedule(int facultyId, int dowRU, bool weekFiltered, int weekFilter, bool includeProposed = false)
+            GetFacultyDOWSchedule(int facultyId, int dowRU, bool weekFiltered, int weekFilter, bool includeProposed, bool onlyFutureDates)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -1491,11 +1492,15 @@ namespace Schedule.Repositories
                         .Include(l => l.Auditorium.Building)
                         .Where(
                             l =>
-                            ((l.State == 1) || ((l.State == 2) && (includeProposed))) &&
+                            ((l.State == 1) || ((l.State == 2) && (includeProposed))) &&                            
                             groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId)
-                            )
+                        )
                         .ToList();
-                    
+
+                    if (onlyFutureDates)
+                    {
+                        primaryList = primaryList.Where(l => DateTime.Now.Date <= l.Calendar.Date.Date).ToList();
+                    }                    
 
                     primaryList = primaryList
                         .Where(l => Constants.Constants.DowRemap[(int)(l.Calendar.Date).DayOfWeek] == dowRU)
@@ -3507,21 +3512,17 @@ namespace Schedule.Repositories
         public static string CombineWeeks(List<int> list)
         {
             var result = new List<string>();
-            var boolWeeks = new bool[21];
+            var maxWeek = 54;
+            var boolWeeks = new bool[maxWeek+1];
 
-            for (var i = 0; i <= 20; i++)
+            for (var i = 0; i <= maxWeek; i++)
             {
-                boolWeeks[i] = false;
+                boolWeeks[i] = list.Contains(i);
             }
-
-            foreach (var week in list)
-            {
-                boolWeeks[week] = true;
-            }
-
+            
             bool prev = false;
-            int baseNum = 20;
-            for (var i = 0; i <= 19; i++)
+            int baseNum = maxWeek;
+            for (var i = 1; i <= maxWeek-2; i++)
             {
                 if (!prev && boolWeeks[i])
                 {
@@ -3540,15 +3541,16 @@ namespace Schedule.Repositories
 
                 if (!boolWeeks[i])
                 {
-                    baseNum = 20;
+                    baseNum = maxWeek+1;
                 }
 
                 prev = boolWeeks[i];
             }
 
+            
             prev = false;
-            baseNum = 20;
-            for (var i = 1; i <= 19; i += 2)
+            baseNum = maxWeek+1;
+            for (var i = 1; i <= maxWeek; i += 2)
             {
                 if (!prev && boolWeeks[i])
                 {
@@ -3567,15 +3569,15 @@ namespace Schedule.Repositories
 
                 if (!boolWeeks[i])
                 {
-                    baseNum = 20;
+                    baseNum = maxWeek+1;
                 }
 
                 prev = boolWeeks[i];
             }
 
             prev = false;
-            baseNum = 20;
-            for (var i = 2; i <= 20; i += 2)
+            baseNum = maxWeek+1;
+            for (var i = 2; i <= maxWeek; i += 2)
             {
                 if (!prev && boolWeeks[i])
                 {
@@ -3594,15 +3596,15 @@ namespace Schedule.Repositories
 
                 if (!boolWeeks[i])
                 {
-                    baseNum = 20;
+                    baseNum = maxWeek+1;
                 }
 
                 prev = boolWeeks[i];
             }
+            
 
 
-
-            for (var i = 1; i <= 18; i++)
+            for (var i = 1; i <= maxWeek; i++)
             {
                 if (boolWeeks[i])
                 {

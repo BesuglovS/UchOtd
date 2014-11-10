@@ -53,6 +53,9 @@
             this.wishesView = new System.Windows.Forms.DataGridView();
             this.ringsPanel = new System.Windows.Forms.Panel();
             this.RingsList = new System.Windows.Forms.ListBox();
+            this.removeAllWishes = new System.Windows.Forms.Button();
+            this.FillAllWishesAsEmpty = new System.Windows.Forms.Button();
+            this.progress = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplit)).BeginInit();
             this.mainSplit.Panel1.SuspendLayout();
             this.mainSplit.Panel2.SuspendLayout();
@@ -71,6 +74,9 @@
             // 
             // mainSplit.Panel1
             // 
+            this.mainSplit.Panel1.Controls.Add(this.progress);
+            this.mainSplit.Panel1.Controls.Add(this.FillAllWishesAsEmpty);
+            this.mainSplit.Panel1.Controls.Add(this.removeAllWishes);
             this.mainSplit.Panel1.Controls.Add(this.chooseRings);
             this.mainSplit.Panel1.Controls.Add(this.label3);
             this.mainSplit.Panel1.Controls.Add(this.FitAllLessonsDaysCount);
@@ -97,7 +103,7 @@
             this.mainSplit.Panel2.Controls.Add(this.viewPanel);
             this.mainSplit.Panel2.Controls.Add(this.ringsPanel);
             this.mainSplit.Size = new System.Drawing.Size(976, 654);
-            this.mainSplit.SplitterDistance = 75;
+            this.mainSplit.SplitterDistance = 101;
             this.mainSplit.TabIndex = 0;
             // 
             // chooseRings
@@ -296,7 +302,7 @@
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(152, 0);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(824, 575);
+            this.viewPanel.Size = new System.Drawing.Size(824, 549);
             this.viewPanel.TabIndex = 1;
             // 
             // wishesView
@@ -306,7 +312,7 @@
             this.wishesView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.wishesView.Location = new System.Drawing.Point(0, 0);
             this.wishesView.Name = "wishesView";
-            this.wishesView.Size = new System.Drawing.Size(824, 575);
+            this.wishesView.Size = new System.Drawing.Size(824, 549);
             this.wishesView.TabIndex = 1;
             this.wishesView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.wishesView_CellValueChanged);
             this.wishesView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.wishesView_KeyDown);
@@ -317,7 +323,7 @@
             this.ringsPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.ringsPanel.Location = new System.Drawing.Point(0, 0);
             this.ringsPanel.Name = "ringsPanel";
-            this.ringsPanel.Size = new System.Drawing.Size(152, 575);
+            this.ringsPanel.Size = new System.Drawing.Size(152, 549);
             this.ringsPanel.TabIndex = 0;
             // 
             // RingsList
@@ -327,9 +333,37 @@
             this.RingsList.Location = new System.Drawing.Point(0, 0);
             this.RingsList.Name = "RingsList";
             this.RingsList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.RingsList.Size = new System.Drawing.Size(152, 575);
+            this.RingsList.Size = new System.Drawing.Size(152, 549);
             this.RingsList.TabIndex = 0;
             this.RingsList.SelectedIndexChanged += new System.EventHandler(this.RingsList_SelectedIndexChanged);
+            // 
+            // removeAllWishes
+            // 
+            this.removeAllWishes.Location = new System.Drawing.Point(12, 69);
+            this.removeAllWishes.Name = "removeAllWishes";
+            this.removeAllWishes.Size = new System.Drawing.Size(171, 23);
+            this.removeAllWishes.TabIndex = 21;
+            this.removeAllWishes.Text = "Удалить все пожелания";
+            this.removeAllWishes.UseVisualStyleBackColor = true;
+            this.removeAllWishes.Click += new System.EventHandler(this.removeAllWishes_Click);
+            // 
+            // FillAllWishesAsEmpty
+            // 
+            this.FillAllWishesAsEmpty.Location = new System.Drawing.Point(208, 69);
+            this.FillAllWishesAsEmpty.Name = "FillAllWishesAsEmpty";
+            this.FillAllWishesAsEmpty.Size = new System.Drawing.Size(195, 23);
+            this.FillAllWishesAsEmpty.TabIndex = 22;
+            this.FillAllWishesAsEmpty.Text = "Записать все желания пустыми";
+            this.FillAllWishesAsEmpty.UseVisualStyleBackColor = true;
+            this.FillAllWishesAsEmpty.Click += new System.EventHandler(this.FillAllWishesAsEmpty_Click);
+            // 
+            // progress
+            // 
+            this.progress.AutoSize = true;
+            this.progress.Location = new System.Drawing.Point(782, 77);
+            this.progress.Name = "progress";
+            this.progress.Size = new System.Drawing.Size(0, 13);
+            this.progress.TabIndex = 23;
             // 
             // Wishes
             // 
@@ -379,5 +413,8 @@
         private System.Windows.Forms.DataGridView wishesView;
         private System.Windows.Forms.Panel ringsPanel;
         private System.Windows.Forms.ListBox RingsList;
+        private System.Windows.Forms.Button FillAllWishesAsEmpty;
+        private System.Windows.Forms.Button removeAllWishes;
+        private System.Windows.Forms.Label progress;
     }
 }
