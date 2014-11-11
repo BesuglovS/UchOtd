@@ -555,11 +555,21 @@ namespace UchOtd.Schedule.Forms
 
             var fillTask = Task.Factory.StartNew(() =>
             {
+                
                 progress.BeginInvoke(new Action(() => progress.Text = "Удаление"));
-                foreach (var wish in _repo.GetAllTeacherWishes())
+                var wishIds = _repo.GetAllTeacherWishes().Select(tw => tw.TeacherWishId).ToList();
+                var wishCount = wishIds.Count;
+                for (int i = 0; i < wishIds.Count; i++)                
                 {
-                    _repo.RemoveTeacherWish(wish.TeacherWishId);
+                    _repo.RemoveTeacherWish(wishIds[i]);
+
+                    if (i % 500 == 0)
+                    {
+                        progress.BeginInvoke(new Action(() => progress.Text = "Удаление - " + i + " / " + wishCount));
+                    }
                 }
+
+                progress.BeginInvoke(new Action(() => progress.Text = "Удаление звонков преподавателей"));
 
                 foreach (var ring in _repo.GetFiltredCustomTeacherAttributes(attr => attr.Key == "TeacherRing"))
                 {
@@ -571,10 +581,15 @@ namespace UchOtd.Schedule.Forms
 
                 var rings = _repo.GetFiltredRings(r => standard80RingsStrings.Contains(r.Time.ToString("H:mm"))).ToList();
 
+                var teachers = _repo.GetAllTeachers().OrderBy(t => t.FIO).ToList();
+                var teachersCount = teachers.Count;
 
-                foreach (var teacher in _repo.GetAllTeachers().OrderBy(t => t.FIO))
+                
+                for (int i = 0; i < teachersCount; i++)
                 {                
-                    progress.BeginInvoke(new Action(() => progress.Text = teacher.FIO));                
+                    var teacher = teachers[i];
+
+                    progress.BeginInvoke(new Action(() => progress.Text = teacher.FIO + " " + i + " / " + teachersCount + " = " + (i / teachersCount).ToString("F2")));
 
                     foreach (var ring in rings)
                     {

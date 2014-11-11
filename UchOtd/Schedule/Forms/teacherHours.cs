@@ -34,7 +34,7 @@ namespace UchOtd.Schedule.Forms
 
         private void teachersList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            RefreshView();
+            //RefreshView();
         }
 
         private void RefreshView()

@@ -27,8 +27,8 @@ namespace UchOtd
     public partial class StartupForm : Form
     {
         public static bool school = false;
-        //public static string DefaultDBName = "Schedule14151";
-        public static string DefaultDBName = "School";
+        public static string DefaultDBName = "Schedule14151";
+        //public static string DefaultDBName = "School";
 
         public ScheduleRepository _repo;
         public UchOtdRepository _UOrepo; 
