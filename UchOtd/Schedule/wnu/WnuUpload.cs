@@ -88,92 +88,92 @@ namespace Schedule.wnu
             var mySqlAuditoriums = MySQLAuditorium.FromAuditoriumList(allAuditoriums);
             var wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "auditoriums", data = jsonSerializer.Serialize(mySqlAuditoriums) };
             string json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var allBuildings = Repo.GetAllBuildings();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "buildings", data = jsonSerializer.Serialize(allBuildings) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var calendars = Repo.GetAllCalendars();
             var mySqlCalendars = MySQLCalendar.FromCalendarList(calendars);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "calendars", data = jsonSerializer.Serialize(mySqlCalendars) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var rings = Repo.GetAllRings();
             var mySqlRings = MySQLRing.FromRingList(rings);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "rings", data = jsonSerializer.Serialize(mySqlRings) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var students = Repo.GetAllStudents();
             var mySqlStudents = MySQLStudent.FromStudentList(students);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "students", data = jsonSerializer.Serialize(mySqlStudents) };
             json = jsonSerializer.Serialize(wud);
-            var stres = WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var studentGroups = Repo.GetAllStudentGroups();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "studentGroups", data = jsonSerializer.Serialize(studentGroups) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var teachers = Repo.GetAllTeachers();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "teachers", data = jsonSerializer.Serialize(teachers) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var disciplines = Repo.GetAllDisciplines();
             var mySqlDisciplines = MySQLDiscipline.FromDisciplineList(disciplines);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "disciplines", data = jsonSerializer.Serialize(mySqlDisciplines) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var studentsInGroups = Repo.GetAllStudentsInGroups();
             var mySqlStudentsInGroups = MySQLStudentsInGroups.FromStudentsInGroupsList(studentsInGroups);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "studentsInGroups", data = jsonSerializer.Serialize(mySqlStudentsInGroups) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var teacherForDisciplines = Repo.GetAllTeacherForDiscipline();
             var mySqlTeacherForDisciplines = MySQLTeacherForDiscipline.FromTeacherForDisciplineList(teacherForDisciplines);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "teacherForDisciplines", data = jsonSerializer.Serialize(mySqlTeacherForDisciplines) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var lessons = Repo.GetFiltredLessons(l => l.State == 0 || l.State == 1);
             var mySqlLessons = MySQLLesson.FromLessonList(lessons);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "lessons", data = jsonSerializer.Serialize(mySqlLessons) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var configs = Repo.GetAllConfigOptions();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "configs", data = jsonSerializer.Serialize(configs) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var lessonsLog = Repo.GetAllLessonLogEvents();
             var mySqlLogEvent = MySQLLessonLogEvent.FromLessonLogList(lessonsLog);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "lessonLogEvents", data = jsonSerializer.Serialize(mySqlLogEvent) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var auditoriumEvents = Repo.GetAllAuditoriumEvents();
             var mySqlauditoriumEvents = MySQLAuditoriumEvent.FromAuditoriumEventList(auditoriumEvents);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "auditoriumEvents", data = jsonSerializer.Serialize(mySqlauditoriumEvents) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var faculties = Repo.GetAllFaculties();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "faculties", data = jsonSerializer.Serialize(faculties) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
 
             var gifs = Repo.GetAllGroupsInFaculty();
             var mySqlgifs = MySQLGroupsInFaculty.FromGroupsInFacultyList(gifs);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "GroupsInFaculties", data = jsonSerializer.Serialize(mySqlgifs) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            UploadTableData(json);
         }
     }
 }

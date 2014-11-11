@@ -24,7 +24,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             if (useDataSet.Checked)
             {
                 var dow = startDate.Value.DayOfWeek;
-                var calendarList = new List<Calendar>();
                 var date = startDate.Value;
                 do
                 {
@@ -80,7 +79,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             List<AuditoriumEvent> eventsList;
 
-            if ((date != null) || (filterBox.Checked == true))
+            if ((date != null) || filterBox.Checked)
             {
                 if (date == null)
                 {

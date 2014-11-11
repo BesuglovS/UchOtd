@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace UchOtd.Core
 {
     public static class LayoutSupport
     {
-        public static Dictionary<char, char> match = new Dictionary<char, char>()
+        public static Dictionary<char, char> match = new Dictionary<char, char>
         {
             {'q', 'й'}, {'w', 'ц'}, {'e', 'у'}, {'r', 'к'}, {'t', 'е'}, {'y', 'н'}, 
             {'u', 'г'}, {'i', 'ш'}, {'o', 'щ'}, {'p', 'з'}, {'[', 'х'}, {']', 'ъ'},

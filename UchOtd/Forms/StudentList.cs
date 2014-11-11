@@ -70,7 +70,7 @@ namespace UchOtd.Forms
                 switch (keyword)
                 {
                     case "student":
-                        var studentDetailsForm = new StudentProperties(this, _repo, id, Core.StudentDetailsMode.Edit);
+                        var studentDetailsForm = new StudentProperties(this, _repo, id, StudentDetailsMode.Edit);
                         studentDetailsForm.Show();
                         Height = 85;
                         Width = 670;
@@ -152,7 +152,7 @@ namespace UchOtd.Forms
 
         private void добавитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var studentDetailsForm = new StudentProperties(this, _repo, 0, Core.StudentDetailsMode.New);
+            var studentDetailsForm = new StudentProperties(this, _repo, 0, StudentDetailsMode.New);
             studentDetailsForm.Show();
         }
 
@@ -163,11 +163,11 @@ namespace UchOtd.Forms
             var studentId = (int)viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["StudentId"].Value;
             var groupName = searchBox.Text;
 
-            var studentDetailsForm = new StudentProperties(this, _repo, studentId, Core.StudentDetailsMode.Edit);
+            var studentDetailsForm = new StudentProperties(this, _repo, studentId, StudentDetailsMode.Edit);
             var result = studentDetailsForm.ShowDialog();
 
             searchBox.Text = groupName;
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 SearchBoxKeyDown(this, new KeyEventArgs(Keys.Enter));
             }
@@ -178,9 +178,9 @@ namespace UchOtd.Forms
             if (viewGrid.SelectedCells.Count == 0) return;
 
             var fioDeleted = 
-                viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["F"].Value as string ?? "" + " " + 
-                viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["I"].Value as string ?? "" + " " +
-                viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["O"].Value as string ?? "";            
+                ((viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["F"].Value as string) ?? "") + " " +
+                ((viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["I"].Value as string) ?? "") + " " +
+                ((viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["O"].Value as string) ?? "");            
             if (MessageBox.Show(
                 caption: "Точно удалить студента?",
                 text: fioDeleted,

@@ -174,7 +174,7 @@ namespace UchOtd.NUDS.Core
 
             result.Sort((a, b) =>
             {
-                int aVal = -1, bVal = -1;
+                int aVal, bVal;
 
                 if (a.Contains('-'))
                 {

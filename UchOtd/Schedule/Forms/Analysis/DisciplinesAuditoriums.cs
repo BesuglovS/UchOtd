@@ -1,13 +1,10 @@
-﻿using Schedule.DomainClasses.Analyse;
+﻿using System.Globalization;
+using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using UchOtd.Schedule.Views;
 
@@ -101,7 +98,7 @@ namespace UchOtd.Schedule.Forms
 
                 if (selected && !discAudIds.Contains(audId))
                 {
-                    var newDiscAudAttribute = new CustomDisciplineAttribute(selectedDiscipline, "DisciplineAuditorium", audId.ToString());
+                    var newDiscAudAttribute = new CustomDisciplineAttribute(selectedDiscipline, "DisciplineAuditorium", audId.ToString(CultureInfo.InvariantCulture));
 
                     _repo.AddCustomDisciplineAttribute(newDiscAudAttribute);
 
@@ -132,7 +129,7 @@ namespace UchOtd.Schedule.Forms
 
             foreach (var aud in allAuds)
             {
-                var newDiscAudAttribute = new CustomDisciplineAttribute(selectedDiscipline, "DisciplineAuditorium", aud.AuditoriumId.ToString());
+                var newDiscAudAttribute = new CustomDisciplineAttribute(selectedDiscipline, "DisciplineAuditorium", aud.AuditoriumId.ToString(CultureInfo.InvariantCulture));
 
                 _repo.AddCustomDisciplineAttribute(newDiscAudAttribute);
             }

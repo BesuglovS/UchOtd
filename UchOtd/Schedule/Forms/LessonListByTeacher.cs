@@ -85,7 +85,7 @@ namespace UchOtd.Schedule.Forms
 
         private void LessonListByTeacher_Resize(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Maximized)
+            if (WindowState == FormWindowState.Maximized)
             {
                 FormatView();
             }

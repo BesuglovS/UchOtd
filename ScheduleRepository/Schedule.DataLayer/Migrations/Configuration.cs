@@ -1,11 +1,8 @@
 namespace Schedule.DataLayer.Migrations
 {
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
-    public sealed class Configuration : DbMigrationsConfiguration<Schedule.DataLayer.ScheduleContext>
+    public sealed class Configuration : DbMigrationsConfiguration<ScheduleContext>
     {
         public Configuration()
         {
@@ -13,7 +10,7 @@ namespace Schedule.DataLayer.Migrations
             AutomaticMigrationDataLossAllowed = true;
         }        
 
-        protected override void Seed(Schedule.DataLayer.ScheduleContext context)
+        protected override void Seed(ScheduleContext context)
         {
             //  This method will be called after migrating to the latest version.
 

@@ -110,7 +110,7 @@ namespace UchOtd.Forms
 
         private void CancelClick(object sender, EventArgs e)
         {
-            DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            DialogResult = DialogResult.Cancel;
             Close();
         }
 
@@ -143,7 +143,7 @@ namespace UchOtd.Forms
                 }
 
                 _studentList.UpdateSearchBoxItems();
-                DialogResult = System.Windows.Forms.DialogResult.OK;
+                DialogResult = DialogResult.OK;
                 Close();
             }
 
@@ -167,7 +167,7 @@ namespace UchOtd.Forms
                 _repo.UpdateStudent(s);
 
                 _studentList.UpdateSearchBoxItems();
-                DialogResult = System.Windows.Forms.DialogResult.OK;
+                DialogResult = DialogResult.OK;
                 Close();
             }
         }

@@ -77,12 +77,7 @@ namespace UchOtd.Schedule.Forms
             view.Columns["Attestation"].HeaderText = "Форма отчётности";
             view.Columns["Attestation"].Width = 80;
         }
-
-        private void DiscipineListView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            
-        }
-
+        
         private Color PickPercentColor(int PlanHours, int ScheduleHours)
         {
             if (ScheduleHours > PlanHours + 1)

@@ -26,7 +26,7 @@ namespace UchOtd.Schedule.Core
             bool print)
         {
             double ScheduleFontsize = 10;
-            int pageCount = 0;
+            int pageCount;
             Document document;
             do
             {
@@ -109,7 +109,7 @@ namespace UchOtd.Schedule.Core
         {
             result.DefaultPageSetup.PageFormat = PageFormat.A4;
 
-            result.DefaultPageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
+            result.DefaultPageSetup.Orientation = Orientation.Landscape;
 
             var cm1 = Unit.FromCentimeter(1);
             result.DefaultPageSetup.TopMargin = cm1;
@@ -195,10 +195,8 @@ namespace UchOtd.Schedule.Core
             {
                 return "первого семестра " + ssYear + " – " + (ssYear+1) + " учебного года";
             }
-            else
-            {
-                return "второго семестра " + (ssYear-1) + " – " + ssYear + " учебного года";
-            }
+
+            return "второго семестра " + (ssYear-1) + " – " + ssYear + " учебного года";
         }        
 
         private static void PutScheduleTable(ScheduleRepository repo, Section section, string facultyName, string dow,
@@ -210,7 +208,7 @@ namespace UchOtd.Schedule.Core
 
             var table = section.AddTable();
             table.Style = "Table";
-            table.Borders.Color = new MigraDoc.DocumentObjectModel.Color(0, 0, 0);
+            table.Borders.Color = new Color(0, 0, 0);
             table.Borders.Width = 0.25;
             table.Borders.Left.Width = 0.5;
             table.Borders.Right.Width = 0.5;
@@ -409,8 +407,8 @@ namespace UchOtd.Schedule.Core
                 for (int i = 1; i <= 6; i++)
                 {
                     //var i = 4;
-                    var facultyDOWLessons = _repo.GetFacultyDOWSchedule(facultyId, i, false, -1, false, false);
-                    PDFExport.ExportSchedulePage(facultyDOWLessons, facultyName, "Export.pdf", Constants.DowLocal[i], _repo, false, false, true);
+                    var facultyDowLessons = _repo.GetFacultyDOWSchedule(facultyId, i, false, -1, false, false);
+                    ExportSchedulePage(facultyDowLessons, facultyName, "Export.pdf", Constants.DowLocal[i], _repo, false, false, true);
                 }
             //}
         }

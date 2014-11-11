@@ -154,7 +154,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var faculty = ((List<Faculty>)FacultiesListView.DataSource)[FacultiesListView.SelectedCells[0].RowIndex];
 
-                if (_repo.GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId).Count() > 0)
+                if (_repo.GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId).Any())
                 {
                     MessageBox.Show("К факультету привязаны группы.");
                     return;

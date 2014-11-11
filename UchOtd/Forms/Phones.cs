@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UchOtd.Core;
@@ -61,7 +57,7 @@ namespace UchOtd.Forms
 
         private void add_Click(object sender, EventArgs e)
         {
-            var newPhone = new Phone() { Name = NameBox.Text, Number = NumberBox.Text };
+            var newPhone = new Phone { Name = NameBox.Text, Number = NumberBox.Text };
 
             _UOrepo.AddPhone(newPhone);
 

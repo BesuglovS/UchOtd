@@ -4,11 +4,11 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using NUDispSchedule.Views;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Core;
 using UchOtd.NUDS.Core;
+using UchOtd.NUDS.View;
 using UchOtd.Properties;
 using Utilities = UchOtd.NUDS.Core.Utilities;
 
@@ -71,7 +71,7 @@ namespace UchOtd.Forms
             List<Lesson> lessonList;
             if (weekFiltered.Checked)
             {
-                int weekNum = -1;
+                int weekNum;
                 int.TryParse(weekFilter.Text, out weekNum);
 
                 lessonList = _repo
@@ -197,11 +197,6 @@ namespace UchOtd.Forms
             return result;
         }
 
-        private static int Percent(double percent, double whole)
-        {
-            return (int)Math.Round(whole * (percent / 100));
-        }
-
         private void FormatView()
         {
             if ((scheduleView.DataSource == null) ||
@@ -304,11 +299,6 @@ namespace UchOtd.Forms
         private void ScheduleViewSelectionChanged(object sender, EventArgs e)
         {
             scheduleView.ClearSelection();
-        }
-
-        private void CurrentWeekCheckedChanged(object sender, EventArgs e)
-        {
-            UpdateTeacherSchedule();
         }
 
         private void teacherList_KeyDown(object sender, KeyEventArgs e)

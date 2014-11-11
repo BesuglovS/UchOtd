@@ -14,7 +14,7 @@ namespace UchOtd.Schedule.wnu.MySQLViews
         public static List<MySQLExamLogEvent> FromLogEventList(List<LogEvent> list)
         {
             return list
-                .Select(logEvent => new MySQLExamLogEvent()
+                .Select(logEvent => new MySQLExamLogEvent
                 {
                     LogEventId = logEvent.LogEventId,
                     OldExamId = logEvent.OldExam.ExamId,

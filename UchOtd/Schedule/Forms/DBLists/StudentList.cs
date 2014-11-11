@@ -31,8 +31,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void RefreshView(string fFilter = "")
         {
-            List<Student> studentList = new List<Student>();
-            List<StudentView> studentView = new List<StudentView>();
+            List<Student> studentList;
             if ((studentGroups.SelectedIndex != -1) && (studentGroups.SelectedValue is int))
             {
                 var studentIds = _repo
@@ -51,7 +50,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 studentList = studentList.Where(s => s.F.ToLower().Contains(fFilter.ToLower())).ToList();
             }
 
-            studentView = StudentView.StudentsToView(studentList);
+            var studentView = StudentView.StudentsToView(studentList);
             studentCombo.DataSource = studentView;
             studentCombo.DisplayMember = "FIO";
             studentCombo.ValueMember = "StudentId";
@@ -92,7 +91,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             FBox.Text = student.F;
             IBox.Text = student.I;
             OBox.Text = student.O;
-            ZachNumber.Text = student.ZachNumber.ToString();
+            ZachNumber.Text = student.ZachNumber;
             BirthDate.Value = student.BirthDate;
             Address.Text = student.Address;
             Phone.Text = student.Phone;
@@ -205,7 +204,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             if (e.KeyChar == (char)Keys.Return)
             {                
                 var sViews = ((List<StudentView>)StudentListView.DataSource);
-                var view = sViews.FirstOrDefault(v => v.StudentId == (int)this.studentCombo.SelectedValue);
+                var view = sViews.FirstOrDefault(v => v.StudentId == (int)studentCombo.SelectedValue);
                 if (view != null)
                 {
                     var index = sViews.IndexOf(view);
@@ -225,7 +224,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             var sViews = ((List<StudentView>)StudentListView.DataSource);
             if (sViews != null)
             {
-                var view = sViews.FirstOrDefault(v => v.StudentId == (int)this.studentCombo.SelectedValue);
+                var view = sViews.FirstOrDefault(v => v.StudentId == (int)studentCombo.SelectedValue);
                 if (view != null)
                 {
                     var index = sViews.IndexOf(view);

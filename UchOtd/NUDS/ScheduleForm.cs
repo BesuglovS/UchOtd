@@ -54,17 +54,7 @@ namespace UchOtd.NUDS
             datePicker.MinDate = calendars.Select(c => c.Date).Min();
             datePicker.MaxDate = calendars.Select(c => c.Date).Max();
         }
-
-        private void SwitchInterFace(bool enable)
-        {
-            groupList.Enabled = enable;
-            datePicker.Enabled = enable;
-            today.Enabled = enable;
-            tomorrow.Enabled = enable;
-            changes.Enabled = enable;
-            teacherSchedule.Enabled = enable;
-        }
-
+        
         private void DatePickerValueChanged(object sender, EventArgs e)
         {
             UpdateDailySchedule();

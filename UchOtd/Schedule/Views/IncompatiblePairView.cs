@@ -20,30 +20,30 @@ namespace UchOtd.Schedule.Views
             cdaId = cda.CustomDisciplineAttributeId;
             
             
-            var separator = " @ ";
+            const string separator = " @ ";
 
-            var DisciplineSummary = "";
-            DisciplineSummary += cda.Discipline.StudentGroup.Name + separator;
-            DisciplineSummary += cda.Discipline.Name + separator;
-            DisciplineSummary += (Constants.Attestation.ContainsKey(cda.Discipline.Attestation) ? Constants.Attestation[cda.Discipline.Attestation] : "") + separator;
-            DisciplineSummary += cda.Discipline.AuditoriumHours;
+            var disciplineSummary = "";
+            disciplineSummary += cda.Discipline.StudentGroup.Name + separator;
+            disciplineSummary += cda.Discipline.Name + separator;
+            disciplineSummary += (Constants.Attestation.ContainsKey(cda.Discipline.Attestation) ? Constants.Attestation[cda.Discipline.Attestation] : "") + separator;
+            disciplineSummary += cda.Discipline.AuditoriumHours;
 
-            Disc1 = DisciplineSummary;
+            Disc1 = disciplineSummary;
 
-            int discId = -1;
+            int discId;
             int.TryParse(cda.Value, out discId);
 
             var disc2 = repo.GetDiscipline(discId);
 
             if (disc2 != null)
             {
-                DisciplineSummary = "";
-                DisciplineSummary += disc2.StudentGroup.Name + separator;
-                DisciplineSummary += disc2.Name + separator;
-                DisciplineSummary += (Constants.Attestation.ContainsKey(disc2.Attestation) ? Constants.Attestation[disc2.Attestation] : "") + separator;
-                DisciplineSummary += disc2.AuditoriumHours;
+                disciplineSummary = "";
+                disciplineSummary += disc2.StudentGroup.Name + separator;
+                disciplineSummary += disc2.Name + separator;
+                disciplineSummary += (Constants.Attestation.ContainsKey(disc2.Attestation) ? Constants.Attestation[disc2.Attestation] : "") + separator;
+                disciplineSummary += disc2.AuditoriumHours;
 
-                Disc2 = DisciplineSummary;
+                Disc2 = disciplineSummary;
             }
             else
             {

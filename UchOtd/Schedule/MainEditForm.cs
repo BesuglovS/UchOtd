@@ -156,7 +156,7 @@ namespace UchOtd.Schedule
         {
             var result = new List<GroupTableView>();
 
-            var groupView = CreateGroupView(groupId, groupLessons, putProposedLessons);
+            var groupView = CreateGroupView(groupId, groupLessons);
             foreach (var gv in groupView)
             {
                 var time = gv.Datetime.Substring(2, gv.Datetime.Length - 2);
@@ -249,11 +249,10 @@ namespace UchOtd.Schedule
         }
 
         private IEnumerable<GroupView> CreateGroupView(
-            int groupId, Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>> data,
-            bool putProposedLessons)
+            int groupId, Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>> data)
         {
-            var proposedLessonStartToken = "[";
-            var proposedLessonEndToken = "]";
+            const string proposedLessonStartToken = "[";
+            const string proposedLessonEndToken = "]";
 
             var result = new List<GroupView>();
 
@@ -657,7 +656,8 @@ namespace UchOtd.Schedule
                 if (line != null)
                 {
                     var studentParts = line.Split('@');
-                    var student = new Student() { 
+                    var student = new Student
+                    { 
                         StudentId = maxStudentId, 
                         F = studentParts[1], 
                         I = studentParts[2], 
@@ -917,63 +917,6 @@ namespace UchOtd.Schedule
         {
             var disciplineForm = new DisciplineList(Repo);
             disciplineForm.Show();
-        }
-
-        private void ImportFromTextClick(object sender, EventArgs e)
-        {
-            /*
-            _repo.RecreateDB();
-            _repo.Dispose();
-
-            _repo = new ScheduleRepository();
-
-            const string basePath = @"D:\BS\csprogs\Schedule\Schedule.TxtImport\bin\Debug\Import\old\";
-            //const string basePath = @"E:\csprogs\Schedule\Schedule.TxtImport\bin\Debug\Import\old\";
-
-            var auds = ScheduleTxtImport.ImportAuditoriums(basePath);
-            _repo.AddAuditoriumRange(auds);
-
-            var studentGroups = ScheduleTxtImport.ImportStudentsWithBaseGroups(basePath);
-            foreach (var group in studentGroups)
-            {
-                var groupToAdd = _repo.FindStudentGroup(group.Key);
-                if (groupToAdd == null)
-                {
-                    groupToAdd = new StudentGroup { Name = group.Key };
-                    _repo.AddStudentGroup(groupToAdd);
-                }
-
-                foreach (var student in group.Value)
-                {
-                    _repo.AddStudent(student);
-
-                    _repo.AddStudentsInGroups(new StudentsInGroups { Student = student, StudentGroup = groupToAdd });
-                }
-            }
-
-            var disciplines = ScheduleTxtImport.ImportDisciplines(basePath);
-            foreach (var disc in disciplines)
-            {
-                var group = _repo.FindStudentGroup(disc.StudentGroup.Name);
-
-                if (group == null)
-                {
-                    group = new StudentGroup { Name = disc.StudentGroup.Name };
-                    _repo.AddStudentGroup(group);
-                }
-
-                disc.StudentGroup = group;
-            }
-            _repo.AddDisciplineRange(disciplines);
-
-            var rings = ScheduleTxtImport.ImportRings(basePath);
-            _repo.AddRingRange(rings);
-            */
-            /*
-            var teachers = ScheduleTxtImport.ImportTeacherList();
-            _repo.AddTeacherRange(teachers);
-             */
-            
         }
 
         private void Button1Click(object sender, EventArgs e)
@@ -1506,7 +1449,7 @@ namespace UchOtd.Schedule
             WriteAuditoriumPercentageToFile(activeLessons, "AuditoriumPercentage.txt");
         }
 
-        private void WriteAuditoriumPercentageToFile(List<Lesson> activeLessons, string filename)
+        private void WriteAuditoriumPercentageToFile(IEnumerable<Lesson> activeLessons, string filename)
         {
             //                          dow(1-7)        time    lessonCount
             var result = new Dictionary<int, Dictionary<string, int>>();
@@ -1735,7 +1678,7 @@ namespace UchOtd.Schedule
 
         private void analyse_Click(object sender, EventArgs e)
         {
-            var analysisForm = new Schedule.Forms.Analysis.Analysis(Repo);
+            var analysisForm = new Forms.Analysis.Analysis(Repo);
             analysisForm.Show();
         }
 

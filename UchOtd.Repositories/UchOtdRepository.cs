@@ -4,8 +4,6 @@ using System.Data.Entity;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UchOtd.DataLayer.Migrations;
 using UchOtd.DomainClasses;
 
@@ -47,14 +45,8 @@ namespace UchOtd.Repositories
         }
 
         #region IDisposable
-        private void Dispose(bool b)
-        {
-            Dispose(true);
-        }
-
         public void Dispose()
         {
-            Dispose(true);
         }
         #endregion
 
@@ -71,17 +63,10 @@ namespace UchOtd.Repositories
         {
             using (var context = new UchOtdContext(ConnectionString))
             {
-                if (context.Notes.FirstOrDefault(n =>
-                        n.Moment == note.Moment &&
-                        n.TargetComputer == note.TargetComputer &&
-                        n.Text == note.Text) != null)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return context.Notes.FirstOrDefault(n =>
+                    n.Moment == note.Moment &&
+                    n.TargetComputer == note.TargetComputer &&
+                    n.Text == note.Text) != null;
             }
         }
 
@@ -89,17 +74,10 @@ namespace UchOtd.Repositories
         {
             using (var context = new UchOtdContext(ConnectionString))
             {
-                if (context.Notes.FirstOrDefault(n =>
-                        n.Moment == Moment &&
-                        n.TargetComputer == TargetComputer &&
-                        n.Text == Text) != null)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return context.Notes.FirstOrDefault(n =>
+                    n.Moment == Moment &&
+                    n.TargetComputer == TargetComputer &&
+                    n.Text == Text) != null;
             }
         }
 
@@ -125,19 +103,10 @@ namespace UchOtd.Repositories
                 var Text = parts[1];
                 var TargetComputer = parts[2];
 
-                var notes = context.Notes.ToList();
-
-                if (context.Notes.FirstOrDefault(n =>
-                        n.Moment.Equals(Moment) &&
-                        n.TargetComputer == TargetComputer &&
-                        n.Text == Text) != null)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return context.Notes.FirstOrDefault(n =>
+                    n.Moment.Equals(Moment) &&
+                    n.TargetComputer == TargetComputer &&
+                    n.Text == Text) != null;
             }
         }        
 
@@ -313,6 +282,6 @@ namespace UchOtd.Repositories
                 context.SaveChanges();
             }
         }
-        #endregion    
+        #endregion
     }    
 }

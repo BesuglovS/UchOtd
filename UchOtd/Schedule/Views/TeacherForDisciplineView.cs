@@ -17,22 +17,13 @@ namespace UchOtd.Schedule.Views
         public int PlannedHours { get; set; }
         public string Attestation { get; set; }
 
-        public TeacherForDisciplineView()
-        {
-        }
-
-        public TeacherForDisciplineView(TeacherForDiscipline tfd)
-        {
-
-        }
-
         public static List<TeacherForDisciplineView> FromTFDList(List<TeacherForDiscipline> list, ScheduleRepository repo)
         {
             var result = new List<TeacherForDisciplineView>();
 
             foreach (var tfd in list)
             {
-                result.Add(new TeacherForDisciplineView()
+                result.Add(new TeacherForDisciplineView
                 {
                      tfdId = tfd.TeacherForDisciplineId,
                      DisciplineId = tfd.Discipline.DisciplineId,

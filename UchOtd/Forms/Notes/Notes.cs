@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UchOtd.Core;
 using UchOtd.DomainClasses;
 using UchOtd.Repositories;
-using UchOtd.Views;
 
 namespace UchOtd.Forms.Notes
 {
@@ -65,7 +60,8 @@ namespace UchOtd.Forms.Notes
                 noteMoment.Value = DateTime.Now;
             }
 
-            var newNote = new Note() {
+            var newNote = new Note
+            {
                 Text = noteText.Text,
                 Moment = noteMoment.Value,
                 TargetComputer = TargetComputer.Text

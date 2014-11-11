@@ -37,7 +37,7 @@ namespace UchOtd.Schedule.Forms
                     checkBox.Name = "cb_" + faculties[i].FacultyId + "_" + j;
                     checkBox.Text = faculties[i].Letter + " " + Constants.DowLocal[j].Substring(0,3);
                     checkBox.Bounds = new Rectangle(-50 + j * 80, 10 + i * 25, 75, 25);
-                    this.Controls.Add(checkBox);
+                    Controls.Add(checkBox);
 
                     checkBox.Click += CheckBoxClicked;
                 }
@@ -48,7 +48,7 @@ namespace UchOtd.Schedule.Forms
             wordButton.Name = "ExportButton";
             wordButton.Text = "Экспорт";
             wordButton.Bounds = new Rectangle(30, 10 + (faculties.Count+1) * 25, 75, 25);
-            this.Controls.Add(wordButton);
+            Controls.Add(wordButton);
 
             wordButton.Click += ExportButtonClick;
 
@@ -58,7 +58,7 @@ namespace UchOtd.Schedule.Forms
             checkBox90.Text = "90 минут";
             checkBox90.Checked = false;
             checkBox90.Bounds = new Rectangle(130, 10 + (faculties.Count + 1) * 25, 75, 25);
-            this.Controls.Add(checkBox90);
+            Controls.Add(checkBox90);
 
             var future = new CheckBox();
             future.Parent = this;
@@ -66,7 +66,7 @@ namespace UchOtd.Schedule.Forms
             future.Text = "только будущие даты";
             future.Checked = false;
             future.Bounds = new Rectangle(230, 10 + (faculties.Count + 1) * 25, 75, 25);
-            this.Controls.Add(future);  
+            Controls.Add(future);  
         }
 
 

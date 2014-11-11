@@ -1,18 +1,15 @@
 namespace UchOtd.DataLayer.Migrations
 {
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
-    public sealed class Configuration : DbMigrationsConfiguration<UchOtd.UchOtdContext>
+    public sealed class Configuration : DbMigrationsConfiguration<UchOtdContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
         }
 
-        protected override void Seed(UchOtd.UchOtdContext context)
+        protected override void Seed(UchOtdContext context)
         {
             //  This method will be called after migrating to the latest version.
 

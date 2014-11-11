@@ -1,16 +1,10 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace UchOtd.NUDS.Core
 {
     public static class FormatMainView
     {
-        private static int Percent(double percent, double whole)
-        {
-            return (int)Math.Round(whole * (percent / 100));
-        }
-
         public static void DailyScheduleView(DataGridView view, ScheduleForm mainForm)
         {
             if (view.DataSource == null)

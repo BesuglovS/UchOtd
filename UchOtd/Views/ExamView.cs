@@ -24,15 +24,12 @@ namespace UchOtd.Views
         {
             var result = new List<ExamView>();
 
-            string consAud;
-            string examAud;
-
             foreach (var exam in list)
             {
                 var disc = _repo.GetFirstFiltredDisciplines(d => d.DisciplineId == exam.DisciplineId);
 
 
-
+                string consAud;
                 if (exam.ConsultationAuditoriumId != 0)
                 {
                     consAud = _repo.GetAuditorium(exam.ConsultationAuditoriumId).Name;
@@ -42,16 +39,9 @@ namespace UchOtd.Views
                     consAud = "";
                 }
 
-                if (exam.ExamAuditoriumId != 0)
-                { 
-                    examAud = _repo.GetAuditorium(exam.ExamAuditoriumId).Name; 
-                }
-                else
-                {
-                    examAud = "";
-                }
+                var examAud = (exam.ExamAuditoriumId != 0) ? _repo.GetAuditorium(exam.ExamAuditoriumId).Name : "";
 
-                result.Add(new ExamView()
+                result.Add(new ExamView
                 {
                     ExamId = exam.ExamId,
                     ConsultationAuditorium = consAud,

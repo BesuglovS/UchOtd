@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using Schedule.Constants;
@@ -172,10 +173,10 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             DisciplineName.Text = discipline.Name;
             Attestation.SelectedIndex = discipline.Attestation;
-            AuditoriumHours.Text = discipline.AuditoriumHours.ToString();
-            AuditoriumHoursPerWeek.Text = discipline.AuditoriumHoursPerWeek.ToString();
-            LectureHours.Text = discipline.LectureHours.ToString();
-            PracticalHours.Text = discipline.PracticalHours.ToString();
+            AuditoriumHours.Text = discipline.AuditoriumHours.ToString(CultureInfo.InvariantCulture);
+            AuditoriumHoursPerWeek.Text = discipline.AuditoriumHoursPerWeek.ToString(CultureInfo.InvariantCulture);
+            LectureHours.Text = discipline.LectureHours.ToString(CultureInfo.InvariantCulture);
+            PracticalHours.Text = discipline.PracticalHours.ToString(CultureInfo.InvariantCulture);
 
             Group.SelectedValue = discipline.StudentGroup.StudentGroupId;
         }

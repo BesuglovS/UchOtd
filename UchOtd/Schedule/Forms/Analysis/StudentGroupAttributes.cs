@@ -1,13 +1,10 @@
-﻿using Schedule.DomainClasses.Analyse;
+﻿using System.Globalization;
+using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using UchOtd.Schedule.Views;
 
@@ -134,7 +131,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             { 
                 StudentGroup = (StudentGroup)group.SelectedItem, 
                 Key = "Building",
-                Value = ((int)building.SelectedValue).ToString()
+                Value = ((int)building.SelectedValue).ToString(CultureInfo.InvariantCulture)
             };
             _repo.AddOrUpdateCustomStudentGroupAttribute(newBuildingAttribute);
 
@@ -142,7 +139,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             {
                 StudentGroup = (StudentGroup)group.SelectedItem,
                 Key = "Auditorium",
-                Value = ((int)auditorium.SelectedValue).ToString()
+                Value = ((int)auditorium.SelectedValue).ToString(CultureInfo.InvariantCulture)
             };
             _repo.AddOrUpdateCustomStudentGroupAttribute(newAuditoriumAttrbute);
 
@@ -150,7 +147,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             {
                 StudentGroup = (StudentGroup)group.SelectedItem,
                 Key = "Shift",
-                Value = ((int)shift.SelectedValue).ToString()
+                Value = ((int)shift.SelectedValue).ToString(CultureInfo.InvariantCulture)
             };
             _repo.AddOrUpdateCustomStudentGroupAttribute(newShiftAttrbute);
 
@@ -165,7 +162,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 {
                     StudentGroup = (StudentGroup)group.SelectedItem,
                     Key = "Building",
-                    Value = ((int)building.SelectedValue).ToString()
+                    Value = ((int)building.SelectedValue).ToString(CultureInfo.InvariantCulture)
                 };
                 _repo.AddOrUpdateCustomStudentGroupAttribute(newBuildingAttribute);
 
@@ -173,7 +170,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 {
                     StudentGroup = (StudentGroup)group.SelectedItem,
                     Key = "Auditorium",
-                    Value = ((int)auditorium.SelectedValue).ToString()
+                    Value = ((int)auditorium.SelectedValue).ToString(CultureInfo.InvariantCulture)
                 };
                 _repo.AddOrUpdateCustomStudentGroupAttribute(newAuditoriumAttrbute);
 
@@ -181,7 +178,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 {
                     StudentGroup = (StudentGroup)group.SelectedItem,
                     Key = "Shift",
-                    Value = ((int)shift.SelectedValue).ToString()
+                    Value = ((int)shift.SelectedValue).ToString(CultureInfo.InvariantCulture)
                 };
                 _repo.AddOrUpdateCustomStudentGroupAttribute(newShiftAttrbute);
 

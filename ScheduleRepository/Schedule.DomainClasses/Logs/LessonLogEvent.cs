@@ -1,8 +1,5 @@
 ﻿using Schedule.DomainClasses.Main;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Schedule.DomainClasses.Logs
 {

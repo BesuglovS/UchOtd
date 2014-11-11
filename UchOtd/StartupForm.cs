@@ -27,8 +27,8 @@ namespace UchOtd
     public partial class StartupForm : Form
     {
         public static bool school = false;
-        public static string DefaultDBName = "Schedule14151";
-        //public static string DefaultDBName = "School";
+        //public static string DefaultDBName = "Schedule14151";
+        public static string DefaultDBName = "School";
 
         public ScheduleRepository _repo;
         public UchOtdRepository _UOrepo; 
@@ -152,7 +152,7 @@ namespace UchOtd
         {
             try
             {
-                string AppDataPath = "D:\\UchOtd-DB-Backup";
+                const string AppDataPath = "D:\\UchOtd-DB-Backup";
 
                 if (!Directory.Exists(AppDataPath))
                 {
@@ -226,7 +226,8 @@ namespace UchOtd
 
         private void InitRepositories()
         {
-            var ServerList = new List<string>() { 
+            var serverList = new List<string>
+            { 
                 "127.0.0.1",
                 "uch-otd-disp"                
             };
@@ -252,8 +253,8 @@ namespace UchOtd
              */
 
             //_repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
-            _repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=" + DefaultDBName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
-            _UOrepo = new UchOtdRepository("data source=tcp:" + ServerList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+            _repo = new ScheduleRepository("data source=tcp:" + serverList[0] + ",1433;Database=" + DefaultDBName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+            _UOrepo = new UchOtdRepository("data source=tcp:" + serverList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
 
             PropagateIsActiveToStateIfNeeded();
 
@@ -285,10 +286,10 @@ namespace UchOtd
             options.DontFragment = true;
 
             // Create a buffer of 32 bytes of data to be transmitted. 
-            string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+            const string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
             byte[] buffer = Encoding.ASCII.GetBytes(data);
-            int timeout = 120;
-            PingReply reply = null;
+            const int timeout = 120;
+            PingReply reply;
             try
             {
                 reply = pingSender.Send(server, timeout, buffer, options);
@@ -298,14 +299,7 @@ namespace UchOtd
                 return false;
             }            
 
-            if ((reply != null) && (reply.Status == IPStatus.Success))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (reply != null) && (reply.Status == IPStatus.Success);
         }
 
         private void RefreshDbOrConnectionName()
@@ -461,9 +455,9 @@ namespace UchOtd
             }
 
             BuildingForm = new BuildingLessons(_repo);
-            _teacherScheduleFormOpened = true;
+            _buildingFormOpened = true;
             BuildingForm.Show();
-            _teacherScheduleFormOpened = false;
+            _buildingFormOpened = false;
         }
 
 

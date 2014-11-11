@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using System;
@@ -18,8 +17,8 @@ namespace UchOtd.Forms
 
         private readonly TaskScheduler _uiScheduler;
         
-        CancellationTokenSource tokenSource;
-        CancellationToken cToken;
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
 
         public BuildingLessons(ScheduleRepository repo)
         {
@@ -69,20 +68,20 @@ namespace UchOtd.Forms
 
         private void UpdateBuildingAuditoriums()
         {
-            if (tokenSource != null)
+            if (_tokenSource != null)
             {
-                tokenSource.Cancel();
+                _tokenSource.Cancel();
             }
 
-            tokenSource = new CancellationTokenSource();
-            cToken = tokenSource.Token;
+            _tokenSource = new CancellationTokenSource();
+            _cToken = _tokenSource.Token;
 
             if ((building.SelectedIndex == -1) || (lessonsDate.Value == new DateTime(1985, 4, 4)))
             {
                 return;
             }
 
-            BuildingLessonsData data = new BuildingLessonsData();
+            var data = new BuildingLessonsData();
 
             loadingLabel.Visible = true;
 
@@ -96,14 +95,14 @@ namespace UchOtd.Forms
                         ((l.State == 1) || ((l.State == 2) && showProposed.Checked)) &&
                         l.Auditorium.Building.BuildingId == buildingId &&
                         l.Calendar.Date.Date == viewDate);
-                cToken.ThrowIfCancellationRequested();
+                _cToken.ThrowIfCancellationRequested();
 
                 var evts = _repo
                     .GetFiltredAuditoriumEvents(ae =>
                         ae.Auditorium.Building.BuildingId == buildingId &&
                         ae.Calendar.Date.Date == viewDate
                     );
-                cToken.ThrowIfCancellationRequested();
+                _cToken.ThrowIfCancellationRequested();
 
                 var evtsRings = evts
                     .Select(e => e.Ring)
@@ -142,7 +141,7 @@ namespace UchOtd.Forms
                 // Занятия
                 foreach (Ring ring in data.Rings)
                 {
-                    cToken.ThrowIfCancellationRequested();
+                    _cToken.ThrowIfCancellationRequested();
                     data.BuildingAuditoriums.Add(ring.RingId, new Dictionary<int, string>());
 
                     foreach (Auditorium aud in data.SortedAuditoriums)
@@ -186,7 +185,7 @@ namespace UchOtd.Forms
                 }
 
                 return data;
-            }, cToken);
+            }, _cToken);
 
             if (calculateAudsTask.Status == TaskStatus.Canceled)
             {
@@ -233,14 +232,13 @@ namespace UchOtd.Forms
 
                     loadingLabel.Visible = false;
                 },
-                cToken,
+                _cToken,
                 TaskContinuationOptions.None,
                 _uiScheduler
             );
 
             if (calculateAudsTask.Status == TaskStatus.Canceled)
             {
-                return;
             }
         }
 

@@ -11,7 +11,7 @@ namespace UchOtd.Schedule.Forms
 {
     public partial class MultipleView : Form
     {
-        ScheduleRepository _repo;
+        readonly ScheduleRepository _repo;
 
         public MultipleView(ScheduleRepository repo)
         {
@@ -27,7 +27,7 @@ namespace UchOtd.Schedule.Forms
                 .Where(g => !g.Name.Contains(" + ") && !g.Name.Contains("I"))
                 .OrderBy(g => g.Name)
                 .ToList();
-            groups1.Insert(0, new StudentGroup() { StudentGroupId = -1, Name = "Empty" });
+            groups1.Insert(0, new StudentGroup { StudentGroupId = -1, Name = "Empty" });
             var groups2 = new List<StudentGroup>(groups1);
             var groups3 = new List<StudentGroup>(groups1);
             var groups4 = new List<StudentGroup>(groups1);
@@ -85,7 +85,7 @@ namespace UchOtd.Schedule.Forms
             FormatView(groupsList, groupNames);
         }
 
-        private Dictionary<int, string> GetGroupNames(List<int> groupsList)
+        private Dictionary<int, string> GetGroupNames(IEnumerable<int> groupsList)
         {
             var result = new Dictionary<int, string>();
 
@@ -251,7 +251,7 @@ namespace UchOtd.Schedule.Forms
                     var item = result.FirstOrDefault(ri => ri.DOWTime == dowString);
                     if (item == null)
                     {
-                        item = new FiveGroupsView() { DOWTime = dowString };
+                        item = new FiveGroupsView { DOWTime = dowString };
                         result.Add(item);
                     }
 

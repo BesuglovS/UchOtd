@@ -9,6 +9,7 @@
         public Auditorium(string name, Building building)
         {
             Name = name;
+            Building = building;
         }
 
         public int AuditoriumId { get; set; }

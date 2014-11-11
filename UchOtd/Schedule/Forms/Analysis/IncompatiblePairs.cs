@@ -1,12 +1,9 @@
-﻿using Schedule.DomainClasses.Analyse;
+﻿using System.Globalization;
+using Schedule.DomainClasses.Analyse;
 using Schedule.Repositories;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using UchOtd.Schedule.Views;
 
@@ -86,7 +83,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             }
             
 
-            var incompatiblePairAttribute = new CustomDisciplineAttribute(discipline1, "IncompatiblePair", disc2Id.ToString());
+            var incompatiblePairAttribute = new CustomDisciplineAttribute(discipline1, "IncompatiblePair", disc2Id.ToString(CultureInfo.InvariantCulture));
 
             _repo.AddCustomDisciplineAttribute(incompatiblePairAttribute);
 

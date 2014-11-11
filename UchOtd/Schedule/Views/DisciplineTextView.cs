@@ -15,7 +15,7 @@ namespace UchOtd.Schedule.Views
 
         public DisciplineTextView(Discipline discipline)
         {
-            string separator = " @ ";
+            const string separator = " @ ";
             
             DisciplineId = discipline.DisciplineId;
 

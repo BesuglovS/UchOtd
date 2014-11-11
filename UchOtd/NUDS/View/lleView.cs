@@ -23,27 +23,27 @@ namespace NUDispSchedule.Views
 
         public lleView(LessonLogEvent e)
         {
-            this.EventId = e.LessonLogEventId;
+            EventId = e.LessonLogEventId;
 
-            this.EventDate = e.DateTime.ToString("dd MM yyyy HH:mm:ss");
+            EventDate = e.DateTime.ToString("dd MM yyyy HH:mm:ss");
             
-            this.EventType = -1;
+            EventType = -1;
             if ((e.OldLesson == null) && (e.NewLesson != null))
             {
-                this.EventType = 1;
+                EventType = 1;
             }
             else
             {
                 if ((e.OldLesson != null) && (e.NewLesson == null))
                 {
-                    this.EventType = 2;
+                    EventType = 2;
                 }
                 else
                 {
                     if ((e.OldLesson.TeacherForDiscipline.TeacherForDisciplineId == e.NewLesson.TeacherForDiscipline.TeacherForDisciplineId) &&
                         (e.OldLesson.Auditorium.AuditoriumId != e.NewLesson.Auditorium.AuditoriumId))
                     {
-                        this.EventType = 3;
+                        EventType = 3;
                     }
                 }
             }
@@ -70,8 +70,6 @@ namespace NUDispSchedule.Views
                     Message += e.NewLesson.TeacherForDiscipline.Discipline.Name + Environment.NewLine;
                     Message += e.NewLesson.TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
                     Message += e.OldLesson.Auditorium.Name + " => " + e.NewLesson.Auditorium.Name;
-                    break;
-                default:
                     break;
             }
         }

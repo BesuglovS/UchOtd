@@ -20,7 +20,6 @@ namespace UchOtd.Schedule.Forms
 
         private void Mon_Click(object sender, EventArgs e)
         {
-            Dictionary<int, Dictionary<int, List<string>>> auds;
             int weekNum = -1;
             int buildingId = -1;
             if (oneWeek.Checked)
@@ -31,7 +30,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingId = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Monday, weekNum, buildingId, showProposed.Checked);
+            var auds = _repo.getDOWAuds(DayOfWeek.Monday, weekNum, buildingId, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -44,7 +43,6 @@ namespace UchOtd.Schedule.Forms
 
         private void Tue_Click(object sender, EventArgs e)
         {
-            Dictionary<int, Dictionary<int, List<string>>> auds;
             int weekNum = -1;
             int buildingNum = -1;
             if (oneWeek.Checked)
@@ -55,7 +53,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Tuesday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.getDOWAuds(DayOfWeek.Tuesday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -68,7 +66,6 @@ namespace UchOtd.Schedule.Forms
 
         private void Wed_Click(object sender, EventArgs e)
         {
-            Dictionary<int, Dictionary<int, List<string>>> auds;
             int weekNum = -1;
             int buildingNum = -1;
             if (oneWeek.Checked)
@@ -79,7 +76,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Wednesday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.getDOWAuds(DayOfWeek.Wednesday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -92,7 +89,6 @@ namespace UchOtd.Schedule.Forms
 
         private void Thu_Click(object sender, EventArgs e)
         {
-            Dictionary<int, Dictionary<int, List<string>>> auds;
             int weekNum = -1;
             int buildingNum = -1;
             if (oneWeek.Checked)
@@ -103,7 +99,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Thursday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.getDOWAuds(DayOfWeek.Thursday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -116,7 +112,6 @@ namespace UchOtd.Schedule.Forms
 
         private void Fri_Click(object sender, EventArgs e)
         {
-            Dictionary<int, Dictionary<int, List<string>>> auds;
             int weekNum = -1;
             int buildingNum = -1;
             if (oneWeek.Checked)
@@ -127,7 +122,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Friday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.getDOWAuds(DayOfWeek.Friday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -140,7 +135,6 @@ namespace UchOtd.Schedule.Forms
 
         private void Sat_Click(object sender, EventArgs e)
         {
-            Dictionary<int, Dictionary<int, List<string>>> auds;
             int weekNum = -1;
             int buildingNum = -1;
             if (oneWeek.Checked)
@@ -151,7 +145,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            auds = _repo.getDOWAuds(DayOfWeek.Saturday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.getDOWAuds(DayOfWeek.Saturday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {

@@ -16,8 +16,7 @@ namespace UchOtd.Forms.Session
         }
 
         private readonly ScheduleRepository _repo;
-        private readonly int _examId;
-        private Exam _exam;
+        private readonly Exam _exam;
         private readonly ExamPropertiesMode _mode;
 
         public ExamProperties(ScheduleRepository Repo, int examToUpdateId, ExamPropertiesMode mode)
@@ -25,12 +24,11 @@ namespace UchOtd.Forms.Session
             InitializeComponent();
 
             _repo = Repo;
-            _examId = examToUpdateId;
             _mode = mode;
 
             if (_mode == ExamPropertiesMode.Edit)
             {
-                _exam = _repo.GetExam(_examId);
+                _exam = _repo.GetExam(examToUpdateId);
             }
 
             if (_mode == ExamPropertiesMode.New)
@@ -100,7 +98,7 @@ namespace UchOtd.Forms.Session
 
         private void Save_Click(object sender, EventArgs e)
         {
-            var newExam = new Exam() { ExamId = _exam.ExamId, DisciplineId = _exam.DisciplineId, IsActive = true };
+            var newExam = new Exam { ExamId = _exam.ExamId, DisciplineId = _exam.DisciplineId, IsActive = true };
 
             newExam.ConsultationDateTime = ConsDate.Value;
             var consAud = _repo.FindAuditorium(ConsAudBox.Text);

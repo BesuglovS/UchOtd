@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Schedule.DomainClasses.Main
+﻿namespace Schedule.DomainClasses.Main
 {
     public class ScheduleNote
     {

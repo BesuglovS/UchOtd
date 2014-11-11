@@ -22,27 +22,27 @@ namespace UchOtd
         [DllImport("user32")]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
-        private static int _id = 0;
+        private static int _id;
         public static event EventHandler<HotKeyEventArgs> HotKeyPressed;
-        private static MessageWindow _wnd = new MessageWindow();
+        private static readonly MessageWindow Wnd = new MessageWindow();
 
         public static int RegisterHotKey(Keys key, uint modifiers)
         {
             int id = System.Threading.Interlocked.Increment(ref _id);
-            RegisterHotKey(_wnd.Handle, id, (uint)modifiers, (uint)key);
+            RegisterHotKey(Wnd.Handle, id, modifiers, (uint)key);
             return id;
         }
 
         public static bool UnregisterHotKey(int id)
         {
-            return UnregisterHotKey(_wnd.Handle, id);
+            return UnregisterHotKey(Wnd.Handle, id);
         }
 
         protected static void OnHotKeyPressed(HotKeyEventArgs e)
         {
-            if (HotKeyManager.HotKeyPressed != null)
+            if (HotKeyPressed != null)
             {
-                HotKeyManager.HotKeyPressed(null, e);
+                HotKeyPressed(null, e);
             }
         }
         
@@ -50,16 +50,16 @@ namespace UchOtd
         {
             protected override void WndProc(ref Message m)
             {
-                if (m.Msg == WM_HOTKEY)
+                if (m.Msg == WmHotkey)
                 {
-                    HotKeyEventArgs e = new HotKeyEventArgs(m.LParam);
-                    HotKeyManager.OnHotKeyPressed(e);
+                    var e = new HotKeyEventArgs(m.LParam);
+                    OnHotKeyPressed(e);
                 }
 
                 base.WndProc(ref m);
             }
 
-            private const int WM_HOTKEY = 0x312;
+            private const int WmHotkey = 0x312;
         }        
     }
 
@@ -71,13 +71,13 @@ namespace UchOtd
 
         public HotKeyEventArgs(Keys key, KeyModifiers modifiers)
         {
-            this.Key = key;
-            this.Modifiers = modifiers;
+            Key = key;
+            Modifiers = modifiers;
         }
 
         public HotKeyEventArgs(IntPtr hotKeyParam)
         {
-            uint param = (uint)hotKeyParam.ToInt64();
+            var param = (uint)hotKeyParam.ToInt64();
             Key = (Keys)((param & 0xffff0000) >> 16);
             Modifiers = (KeyModifiers)(param & 0x0000ffff);
         }

@@ -57,7 +57,7 @@ namespace Schedule.Repositories
 
         public string ExtractDBName(string connectionString)
         {
-            int startIndex = connectionString.IndexOf("Database=") + 9;
+            int startIndex = connectionString.IndexOf("Database=", StringComparison.Ordinal) + 9;
 
             if (startIndex == -1)
             {
@@ -75,7 +75,7 @@ namespace Schedule.Repositories
 
         public void BackupDB(string filename)
         {
-            var dbName = ExtractDBName(this.ConnectionString);
+            var dbName = ExtractDBName(ConnectionString);
 
             if (dbName == "")
             {
@@ -94,12 +94,13 @@ namespace Schedule.Repositories
 
         private void ExecuteQuery(string SQLQuery)
         {
-            SqlConnection sqlConnection1 = new SqlConnection(ConnectionString);
-            SqlCommand cmd = new SqlCommand();
-
-            cmd.CommandText = SQLQuery;
-            cmd.CommandType = CommandType.Text;
-            cmd.Connection = sqlConnection1;
+            var sqlConnection1 = new SqlConnection(ConnectionString);
+            var cmd = new SqlCommand
+            {
+                CommandText = SQLQuery,
+                CommandType = CommandType.Text,
+                Connection = sqlConnection1
+            };
 
             sqlConnection1.Open();
 
@@ -110,7 +111,7 @@ namespace Schedule.Repositories
 
         public void cloneDB(ScheduleRepository scheduleRepository)
         {
-            this.RecreateDB();
+            RecreateDB();
 
             // TODO : Скопировать базу данных
         }
@@ -124,14 +125,9 @@ namespace Schedule.Repositories
         #endregion
 
         #region IDisposable
-        private void Dispose(bool b)
-        {
-
-        }
 
         public void Dispose()
         {
-            Dispose(true);
         }
         #endregion
 
@@ -1111,8 +1107,8 @@ namespace Schedule.Repositories
             {
                 var curTeacherForDiscipline = context.TeacherForDiscipline.FirstOrDefault(tfd => tfd.TeacherForDisciplineId == teacherForDiscipline.TeacherForDisciplineId);
 
-                teacherForDiscipline.Teacher = context.Teachers.FirstOrDefault(t => t.TeacherId == teacherForDiscipline.Teacher.TeacherId);
-                teacherForDiscipline.Discipline = context.Disciplines.FirstOrDefault(d => d.DisciplineId == teacherForDiscipline.Discipline.DisciplineId);
+                curTeacherForDiscipline.Teacher = context.Teachers.FirstOrDefault(t => t.TeacherId == teacherForDiscipline.Teacher.TeacherId);
+                curTeacherForDiscipline.Discipline = context.Disciplines.FirstOrDefault(d => d.DisciplineId == teacherForDiscipline.Discipline.DisciplineId);
 
                 context.SaveChanges();
             }
@@ -1415,7 +1411,7 @@ namespace Schedule.Repositories
                     {
                         DOW = dowTime / 2000,
                         time = ((dowTime - (dowTime / 2000) * 2000) / 60).ToString("D2") + ":" + ((dowTime - (dowTime / 2000) * 2000) - ((dowTime - (dowTime / 2000) * 2000) / 60) * 60).ToString("D2"),
-                        Groups = lessons.GroupBy(ls => ls.TeacherForDiscipline.TeacherForDisciplineId.ToString() + "+" + ls.State,
+                        Groups = lessons.GroupBy(ls => ls.TeacherForDiscipline.TeacherForDisciplineId.ToString(CultureInfo.InvariantCulture) + "+" + ls.State,
                             (tfdAndState, tfdLessons) =>
                             new
                             {
@@ -2414,7 +2410,7 @@ namespace Schedule.Repositories
                 context.Exams.Add(exam);
                 context.SaveChanges();
 
-                var logEntry = new LogEvent() { OldExam = oldExam, NewExam = exam, DateTime = DateTime.Now };
+                var logEntry = new LogEvent { OldExam = oldExam, NewExam = exam, DateTime = DateTime.Now };
 
                 context.EventLog.Add(logEntry);
                 context.SaveChanges();
@@ -2446,14 +2442,7 @@ namespace Schedule.Repositories
                 var exam = context.Exams.FirstOrDefault(e => e.ExamId == examId);
 
                 context.Exams.Remove(exam);
-                try
-                {
-                    context.SaveChanges();
-                }
-                catch
-                {
-                    throw;
-                }
+                context.SaveChanges();
             }
 
         }
@@ -2484,7 +2473,7 @@ namespace Schedule.Repositories
 
             foreach (var disc in examDiscs)
             {
-                AddExam(new Exam()
+                AddExam(new Exam
                 {
                     DisciplineId = disc.DisciplineId,
                     IsActive = true,
@@ -2580,13 +2569,7 @@ namespace Schedule.Repositories
                             .ToList()
                             .Select(stig => stig.StudentGroup.StudentGroupId);
 
-                        foreach (var group in groups)
-                        {
-                            if (groupsListIds.Contains(group))
-                            {
-                                examGroups.Add(group);
-                            }
-                        }
+                        examGroups.AddRange(groups.Where(groupsListIds.Contains));
                     }
                     if (examGroups.Count == 0)
                     {
@@ -2622,7 +2605,7 @@ namespace Schedule.Repositories
                         {
                             if (groupId == groups[i])
                             {
-                                result[exam.ConsultationDateTime.Date][groupId].Add(new SessionEvent()
+                                result[exam.ConsultationDateTime.Date][groupId].Add(new SessionEvent
                                 {
                                     IsExam = false,
                                     DisciplineName = discipline.Name,
@@ -2663,7 +2646,7 @@ namespace Schedule.Repositories
                         {
                             if (groupId == groups[i])
                             {
-                                result[exam.ExamDateTime.Date][groupId].Add(new SessionEvent()
+                                result[exam.ExamDateTime.Date][groupId].Add(new SessionEvent
                                 {
                                     IsExam = true,
                                     DisciplineName = discipline.Name,
@@ -2697,7 +2680,7 @@ namespace Schedule.Repositories
                     continue;
                 }
 
-                AddExam(new Exam()
+                AddExam(new Exam
                 {
                     DisciplineId = disc.DisciplineId,
                     IsActive = true,
@@ -2709,19 +2692,12 @@ namespace Schedule.Repositories
 
         public void RemoveSyncWithSchedule(ScheduleRepository _sRepo)
         {
-            var examDiscs = _sRepo
-                .GetFiltredDisciplines(d => d.Attestation == 2 || d.Attestation == 3)
-                .ToList();
-
-            var examDiscIds = GetAllExams()
-                .Select(e => e.DisciplineId)
-                .ToList();
-
             var examsToRemove = new List<int>();
 
             foreach (var exam in GetAllExams())
             {
-                var disc = _sRepo.GetFirstFiltredDisciplines(d => d.DisciplineId == exam.DisciplineId);
+                Exam localExam = exam;
+                var disc = _sRepo.GetFirstFiltredDisciplines(d => d.DisciplineId == localExam.DisciplineId);
 
                 if (disc == null || !(disc.Attestation == 2 || disc.Attestation == 3))
                 {
@@ -2906,25 +2882,21 @@ namespace Schedule.Repositories
 
         public void AddOrUpdateTeacherWish(TeacherWish wish)
         {
-            using (var context = new ScheduleContext(ConnectionString))
+            TeacherWish targetWish = FindTeacherWish(wish.Teacher, wish.Calendar, wish.Ring);
+
+            if (targetWish == null)
             {
-                TeacherWish targetWish = FindTeacherWish(wish.Teacher, wish.Calendar, wish.Ring);
-
-                if (targetWish == null)
+                AddTeacherWish(wish);
+            }
+            else
+            {
+                if (targetWish.Wish != wish.Wish)
                 {
-                    AddTeacherWish(wish);
-                }
-                else
-                {
-                    if (targetWish.Wish != wish.Wish)
-                    {
-                        targetWish.Wish = wish.Wish;
+                    targetWish.Wish = wish.Wish;
 
-                        UpdateTeacherWish(targetWish);
-                    }
+                    UpdateTeacherWish(targetWish);
                 }
-                
-            }            
+            }
         }
         #endregion
 
@@ -3027,24 +2999,20 @@ namespace Schedule.Repositories
 
         public void AddOrUpdateCustomTeacherAttribute(CustomTeacherAttribute wish)
         {
-            using (var context = new ScheduleContext(ConnectionString))
+            CustomTeacherAttribute targetWish = GetCustomTeacherAttribute(wish.Teacher, wish.Key);
+
+            if (targetWish == null)
             {
-                CustomTeacherAttribute targetWish = GetCustomTeacherAttribute(wish.Teacher, wish.Key);
-
-                if (targetWish == null)
+                AddCustomTeacherAttribute(wish);
+            }
+            else
+            {
+                if (targetWish.Value != wish.Value)
                 {
-                    AddCustomTeacherAttribute(wish);
-                }
-                else
-                {
-                    if (targetWish.Value != wish.Value)
-                    {
-                        targetWish.Value = wish.Value;
+                    targetWish.Value = wish.Value;
 
-                        UpdateCustomTeacherAttribute(targetWish);
-                    }
+                    UpdateCustomTeacherAttribute(targetWish);
                 }
-
             }
         }
         #endregion
@@ -3150,24 +3118,20 @@ namespace Schedule.Repositories
 
         public void AddOrUpdateCustomDisciplineAttribute(CustomDisciplineAttribute customDisciplineAttribute)
         {
-            using (var context = new ScheduleContext(ConnectionString))
+            CustomDisciplineAttribute targetAttr = GetCustomDisciplineAttribute(customDisciplineAttribute.Discipline, customDisciplineAttribute.Key);
+
+            if (targetAttr == null)
             {
-                CustomDisciplineAttribute targetAttr = GetCustomDisciplineAttribute(customDisciplineAttribute.Discipline, customDisciplineAttribute.Key);
-
-                if (targetAttr == null)
+                AddCustomDisciplineAttribute(customDisciplineAttribute);
+            }
+            else
+            {
+                if (targetAttr.Value != customDisciplineAttribute.Value)
                 {
-                    AddCustomDisciplineAttribute(customDisciplineAttribute);
-                }
-                else
-                {
-                    if (targetAttr.Value != customDisciplineAttribute.Value)
-                    {
-                        targetAttr.Value = customDisciplineAttribute.Value;
+                    targetAttr.Value = customDisciplineAttribute.Value;
 
-                        UpdateCustomDisciplineAttribute(targetAttr);
-                    }
+                    UpdateCustomDisciplineAttribute(targetAttr);
                 }
-
             }
         }
         #endregion
@@ -3272,24 +3236,20 @@ namespace Schedule.Repositories
 
         public void AddOrUpdateCustomStudentGroupAttribute(CustomStudentGroupAttribute attr)
         {
-            using (var context = new ScheduleContext(ConnectionString))
+            CustomStudentGroupAttribute targetAttr = GetCustomStudentGroupAttribute(attr.StudentGroup, attr.Key);
+
+            if (targetAttr == null)
             {
-                CustomStudentGroupAttribute targetAttr = GetCustomStudentGroupAttribute(attr.StudentGroup, attr.Key);
-
-                if (targetAttr == null)
+                AddCustomStudentGroupAttribute(attr);
+            }
+            else
+            {
+                if (targetAttr.Value != attr.Value)
                 {
-                    AddCustomStudentGroupAttribute(attr);
-                }
-                else
-                {
-                    if (targetAttr.Value != attr.Value)
-                    {
-                        targetAttr.Value = attr.Value;
+                    targetAttr.Value = attr.Value;
 
-                        UpdateCustomStudentGroupAttribute(targetAttr);
-                    }
+                    UpdateCustomStudentGroupAttribute(targetAttr);
                 }
-
             }
         }
         #endregion
@@ -3512,7 +3472,7 @@ namespace Schedule.Repositories
         public static string CombineWeeks(List<int> list)
         {
             var result = new List<string>();
-            var maxWeek = 54;
+            const int maxWeek = 54;
             var boolWeeks = new bool[maxWeek+1];
 
             for (var i = 0; i <= maxWeek; i++)
@@ -3614,7 +3574,7 @@ namespace Schedule.Repositories
 
             result.Sort((a, b) =>
             {
-                int aVal = -1, bVal = -1;
+                int aVal, bVal;
 
                 if (a.Contains('-'))
                 {
@@ -3654,8 +3614,6 @@ namespace Schedule.Repositories
                 str = str.Substring(1, str.Length - 1);
             }
 
-            int mods = 0; // 0 - нет; 1 - нечётные; 2 - чётные
-
             foreach (var item in str.Split(','))
             {
                 var st = item.Trim(' ');
@@ -3666,7 +3624,7 @@ namespace Schedule.Repositories
                 }
                 else
                 {
-                    mods = 0;
+                    int mods = 0; // 0 - нет; 1 - нечётные; 2 - чётные
 
                     if (st.EndsWith(" (нечёт.)"))
                     {
@@ -4009,7 +3967,6 @@ namespace Schedule.Repositories
             }
 
             var eventId = 0;
-            int curEventId;
             var eventsIds = new Dictionary<int, string>();
             var eventsData = new Dictionary<int, Dictionary<int, Dictionary<int, List<AuditoriumEvent>>>>();
 
@@ -4025,7 +3982,8 @@ namespace Schedule.Repositories
                     eventsData[evt.Ring.RingId].Add(evt.Auditorium.AuditoriumId, new Dictionary<int, List<AuditoriumEvent>>());
                 }
 
-                var eventFound = (eventsIds.Count(e => e.Value == evt.Name) > 0) ? true : false;
+                var eventFound = (eventsIds.Count(e => e.Value == evt.Name) > 0);
+                int curEventId;
                 if (eventFound)
                 {
                     curEventId = eventsIds.First(e => e.Value == evt.Name).Key;
@@ -4135,16 +4093,10 @@ namespace Schedule.Repositories
                     }
                 }
             }
-
-            // Непонятно почему, но следующая строчка без этого не работает
-            // Аудитории или даты в event'е получаются == null
-            var pick = this.GetAllAuditoriums();
-            var pick2 = this.GetAllCalendars();
-
+            
             var dowEvents = GetFiltredAuditoriumEvents(evt => evt.Auditorium.AuditoriumId == auditoriumId);
 
             var eventId = 0;
-            int curEventId;
             var eventsIds = new Dictionary<int, string>();
             var eventsData = new Dictionary<int, Dictionary<int, Dictionary<int, List<AuditoriumEvent>>>>();
 
@@ -4160,7 +4112,8 @@ namespace Schedule.Repositories
                     eventsData[evt.Ring.RingId].Add(Constants.Constants.DowRemap[(int)evt.Calendar.Date.DayOfWeek], new Dictionary<int, List<AuditoriumEvent>>());
                 }
 
-                var eventFound = (eventsIds.Count(e => e.Value == evt.Name) > 0) ? true : false;
+                var eventFound = (eventsIds.Count(e => e.Value == evt.Name) > 0);
+                int curEventId;
                 if (eventFound)
                 {
                     curEventId = eventsIds.First(e => e.Value == evt.Name).Key;

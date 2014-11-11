@@ -1,12 +1,10 @@
-﻿using Schedule.DomainClasses.Analyse;
+﻿using System.Globalization;
+using Schedule.DomainClasses.Analyse;
 using Schedule.Repositories;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using UchOtd.Schedule.Views;
 
@@ -66,7 +64,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             if (ix != -1)
             {
-                discsView.DoDragDrop(ix.ToString(), DragDropEffects.Move);
+                discsView.DoDragDrop(ix.ToString(CultureInfo.InvariantCulture), DragDropEffects.Move);
             }
         }
 
@@ -101,7 +99,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                 var disc = _repo.GetDiscipline(item.DisciplineId);
 
-                var orderAttr = new CustomDisciplineAttribute(disc, "DisciplineOrder", i.ToString());
+                var orderAttr = new CustomDisciplineAttribute(disc, "DisciplineOrder", i.ToString(CultureInfo.InvariantCulture));
 
                 _repo.AddOrUpdateCustomDisciplineAttribute(orderAttr);
             }

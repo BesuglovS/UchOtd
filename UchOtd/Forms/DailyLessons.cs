@@ -2,11 +2,7 @@
 using Schedule.Repositories;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -63,8 +59,8 @@ namespace UchOtd.Forms
             tokenSource = new CancellationTokenSource();
             cToken = tokenSource.Token;
             
-            bool isfacultyFiltered = facultyFiltered.Checked;
-            int facultyFilterSelectedValue = (int)facultyFilter.SelectedValue;
+            var isfacultyFiltered = facultyFiltered.Checked;
+            var facultyFilterSelectedValue = (int)facultyFilter.SelectedValue;
 
             bool isStudentGroupsFiltered = studentGroupsFiltered.Checked;
             List<StudentGroup> groups = null;
@@ -73,7 +69,7 @@ namespace UchOtd.Forms
                 groups = new List<StudentGroup>();
                 foreach (Object groupObject in studentGroupList.SelectedItems)
                 {
-                    StudentGroup group = groupObject as StudentGroup;
+                    var group = groupObject as StudentGroup;
                     groups.Add(group);
                 }
             }
@@ -160,18 +156,18 @@ namespace UchOtd.Forms
             calculateTask.ContinueWith(
                 antecedent =>
                 {
-                    var LessonsData = antecedent.Result;
+                    var lessonsData = antecedent.Result;
 
-                    if (LessonsData == null)
+                    if (lessonsData == null)
                     {
                         return;
                     }
 
-                    view.RowCount = LessonsData.Rings.Count + 1;
-                    view.ColumnCount = LessonsData.LessonsData.Count + 1;
+                    view.RowCount = lessonsData.Rings.Count + 1;
+                    view.ColumnCount = lessonsData.LessonsData.Count + 1;
 
                     int columnIndex1 = 1;
-                    foreach (var group in LessonsData.LessonsData)
+                    foreach (var group in lessonsData.LessonsData)
                     {
                         view.Rows[0].Cells[columnIndex1].Value = repo.GetStudentGroup(group.Key).Name;
 
@@ -179,18 +175,18 @@ namespace UchOtd.Forms
                     }
 
                     int rowIndex = 1;
-                    foreach (var ring in LessonsData.Rings)
+                    foreach (var ring in lessonsData.Rings)
                     {
-                        view.Rows[rowIndex].Cells[0].Value = LessonsData.Rings[rowIndex - 1].Time.ToString("H:mm");
+                        view.Rows[rowIndex].Cells[0].Value = lessonsData.Rings[rowIndex - 1].Time.ToString("H:mm");
 
                         //foreach (var group in result[ring.RingId])
                         for (int columnIndex = 1; columnIndex < view.Columns.Count; columnIndex++)
                         {
-                            var group = repo.GetStudentGroup(LessonsData.Groups[columnIndex - 1].StudentGroupId);
+                            var group = repo.GetStudentGroup(lessonsData.Groups[columnIndex - 1].StudentGroupId);
 
-                            if (LessonsData.LessonsData[group.StudentGroupId].ContainsKey(ring.RingId))
+                            if (lessonsData.LessonsData[group.StudentGroupId].ContainsKey(ring.RingId))
                             {
-                                var lesson = LessonsData.LessonsData[group.StudentGroupId][ring.RingId][0];
+                                var lesson = lessonsData.LessonsData[group.StudentGroupId][ring.RingId][0];
 
                                 bool groupsNotEqual = lesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId != group.StudentGroupId;
 

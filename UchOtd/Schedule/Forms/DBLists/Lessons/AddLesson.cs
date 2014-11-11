@@ -77,7 +77,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 return;
             }
 
-            var currentBuilding = _repo.GetBuilding(selectedBuildingId);
+            _repo.GetBuilding(selectedBuildingId);
 
             // TFD list
             var AllTfdList = _repo.GetAllTeacherForDiscipline();
@@ -101,7 +101,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             teacherForDisciplineBox.DataSource = tfdViewList;
         }
 
-        private void AddLesson_Load(object sender, System.EventArgs e)
+        private void AddLesson_Load(object sender, EventArgs e)
         {
             var buildings = _repo.GetAllBuildings();
 
@@ -176,13 +176,13 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             publicComment.Items.AddRange(global::Schedule.Constants.Constants.LessonAddPublicComment.ToArray());
             publicComment.SelectedIndex = 0;
 
-            this.Top = (Screen.PrimaryScreen.WorkingArea.Height - this.Height) / 2;
-            this.Left = (Screen.PrimaryScreen.WorkingArea.Width - this.Width) / 2;
+            Top = (Screen.PrimaryScreen.WorkingArea.Height - Height) / 2;
+            Left = (Screen.PrimaryScreen.WorkingArea.Width - Width) / 2;
         }
 
         private void Cancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void Execute_Click(object sender, EventArgs e)
@@ -306,17 +306,6 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             var audsForm = new Auditoriums(_repo);
             audsForm.Show();
         }
-
-        private void ringsBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateFreeAuds();
-        }
-
-        private void dayOfWeekBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateFreeAuds();
-        }
-
 
         private void lessonWeeks_TextChanged(object sender, EventArgs e)
         {

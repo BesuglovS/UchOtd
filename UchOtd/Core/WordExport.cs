@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Office.Interop.Word;
-using NUDispSchedule.Views;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using UchOtd.NUDS.View;
 using UchOtd.Schedule.Views.DBListViews;
 using Shape = Microsoft.Office.Interop.Word.Shape;
 using Schedule.Constants;
@@ -371,7 +371,6 @@ namespace UchOtd.Core
             int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek,
             bool weekFiltered, int weekFilter, bool weeksMarksVisible)
         {
-            object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             //Start Word and create a new document.
@@ -691,13 +690,11 @@ namespace UchOtd.Core
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
             int pageCounter = 0;
 
-            List<Faculty> facultiesList;
-            facultiesList = repo.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
+            List<Faculty> facultiesList = repo.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
 
             if (facultyFilter != -1)
             {
-                facultiesList = new List<Faculty>();
-                facultiesList.Add(repo.GetFaculty(facultyFilter));
+                facultiesList = new List<Faculty> {repo.GetFaculty(facultyFilter)};
             }
 
 
@@ -711,8 +708,7 @@ namespace UchOtd.Core
 
                     var schedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, false, -1, false, futureDatesOnly);
 
-                    Paragraph oPara1;
-                    oPara1 = oDoc.Content.Paragraphs.Add();
+                    Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
                     oPara1.Range.Text = "Расписание";
                     oPara1.Range.Font.Bold = 0;
                     oPara1.Range.Font.Size = 10;
@@ -795,10 +791,9 @@ namespace UchOtd.Core
                         }
                     }
 
-                    Table oTable;
                     Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
 
-                    oTable = oDoc.Tables.Add(wrdRng, 1 + timeList.Count, 1 + schedule.Count);
+                    Table oTable = oDoc.Tables.Add(wrdRng, 1 + timeList.Count, 1 + schedule.Count);
                     oTable.Borders.Enable = 1;
                     oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
                     oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
@@ -818,8 +813,8 @@ namespace UchOtd.Core
 
                     int groupColumn = 2;
 
-                    Dictionary<int, List<int>> plainGroupsListIds = new Dictionary<int, List<int>>();
-                    Dictionary<int, List<int>> nGroupsListIds = new Dictionary<int, List<int>>();
+                    var plainGroupsListIds = new Dictionary<int, List<int>>();
+                    var nGroupsListIds = new Dictionary<int, List<int>>();
 
 
                     foreach (var group in schedule)
@@ -1064,8 +1059,7 @@ namespace UchOtd.Core
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
             int pageCounter = 0;
 
-            List<Faculty> facultiesList;
-            facultiesList = repo.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
+            List<Faculty> facultiesList = repo.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
 
             foreach (var faculty in facultiesList)
             {
@@ -1087,8 +1081,7 @@ namespace UchOtd.Core
 
                     var schedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek, false, -1, false, onlyFutureDates);
 
-                    Paragraph oPara1;
-                    oPara1 = oDoc.Content.Paragraphs.Add();
+                    Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
                     oPara1.Range.Text = "Расписание";
                     oPara1.Range.Font.Bold = 0;
                     oPara1.Range.Font.Size = 10;
@@ -1171,10 +1164,9 @@ namespace UchOtd.Core
                         }
                     }
 
-                    Table oTable;
                     Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
 
-                    oTable = oDoc.Tables.Add(wrdRng, 1 + timeList.Count, 1 + schedule.Count);
+                    Table oTable = oDoc.Tables.Add(wrdRng, 1 + timeList.Count, 1 + schedule.Count);
                     oTable.Borders.Enable = 1;
                     oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
                     oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
@@ -1194,8 +1186,8 @@ namespace UchOtd.Core
 
                     int groupColumn = 2;
 
-                    Dictionary<int, List<int>> plainGroupsListIds = new Dictionary<int, List<int>>();
-                    Dictionary<int, List<int>> nGroupsListIds = new Dictionary<int, List<int>>();
+                    var plainGroupsListIds = new Dictionary<int, List<int>>();
+                    var nGroupsListIds = new Dictionary<int, List<int>>();
 
 
                     foreach (var group in schedule)
@@ -1432,7 +1424,6 @@ namespace UchOtd.Core
             int lessonLength, int facultyId, int daysOfWeek,
             bool weekFiltered, int weekFilter, bool weeksMarksVisible)
         {
-            object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             //Start Word and create a new document.
@@ -1445,7 +1436,6 @@ namespace UchOtd.Core
             oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
 
-            int pageCount;
             int currentPageNum = 1;
 
             var faculty = repo.GetFaculty(facultyId);
@@ -1456,13 +1446,12 @@ namespace UchOtd.Core
 
                 var firstDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, firstDaySchedule, oDoc, oEndOfDoc, oWord, null, dayOfWeek);
 
-                Table secondDayTable = null;
-
 
                 var secondDaySchedule = repo.GetFacultyDOWSchedule(faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter, false, false);
-                secondDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, secondDaySchedule, oDoc, oEndOfDoc, oWord, firstDayTable, dayOfWeek + 1);
+                var secondDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, secondDaySchedule, oDoc, oEndOfDoc, oWord, firstDayTable, dayOfWeek + 1);
 
                 var fontSize = 10.5F;
+                int pageCount;
                 do
                 {
                     fontSize -= 0.5F;
@@ -1508,7 +1497,6 @@ namespace UchOtd.Core
             int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek,
             bool weekFiltered, int weekFilter, bool weeksMarksVisible)
         {
-            object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             //Start Word and create a new document.
@@ -1523,8 +1511,7 @@ namespace UchOtd.Core
 
             var faculty = repo.GetFaculty(facultyId);
 
-            Paragraph oPara1;
-            oPara1 = oDoc.Content.Paragraphs.Add();
+            Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
             oPara1.Range.Text = "Расписание";
             oPara1.Range.Font.Bold = 0;
             oPara1.Range.Font.Size = 10;
@@ -1627,7 +1614,6 @@ namespace UchOtd.Core
                 }
             }
 
-            object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             //Start Word and create a new document.
@@ -1797,7 +1783,6 @@ namespace UchOtd.Core
             ScheduleRepository repo, Dictionary<int, Dictionary<int, List<string>>> auds
             , int dow, bool addTeacherFio)
         {
-            object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             //Start Word and create a new document.
@@ -1933,7 +1918,6 @@ namespace UchOtd.Core
             int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek,
             bool weekFiltered, int weekFilter, bool weeksMarksVisible)
         {
-            object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             //Start Word and create a new document.
@@ -1948,9 +1932,7 @@ namespace UchOtd.Core
 
             var faculty = repo.GetFaculty(facultyId);
 
-            Table oTable = null;
-
-            oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null);
+            var oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null);
             if (dayOfWeek != 7)
             {
                 oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, oTable);
@@ -2008,7 +1990,7 @@ namespace UchOtd.Core
 
             Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
 
-            Table oTable = null;
+            Table oTable;
             var tableRowOffset = 0;
 
             if (tableToContinue == null)
@@ -2392,10 +2374,12 @@ namespace UchOtd.Core
 
                             var discName = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
 
-                            var shorteningDictionary = new Dictionary<string, string>();
-                            shorteningDictionary.Add("Английский язык", "Англ. яз.");
-                            shorteningDictionary.Add("Немецкий язык", "Нем. яз.");
-                            shorteningDictionary.Add("Французский язык", "Франц. яз.");
+                            var shorteningDictionary = new Dictionary<string, string>
+                            {
+                                {"Английский язык", "Англ. яз."},
+                                {"Немецкий язык", "Нем. яз."},
+                                {"Французский язык", "Франц. яз."}
+                            };
 
                             if (shorteningDictionary.ContainsKey(discName))
                             {
@@ -2557,8 +2541,6 @@ namespace UchOtd.Core
 
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
-            Range wrdRng;
-
             int pageCounter = 0;
 
             foreach (var faculty in repo.GetAllFaculties())
@@ -2575,7 +2557,7 @@ namespace UchOtd.Core
 
                     var groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons, false);
 
-                    wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                    Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
 
                     Table oTable = oDoc.Tables.Add(wrdRng, 1 + groupEvents.Count, 7);
                     oTable.Borders.Enable = 1;
@@ -2589,7 +2571,7 @@ namespace UchOtd.Core
                                 WdParagraphAlignment.wdAlignParagraphCenter;
 
                     oTable.Columns[1].Width = oWord.CentimetersToPoints(2.44f);
-                    float colWidth = 25.64F / 6;
+                    const float colWidth = 25.64F / 6;
                     for (int j = 1; j <= 6; j++)
                     {
                         oTable.Columns[j + 1].Width = oWord.CentimetersToPoints(colWidth);
@@ -2657,8 +2639,6 @@ namespace UchOtd.Core
 
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
-            Range wrdRng;
-
             var group = repo.GetStudentGroup(groupId);
 
             var sStarts = repo.GetSemesterStarts();
@@ -2667,7 +2647,7 @@ namespace UchOtd.Core
 
             List<GroupTableView> groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons, false);
 
-            wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+            Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
 
             Table oTable = oDoc.Tables.Add(wrdRng, 1 + groupEvents.Count, 7);
             oTable.Borders.Enable = 1;
@@ -2681,7 +2661,7 @@ namespace UchOtd.Core
                         WdParagraphAlignment.wdAlignParagraphCenter;
 
             oTable.Columns[1].Width = oWord.CentimetersToPoints(2.44f);
-            float colWidth = 25.64F / 6;
+            const float colWidth = 25.64F / 6;
             for (int j = 1; j <= 6; j++)
             {
                 oTable.Columns[j + 1].Width = oWord.CentimetersToPoints(colWidth);
@@ -2733,7 +2713,6 @@ namespace UchOtd.Core
             int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek,
             bool weekFiltered, int weekFilter, bool weeksMarksVisible)
         {
-            object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             //Start Word and create a new document.
@@ -2748,8 +2727,7 @@ namespace UchOtd.Core
 
             var faculty = repo.GetFaculty(facultyId);
 
-            Paragraph oPara1;
-            oPara1 = oDoc.Content.Paragraphs.Add();
+            Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
             oPara1.Range.Text = "Расписание " + DetectSemesterString(repo);
             oPara1.Range.Font.Bold = 0;
             oPara1.Range.Font.Size = 10;

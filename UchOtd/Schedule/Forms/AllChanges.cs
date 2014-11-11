@@ -8,18 +8,18 @@ namespace UchOtd.Schedule.Forms
 {
     public partial class AllChanges : Form
     {
-        ScheduleRepository repo;
+        readonly ScheduleRepository _repo;
 
-        public AllChanges(ScheduleRepository Repo)
+        public AllChanges(ScheduleRepository repo)
         {
             InitializeComponent();
 
-            repo = Repo;
+            _repo = repo;
         }
 
         private void AllChanges_Load(object sender, EventArgs e)
         {
-            var tfds = repo
+            var tfds = _repo
                 .GetAllTeacherForDiscipline()
                 .OrderBy(tfd => tfd.Teacher.FIO)
                 .ThenBy(tfd => tfd.Discipline.Name)
@@ -30,7 +30,7 @@ namespace UchOtd.Schedule.Forms
             tfdFilter.ValueMember = "TeacherForDisciplineId";
             tfdFilter.DataSource = tfdsView;
 
-            var teachers = repo
+            var teachers = _repo
                 .GetAllTeachers()
                 .OrderBy(t => t.FIO)
                 .ToList();
@@ -44,7 +44,7 @@ namespace UchOtd.Schedule.Forms
 
         private void RefreshView()
         {
-            var changes = repo
+            var changes = _repo
                 .GetAllLessonLogEvents()
                 .OrderByDescending(lle => lle.DateTime)
                 .ToList();

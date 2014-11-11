@@ -1,29 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Schedule.Views.DBListViews;
 
-namespace UchOtd.Schedule.Forms
+namespace UchOtd.Schedule.Forms.Analysis
 {
     public partial class ChooseRings : Form
     {
         private readonly ScheduleRepository _repo;
-        private readonly Teacher teacher;
+        private readonly Teacher _teacher;
 
         public ChooseRings(ScheduleRepository repo, Teacher teacher)
         {
             InitializeComponent();
 
-            this._repo = repo;
-            this.teacher = teacher;
+            _repo = repo;
+            _teacher = teacher;
         }
 
         private void ChooseRings_Load(object sender, EventArgs e)
@@ -34,7 +31,7 @@ namespace UchOtd.Schedule.Forms
         private void RefreshRings()
         {
             var teacherRingIds = _repo
-                .GetFiltredCustomTeacherAttributes(cta => (cta.Teacher.TeacherId == teacher.TeacherId) && (cta.Key == "TeacherRing"))
+                .GetFiltredCustomTeacherAttributes(cta => (cta.Teacher.TeacherId == _teacher.TeacherId) && (cta.Key == "TeacherRing"))
                 .Select(cta => int.Parse(cta.Value))
                 .ToList();
 
@@ -65,7 +62,7 @@ namespace UchOtd.Schedule.Forms
         private void OK_Click(object sender, EventArgs e)
         {
             var teacherRingIds = _repo
-                .GetFiltredCustomTeacherAttributes(cta => (cta.Teacher.TeacherId == teacher.TeacherId) && (cta.Key == "TeacherRing"))
+                .GetFiltredCustomTeacherAttributes(cta => (cta.Teacher.TeacherId == _teacher.TeacherId) && (cta.Key == "TeacherRing"))
                 .Select(cta => int.Parse(cta.Value))
                 .ToList();
 
@@ -79,14 +76,14 @@ namespace UchOtd.Schedule.Forms
                 {
                     Wishes.NeedsUpdateAfterChoosingRings = true;
 
-                    var newTeacherRingAttribute = new CustomTeacherAttribute(teacher, "TeacherRing", ringId.ToString());
+                    var newTeacherRingAttribute = new CustomTeacherAttribute(_teacher, "TeacherRing", ringId.ToString(CultureInfo.InvariantCulture));
                     _repo.AddCustomTeacherAttribute(newTeacherRingAttribute);
 
                     var newTeacherWishList = new List<TeacherWish>();
 
                     newTeacherWishList.AddRange(
                         _repo.GetAllCalendars()
-                            .Select(calendar => new TeacherWish(teacher, calendar, ring, 0)));
+                            .Select(calendar => new TeacherWish(_teacher, calendar, ring, 0)));
 
                     _repo.AddTeacherWishRange(newTeacherWishList);
                 }
@@ -97,15 +94,15 @@ namespace UchOtd.Schedule.Forms
 
                     var teacherRingAttribute = _repo
                         .GetFirstFiltredCustomTeacherAttribute( cta =>
-                        cta.Teacher.TeacherId == teacher.TeacherId &&
+                        cta.Teacher.TeacherId == _teacher.TeacherId &&
                         cta.Key == "TeacherRing" &&
-                        cta.Value == ringId.ToString());
+                        cta.Value == ringId.ToString(CultureInfo.InvariantCulture));
 
                     _repo.RemoveCustomTeacherAttribute(teacherRingAttribute.CustomTeacherAttributeId);
 
                     var teacherWishes = _repo
                         .GetFiltredTeacherWishes(tw =>
-                            tw.Teacher.TeacherId == teacher.TeacherId &&
+                            tw.Teacher.TeacherId == _teacher.TeacherId &&
                             tw.Ring.RingId == ringId);
 
                     foreach (var wish in teacherWishes)

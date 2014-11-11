@@ -23,8 +23,8 @@ namespace UchOtd.Schedule.wnu.MySQLViews
         public static List<MySQLExam> FromExamList(List<Exam> list)
         {
             return list
-                .Select(exam => new MySQLExam()
-                    {
+                .Select(exam => new MySQLExam
+                {
                         ExamId = exam.ExamId, 
                         DisciplineId = exam.DisciplineId, 
                         IsActive = exam.IsActive ? 1 : 0, 

@@ -69,9 +69,9 @@ namespace UchOtd.Schedule.Core
             {
                 foreach (var aud in auds)
                 {
-                    var dashPos = aud.IndexOf(" - ");
+                    var dashPos = aud.IndexOf(" - ", StringComparison.Ordinal);
                     var weeksString = aud.Substring(0, dashPos);
-                    var weeks = Utilities.ConvertWeeksToList(weeksString);
+                    var weeks = ConvertWeeksToList(weeksString);
                     var auditorium = aud.Substring(dashPos + 3, aud.Length - (dashPos + 3));
                     foreach (var week in weeks)
                     {
@@ -156,17 +156,15 @@ namespace UchOtd.Schedule.Core
             {
                 return connectionString.Substring(5);
             }
-            else
-            {
-                int startIndex = connectionString.IndexOf("Database=") + 9;
-                int endIndex = -1;
-                if (startIndex != 0)
-                {
-                    endIndex = connectionString.IndexOf(';', startIndex);
-                }
 
-                return connectionString.Substring(startIndex, endIndex - startIndex);
+            int startIndex = connectionString.IndexOf("Database=", StringComparison.Ordinal) + 9;
+            int endIndex = -1;
+            if (startIndex != 0)
+            {
+                endIndex = connectionString.IndexOf(';', startIndex);
             }
+
+            return connectionString.Substring(startIndex, endIndex - startIndex);
         }
     }
 }

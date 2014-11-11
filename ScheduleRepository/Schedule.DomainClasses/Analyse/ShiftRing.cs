@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Schedule.DomainClasses.Main;
+﻿using Schedule.DomainClasses.Main;
 
 namespace Schedule.DomainClasses.Analyse
 {

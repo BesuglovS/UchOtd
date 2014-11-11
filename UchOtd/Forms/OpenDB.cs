@@ -1,23 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace UchOtd.Forms
 {
     public partial class OpenDB : Form
     {
-        StartupForm startupForm;
+        readonly StartupForm startupForm;
 
         public OpenDB(StartupForm StartupForm)
         {
             InitializeComponent();
 
-            this.startupForm = StartupForm;
+            startupForm = StartupForm;
         }
 
         private void Cancel_Click(object sender, EventArgs e)
@@ -30,8 +24,8 @@ namespace UchOtd.Forms
             if (sqlExpressDB.Checked)
             {
                 var connectionString = "data source=tcp:127.0.0.1,1433; Database=" + SQLExpressDatabaseName.Text + 
-                    ";User ID = " + UchOtd.Properties.Settings.Default.DBUserName +
-                    ";Password = " + UchOtd.Properties.Settings.Default.DBPassword;
+                    ";User ID = " + Properties.Settings.Default.DBUserName +
+                    ";Password = " + Properties.Settings.Default.DBPassword;
 
                 startupForm._repo.ConnectionString = connectionString;
 
@@ -42,8 +36,8 @@ namespace UchOtd.Forms
             {
                 var connectionString = "data source=tcp:" + remoteHost.Text +  "," + PortNumber.Text + 
                     ";Database=" + remoteDatabaseName.Text +
-                    ";User ID = " + UchOtd.Properties.Settings.Default.DBUserName +
-                    ";Password = " + UchOtd.Properties.Settings.Default.DBPassword;
+                    ";User ID = " + Properties.Settings.Default.DBUserName +
+                    ";Password = " + Properties.Settings.Default.DBPassword;
 
                 startupForm._repo.ConnectionString = connectionString;
 

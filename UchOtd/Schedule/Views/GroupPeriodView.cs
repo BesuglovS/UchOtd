@@ -17,7 +17,7 @@ namespace UchOtd.Schedule.Views
         {
         }
 
-        public GroupPeriodView(ScheduleRepository repo, CustomStudentGroupAttribute attr)
+        public GroupPeriodView(CustomStudentGroupAttribute attr)
         {
             CustomStudentGroupAttributeId = attr.CustomStudentGroupAttributeId;
             var valueParts = attr.Value.Split('@');
@@ -29,7 +29,7 @@ namespace UchOtd.Schedule.Views
 
         public static List<GroupPeriodView> GroupPeriodsToView(ScheduleRepository repo, List<CustomStudentGroupAttribute> list)
         {
-            return list.Select(csga => new GroupPeriodView(repo, csga)).ToList();
+            return list.Select(csga => new GroupPeriodView(csga)).ToList();
         }
     }
 }
