@@ -52,13 +52,13 @@ namespace UchOtd.Schedule.Forms.Analysis
         {
             var pairs = _repo.GetFiltredCustomDisciplineAttributes(cda => cda.Key == "IncompatiblePair").ToList();
 
-            var IPViews = IncompatiblePairView.FromCDAList(_repo, pairs);
+            var ipViews = IncompatiblePairView.FromCdaList(_repo, pairs);
 
-            PairsView.DataSource = IPViews;
+            PairsView.DataSource = ipViews;
 
             PairsView.RowHeadersVisible = false;
 
-            PairsView.Columns["cdaId"].Visible = false;
+            PairsView.Columns["CdaId"].Visible = false;
 
             PairsView.Columns["Disc1"].HeaderText = "Дисциплина 1";
             PairsView.Columns["Disc1"].Width = (int)Math.Round(PairsView.Width * 0.45);
@@ -99,7 +99,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             var rowIndex = PairsView.SelectedCells[0].RowIndex;
 
-            var cdaId = ((List<IncompatiblePairView>)PairsView.DataSource)[rowIndex].cdaId;
+            var cdaId = ((List<IncompatiblePairView>)PairsView.DataSource)[rowIndex].CdaId;
 
             _repo.RemoveCustomDisciplineAttribute(cdaId);
 

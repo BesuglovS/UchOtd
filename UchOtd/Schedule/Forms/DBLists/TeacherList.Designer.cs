@@ -193,7 +193,7 @@
             this.teacherFIO.Name = "teacherFIO";
             this.teacherFIO.Size = new System.Drawing.Size(198, 20);
             this.teacherFIO.TabIndex = 0;
-            this.teacherFIO.TextChanged += new System.EventHandler(this.TeacherFIOTextChanged);
+            this.teacherFIO.TextChanged += new System.EventHandler(this.TeacherFioTextChanged);
             // 
             // label1
             // 

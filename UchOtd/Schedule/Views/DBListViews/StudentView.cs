@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Schedule.DomainClasses.Main;
 
 namespace UchOtd.Schedule.Views.DBListViews
@@ -6,7 +7,7 @@ namespace UchOtd.Schedule.Views.DBListViews
     public class StudentView
     {
         public int StudentId { get; set; }
-        public string FIO { get; set; }
+        public string Fio { get; set; }
         public string ZachNumber { get; set; }
         public string BirthDate { get; set; }
         public string Address { get; set; }
@@ -24,7 +25,7 @@ namespace UchOtd.Schedule.Views.DBListViews
         public StudentView(Student st)
         {
             StudentId = st.StudentId;
-            FIO = st.F + " " + st.I + " " + st.O;
+            Fio = st.F + " " + st.I + " " + st.O;
             ZachNumber  = st.ZachNumber;
             BirthDate = st.BirthDate.ToShortDateString();
             Address = st.Address;
@@ -38,14 +39,7 @@ namespace UchOtd.Schedule.Views.DBListViews
 
         public static List<StudentView> StudentsToView(List<Student> list)
         {
-            var result = new List<StudentView>();
-
-            foreach (var st in list)
-            {
-                result.Add(new StudentView(st));
-            }
-
-            return result;
-        }       
+            return list.Select(st => new StudentView(st)).ToList();
+        }
     }
 }

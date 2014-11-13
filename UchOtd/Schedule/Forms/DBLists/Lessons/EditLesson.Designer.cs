@@ -88,7 +88,7 @@
             this.nextTFD.TabIndex = 2;
             this.nextTFD.Text = "След.";
             this.nextTFD.UseVisualStyleBackColor = true;
-            this.nextTFD.Click += new System.EventHandler(this.NextTFDClick);
+            this.nextTFD.Click += new System.EventHandler(this.NextTfdClick);
             // 
             // prevTFD
             // 
@@ -98,7 +98,7 @@
             this.prevTFD.TabIndex = 1;
             this.prevTFD.Text = "Пред.";
             this.prevTFD.UseVisualStyleBackColor = true;
-            this.prevTFD.Click += new System.EventHandler(this.PrevTFDClick);
+            this.prevTFD.Click += new System.EventHandler(this.PrevTfdClick);
             // 
             // tfdIndex
             // 

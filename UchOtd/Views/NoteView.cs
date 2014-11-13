@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UchOtd.DomainClasses;
 
 namespace UchOtd.Views
@@ -8,28 +9,20 @@ namespace UchOtd.Views
         public int NoteId { get; set; }
         public string Text { get; set; }        
 
-        public static string format = "dd.MM.yyyy H:mm:ss";
+        public static string Format = "dd.MM.yyyy H:mm:ss";
 
         public static List<NoteView> FromNoteList(List<Note> list)
         {
-            var result = new List<NoteView>();
-
-            foreach (var note in list)
+            return list.Select(note => new NoteView
             {
-                result.Add(new NoteView { 
-                    NoteId = note.NoteId,
-                    Text = note.Text + "@" +
-                           note.Moment.ToString(format)
-                });
-            }
-
-            return result;
+                NoteId = note.NoteId, Text = note.Text + "@" + note.Moment.ToString(Format)
+            }).ToList();
         }
 
         public static string ViewFromNote(Note note)
         {
             return note.Text + "@" + 
-                   note.Moment.ToString(format);        
+                   note.Moment.ToString(Format);        
         }
     }
 }

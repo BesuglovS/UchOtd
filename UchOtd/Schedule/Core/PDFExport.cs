@@ -13,37 +13,36 @@ using System.Linq;
 
 namespace UchOtd.Schedule.Core
 {
-    public static class PDFExport
+    public static class PdfExport
     {
         public static void ExportSchedulePage(
             Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> schedule,
             string facultyName,
             string filename,
             string dow,
-            ScheduleRepository _repo,
+            ScheduleRepository repo,
             bool save,
             bool quit,
             bool print)
         {
-            double ScheduleFontsize = 10;
+            double scheduleFontsize = 10;
             int pageCount;
             Document document;
             do
             {
                 // Create a new PDF document
-                document = CreateDocument(_repo, facultyName, dow, schedule, ScheduleFontsize);
+                document = CreateDocument(repo, facultyName, dow, schedule, scheduleFontsize);
 
                 // Create a renderer and prepare (=layout) the document
                 var docRenderer = new DocumentRenderer(document);
                 docRenderer.PrepareDocument();
                 pageCount = docRenderer.FormattedDocument.PageCount;
 
-                ScheduleFontsize -= 0.5;
+                scheduleFontsize -= 0.5;
             } while (pageCount > 1);
 
             // Render the file
-            PdfDocumentRenderer pdfRenderer = new PdfDocumentRenderer(true, PdfFontEmbedding.Always);
-            pdfRenderer.Document = document;
+            var pdfRenderer = new PdfDocumentRenderer(true, PdfFontEmbedding.Always) {Document = document};
             pdfRenderer.RenderDocument();
 
             // Save the document...                
@@ -67,14 +66,15 @@ namespace UchOtd.Schedule.Core
 
         private static void SendToPrinter(String filename)
         {
-            ProcessStartInfo info = new ProcessStartInfo();
-            info.Verb = "print";
-            info.FileName = filename;
-            info.CreateNoWindow = true;
-            info.WindowStyle = ProcessWindowStyle.Hidden;
+            var info = new ProcessStartInfo
+            {
+                Verb = "print",
+                FileName = filename,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
 
-            Process p = new Process();
-            p.StartInfo = info;
+            var p = new Process {StartInfo = info};
             p.Start();
 
             p.WaitForInputIdle();
@@ -86,7 +86,7 @@ namespace UchOtd.Schedule.Core
 
         private static Document CreateDocument(ScheduleRepository repo, string facultyName, string dow, 
             Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> schedule,
-            double ScheduleFontsize)
+            double scheduleFontsize)
         {
             var result = new Document();
             Section section = result.AddSection();
@@ -100,7 +100,7 @@ namespace UchOtd.Schedule.Core
 
             SetHeaderText(section, repo, facultyName, dow);
 
-            PutScheduleTable(repo, section, facultyName, dow, schedule, ScheduleFontsize);
+            PutScheduleTable(repo, section, schedule, scheduleFontsize);
 
             return result;
         }
@@ -199,9 +199,9 @@ namespace UchOtd.Schedule.Core
             return "второго семестра " + (ssYear-1) + " – " + ssYear + " учебного года";
         }        
 
-        private static void PutScheduleTable(ScheduleRepository repo, Section section, string facultyName, string dow,
+        private static void PutScheduleTable(ScheduleRepository repo, Section section,
             Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> schedule,
-            double ScheduleFontsize)
+            double scheduleFontsize)
         {
             var paragraph = section.AddParagraph();
             paragraph.Format.SpaceBefore = "1.25cm";
@@ -238,8 +238,8 @@ namespace UchOtd.Schedule.Core
 
             int groupColumn = 1;
 
-            Dictionary<int, List<int>> plainGroupsListIds = new Dictionary<int, List<int>>();
-            Dictionary<int, List<int>> nGroupsListIds = new Dictionary<int, List<int>>();
+            var plainGroupsListIds = new Dictionary<int, List<int>>();
+            var nGroupsListIds = new Dictionary<int, List<int>>();
 
             // Create the header of the table
             Row row = table.AddRow();
@@ -292,22 +292,22 @@ namespace UchOtd.Schedule.Core
                 var timeRow = table.AddRow();
                 timeRow.VerticalAlignment = VerticalAlignment.Center;
 
-                var Hour = int.Parse(time.Substring(0, 2));
-                var Minute = int.Parse(time.Substring(3, 2));
+                var hour = int.Parse(time.Substring(0, 2));
+                var minute = int.Parse(time.Substring(3, 2));
 
-                Minute += 80;
+                minute += 80;
 
-                while (Minute >= 60)
+                while (minute >= 60)
                 {
-                    Hour++;
-                    Minute -= 60;
+                    hour++;
+                    minute -= 60;
                 }
 
 
                 timeRowIndexList.Add(timeRowIndex);
 
                 timeRow.Cells[0].Format.Alignment = ParagraphAlignment.Center;
-                timeRow.Cells[0].AddParagraph(time + " - " + Hour.ToString("D2") + ":" + Minute.ToString("D2"));
+                timeRow.Cells[0].AddParagraph(time + " - " + hour.ToString("D2") + ":" + minute.ToString("D2"));
                 
 
                 var columnGroupIndex = 1;
@@ -315,13 +315,10 @@ namespace UchOtd.Schedule.Core
                 {
                     if (group.Value.ContainsKey(time))
                     {
-                        var eventCount = group.Value[time].Count;
-
                         var cellTable = timeRow.Cells[columnGroupIndex].Elements.AddTable();
                         cellTable.AddColumn(table.Columns[columnGroupIndex].Width.Centimeter + "cm");
                         cellTable.Borders.Width = 0;
 
-                        var tfdIndex = 0;                                                
                         foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CalculateWeekNumber(l.Calendar.Date)).Min()))
                         {
                             var cellText = "";
@@ -369,10 +366,8 @@ namespace UchOtd.Schedule.Core
                             Row cellTableRow = cellTable.AddRow();
 
                             cellTableRow.Cells[0].Format.Alignment = ParagraphAlignment.Left;
-                            cellTableRow.Cells[0].Format.Font.Size = ScheduleFontsize;
+                            cellTableRow.Cells[0].Format.Font.Size = scheduleFontsize;
                             cellTableRow.Cells[0].AddParagraph(cellText);
-
-                            tfdIndex++;
                         }
                     }
                     
@@ -386,7 +381,7 @@ namespace UchOtd.Schedule.Core
 
         public static void ExportWholeSchedule(
             string filename, 
-            ScheduleRepository _repo,
+            ScheduleRepository repo,
             bool save,
             bool quit,
             bool print)
@@ -394,21 +389,21 @@ namespace UchOtd.Schedule.Core
             throw new NotImplementedException();
         }
 
-        public static void PrintWholeSchedule(ScheduleRepository _repo)
+        public static void PrintWholeSchedule(ScheduleRepository repo)
         {
             
             /*foreach (var faculty in _repo.GetAllFaculties().OrderBy(f => f.SortingOrder))
             {*/
                 //var facultyId = faculty.FacultyId;
-                var facultyId = _repo.GetFirstFiltredFaculty(f => f.Letter == "Т").FacultyId;
-                var facultyName = _repo.GetFaculty(facultyId).Name;
+                var facultyId = repo.GetFirstFiltredFaculty(f => f.Letter == "Т").FacultyId;
+                var facultyName = repo.GetFaculty(facultyId).Name;
                 
                 
                 for (int i = 1; i <= 6; i++)
                 {
                     //var i = 4;
-                    var facultyDowLessons = _repo.GetFacultyDOWSchedule(facultyId, i, false, -1, false, false);
-                    ExportSchedulePage(facultyDowLessons, facultyName, "Export.pdf", Constants.DowLocal[i], _repo, false, false, true);
+                    var facultyDowLessons = repo.GetFacultyDowSchedule(facultyId, i, false, -1, false, false);
+                    ExportSchedulePage(facultyDowLessons, facultyName, "Export.pdf", Constants.DowLocal[i], repo, false, false, true);
                 }
             //}
         }

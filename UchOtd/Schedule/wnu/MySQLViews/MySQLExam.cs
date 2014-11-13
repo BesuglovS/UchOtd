@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace UchOtd.Schedule.wnu.MySQLViews
 {
-    public class MySQLExam
+    public class MySqlExam
     {
         // Common
         public int ExamId { get; set; }
@@ -20,10 +20,10 @@ namespace UchOtd.Schedule.wnu.MySQLViews
         public string ExamDateTime { get; set; }
         public int ExamAuditoriumId { get; set; }
 
-        public static List<MySQLExam> FromExamList(List<Exam> list)
+        public static List<MySqlExam> FromExamList(List<Exam> list)
         {
             return list
-                .Select(exam => new MySQLExam
+                .Select(exam => new MySqlExam
                 {
                         ExamId = exam.ExamId, 
                         DisciplineId = exam.DisciplineId, 

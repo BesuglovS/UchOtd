@@ -6,11 +6,11 @@ using UchOtd.Schedule.Views;
 
 namespace UchOtd.Schedule.Forms
 {
-    public partial class LessonListByTFD : Form
+    public partial class LessonListByTfd : Form
     {
         private readonly ScheduleRepository _repo;
 
-        public LessonListByTFD(ScheduleRepository repo)
+        public LessonListByTfd(ScheduleRepository repo)
         {
             InitializeComponent();
 
@@ -21,10 +21,10 @@ namespace UchOtd.Schedule.Forms
         {
             // TFD load
             var tfdList = _repo.GetAllTeacherForDiscipline();
-            var tfdViewList = tfdView.tfdsToView(tfdList);
-            tfdViewList = tfdViewList.OrderBy(tfdv => tfdv.tfdSummary).ToList();
+            var tfdViewList = TfdView.TfdsToView(tfdList);
+            tfdViewList = tfdViewList.OrderBy(tfdv => tfdv.TfdSummary).ToList();
 
-            tfdBox.DisplayMember = "tfdSummary";
+            tfdBox.DisplayMember = "TfdSummary";
             tfdBox.ValueMember = "TeacherForDisciplineId";
             tfdBox.DataSource = tfdViewList;
         }
@@ -39,7 +39,7 @@ namespace UchOtd.Schedule.Forms
                 .ThenBy(l => l.Ring.Time.TimeOfDay)
                 .ToList();
 
-            var lessonsView = LessonViewAtLessonListByTFD.FromLessonList(lessons);
+            var lessonsView = LessonViewAtLessonListByTfd.FromLessonList(lessons);
 
             view.DataSource = lessonsView;
 

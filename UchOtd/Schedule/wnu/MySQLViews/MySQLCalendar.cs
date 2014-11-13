@@ -2,22 +2,22 @@
 using System.Linq;
 using Schedule.DomainClasses.Main;
 
-namespace Schedule.wnu.MySQLViews
+namespace UchOtd.Schedule.wnu.MySQLViews
 {
-    public class MySQLCalendar
+    public class MySqlCalendar
     {
         public int CalendarId { get; set; }
         public string Date { get; set; }
 
-        public MySQLCalendar(Calendar calendar)
+        public MySqlCalendar(Calendar calendar)
         {
             CalendarId = calendar.CalendarId;
             Date = calendar.Date.ToString("yyyy-MM-dd");
         }
 
-        public static List<MySQLCalendar> FromCalendarList(IEnumerable<Calendar> list)
+        public static List<MySqlCalendar> FromCalendarList(IEnumerable<Calendar> list)
         {
-            return list.Select(calendar => new MySQLCalendar(calendar)).ToList();
+            return list.Select(calendar => new MySqlCalendar(calendar)).ToList();
         }
     }
 }

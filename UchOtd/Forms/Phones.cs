@@ -12,14 +12,14 @@ namespace UchOtd.Forms
 {
     public partial class Phones : Form
     {
-        readonly UchOtdRepository _UOrepo;
+        readonly UchOtdRepository _uoRepo;
         private readonly TaskScheduler _uiScheduler;
 
-        public Phones(UchOtdRepository UOrepo)
+        public Phones(UchOtdRepository uoRepo)
         {
             InitializeComponent();
 
-            _UOrepo = UOrepo;
+            _uoRepo = uoRepo;
 
             _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
         }
@@ -31,10 +31,10 @@ namespace UchOtd.Forms
 
         private void RefreshView()
         {
-            var phones = _UOrepo
+            var phones = _uoRepo
                 .GetFiltredPhones(p => 
                     p.Name.ToUpper().Contains(NameBox.Text.ToUpper()) ||
-                    p.Name.ToUpper().Contains(LayoutSupport.ConvertEnRU(NameBox.Text.ToLower()).ToUpper()))
+                    p.Name.ToUpper().Contains(LayoutSupport.ConvertEnRu(NameBox.Text.ToLower()).ToUpper()))
                 .OrderBy(p => p.Name)
                 .ToList();
 
@@ -59,7 +59,7 @@ namespace UchOtd.Forms
         {
             var newPhone = new Phone { Name = NameBox.Text, Number = NumberBox.Text };
 
-            _UOrepo.AddPhone(newPhone);
+            _uoRepo.AddPhone(newPhone);
 
             RefreshView();
         }
@@ -73,7 +73,7 @@ namespace UchOtd.Forms
                 phone.Name = NameBox.Text;
                 phone.Number = NumberBox.Text;
 
-                _UOrepo.UpdatePhone(phone);
+                _uoRepo.UpdatePhone(phone);
 
                 RefreshView();
             }
@@ -85,7 +85,7 @@ namespace UchOtd.Forms
             {
                 var phone = ((List<Phone>)view.DataSource)[view.SelectedCells[0].RowIndex];
 
-                _UOrepo.RemovePhone(phone.PhoneId);
+                _uoRepo.RemovePhone(phone.PhoneId);
 
                 NameBox.Text = "";
 
@@ -138,16 +138,16 @@ namespace UchOtd.Forms
                 phones.Add(phone);
             }
 
-            _UOrepo.AddPhonesRange(phones);
+            _uoRepo.AddPhonesRange(phones);
         }
 
         private void clear_Click(object sender, EventArgs e)
         {
-            var phoneIds = _UOrepo.GetAllPhones().Select(p => p.PhoneId);
+            var phoneIds = _uoRepo.GetAllPhones().Select(p => p.PhoneId);
 
             foreach (var pid in phoneIds)
             {
-                _UOrepo.RemovePhone(pid);
+                _uoRepo.RemovePhone(pid);
             }
         }
     }

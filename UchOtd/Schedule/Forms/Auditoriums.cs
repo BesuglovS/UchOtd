@@ -30,7 +30,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingId = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.getDOWAuds(DayOfWeek.Monday, weekNum, buildingId, showProposed.Checked);
+            var auds = _repo.GetDowAuds(DayOfWeek.Monday, weekNum, buildingId, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -53,7 +53,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.getDOWAuds(DayOfWeek.Tuesday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.GetDowAuds(DayOfWeek.Tuesday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -76,7 +76,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.getDOWAuds(DayOfWeek.Wednesday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.GetDowAuds(DayOfWeek.Wednesday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -99,7 +99,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.getDOWAuds(DayOfWeek.Thursday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.GetDowAuds(DayOfWeek.Thursday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -122,7 +122,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.getDOWAuds(DayOfWeek.Friday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.GetDowAuds(DayOfWeek.Friday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -145,7 +145,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.getDOWAuds(DayOfWeek.Saturday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.GetDowAuds(DayOfWeek.Saturday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {

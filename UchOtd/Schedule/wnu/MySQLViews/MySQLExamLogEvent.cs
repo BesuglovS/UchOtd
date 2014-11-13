@@ -4,17 +4,17 @@ using System.Linq;
 
 namespace UchOtd.Schedule.wnu.MySQLViews
 {
-    public class MySQLExamLogEvent
+    public class MySqlExamLogEvent
     {
         public int LogEventId { get; set; }
         public int OldExamId { get; set; }
         public int NewExamId { get; set; }
         public string DateTime { get; set; }
 
-        public static List<MySQLExamLogEvent> FromLogEventList(List<LogEvent> list)
+        public static List<MySqlExamLogEvent> FromLogEventList(List<LogEvent> list)
         {
             return list
-                .Select(logEvent => new MySQLExamLogEvent
+                .Select(logEvent => new MySqlExamLogEvent
                 {
                     LogEventId = logEvent.LogEventId,
                     OldExamId = logEvent.OldExam.ExamId,

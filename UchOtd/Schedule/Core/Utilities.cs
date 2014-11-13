@@ -33,7 +33,7 @@ namespace UchOtd.Schedule.Core
             sw.Close();
         }
 
-        public static int FindLCM(int a, int b)
+        public static int FindLcm(int a, int b)
         {
             int num1, num2;
             if (a > b)
@@ -150,7 +150,7 @@ namespace UchOtd.Schedule.Core
             return result;
         }
 
-        internal static string ExtractDBOrConnectionName(string connectionString)
+        internal static string ExtractDbOrConnectionName(string connectionString)
         {
             if (connectionString.StartsWith("Name="))
             {

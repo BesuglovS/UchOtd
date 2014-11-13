@@ -2,7 +2,6 @@
 using Schedule.DomainClasses.Analyse;
 using Schedule.Repositories;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -27,32 +26,30 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void LoadDisciplines()
         {
-            var DisciplineViews = new List<DisciplineTextView>();
-
             var attributes = _repo.GetFiltredCustomDisciplineAttributes(cda => cda.Key == "DisciplineOrder").ToList();
             var discIds = attributes.Select(a => a.Discipline.DisciplineId).ToList();
 
-            foreach (var attribute in attributes.OrderBy(a => int.Parse(a.Value))
+            var disciplineViews = attributes
+                .OrderBy(a => int.Parse(a.Value))
                 .ThenBy(a => a.Discipline.StudentGroup.Name)
                 .ThenBy(a => a.Discipline.Name)
-                .ThenBy(a => a.Discipline.AuditoriumHours))
-            {
-                DisciplineViews.Add(new DisciplineTextView(attribute.Discipline));
-            }
+                .ThenBy(a => a.Discipline.AuditoriumHours)
+                .Select(attribute => new DisciplineTextView(attribute.Discipline))
+                .ToList();
 
             var discsLeft = _repo.GetFiltredDisciplines(d => !discIds.Contains(d.DisciplineId)).ToList();
 
-            foreach (var disc in discsLeft.OrderBy(d => d.StudentGroup.Name)
+            disciplineViews
+                .AddRange(discsLeft
+                .OrderBy(d => d.StudentGroup.Name)
                 .ThenBy(d => d.Name)
-                .ThenBy(d => d.AuditoriumHours))
-            {
-                DisciplineViews.Add(new DisciplineTextView(disc));
-            }
+                .ThenBy(d => d.AuditoriumHours)
+                .Select(disc => new DisciplineTextView(disc)));
 
             discsView.DisplayMember = "DisciplineSummary";
             discsView.ValueMember = "DisciplineId";
 
-            foreach (var view in DisciplineViews)
+            foreach (var view in disciplineViews)
             {
                 discsView.Items.Add(view);
             }

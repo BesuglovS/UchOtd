@@ -197,7 +197,7 @@
       <DependentUpon>ScheduleForm.cs</DependentUpon>
     </Compile>
     <Compile Include="NUDS\View\DailyScheduleGroupLessonView.cs" />
-    <Compile Include="NUDS\View\lleView.cs" />
+    <Compile Include="NUDS\View\LleView.cs" />
     <Compile Include="NUDS\View\TeacherScheduleTimeView.cs" />
     <Compile Include="Schedule\Core\PDFExport.cs" />
     <Compile Include="Schedule\Core\Utilities.cs" />

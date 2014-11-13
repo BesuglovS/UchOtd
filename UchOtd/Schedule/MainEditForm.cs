@@ -7,9 +7,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
+using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
-using Schedule.wnu;
 using UchOtd.Core;
 using UchOtd.Schedule.Core;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
@@ -17,6 +17,7 @@ using UchOtd.Schedule.Views.DBListViews;
 using UchOtd.Schedule.Forms.DBLists;
 using UchOtd.Schedule.Forms.Analysis;
 using UchOtd.Schedule.Forms;
+using UchOtd.Schedule.wnu;
 using Utilities = UchOtd.Core.Utilities;
 
 namespace UchOtd.Schedule
@@ -43,7 +44,7 @@ namespace UchOtd.Schedule
                 Text = "Расписание (" + Utilities.ExtractDbOrConnectionName(Repo.ConnectionString) + ")";
             }
 
-            if (StartupForm.school)
+            if (StartupForm.School)
             {
                 uploadPrefix.Text = "s_";
             }
@@ -86,7 +87,7 @@ namespace UchOtd.Schedule
             
 
             DOWList.Items.Clear();
-            foreach (var dow in global::Schedule.Constants.Constants.DowLocal.Values)
+            foreach (var dow in Constants.DowLocal.Values)
             {
                 DOWList.Items.Add(dow);
             }
@@ -141,7 +142,7 @@ namespace UchOtd.Schedule
 
             for (int i = 1; i <= 7; i++)
             {
-                ScheduleView.Columns[i].HeaderText = global::Schedule.Constants.Constants.DowLocal[i];
+                ScheduleView.Columns[i].HeaderText = Constants.DowLocal[i];
                 if (i < 7)
                 {
                     ScheduleView.Columns[i].Width = (ScheduleView.Width - ScheduleView.Columns[0].Width - 20) / 6;
@@ -340,21 +341,7 @@ namespace UchOtd.Schedule
         {
             return (state == 2) ? startToken + text + endToken : text;
         }
-
-        private void BigRedButtonClick(object sender, EventArgs e)
-        {            
-            // Oops
-            // ExportStudentsData("StudentsExport-1sem.txt");
-            // ImportStudentData("StudentsExport-1sem.txt");
-            // CopyINOGroupLessonsFromRealSchedule();
-            //ExportScheduleDates("Oops\\stat.txt");
-            // ExportFacultyGroups();
-            // ExportDiscAuds("Auds.txt");
-            //ExportGroupDisciplines("Oops\\Discs.txt");
-
-            
-        }
-
+        
         private void ExportGroupDisciplines(string filename)
         {
             String semesterString = (Repo.GetSemesterStarts().Month > 6) ? " (1 семестр)" : " (2 семестр)";
@@ -383,7 +370,7 @@ namespace UchOtd.Schedule
                             tfd.Discipline.Name + '\t' + 
                             tfd.Discipline.StudentGroup.Name + '\t' +
                             tfd.Teacher.FIO + '\t' +
-                            Repo.getTFDHours(tfd.TeacherForDisciplineId)
+                            Repo.GetTfdHours(tfd.TeacherForDisciplineId)
                             /*tfd.Discipline.AuditoriumHours + '\t' +
                             Constants.Constants.Attestation[tfd.Discipline.Attestation]*/
                         );
@@ -411,22 +398,16 @@ namespace UchOtd.Schedule
                     continue;
                 }
 
-                var studentIds = Repo.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == tfd.Discipline.StudentGroup.StudentGroupId)
-                    .ToList()
-                    .Select(stig => stig.Student.StudentId);
+                var localTfd = tfd;
+                var studentIds = Repo
+                    .GetFiltredStudentsInGroups(sig => 
+                        sig.StudentGroup.StudentGroupId == localTfd.Discipline.StudentGroup.StudentGroupId)
+                    .Select(stig => stig.Student.StudentId)
+                    .ToList();
 
                 
 
-                Boolean econ = false;
-
-                foreach (var studentId in studentIds)
-                {
-                    if (econstudentIds.Contains(studentId))
-                    {
-                        econ = true;
-                        break;
-                    }
-                }
+                var econ = studentIds.Any(econstudentIds.Contains);
 
                 if (!econ)
                 {
@@ -535,7 +516,7 @@ namespace UchOtd.Schedule
                             continue;
                         }
 
-                        StringBuilder sb = new StringBuilder();
+                        var sb = new StringBuilder();
                         sb.Append(
                             tfd.Discipline.StudentGroup.Name + '\t' +
                             tfd.Discipline.Name + '\t' +
@@ -559,14 +540,14 @@ namespace UchOtd.Schedule
 
         private static void AppendToFile(String filename, String line)
         {
-            StreamWriter sw = new StreamWriter(filename, true);
+            var sw = new StreamWriter(filename, true);
             sw.WriteLine(line);
             sw.Close();
         }
 
 
 
-        private void CopyINOGroupLessonsFromRealSchedule()
+        private void CopyInoGroupLessonsFromRealSchedule()
         {
 
             Repo.ConnectionString = "data source=tcp:127.0.0.1,1433; Database=ScheduleDB;User ID = "+ 
@@ -796,7 +777,7 @@ namespace UchOtd.Schedule
 
         private void LogDoubledLessons(string filename)
         {
-            StreamWriter sw = new StreamWriter(filename);
+            var sw = new StreamWriter(filename);
             sw.Close();
             var students = Repo.GetFiltredStudents(s => !s.Expelled);
             foreach (var student in students)
@@ -1027,7 +1008,7 @@ namespace UchOtd.Schedule
                 .GetFiltredDisciplines(d => 
                     (d.AuditoriumHours == 0) ||
                     (Repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == d.DisciplineId) == null) ||
-                    (Repo.getTFDHours(Repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == d.DisciplineId).TeacherForDisciplineId) != 0))
+                    (Repo.GetTfdHours(Repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == d.DisciplineId).TeacherForDisciplineId) != 0))
                 .Count;
             var diff2 = discCount - touchedDiscs;
 
@@ -1051,7 +1032,7 @@ namespace UchOtd.Schedule
 
         private void teachersHours_Click(object sender, EventArgs e)
         {
-            var teacherHoursForm = new teacherHours(Repo);
+            var teacherHoursForm = new TeacherHours(Repo);
             teacherHoursForm.Show();
         }
 
@@ -1136,25 +1117,20 @@ namespace UchOtd.Schedule
                     .Select(sig => sig.Student.StudentId)
                     .ToList();
 
-                    var facultyScheduleChanged = new List<int>();
+                    var facultyScheduleChanged = (
+                            from faculty in fg
+                            where Repo.GetFiltredStudentsInGroups(sig => 
+                                studentIds.Contains(sig.Student.StudentId) &&
+                                faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
+                            select faculty.Key)
+                        .ToList();
 
-                    foreach (var faculty in fg)
+                    var localEvent = ev;
+                    foreach (var dowFacTuple in facultyScheduleChanged
+                        .Select(faculty => Tuple.Create(faculty, localEvent.OldLesson.Calendar.Date.DayOfWeek))
+                        .Where(dowFacTuple => !result.Contains(dowFacTuple)))
                     {
-                        if (Repo.GetFiltredStudentsInGroups(sig => 
-                            studentIds.Contains(sig.Student.StudentId) && 
-                            faculty.Contains(sig.StudentGroup.StudentGroupId)).Any())
-                        {
-                            facultyScheduleChanged.Add(faculty.Key);
-                        }
-                    }
-
-                    foreach (var faculty in facultyScheduleChanged)
-                    {
-                        var dowFacTuple = Tuple.Create(faculty, ev.OldLesson.Calendar.Date.DayOfWeek);
-                        if (!result.Contains(dowFacTuple))
-                        {
-                            result.Add(dowFacTuple);
-                        }
+                        result.Add(dowFacTuple);
                     }
                 }
 
@@ -1169,33 +1145,31 @@ namespace UchOtd.Schedule
                     .Select(sig => sig.Student.StudentId)
                     .ToList();
 
-                    var facultyScheduleChanged = new List<int>();
+                    var facultyScheduleChanged = (
+                            from faculty in fg
+                            where Repo
+                            .GetFiltredStudentsInGroups(sig => 
+                                studentIds.Contains(sig.Student.StudentId) &&
+                                faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
+                            select faculty.Key)
+                        .ToList();
 
-                    foreach (var faculty in fg)
+                    var localEvent = ev;
+                    foreach (var dowFacTuple in facultyScheduleChanged
+                        .Select(faculty => Tuple.Create(faculty, localEvent.NewLesson.Calendar.Date.DayOfWeek))
+                        .Where(dowFacTuple => !result.Contains(dowFacTuple)))
                     {
-                        if (Repo.GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId) && faculty.Contains(sig.StudentGroup.StudentGroupId)).Any())
-                        {
-                            facultyScheduleChanged.Add(faculty.Key);
-                        }
-                    }
-
-                    foreach (var faculty in facultyScheduleChanged)
-                    {
-                        var dowFacTuple = Tuple.Create(faculty, ev.NewLesson.Calendar.Date.DayOfWeek);
-                        if (!result.Contains(dowFacTuple))
-                        {
-                            result.Add(dowFacTuple);
-                        }
+                        result.Add(dowFacTuple);
                     }
                 }                
             }
 
-            var messageString = "";
-
-            foreach (var dowFac in result.OrderBy(df => df.Item1).ThenBy(df => df.Item2))
-            {
-                messageString += Repo.GetFaculty(dowFac.Item1).Letter + " - " + global::Schedule.Constants.Constants.DowLocal[global::Schedule.Constants.Constants.DowRemap[(int)dowFac.Item2]] + Environment.NewLine;
-            }
+            var messageString = result
+                .OrderBy(df => df.Item1)
+                .ThenBy(df => df.Item2)
+                .Aggregate("", (current, dowFac) => 
+                    current + (Repo.GetFaculty(dowFac.Item1).Letter + " - " + 
+                    Constants.DowLocal[Constants.DowRemap[(int) dowFac.Item2]] + Environment.NewLine));
 
             MessageBox.Show(messageString, "Изменения на сегодня");
         }
@@ -1229,15 +1203,15 @@ namespace UchOtd.Schedule
                 .ThenBy(l => l.Auditorium.Name)                
                 .ToList();
 
-            for (int i = 0; i < lessons.Count; i++)
+            foreach (var lesson in lessons)
             {
                 sr.WriteLine(
-                    lessons[i].Calendar.Date.Date.ToString("dd.MM.yyyy") + '\t' + 
-                    lessons[i].Ring.Time + '\t' + 
-                    lessons[i].TeacherForDiscipline.Discipline.Name + '\t' + 
-                    lessons[i].TeacherForDiscipline.Teacher.FIO + '\t' +
-                    lessons[i].TeacherForDiscipline.Discipline.StudentGroup.Name + '\t' + 
-                    lessons[i].Auditorium.Name);
+                    lesson.Calendar.Date.Date.ToString("dd.MM.yyyy") + '\t' + 
+                    lesson.Ring.Time + '\t' + 
+                    lesson.TeacherForDiscipline.Discipline.Name + '\t' + 
+                    lesson.TeacherForDiscipline.Teacher.FIO + '\t' +
+                    lesson.TeacherForDiscipline.Discipline.StudentGroup.Name + '\t' + 
+                    lesson.Auditorium.Name);
             }
 
             sr.Close();
@@ -1247,7 +1221,7 @@ namespace UchOtd.Schedule
 
         private void LessonListByTFD_Click(object sender, EventArgs e)
         {
-            var lessonListByTfdForm = new LessonListByTFD(Repo);
+            var lessonListByTfdForm = new LessonListByTfd(Repo);
             lessonListByTfdForm.Show();
         }
 
@@ -1308,8 +1282,8 @@ namespace UchOtd.Schedule
             var facultyName = Repo.GetFaculty(facultyId).Name;
             var ruDow = DOWList.SelectedIndex + 1;
 
-            var facultyDowLessons = Repo.GetFacultyDOWSchedule(facultyId, ruDow, false, -1, false, false);
-            PDFExport.ExportSchedulePage(facultyDowLessons, facultyName, "Export.pdf", DOWList.Text, Repo, true, false, false);
+            var facultyDowLessons = Repo.GetFacultyDowSchedule(facultyId, ruDow, false, -1, false, false);
+            PdfExport.ExportSchedulePage(facultyDowLessons, facultyName, "Export.pdf", DOWList.Text, Repo, true, false, false);
 
             Process.Start("Export.pdf");
         }
@@ -1318,14 +1292,14 @@ namespace UchOtd.Schedule
         {            
             //PDFExport.ExportWholeSchedule("Export.pdf", _repo, false, false, false);
 
-            PDFExport.PrintWholeSchedule(Repo);
+            PdfExport.PrintWholeSchedule(Repo);
         }
 
         private void BackupAndUpload_Click(object sender, EventArgs e)
         {
-            var dbName = Repo.ExtractDBName(Repo.ConnectionString);
+            var dbName = Repo.ExtractDbName(Repo.ConnectionString);
 
-            Repo.BackupDB(Application.StartupPath + "\\" + dbName + ".bak");
+            Repo.BackupDb(Application.StartupPath + "\\" + dbName + ".bak");
             WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak", "httpdocs/upload/DB-Backup/" + dbName + ".bak");
         }
 
@@ -1382,7 +1356,7 @@ namespace UchOtd.Schedule
                         continue;
                     }
 
-                    StringBuilder discipline = new StringBuilder();
+                    var discipline = new StringBuilder();
 
                     discipline.Append(tfd.Discipline.StudentGroup.Name + '\t');
                     discipline.Append(tfd.Discipline.Name + '\t');
@@ -1488,7 +1462,7 @@ namespace UchOtd.Schedule
 
             for (int i = 1; i <= 7; i++)
             {
-                sw.Write(global::Schedule.Constants.Constants.DowLocal[i] + "\t");
+                sw.Write(Constants.DowLocal[i] + "\t");
                 foreach (var ring in rings)
                 {
                     sw.Write(result[i][ring.Time.ToString("H:mm")] + "\t");
@@ -1544,9 +1518,17 @@ namespace UchOtd.Schedule
 
         private void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
-            //dayDelta_Click(sender, e);            
-            //setLayout_Click(sender, e);
-            //ExportGroupDisciplines("Oops\\Discs.txt");
+            // Oops
+            // ExportStudentsData("StudentsExport-1sem.txt");
+            // ImportStudentData("StudentsExport-1sem.txt");
+            // CopyINOGroupLessonsFromRealSchedule();
+            // ExportScheduleDates("Oops\\stat.txt");
+            // ExportFacultyGroups();
+            // ExportDiscAuds("Auds.txt");
+            // ExportGroupDisciplines("Oops\\Discs.txt");
+            // dayDelta_Click(sender, e);            
+            // setLayout_Click(sender, e);
+            // ExportGroupDisciplines("Oops\\Discs.txt");
 
             /*
             foreach (var disc in Repo.GetAllDisciplines())
@@ -1585,15 +1567,13 @@ namespace UchOtd.Schedule
 
         private void happyBirthday_Click(object sender, EventArgs e)
         {
-            var message = "";
-
-            foreach (var student in Repo.GetFiltredStudents(s => !s.Expelled))
-            {
-                if (DateTime.Now.Date == student.BirthDate.Date)
-                {
-                    message += student.F + " " + student.I + " " + student.O  + " ( " + (student.BirthDate.Year - DateTime.Now.Year) + " / " + student.BirthDate.Year + " )" + Environment.NewLine;
-                }
-            }
+            var message = Repo
+                .GetFiltredStudents(s => !s.Expelled)
+                .Where(student => DateTime.Now.Date == student.BirthDate.Date)
+                .Aggregate("", (current, student) => 
+                    current + (student.F + " " + student.I + " " + student.O +
+                    " ( " + (DateTime.Now.Year - student.BirthDate.Year) + " / " + 
+                    student.BirthDate.Year + " )" + Environment.NewLine));
 
             if (message == "")
             {
@@ -1615,9 +1595,9 @@ namespace UchOtd.Schedule
 
         private void BackupUpload_Click(object sender, EventArgs e)
         {
-            string dbName = (FromDBName.Text == "") ? Repo.ExtractDBName(Repo.ConnectionString) : FromDBName.Text;
+            string dbName = (FromDBName.Text == "") ? Repo.ExtractDbName(Repo.ConnectionString) : FromDBName.Text;
             
-            Repo.BackupDB(Application.StartupPath + "\\" + dbName + ".bak");
+            Repo.BackupDb(Application.StartupPath + "\\" + dbName + ".bak");
             WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak", "httpdocs/upload/DB-Backup/" + ToDBName.Text + ".bak");
         }
 
@@ -1654,26 +1634,26 @@ namespace UchOtd.Schedule
 
         private void нельзяСтавитьПоследнимУрокомToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var NottheLastLessonForm = new LastLesson(Repo);
-            NottheLastLessonForm.Show();
+            var nottheLastLessonForm = new LastLesson(Repo);
+            nottheLastLessonForm.Show();
         }
 
         private void парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var IncompatiblePairsForm = new IncompatiblePairs(Repo);
-            IncompatiblePairsForm.Show();
+            var incompatiblePairsForm = new IncompatiblePairs(Repo);
+            incompatiblePairsForm.Show();
         }
 
         private void дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var DoubledLessonsForm = new DoubledLessons(Repo);
-            DoubledLessonsForm.Show();
+            var doubledLessonsForm = new DoubledLessons(Repo);
+            doubledLessonsForm.Show();
         }
 
         private void порядокПостановкиДисциплинВРасписаниеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var DisciplineByOrderForm = new DisciplineByOrder(Repo);
-            DisciplineByOrderForm.Show();
+            var disciplineByOrderForm = new DisciplineByOrder(Repo);
+            disciplineByOrderForm.Show();
         }
 
         private void analyse_Click(object sender, EventArgs e)
@@ -1715,14 +1695,14 @@ namespace UchOtd.Schedule
 
         private void дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var DisciplinesWithAudForm = new DisciplinesWithAud(Repo);
-            DisciplinesWithAudForm.Show();
+            var disciplinesWithAudForm = new DisciplinesWithAud(Repo);
+            disciplinesWithAudForm.Show();
         }
 
         private void сменыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var ShiftsForm = new Shifts(Repo);
-            ShiftsForm.Show();
+            var shiftsForm = new Shifts(Repo);
+            shiftsForm.Show();
         }
     }
 }

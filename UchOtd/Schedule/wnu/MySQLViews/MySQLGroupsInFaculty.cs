@@ -4,22 +4,22 @@ using System.Linq;
 
 namespace UchOtd.Schedule.wnu.MySQLViews
 {
-    class MySQLGroupsInFaculty
+    class MySqlGroupsInFaculty
     {
         public int GroupsInFacultyId { get; set; }
         public int StudentGroupId { get; set; }
         public int FacultyId { get; set; }
 
-        public MySQLGroupsInFaculty(GroupsInFaculty gif)
+        public MySqlGroupsInFaculty(GroupsInFaculty gif)
         {
             GroupsInFacultyId = gif.GroupsInFacultyId;
             StudentGroupId = gif.StudentGroup.StudentGroupId;
             FacultyId = gif.Faculty.FacultyId;
         }
 
-        public static List<MySQLGroupsInFaculty> FromGroupsInFacultyList(IEnumerable<GroupsInFaculty> list)
+        public static List<MySqlGroupsInFaculty> FromGroupsInFacultyList(IEnumerable<GroupsInFaculty> list)
         {
-            return list.Select(gif => new MySQLGroupsInFaculty(gif)).ToList();
+            return list.Select(gif => new MySqlGroupsInFaculty(gif)).ToList();
         }
     }
 }

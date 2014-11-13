@@ -1,12 +1,12 @@
-﻿using Schedule.DomainClasses.Analyse;
-using Schedule.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Analyse;
+using Schedule.Repositories;
 using UchOtd.Schedule.Views;
 
-namespace UchOtd.Schedule.Forms
+namespace UchOtd.Schedule.Forms.Analysis
 {
     public partial class LastLesson : Form
     {
@@ -26,16 +26,16 @@ namespace UchOtd.Schedule.Forms
 
         private void RefreshLists()
         {
-            var NotTheLastOnesAttrs = _repo.GetFiltredCustomDisciplineAttributes(cda => cda.Key == "NotTheLastOne").ToList();
-            var NotTheLastOnesDiscs = NotTheLastOnesAttrs.Select(cda => cda.Discipline).ToList();
+            var notTheLastOnesAttrs = _repo.GetFiltredCustomDisciplineAttributes(cda => cda.Key == "NotTheLastOne").ToList();
+            var notTheLastOnesDiscs = notTheLastOnesAttrs.Select(cda => cda.Discipline).ToList();
 
-            var NotTheLastOnesView = DisciplineTextView.DisciplinesToView(NotTheLastOnesDiscs);
+            var notTheLastOnesView = DisciplineTextView.DisciplinesToView(notTheLastOnesDiscs);
 
-            NotTheLastOneLessonDiscsList.DataSource = NotTheLastOnesView;
+            NotTheLastOneLessonDiscsList.DataSource = notTheLastOnesView;
             NotTheLastOneLessonDiscsList.ValueMember = "DisciplineId";
             NotTheLastOneLessonDiscsList.DisplayMember = "DisciplineSummary";
 
-            var allDiscsLeft = _repo.GetFiltredDisciplines(d => !NotTheLastOnesDiscs.Select(di => di.DisciplineId).ToList().Contains(d.DisciplineId))
+            var allDiscsLeft = _repo.GetFiltredDisciplines(d => !notTheLastOnesDiscs.Select(di => di.DisciplineId).ToList().Contains(d.DisciplineId))
                 .OrderBy(d => d.StudentGroup.Name)
                 .ThenBy(d => d.Name)
                 .ThenBy(d => d.AuditoriumHours)
@@ -101,11 +101,12 @@ namespace UchOtd.Schedule.Forms
 
             foreach (var discId in discIds)
             {
-                var NotLastLessonAttribute = _repo.GetFirstFiltredCustomDisciplineAttribute(cda => cda.Discipline.DisciplineId == discId && cda.Key == "NotTheLastOne");
+                int localDiscId = discId;
+                var notLastLessonAttribute = _repo.GetFirstFiltredCustomDisciplineAttribute(cda => cda.Discipline.DisciplineId == localDiscId && cda.Key == "NotTheLastOne");
 
-                if (NotLastLessonAttribute != null)
+                if (notLastLessonAttribute != null)
                 {
-                    _repo.RemoveCustomDisciplineAttribute(NotLastLessonAttribute.CustomDisciplineAttributeId);
+                    _repo.RemoveCustomDisciplineAttribute(notLastLessonAttribute.CustomDisciplineAttributeId);
                 }
             }            
 

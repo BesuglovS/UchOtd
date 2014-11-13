@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Schedule.DomainClasses.Main;
 
 namespace UchOtd.Schedule.Views.DBListViews
@@ -26,14 +27,7 @@ namespace UchOtd.Schedule.Views.DBListViews
 
         public static List<AuditoriumEventView> AuditoriumEventsToView(List<AuditoriumEvent> list)
         {
-            var result = new List<AuditoriumEventView>();
-
-            foreach (var evt in list)
-            {
-                result.Add(new AuditoriumEventView(evt));
-            }
-
-            return result;
+            return list.Select(evt => new AuditoriumEventView(evt)).ToList();
         }
     }
 }

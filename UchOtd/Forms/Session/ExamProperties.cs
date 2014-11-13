@@ -19,11 +19,11 @@ namespace UchOtd.Forms.Session
         private readonly Exam _exam;
         private readonly ExamPropertiesMode _mode;
 
-        public ExamProperties(ScheduleRepository Repo, int examToUpdateId, ExamPropertiesMode mode)
+        public ExamProperties(ScheduleRepository repo, int examToUpdateId, ExamPropertiesMode mode)
         {
             InitializeComponent();
 
-            _repo = Repo;
+            _repo = repo;
             _mode = mode;
 
             if (_mode == ExamPropertiesMode.Edit)
@@ -58,49 +58,28 @@ namespace UchOtd.Forms.Session
                 discipline.Text += disc.AuditoriumHours + " @ " + disc.LectureHours + " / "  + disc.PracticalHours + Environment.NewLine;
                 discipline.Text += disc.Name;
 
-                if (_exam.ConsultationDateTime == Constants.DefaultEmptyDateForEvent)
-                {
-                    ConsDate.Value = Constants.DefaultEditDate;
-                }
-                else
-                {
-                    ConsDate.Value = _exam.ConsultationDateTime;
-                }
+                ConsDate.Value = (_exam.ConsultationDateTime == Constants.DefaultEmptyDateForEvent) ? 
+                    Constants.DefaultEditDate : _exam.ConsultationDateTime;
                 var cAud = _repo.GetAuditorium(_exam.ConsultationAuditoriumId);
-                if (cAud != null)
-                {
-                    ConsAudBox.Text = cAud.Name;
-                }
-                else
-                {
-                    ConsAudBox.Text = "";
-                }
+                ConsAudBox.Text = (cAud != null) ? cAud.Name : "";
 
-                if (_exam.ExamDateTime == Constants.DefaultEmptyDateForEvent)
-                {
-                    ExamDate.Value = Constants.DefaultEditDate;   
-                }
-                else
-                {
-                    ExamDate.Value = _exam.ExamDateTime;
-                }
+                ExamDate.Value = (_exam.ExamDateTime == Constants.DefaultEmptyDateForEvent)
+                    ? Constants.DefaultEditDate : _exam.ExamDateTime;
                 var eAud = _repo.GetAuditorium(_exam.ExamAuditoriumId);
-                if (eAud != null)
-                {
-                    ExamAudBox.Text = eAud.Name;
-                }
-                else
-                {
-                    ExamAudBox.Text = "";
-                }
+                ExamAudBox.Text = (eAud != null) ? eAud.Name : "";
             }
         }
 
         private void Save_Click(object sender, EventArgs e)
         {
-            var newExam = new Exam { ExamId = _exam.ExamId, DisciplineId = _exam.DisciplineId, IsActive = true };
+            var newExam = new Exam
+            {
+                ExamId = _exam.ExamId,
+                DisciplineId = _exam.DisciplineId,
+                IsActive = true,
+                ConsultationDateTime = ConsDate.Value
+            };
 
-            newExam.ConsultationDateTime = ConsDate.Value;
             var consAud = _repo.FindAuditorium(ConsAudBox.Text);
             if (consAud != null)
             {

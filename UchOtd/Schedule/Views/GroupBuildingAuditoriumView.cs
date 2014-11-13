@@ -39,16 +39,8 @@ namespace UchOtd.Schedule.Views
 
         public static List<GroupAttributesView> ItemsToView(ScheduleRepository repo, List<CustomStudentGroupAttribute> attrlist)
         {
-            var groupedAttributes = attrlist.GroupBy(a => a.StudentGroup.StudentGroupId);
-
-            var result = new List<GroupAttributesView>();
-
-            foreach (var group in groupedAttributes)
-            {
-                result.Add(new GroupAttributesView(repo, group.ToList()));
-            }
-
-            return result;
+            return attrlist.GroupBy(a => a.StudentGroup.StudentGroupId)
+                .Select(@group => new GroupAttributesView(repo, @group.ToList())).ToList();
         }
     }
 }

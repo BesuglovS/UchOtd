@@ -2,9 +2,9 @@
 using System.Linq;
 using Schedule.DomainClasses.Main;
 
-namespace Schedule.wnu.MySQLViews
+namespace UchOtd.Schedule.wnu.MySQLViews
 {
-    class MySQLLesson
+    class MySqlLesson
     {
         public int LessonId { get; set; }
         public int IsActive { get; set; }
@@ -13,7 +13,7 @@ namespace Schedule.wnu.MySQLViews
         public int RingId { get; set; }
         public int AuditoriumId { get; set; }
 
-        public MySQLLesson(Lesson lesson)
+        public MySqlLesson(Lesson lesson)
         {
             LessonId = lesson.LessonId;
             IsActive = lesson.State;
@@ -23,9 +23,9 @@ namespace Schedule.wnu.MySQLViews
             AuditoriumId = lesson.Auditorium.AuditoriumId;
         }
 
-        public static List<MySQLLesson> FromLessonList(IEnumerable<Lesson> list)
+        public static List<MySqlLesson> FromLessonList(IEnumerable<Lesson> list)
         {
-            return list.Select(lesson => new MySQLLesson(lesson)).ToList();
+            return list.Select(lesson => new MySqlLesson(lesson)).ToList();
         }
     }
 }

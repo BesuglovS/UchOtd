@@ -10,7 +10,7 @@ namespace UchOtd.Schedule.Views.DBListViews
         public int DisciplineId { get; set; }
         public string Name { get; set; }
         public string StudentGroupName { get; set; }
-        public string TeacherFIO { get; set; }
+        public string TeacherFio { get; set; }
         public int ScheduleHours { get; set; }
         public string Attestation { get; set; } // 0 - ничего; 1 - зачёт; 2 - экзамен; 3 - зачёт и экзамен
         public int AuditoriumHours { get; set; }
@@ -37,12 +37,12 @@ namespace UchOtd.Schedule.Views.DBListViews
             var tefd = repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
             if (tefd != null)
             {
-                TeacherFIO = tefd.Teacher.FIO;
-                ScheduleHours = repo.getTFDHours(tefd.TeacherForDisciplineId);
+                TeacherFio = tefd.Teacher.FIO;
+                ScheduleHours = repo.GetTfdHours(tefd.TeacherForDisciplineId);
             }
             else
             {
-                TeacherFIO = "нет";
+                TeacherFio = "нет";
                 ScheduleHours = 0;
             }
         }

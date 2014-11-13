@@ -4,13 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using UchOtd.Schedule.wnu;
 using Word = Microsoft.Office.Interop.Word;
 using System.Globalization;
 using Microsoft.Office.Core;
 using UchOtd.Views;
 using UchOtd.Schedule.wnu.MySQLViews;
-using Schedule.wnu;
-using Schedule.DomainClasses.Session;
 
 namespace UchOtd.Forms.Session
 {
@@ -42,31 +41,22 @@ namespace UchOtd.Forms.Session
                 .Select(e => e.DisciplineId)
                 .ToList();
 
-            //var groupList = new List<StudentGroup>();
-            var TeachersList = new List<Teacher>();
+            var teachersList = (
+                    from discId in discIds
+                    select _repo.GetDiscipline(discId)
+                    into disc
 
-            foreach (var discId in discIds)
-            {
-                var disc = _repo.GetDiscipline(discId);
+                    select _repo
+                        .GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == disc.DisciplineId)
+                    into tefd
+                    where tefd != null
 
-                //groupList.Add(disc.StudentGroup);
-
-                var tefd = _repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == disc.DisciplineId);
-
-                if (tefd != null)
-                {
-                    TeachersList.Add(tefd.Teacher);
-                }
-            }
-
-            /*groupList = groupList
-                .GroupBy(g => g.StudentGroupId)
-                .Select(x => x.First())                
-                .OrderBy(g => g.Name)                
-                .ToList();*/
+                    select tefd.Teacher)
+                .ToList();
 
             var groupList = _repo
-                .GetFiltredStudentGroups(sg => !(sg.Name.Contains("-") || sg.Name.Contains("I") || sg.Name.Contains(".")))
+                .GetFiltredStudentGroups(sg => 
+                    !(sg.Name.Contains("-") || sg.Name.Contains("I") || sg.Name.Contains(".")))
                 .ToList();
 
 
@@ -74,7 +64,7 @@ namespace UchOtd.Forms.Session
             groupBox.DisplayMember = "Name";
             groupBox.DataSource = groupList;
 
-            TeachersList = TeachersList
+            teachersList = teachersList
                 .GroupBy(t => t.TeacherId)
                 .Select(x => x.First())
                 .OrderBy(t => t.FIO)
@@ -82,7 +72,7 @@ namespace UchOtd.Forms.Session
 
             TeacherList.ValueMember = "TeacherId";
             TeacherList.DisplayMember = "FIO";
-            TeacherList.DataSource = TeachersList;
+            TeacherList.DataSource = teachersList;
 
             var faculties = _repo.GetAllFaculties();
 
@@ -103,9 +93,9 @@ namespace UchOtd.Forms.Session
                 .OrderBy(ex => ex.ConsultationDateTime)
                 .ToList();
 
-            var ExamViewList = ExamView.FromExamList(_repo, exams);
+            var examViewList = ExamView.FromExamList(_repo, exams);
 
-            examsView.DataSource = ExamViewList;
+            examsView.DataSource = examViewList;
 
             TuneDataView(examsView, DataViews.ExamsView);
         }
@@ -156,9 +146,9 @@ namespace UchOtd.Forms.Session
                 .GetGroupActiveExams(_repo, (int)groupBox.SelectedValue, false)
                 .ToList();
 
-            var ExamViewList = ExamView.FromExamList(_repo, groupExams);
+            var examViewList = ExamView.FromExamList(_repo, groupExams);
 
-            examsView.DataSource = ExamViewList;
+            examsView.DataSource = examViewList;
 
             TuneDataView(examsView, DataViews.ExamsView);
         }
@@ -180,13 +170,13 @@ namespace UchOtd.Forms.Session
         {
             var jsonSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
 
-            var mySQLExams = MySQLExam.FromExamList(_repo.GetAllExamRecords());
-            var wud = new WnuUploadData { tableSelector = "exams", data = jsonSerializer.Serialize(mySQLExams) };
+            var mySqlExams = MySqlExam.FromExamList(_repo.GetAllExamRecords());
+            var wud = new WnuUploadData { tableSelector = "exams", data = jsonSerializer.Serialize(mySqlExams) };
             string json = jsonSerializer.Serialize(wud);
             WnuUpload.UploadTableData(json);
 
-            var MySQLlogEvents = MySQLExamLogEvent.FromLogEventList(_repo.GetAllLogEvents());
-            wud = new WnuUploadData { tableSelector = "examsLogEvents", data = jsonSerializer.Serialize(MySQLlogEvents) };
+            var mySqLlogEvents = MySqlExamLogEvent.FromLogEventList(_repo.GetAllLogEvents());
+            wud = new WnuUploadData { tableSelector = "examsLogEvents", data = jsonSerializer.Serialize(mySqLlogEvents) };
             json = jsonSerializer.Serialize(wud);
             WnuUpload.UploadTableData(json);
         }
@@ -230,15 +220,9 @@ namespace UchOtd.Forms.Session
             if (facultyFilter != -1)
             {
                 var onefaculty = _repo.GetFaculty((int)FacultyList.SelectedValue);
-                if (oneFaculty == null)
-                {
-                    faculties = _repo.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
-                }
-                else
-                {
-                    faculties = new List<Faculty>();
-                    faculties.Add(onefaculty);
-                }
+                faculties = oneFaculty == null ? 
+                    _repo.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList() : 
+                    new List<Faculty> {onefaculty};
             }
             else
             {
@@ -258,8 +242,9 @@ namespace UchOtd.Forms.Session
                     }
                 }*/
 
+                var localFaculty = faculty;
                 var groupIds = _repo
-                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == localFaculty.FacultyId)
                     .Select(gif => gif.StudentGroup.StudentGroupId)
                     .ToList();
 
@@ -312,8 +297,9 @@ namespace UchOtd.Forms.Session
                 signBox.TextFrame.ContainingRange.InsertParagraphAfter();
                 signBox.TextFrame.ContainingRange.InsertAfter("____________  " + prorUchRabName);
 
+                Faculty local2Faculty = faculty;
                 List<StudentGroup> groups = _repo
-                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == local2Faculty.FacultyId)
                     .Select(gif => gif.StudentGroup)
                     .ToList();
 
@@ -393,7 +379,7 @@ namespace UchOtd.Forms.Session
 
                                     cellText += Environment.NewLine;
                                     cellText += evt.DisciplineName + Environment.NewLine;
-                                    cellText += evt.TeacherFIO + Environment.NewLine;
+                                    cellText += evt.TeacherFio + Environment.NewLine;
                                     cellText += evt.Time.ToString("H:mm") + Environment.NewLine;
                                     cellText += evt.Auditorium;
 
@@ -416,7 +402,7 @@ namespace UchOtd.Forms.Session
                 oTable.Columns[1].Width = oWord.CentimetersToPoints(3);
                 for (int i = 0; i < groups.Count; i++)
                 {
-                    oTable.Columns[i + 2].Width = oWord.CentimetersToPoints(16 / groups.Count);
+                    oTable.Columns[i + 2].Width = oWord.CentimetersToPoints(16f / groups.Count);
                 }
 
                 oTable.Rows.Alignment = Word.WdRowAlignment.wdAlignRowCenter;
@@ -430,14 +416,14 @@ namespace UchOtd.Forms.Session
                 oPara2.Range.InsertParagraphAfter();
 
 
-                var HeadUchOtdNameOption = _repo.GetFirstFiltredConfigOption(co => co.Key == "Начальник учебного отдела");
-                var HeadUchOtdName = (HeadUchOtdNameOption == null) ? "" : HeadUchOtdNameOption.Value;
+                var headUchOtdNameOption = _repo.GetFirstFiltredConfigOption(co => co.Key == "Начальник учебного отдела");
+                var headUchOtdName = (headUchOtdNameOption == null) ? "" : headUchOtdNameOption.Value;
 
                 oPara2 =
                     oDoc.Content.Paragraphs.Add(ref oMissing);
                 oPara2.Range.Font.Size = 12;
                 oPara2.Format.LineSpacing = oWord.LinesToPoints(1);
-                oPara2.Range.Text = "Начальник учебного отдела\t\t" + "_________________  " + HeadUchOtdName;
+                oPara2.Range.Text = "Начальник учебного отдела\t\t" + "_________________  " + headUchOtdName;
                 oPara2.Format.SpaceAfter = 0;
                 oPara2.Range.InsertParagraphAfter();
                 oPara2.Range.InsertParagraphAfter();
@@ -487,21 +473,19 @@ namespace UchOtd.Forms.Session
 
         private void TeacherSchedule_Click(object sender, EventArgs e)
         {
-            var teacherExams = new List<Exam>();
+            var teacherExams = (
+                    from exam in _repo.GetAllExams()
+                    let tefd = _repo
+                    .GetFirstFiltredTeacherForDiscipline(tfd =>
+                        tfd.Discipline.DisciplineId == exam.DisciplineId)
+                    where tefd != null && 
+                          tefd.Teacher.TeacherId == (int) TeacherList.SelectedValue
+                    select exam)
+                .ToList();
 
-            foreach (var exam in _repo.GetAllExams())
-            {
-                var tefd = _repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == exam.DisciplineId);
+            var examViewList = ExamView.FromExamList(_repo, teacherExams);
 
-                if (tefd != null && tefd.Teacher.TeacherId == (int)TeacherList.SelectedValue)
-                {
-                    teacherExams.Add(exam);
-                }
-            }
-
-            var ExamViewList = ExamView.FromExamList(_repo, teacherExams);
-
-            examsView.DataSource = ExamViewList;
+            examsView.DataSource = examViewList;
 
             TuneDataView(examsView, DataViews.ExamsView);
         }
@@ -570,13 +554,13 @@ namespace UchOtd.Forms.Session
 
             for (int i = 0; i < examsView.Rows.Count; i++)
             {
-                var DateItem = auds.OrderBy(a => a.Key).ElementAt(i);
+                var dateItem = auds.OrderBy(a => a.Key).ElementAt(i);
 
                 for (int j = 0; j < examsView.Columns.Count; j++)
                 {
-                    if (DateItem.Value.ContainsKey(audIdsList[j]))
+                    if (dateItem.Value.ContainsKey(audIdsList[j]))
                     {
-                        examsView.Rows[i].Cells[j].Value = DateItem.Value[audIdsList[j]];
+                        examsView.Rows[i].Cells[j].Value = dateItem.Value[audIdsList[j]];
                     }
                 }
             }

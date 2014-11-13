@@ -2,7 +2,7 @@
 {
     public class FiveGroupsView
     {
-        public string DOWTime { get; set; }
+        public string DowTime { get; set; }
         public string FirstGroupEvents { get; set; }
         public string SecondGroupEvents { get; set; }
         public string ThirdGroupEvents { get; set; }

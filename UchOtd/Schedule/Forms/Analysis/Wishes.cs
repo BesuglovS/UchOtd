@@ -1,29 +1,28 @@
-﻿using System.Globalization;
-using Schedule.DomainClasses.Analyse;
-using Schedule.DomainClasses.Main;
-using Schedule.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using UchOtd.Schedule.Forms.Analysis;
+using Schedule.DomainClasses.Analyse;
+using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
 using UchOtd.Schedule.Views;
 using UchOtd.Schedule.Views.DBListViews;
 
-namespace UchOtd.Schedule.Forms
+namespace UchOtd.Schedule.Forms.Analysis
 {
     public partial class Wishes : Form
     {
         private readonly ScheduleRepository _repo;
 
-        private bool listBoxInitialization = true;
+        private bool _listBoxInitialization = true;
 
         public static bool NeedsUpdateAfterChoosingRings = false;
 
-        CancellationTokenSource tokenSource;
-        CancellationToken cToken;
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
 
         public Wishes(ScheduleRepository repo)
         {
@@ -34,7 +33,7 @@ namespace UchOtd.Schedule.Forms
 
         private void Wishes_Load(object sender, EventArgs e)
         {
-            listBoxInitialization = true;
+            _listBoxInitialization = true;
             var teachers = _repo.GetAllTeachers()
                 .OrderBy(t => t.FIO)
                 .ToList();
@@ -44,7 +43,7 @@ namespace UchOtd.Schedule.Forms
             teacherList.DataSource = teachers;
 
             RingsList.ClearSelected();
-            listBoxInitialization = false;
+            _listBoxInitialization = false;
         }
 
         private void refreshButton_Click(object sender, EventArgs e)
@@ -55,7 +54,7 @@ namespace UchOtd.Schedule.Forms
 
         private void RefreshRings()
         {
-            listBoxInitialization = true;
+            _listBoxInitialization = true;
 
             var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
 
@@ -82,7 +81,7 @@ namespace UchOtd.Schedule.Forms
                 }
             }
             
-            listBoxInitialization = false;
+            _listBoxInitialization = false;
         }
         
         private void RefreshWishes()
@@ -217,7 +216,7 @@ namespace UchOtd.Schedule.Forms
             int simpleWish;
             if (int.TryParse(cell.Value.ToString(), out simpleWish))
             {
-                var calendars = _repo.GetDOWCalendars(dow);
+                var calendars = _repo.GetDowCalendars(dow);
 
                 var ring = _repo.GetRing(((List<RingWeekView>)wishesView.DataSource)[e.RowIndex].RingId);
 
@@ -304,7 +303,7 @@ namespace UchOtd.Schedule.Forms
                     continue;
                 }
 
-                var calendars = _repo.GetDOWCalendars(dow);
+                var calendars = _repo.GetDowCalendars(dow);
 
                 var ring = _repo.GetRing(((List<RingWeekView>)wishesView.DataSource)[cell.RowIndex].RingId);
 
@@ -391,10 +390,10 @@ namespace UchOtd.Schedule.Forms
 
             if (LessonsLimitedPerDay.Checked)
             {
-                int LessonsLimit;
-                if (int.TryParse(LessonsLimitPerDay.Text, out LessonsLimit))
+                int lessonsLimit;
+                if (int.TryParse(LessonsLimitPerDay.Text, out lessonsLimit))
                 {
-                    var wish = new CustomTeacherAttribute(teacher, "LessonsLimit", LessonsLimit.ToString(CultureInfo.InvariantCulture));
+                    var wish = new CustomTeacherAttribute(teacher, "LessonsLimit", lessonsLimit.ToString(CultureInfo.InvariantCulture));
 
                     _repo.AddOrUpdateCustomTeacherAttribute(wish);
                 }
@@ -420,10 +419,10 @@ namespace UchOtd.Schedule.Forms
 
             if (FitAllLessonsInXDays.Checked)
             {
-                int FitAllLessonsDaysInt;
-                if (int.TryParse(FitAllLessonsDaysCount.Text, out FitAllLessonsDaysInt))
+                int fitAllLessonsDaysInt;
+                if (int.TryParse(FitAllLessonsDaysCount.Text, out fitAllLessonsDaysInt))
                 {
-                    var wish = new CustomTeacherAttribute(teacher, "FitAllLessonsDaysCount", FitAllLessonsDaysInt.ToString(CultureInfo.InvariantCulture));
+                    var wish = new CustomTeacherAttribute(teacher, "FitAllLessonsDaysCount", fitAllLessonsDaysInt.ToString(CultureInfo.InvariantCulture));
 
                     _repo.AddOrUpdateCustomTeacherAttribute(wish);
                 }
@@ -445,7 +444,7 @@ namespace UchOtd.Schedule.Forms
 
         private void RingsList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listBoxInitialization)
+            if (_listBoxInitialization)
             {
                 return;
             }
@@ -475,7 +474,7 @@ namespace UchOtd.Schedule.Forms
                     for (int dow = 1; dow <= 7; dow++)
                     {
                         newTeacherWishList.AddRange(
-                            _repo.GetDOWCalendars(dow)
+                            _repo.GetDowCalendars(dow)
                             .Select(calendar => new TeacherWish(teacher, calendar, ring, 0)));
                     }
 
@@ -545,15 +544,15 @@ namespace UchOtd.Schedule.Forms
 
         private void FillAllWishesAsEmpty_Click(object sender, EventArgs e)
         {
-            if (tokenSource != null)
+            if (_tokenSource != null)
             {
-                tokenSource.Cancel();
+                _tokenSource.Cancel();
             }
 
-            tokenSource = new CancellationTokenSource();
-            cToken = tokenSource.Token;
+            _tokenSource = new CancellationTokenSource();
+            _cToken = _tokenSource.Token;
 
-            var fillTask = Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(() =>
             {
                 
                 progress.BeginInvoke(new Action(() => progress.Text = "Удаление"));
@@ -565,7 +564,8 @@ namespace UchOtd.Schedule.Forms
 
                     if (i % 500 == 0)
                     {
-                        progress.BeginInvoke(new Action(() => progress.Text = "Удаление - " + i + " / " + wishCount));
+                        int counter = i;
+                        progress.BeginInvoke(new Action(() => progress.Text = "Удаление - " + counter + " / " + wishCount));
                     }
                 }
 
@@ -589,7 +589,8 @@ namespace UchOtd.Schedule.Forms
                 {                
                     var teacher = teachers[i];
 
-                    progress.BeginInvoke(new Action(() => progress.Text = teacher.FIO + " " + i + " / " + teachersCount + " = " + (i / teachersCount).ToString("F2")));
+                    int counter = i;
+                    progress.BeginInvoke(new Action(() => progress.Text = teacher.FIO + " " + counter + " / " + teachersCount + " = " + (counter / teachersCount).ToString("F2")));
 
                     foreach (var ring in rings)
                     {
@@ -610,7 +611,7 @@ namespace UchOtd.Schedule.Forms
                 }
 
                 progress.BeginInvoke(new Action(() => progress.Text = ""));
-            }, cToken);            
+            }, _cToken);            
         }       
     }
 }

@@ -2,24 +2,24 @@
 using System.Linq;
 using Schedule.DomainClasses.Main;
 
-namespace Schedule.wnu.MySQLViews
+namespace UchOtd.Schedule.wnu.MySQLViews
 {
-    class MySQLStudentsInGroups
+    class MySqlStudentsInGroups
     {
         public int StudentsInGroupsId { get; set; }
         public int StudentId { get; set; }
         public int StudentGroupId { get; set; }
 
-        public MySQLStudentsInGroups(StudentsInGroups sig)
+        public MySqlStudentsInGroups(StudentsInGroups sig)
         {
             StudentsInGroupsId = sig.StudentsInGroupsId;
             StudentId = sig.Student.StudentId;
             StudentGroupId = sig.StudentGroup.StudentGroupId;
         }
 
-        public static List<MySQLStudentsInGroups> FromStudentsInGroupsList(IEnumerable<StudentsInGroups> list)
+        public static List<MySqlStudentsInGroups> FromStudentsInGroupsList(IEnumerable<StudentsInGroups> list)
         {
-            return list.Select(sig => new MySQLStudentsInGroups(sig)).ToList();
+            return list.Select(sig => new MySqlStudentsInGroups(sig)).ToList();
         }
     }
 }

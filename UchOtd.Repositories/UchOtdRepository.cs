@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using UchOtd.DataLayer;
 using UchOtd.DataLayer.Migrations;
 using UchOtd.DomainClasses;
 
@@ -28,7 +29,7 @@ namespace UchOtd.Repositories
             }
         }
 
-        public void RecreateDB()
+        public void RecreateDb()
         {
             using (var context = new UchOtdContext(ConnectionString))
             {
@@ -70,14 +71,14 @@ namespace UchOtd.Repositories
             }
         }
 
-        public bool ContainsNote(DateTime Moment, string TargetComputer, string Text)
+        public bool ContainsNote(DateTime moment, string targetComputer, string text)
         {
             using (var context = new UchOtdContext(ConnectionString))
             {
                 return context.Notes.FirstOrDefault(n =>
-                    n.Moment == Moment &&
-                    n.TargetComputer == TargetComputer &&
-                    n.Text == Text) != null;
+                    n.Moment == moment &&
+                    n.TargetComputer == targetComputer &&
+                    n.Text == text) != null;
             }
         }
 
@@ -85,28 +86,22 @@ namespace UchOtd.Repositories
         {
             using (var context = new UchOtdContext(ConnectionString))
             {
-                DateTime Moment;
                 var parts = noteView.Split('@');
                 if (parts.Length != 3)
                 {
                     return false;
                 }
 
-                if (parts[0] != "")
-                {
-                    Moment = DateTime.ParseExact(parts[0], "dd.MM.yyyy H:mm:ss", CultureInfo.InvariantCulture);
-                }
-                else
-                {
-                    Moment = new DateTime(1970, 1, 1);
-                }
-                var Text = parts[1];
-                var TargetComputer = parts[2];
+                var moment = parts[0] != "" ?
+                    DateTime.ParseExact(parts[0], "dd.MM.yyyy H:mm:ss", CultureInfo.InvariantCulture) :
+                    new DateTime(1970, 1, 1);
+                var text = parts[1];
+                var targetComputer = parts[2];
 
                 return context.Notes.FirstOrDefault(n =>
-                    n.Moment.Equals(Moment) &&
-                    n.TargetComputer == TargetComputer &&
-                    n.Text == Text) != null;
+                    n.Moment.Equals(moment) &&
+                    n.TargetComputer == targetComputer &&
+                    n.Text == text) != null;
             }
         }        
 

@@ -4,7 +4,7 @@ namespace UchOtd.Core
 {
     public static class LayoutSupport
     {
-        public static Dictionary<char, char> match = new Dictionary<char, char>
+        public static Dictionary<char, char> Match = new Dictionary<char, char>
         {
             {'q', 'й'}, {'w', 'ц'}, {'e', 'у'}, {'r', 'к'}, {'t', 'е'}, {'y', 'н'}, 
             {'u', 'г'}, {'i', 'ш'}, {'o', 'щ'}, {'p', 'з'}, {'[', 'х'}, {']', 'ъ'},
@@ -14,14 +14,14 @@ namespace UchOtd.Core
             {'m', 'ь'}, {',', 'б'}, {'.', 'ю'}
         };
 
-        public static string ConvertEnRU(string input)
+        public static string ConvertEnRu(string input)
         {
             var result = "";
             foreach (var с in input)
             {
-                if (match.ContainsKey(с))
+                if (Match.ContainsKey(с))
                 {
-                    result += match[с];
+                    result += Match[с];
                 }
                 else
                 {

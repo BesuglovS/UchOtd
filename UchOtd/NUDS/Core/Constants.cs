@@ -5,10 +5,10 @@ namespace UchOtd.NUDS.Core
 {
     public static class Constants
     {
-        public static Dictionary<int, int> DOWEnToRu = new Dictionary<int, int> { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 }, { 0, 7 } };
-        public static Dictionary<int, int> DOWRuToEn = new Dictionary<int, int> { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 }, { 7, 0 } };
+        public static Dictionary<int, int> DowEnToRu = new Dictionary<int, int> { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 }, { 0, 7 } };
+        public static Dictionary<int, int> DowRuToEn = new Dictionary<int, int> { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 }, { 7, 0 } };
 
-        public static Dictionary<int, string> DOWRU = new Dictionary<int, string>
+        public static Dictionary<int, string> DowRu = new Dictionary<int, string>
         {
                 {1, "Понедельник"},
                 {2, "Вторник"},

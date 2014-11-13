@@ -1,4 +1,5 @@
-﻿using Schedule.Constants;
+﻿using System.Linq;
+using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using System.Collections.Generic;
 
@@ -28,15 +29,7 @@ namespace UchOtd.Schedule.Views
 
         public static List<DisciplineTextView> DisciplinesToView(List<Discipline> list)
         {
-            var result = new List<DisciplineTextView>();
-
-            foreach (var disc in list)
-            {
-                result.Add(new DisciplineTextView(disc));
-            }
-
-            return result;
-        }     
-           
+            return list.Select(disc => new DisciplineTextView(disc)).ToList();
+        }
     }
 }

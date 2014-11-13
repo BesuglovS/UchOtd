@@ -1,4 +1,5 @@
-﻿using Schedule.Constants;
+﻿using System.Linq;
+using Schedule.Constants;
 using Schedule.DomainClasses.Analyse;
 using Schedule.Repositories;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ namespace UchOtd.Schedule.Views
 {
     class IncompatiblePairView
     {
-        public int cdaId { get; set; }
+        public int CdaId { get; set; }
         public string Disc1 { get; set; }
         public string Disc2 { get; set; }
 
@@ -17,7 +18,7 @@ namespace UchOtd.Schedule.Views
 
         public IncompatiblePairView(ScheduleRepository repo, CustomDisciplineAttribute cda)
         {
-            cdaId = cda.CustomDisciplineAttributeId;
+            CdaId = cda.CustomDisciplineAttributeId;
             
             
             const string separator = " @ ";
@@ -51,16 +52,9 @@ namespace UchOtd.Schedule.Views
             }
         }
 
-        public static List<IncompatiblePairView> FromCDAList(ScheduleRepository repo, List<CustomDisciplineAttribute> cdaList)
+        public static List<IncompatiblePairView> FromCdaList(ScheduleRepository repo, List<CustomDisciplineAttribute> cdaList)
         {
-            var result = new List<IncompatiblePairView>();
-
-            foreach (var cda in cdaList)
-            {
-                result.Add(new IncompatiblePairView(repo, cda));
-            }
-
-            return result;
+            return cdaList.Select(cda => new IncompatiblePairView(repo, cda)).ToList();
         }
     }
 }

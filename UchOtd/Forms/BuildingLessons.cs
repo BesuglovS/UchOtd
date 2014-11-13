@@ -37,13 +37,13 @@ namespace UchOtd.Forms
 
             var mainBuilding = buildings.FirstOrDefault(b => b.Name == "ул. Молодогвардейская, 196");
 
-            building.DisplayMember = "Name";
-            building.ValueMember = "BuildingId";
-            building.DataSource = buildings;
+            buildingBox.DisplayMember = "Name";
+            buildingBox.ValueMember = "BuildingId";
+            buildingBox.DataSource = buildings;
 
             if (mainBuilding != null)
             {
-                building.SelectedValue = mainBuilding.BuildingId;
+                buildingBox.SelectedValue = mainBuilding.BuildingId;
             }
 
             var initialCalendar = _repo.GetFirstFiltredCalendar(c => c.Date.Date == DateTime.Now.Date);
@@ -76,7 +76,7 @@ namespace UchOtd.Forms
             _tokenSource = new CancellationTokenSource();
             _cToken = _tokenSource.Token;
 
-            if ((building.SelectedIndex == -1) || (lessonsDate.Value == new DateTime(1985, 4, 4)))
+            if ((buildingBox.SelectedIndex == -1) || (lessonsDate.Value == new DateTime(1985, 4, 4)))
             {
                 return;
             }
@@ -85,7 +85,7 @@ namespace UchOtd.Forms
 
             loadingLabel.Visible = true;
 
-            var buildingId = (int)building.SelectedValue;
+            var buildingId = (int)buildingBox.SelectedValue;
             var viewDate = lessonsDate.Value.Date;
 
             var calculateAudsTask = Task.Factory.StartNew(() =>

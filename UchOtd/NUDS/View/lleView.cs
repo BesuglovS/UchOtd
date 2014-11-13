@@ -1,27 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Schedule.DomainClasses.Logs;
 
-namespace NUDispSchedule.Views
+namespace UchOtd.NUDS.View
 {
-    public class lleView
+    public class LleView
     {
         public int EventId { get; set; }
         public string EventDate { get; set; }
         public int EventType { get; set; } // -1 - unknown; 1 - Lesson Added; 2 - Lesson removed; 3 - Auditorium changed
         public string Message { get; set; }
 
-        public static List<lleView> ListFromLessonLogEvents(List<LessonLogEvent> list)
+        public static List<LleView> ListFromLessonLogEvents(List<LessonLogEvent> list)
         {
-            var result = new List<lleView>();
-            foreach (var ev in list)
-            {
-                result.Add(new lleView(ev));
-            }
-            return result;
+            return list.Select(ev => new LleView(ev)).ToList();
         }
 
-        public lleView(LessonLogEvent e)
+        public LleView(LessonLogEvent e)
         {
             EventId = e.LessonLogEventId;
 
@@ -40,11 +36,14 @@ namespace NUDispSchedule.Views
                 }
                 else
                 {
-                    if ((e.OldLesson.TeacherForDiscipline.TeacherForDisciplineId == e.NewLesson.TeacherForDiscipline.TeacherForDisciplineId) &&
+                    
+                    if ((e.OldLesson.TeacherForDiscipline.TeacherForDisciplineId ==
+                            e.NewLesson.TeacherForDiscipline.TeacherForDisciplineId) &&
                         (e.OldLesson.Auditorium.AuditoriumId != e.NewLesson.Auditorium.AuditoriumId))
                     {
                         EventType = 3;
                     }
+                    
                 }
             }
             

@@ -1,7 +1,7 @@
 ﻿using System.Data.Entity;
 using UchOtd.DomainClasses;
 
-namespace UchOtd
+namespace UchOtd.DataLayer
 {
     public class UchOtdContext : DbContext
     {

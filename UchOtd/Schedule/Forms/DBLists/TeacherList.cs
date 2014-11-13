@@ -11,7 +11,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 {
     public partial class TeacherList : Form
     {
-        enum refreshType { teachersOnly = 1, disciplinesOnly, fullRefresh };
+        enum RefreshType { TeachersOnly = 1, DisciplinesOnly, FullRefresh };
         
         private readonly ScheduleRepository _repo;
 
@@ -24,9 +24,9 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void FillDicsiplinesList(bool useFilter)
         {
-            var discIdsFromTFD = _repo.GetAllTeacherForDiscipline().Select(tfd => tfd.Discipline.DisciplineId);
+            var discIdsFromTfd = _repo.GetAllTeacherForDiscipline().Select(tfd => tfd.Discipline.DisciplineId);
 
-            var disciplines = _repo.GetFiltredDisciplines(d => !discIdsFromTFD.Contains(d.DisciplineId));
+            var disciplines = _repo.GetFiltredDisciplines(d => !discIdsFromTfd.Contains(d.DisciplineId));
 
             if (useFilter && filter.Text != "")
             {
@@ -50,7 +50,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void TeacherList_Load(object sender, EventArgs e)
         {
-            RefreshView((int)refreshType.fullRefresh);            
+            RefreshView((int)RefreshType.FullRefresh);            
         }
 
         private void RefreshView(int refreshType)
@@ -115,7 +115,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             var newTeacher = new Teacher { FIO = teacherFIO.Text, Phone = teacherPhone.Text };
             _repo.AddTeacher(newTeacher);
 
-            RefreshView((int)refreshType.teachersOnly);
+            RefreshView((int)RefreshType.TeachersOnly);
             
             
             TeacherListView.ClearSelection();
@@ -136,7 +136,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 _repo.UpdateTeacher(teacher);
 
-                RefreshView((int)refreshType.teachersOnly);
+                RefreshView((int)RefreshType.TeachersOnly);
             }
         }
 
@@ -154,7 +154,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 _repo.RemoveTeacher(teacher.TeacherId);
 
-                RefreshView((int)refreshType.teachersOnly);
+                RefreshView((int)RefreshType.TeachersOnly);
             }
         }
 
@@ -164,10 +164,10 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var teacher = ((List<Teacher>)TeacherListView.DataSource)[TeacherListView.SelectedCells[0].RowIndex];
 
-                var teacherTFDs = _repo.GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacher.TeacherId);
-                if (teacherTFDs.Count > 0)
+                var teacherTfDs = _repo.GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacher.TeacherId);
+                if (teacherTfDs.Count > 0)
                 {
-                    foreach (var tfd in teacherTFDs)
+                    foreach (var tfd in teacherTfDs)
                     {
                         _repo.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
                     }
@@ -175,7 +175,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 _repo.RemoveTeacher(teacher.TeacherId);
 
-                RefreshView((int)refreshType.fullRefresh);
+                RefreshView((int)RefreshType.FullRefresh);
             }
         }
 
@@ -209,7 +209,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             RefreshTeacherDisciplines(teacher);
 
-            RefreshView((int)refreshType.disciplinesOnly);
+            RefreshView((int)RefreshType.DisciplinesOnly);
         }
 
         private void removeTFD_Click(object sender, EventArgs e)
@@ -243,7 +243,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             RefreshTeacherDisciplines(teacher);
 
-            RefreshView((int)refreshType.disciplinesOnly);
+            RefreshView((int)RefreshType.DisciplinesOnly);
         }
 
         private void removeWithLessons_Click(object sender, EventArgs e)
@@ -282,19 +282,19 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             foreach (var lesson in tfdLessons)            
             {
-                _repo.RemoveLessonWOLog(lesson.LessonId);
+                _repo.RemoveLessonWoLog(lesson.LessonId);
             }
 
             _repo.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
 
             RefreshTeacherDisciplines(teacher);
 
-            RefreshView((int)refreshType.disciplinesOnly);
+            RefreshView((int)RefreshType.DisciplinesOnly);
         }
 
         private void FilterButtonClick(object sender, EventArgs e)
         {
-            RefreshView((int)refreshType.disciplinesOnly);
+            RefreshView((int)RefreshType.DisciplinesOnly);
         }
 
         private void FilterKeyPress(object sender, KeyPressEventArgs e)
@@ -305,7 +305,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             }
         }
 
-        private void TeacherFIOTextChanged(object sender, EventArgs e)
+        private void TeacherFioTextChanged(object sender, EventArgs e)
         {
             if (teacherFIO.Text.Contains('*'))
             {

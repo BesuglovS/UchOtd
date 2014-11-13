@@ -2,9 +2,9 @@
 using System.Linq;
 using Schedule.DomainClasses.Main;
 
-namespace Schedule.wnu.MySQLViews
+namespace UchOtd.Schedule.wnu.MySQLViews
 {
-    class MySQLDiscipline
+    class MySqlDiscipline
     {
         public int DisciplineId { get; set; }
         public string Name { get; set; }
@@ -15,7 +15,7 @@ namespace Schedule.wnu.MySQLViews
         public int StudentGroupId { get; set; }
 
 
-        public MySQLDiscipline(Discipline discipline)
+        public MySqlDiscipline(Discipline discipline)
         {
             DisciplineId = discipline.DisciplineId;
             Name = discipline.Name;
@@ -26,9 +26,9 @@ namespace Schedule.wnu.MySQLViews
             StudentGroupId = discipline.StudentGroup.StudentGroupId;
         }
 
-        public static List<MySQLDiscipline> FromDisciplineList(IEnumerable<Discipline> list)
+        public static List<MySqlDiscipline> FromDisciplineList(IEnumerable<Discipline> list)
         {
-            return list.Select(discipline => new MySQLDiscipline(discipline)).ToList();
+            return list.Select(discipline => new MySqlDiscipline(discipline)).ToList();
         }
     }
 }

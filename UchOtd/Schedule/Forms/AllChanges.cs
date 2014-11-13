@@ -24,7 +24,7 @@ namespace UchOtd.Schedule.Forms
                 .OrderBy(tfd => tfd.Teacher.FIO)
                 .ThenBy(tfd => tfd.Discipline.Name)
                 .ToList();
-            var tfdsView = tfdView.tfdsToView(tfds);
+            var tfdsView = TfdView.TfdsToView(tfds);
 
             tfdFilter.DisplayMember = "tfdSummary";
             tfdFilter.ValueMember = "TeacherForDisciplineId";

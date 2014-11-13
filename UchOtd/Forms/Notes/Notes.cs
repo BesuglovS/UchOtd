@@ -11,14 +11,14 @@ namespace UchOtd.Forms.Notes
 {
     public partial class Notes : Form
     {
-        readonly UchOtdRepository _UOrepo;
+        readonly UchOtdRepository _uoRepo;
         private readonly TaskScheduler _uiScheduler;           
 
-        public Notes(UchOtdRepository UOrepo)
+        public Notes(UchOtdRepository uoRepo)
         {
             InitializeComponent();
 
-            _UOrepo = UOrepo;
+            _uoRepo = uoRepo;
 
             _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
         }
@@ -32,10 +32,10 @@ namespace UchOtd.Forms.Notes
 
         private void RefreshView()
         {
-            var notes = _UOrepo                
+            var notes = _uoRepo                
                 .GetFiltredNotes(n =>
                     n.Text.ToUpper().Contains(filter.Text.ToUpper()) ||
-                    n.Text.ToUpper().Contains(LayoutSupport.ConvertEnRU(filter.Text.ToLower()).ToUpper()))                
+                    n.Text.ToUpper().Contains(LayoutSupport.ConvertEnRu(filter.Text.ToLower()).ToUpper()))                
                 .ToList();
 
             view.DataSource = notes;
@@ -67,7 +67,7 @@ namespace UchOtd.Forms.Notes
                 TargetComputer = TargetComputer.Text
             };
 
-            _UOrepo.AddNote(newNote);
+            _uoRepo.AddNote(newNote);
 
             RefreshView();
         }
@@ -96,7 +96,7 @@ namespace UchOtd.Forms.Notes
                 note.Moment = noteMoment.Value;
                 note.TargetComputer = TargetComputer.Text;
 
-                _UOrepo.UpdateNote(note);
+                _uoRepo.UpdateNote(note);
 
                 RefreshView();
             }
@@ -108,7 +108,7 @@ namespace UchOtd.Forms.Notes
             {
                 var note = ((List<Note>)view.DataSource)[view.SelectedCells[0].RowIndex];
 
-                _UOrepo.RemoveNote(note.NoteId);
+                _uoRepo.RemoveNote(note.NoteId);
 
                 noteText.Text = "";
                 noteMoment.Value = DateTime.Now;

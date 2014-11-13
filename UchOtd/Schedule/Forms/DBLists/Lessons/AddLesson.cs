@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Schedule.Core;
@@ -14,9 +15,9 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
     public partial class AddLesson : Form
     {
         private readonly ScheduleRepository _repo;
-        private readonly int tfdId = -1;
+        private readonly int _tfdId = -1;
 
-        private int selectedBuildingId = -1;
+        private int _selectedBuildingId = -1;
 
         public AddLesson(ScheduleRepository repo)
         {
@@ -31,18 +32,18 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
             _repo = repo;
 
-            this.tfdId = tfdId;
+            _tfdId = tfdId;
         }
 
-        private void radioButtonCheckedChanged(Object sender, EventArgs e)
+        private void RadioButtonCheckedChanged(Object sender, EventArgs e)
         {
             var radioButton = (sender as RadioButton);
             if (radioButton.Checked)
             {
-                selectedBuildingId = (int)(sender as RadioButton).Tag;
+                _selectedBuildingId = (int)(sender as RadioButton).Tag;
             }
 
-            if (StartupForm.school)
+            if (StartupForm.School)
             {
                 RefreshLists();
             }
@@ -72,31 +73,27 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
         private void RefreshLists()
         {
-            if (selectedBuildingId == -1)
+            if (_selectedBuildingId == -1)
             {
                 return;
             }
 
-            _repo.GetBuilding(selectedBuildingId);
+            _repo.GetBuilding(_selectedBuildingId);
 
             // TFD list
-            var AllTfdList = _repo.GetAllTeacherForDiscipline();
-            var tfdList = new List<TeacherForDiscipline>();
-            foreach (var tfd in AllTfdList)
-            {
-                var partBuildingName = DetectBuildingByGroupName(tfd.Discipline.StudentGroup.Name);
-                var building = _repo.GetFirstFiltredBuilding(b => b.Name.Contains(partBuildingName));
+            var allTfdList = _repo.GetAllTeacherForDiscipline();
+            var tfdList = (
+                    from tfd in allTfdList
+                    let partBuildingName = DetectBuildingByGroupName(tfd.Discipline.StudentGroup.Name)
+                    let building = _repo.GetFirstFiltredBuilding(b => b.Name.Contains(partBuildingName))
+                    where building != null && building.BuildingId == _selectedBuildingId
+                    select tfd)
+                .ToList();
 
-                if (building != null && building.BuildingId == selectedBuildingId)
-                {
-                    tfdList.Add(tfd);
-                }
-            }
+            var tfdViewList = TfdView.TfdsToView(tfdList);
+            tfdViewList = tfdViewList.OrderBy(tfdv => tfdv.TfdSummary).ToList();
 
-            var tfdViewList = tfdView.tfdsToView(tfdList);
-            tfdViewList = tfdViewList.OrderBy(tfdv => tfdv.tfdSummary).ToList();
-
-            teacherForDisciplineBox.DisplayMember = "tfdSummary";
+            teacherForDisciplineBox.DisplayMember = "TfdSummary";
             teacherForDisciplineBox.ValueMember = "TeacherForDisciplineId";
             teacherForDisciplineBox.DataSource = tfdViewList;
         }
@@ -110,13 +107,15 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             int buildingCounter = 1;
             foreach (var building in buildings)
             { 
-                RadioButton buildingButton = new RadioButton();
-                buildingButton.Name = "bb_" + building.BuildingId;
-                buildingButton.Tag = building.BuildingId;
-                buildingButton.Width = 200;
-                buildingButton.Text = building.Name;
-                buildingButton.Location = new Point(startingPositionX, startingPositionY);
-                buildingButton.CheckedChanged += radioButtonCheckedChanged;
+                var buildingButton = new RadioButton
+                {
+                    Name = "bb_" + building.BuildingId,
+                    Tag = building.BuildingId,
+                    Width = 200,
+                    Text = building.Name,
+                    Location = new Point(startingPositionX, startingPositionY)
+                };
+                buildingButton.CheckedChanged += RadioButtonCheckedChanged;
                 BuildingsPanel.Controls.Add(buildingButton);
                 startingPositionX += 200;
 
@@ -129,23 +128,23 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 buildingCounter++;
             }
 
-            var BuildingsRowCount = (buildings.Count / 3) + ((buildings.Count % 3 == 0) ? 0 : 1);
+            var buildingsRowCount = (buildings.Count / 3) + ((buildings.Count % 3 == 0) ? 0 : 1);
 
-            BuildingsPanel.Height = 8 + 20 * BuildingsRowCount;
+            BuildingsPanel.Height = 8 + 20 * buildingsRowCount;
 
 
             // TFD load
             var tfdList = _repo.GetAllTeacherForDiscipline();
-            var tfdViewList = tfdView.tfdsToView(tfdList);
-            tfdViewList = tfdViewList.OrderBy(tfdv => tfdv.tfdSummary).ToList();
+            var tfdViewList = TfdView.TfdsToView(tfdList);
+            tfdViewList = tfdViewList.OrderBy(tfdv => tfdv.TfdSummary).ToList();
 
             teacherForDisciplineBox.DataSource = tfdViewList;
-            teacherForDisciplineBox.DisplayMember = "tfdSummary";
+            teacherForDisciplineBox.DisplayMember = "TfdSummary";
             teacherForDisciplineBox.ValueMember = "TeacherForDisciplineId";
 
-            if (tfdId != -1)
+            if (_tfdId != -1)
             {
-                teacherForDisciplineBox.SelectedValue = tfdId;
+                teacherForDisciplineBox.SelectedValue = _tfdId;
                 //ringsBox.Focus();
             }
 
@@ -163,7 +162,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
             // DOW Local
             var dowList = new List<object>();
-            foreach (var dow in global::Schedule.Constants.Constants.DowLocal)
+            foreach (var dow in Constants.DowLocal)
             {
                 dowList.Add(new { Value = dow.Key, Text = dow.Value });
             }
@@ -173,7 +172,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             DayOfWeekListBox.DataSource = dowList;            
 
             // Public comment
-            publicComment.Items.AddRange(global::Schedule.Constants.Constants.LessonAddPublicComment.ToArray());
+            publicComment.DataSource = Constants.LessonAddPublicComment;
             publicComment.SelectedIndex = 0;
 
             Top = (Screen.PrimaryScreen.WorkingArea.Height - Height) / 2;
@@ -202,25 +201,23 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             var studentIdsInGroup = sigFromGroup.Select(studentsInGroupse => studentsInGroupse.Student.StudentId).ToList();
             var studentGroupsIds = _repo.GetFiltredStudentsInGroups(sig => studentIdsInGroup.Contains(sig.Student.StudentId)).Select(sing => sing.StudentGroup.StudentGroupId).Distinct();
                                     
-            var rings = new List<Ring>();
-            foreach (var ringView in ringsListBox.SelectedItems)
-            {
-                rings.Add(_repo.GetRing(((RingView)ringView).RingId));
-            }
+            var rings = (
+                    from object ringView in ringsListBox.SelectedItems
+                    select _repo.GetRing(((RingView) ringView).RingId))
+                .ToList();
             var ringIds = rings.Select(r => r.RingId).ToList();
             
             
-            var calendarIdsList = new List<int>();
-            for (int i = 0; i < weekList.Count; i++)
-            {
-                var date = _repo.GetDateFromDowAndWeek((int)DayOfWeekListBox.SelectedValue, weekList[i]);
-                var calendar = _repo.FindCalendar(date);
-                if (calendar != null)
-                {
-                    calendarIdsList.Add(calendar.CalendarId);
-                }
-            }
-            
+            var calendarIdsList = (
+                    from week in weekList
+                    select _repo.GetDateFromDowAndWeek((int) DayOfWeekListBox.SelectedValue, week)
+                    into date
+                    select _repo.FindCalendar(date)
+                    into calendar
+                    where calendar != null
+                    select calendar.CalendarId)
+                .ToList();
+
             var groupsLessons = _repo
                 .GetFiltredLessons(
                     l => studentGroupsIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) && 
@@ -241,7 +238,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                         
             var audWeekList = Utilities.GetAudWeeksList(auditoriums.Text);
 
-            for (int i = 0; i < weekList.Count; i++)
+            foreach (int week in weekList)
             {
                 foreach (var ring in rings)
                 {
@@ -252,7 +249,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                         Ring = ring
                     };
 
-                    var date = _repo.GetDateFromDowAndWeek((int)DayOfWeekListBox.SelectedValue, weekList[i]);
+                    var date = _repo.GetDateFromDowAndWeek((int)DayOfWeekListBox.SelectedValue, week);
                     var calendar = _repo.FindCalendar(date) ?? new Calendar(date);
                     lesson.Calendar = calendar;
 
@@ -268,21 +265,21 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                         {
                             var lessonAud = audWeekList[0];
                             audWeekList.Clear();
-                            foreach (var week in weekList)
+                            foreach (var localWeek in weekList)
                             {
-                                audWeekList.Add(week, lessonAud);
+                                audWeekList.Add(localWeek, lessonAud);
                             }
                         }
 
-                        aud = _repo.FindAuditorium(audWeekList[weekList[i]]);
+                        aud = _repo.FindAuditorium(audWeekList[week]);
                         if (aud == null)
                         {
                             var firstBuilding = _repo.GetFirstFiltredBuilding(b => true);
 
                             if (firstBuilding != null)
                             {
-                                _repo.AddAuditorium(new Auditorium(audWeekList[weekList[i]], firstBuilding));
-                                aud = _repo.FindAuditorium(audWeekList[weekList[i]]);
+                                _repo.AddAuditorium(new Auditorium(audWeekList[week], firstBuilding));
+                                aud = _repo.FindAuditorium(audWeekList[week]);
                             }
                         }
                     }
@@ -330,26 +327,20 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 return;
             }          
             
-            var calendarIds = new List<int>();
-            foreach (var cal in _repo.GetAllCalendars())
-            {
-                if (global::Schedule.Constants.Constants.DowRemap[(int)cal.Date.DayOfWeek] - 1 == DayOfWeekListBox.SelectedIndex)
-                {
-                    var week = _repo.CalculateWeekNumber(cal.Date);
-                    if (weekList.Contains(week))
-                    {
-                        calendarIds.Add(cal.CalendarId);
-                    }
-                }
-            }
+            var calendarIds = (
+                    from cal in _repo.GetAllCalendars()
+                    where Constants.DowRemap[(int) cal.Date.DayOfWeek] - 1 == DayOfWeekListBox.SelectedIndex
+                    let week = _repo.CalculateWeekNumber(cal.Date)
+                    where weekList.Contains(week)
+                    select cal.CalendarId)
+                .ToList();
 
-            var ringIds = new List<int>();
-            foreach (var ringView in ringsListBox.SelectedItems)
-            {
-                ringIds.Add(((RingView)ringView).RingId);
-            }
+            var ringIds = (
+                    from object ringView in ringsListBox.SelectedItems
+                    select ((RingView) ringView).RingId)
+                .ToList();
 
-            var res = _repo.GetFreeAuditoriumAtDOWTime(calendarIds, ringIds, selectedBuildingId, proposedIncluded.Checked);
+            var res = _repo.GetFreeAuditoriumAtDowTime(calendarIds, ringIds, _selectedBuildingId, proposedIncluded.Checked);
 
             var c = new Utilities.AudComparer();
             res = res
@@ -374,10 +365,13 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             {
                 var button = controlObject as RadioButton;
 
-                button.Checked = false;
+                if (button != null)
+                {
+                    button.Checked = false;
+                }
             }
 
-            selectedBuildingId = -1;
+            _selectedBuildingId = -1;
         }
 
         private void teacherForDisciplineBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -389,7 +383,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
         {
             if (filterRings.Checked)
             {
-                UpdateTFDRings();
+                UpdateTfdRings();
             }
             else
             {
@@ -404,7 +398,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             }
         }
 
-        private void UpdateTFDRings()
+        private void UpdateTfdRings()
         {
             if (!(teacherForDisciplineBox.SelectedValue is int))
             {
@@ -416,7 +410,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
             var teacher = tfd.Teacher;
 
-            var RingsForTeacher = _repo
+            var ringsForTeacher = _repo
                 .GetFiltredCustomTeacherAttributes(cta => 
                     cta.Teacher.TeacherId == teacher.TeacherId &&
                     cta.Key == "TeacherRing")
@@ -425,7 +419,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 .ToList();
 
             // Rings load            
-            var ringsView = RingView.RingsToView(RingsForTeacher);
+            var ringsView = RingView.RingsToView(ringsForTeacher);
 
             ringsListBox.DataSource = ringsView;
             ringsListBox.DisplayMember = "Time";

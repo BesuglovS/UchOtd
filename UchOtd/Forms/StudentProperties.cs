@@ -118,20 +118,21 @@ namespace UchOtd.Forms
         {
             if (_mode == StudentDetailsMode.New)
             {
-                var s = new Student();
-
-                s.Address = AddressBox.Text;
-                s.BirthDate = BirthDateBox.Value;
-                s.Expelled = ExpelledBox.Checked;
-                s.F = FamilyBox.Text;
-                s.I = NameBox.Text;
-                s.NFactor = FromSchoolBox.Checked;
-                s.O = PatronymicBox.Text;
-                s.Orders = OrdersBox.Text;
-                s.PaidEdu = PaidLearningBox.Checked;
-                s.Phone = PhoneBox.Text;
-                s.Starosta = StarostaBox.Checked;
-                s.ZachNumber = IdNumBox.Text;
+                var s = new Student
+                {
+                    Address = AddressBox.Text,
+                    BirthDate = BirthDateBox.Value,
+                    Expelled = ExpelledBox.Checked,
+                    F = FamilyBox.Text,
+                    I = NameBox.Text,
+                    NFactor = FromSchoolBox.Checked,
+                    O = PatronymicBox.Text,
+                    Orders = OrdersBox.Text,
+                    PaidEdu = PaidLearningBox.Checked,
+                    Phone = PhoneBox.Text,
+                    Starosta = StarostaBox.Checked,
+                    ZachNumber = IdNumBox.Text
+                };
 
                 _repo.AddStudent(s);
 

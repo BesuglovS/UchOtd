@@ -122,9 +122,10 @@ namespace UchOtd.Schedule.Forms.Analysis
                 
                 foreach (var ring in selectedRings)
                 {
+                    var localRing = ring;
                     var foundedRing = _repo.GetFirstFiltredShiftRing(sr =>
                     sr.Shift.ShiftId == selectedShift.ShiftId &&
-                    sr.Ring.RingId == ring.RingId);
+                    sr.Ring.RingId == localRing.RingId);
 
                     if (foundedRing == null)
                     {

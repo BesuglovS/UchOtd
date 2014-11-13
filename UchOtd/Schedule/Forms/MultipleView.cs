@@ -105,59 +105,29 @@ namespace UchOtd.Schedule.Forms
         
         private void FormatView(List<int> groupList, Dictionary<int, string> groupNames)
         {
-            view.Columns["DOWTime"].HeaderText = "День недели + Время";
-            view.Columns["DOWTime"].Width = 100;
+            view.Columns["DowTime"].HeaderText = "День недели + Время";
+            view.Columns["DowTime"].Width = 100;
 
             view.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-            if (groupList.Count > 0)
-            {
-                view.Columns["FirstGroupEvents"].HeaderText = groupNames[groupList[0]];
-            }
-            else
-            {
-                view.Columns["FirstGroupEvents"].HeaderText = "Группа 1";
-            }
+            view.Columns["FirstGroupEvents"].HeaderText = groupList.Count > 0 ? 
+                groupNames[groupList[0]] : "Группа 1";
             view.Columns["FirstGroupEvents"].Width = 150;
 
-            if (groupList.Count > 1)
-            {
-                view.Columns["SecondGroupEvents"].HeaderText = groupNames[groupList[1]];
-            }
-            else
-            {
-                view.Columns["SecondGroupEvents"].HeaderText = "Группа 2";
-            }
+            view.Columns["SecondGroupEvents"].HeaderText = groupList.Count > 1 ?
+                groupNames[groupList[1]] : "Группа 2";
             view.Columns["SecondGroupEvents"].Width = 150;
 
-            if (groupList.Count > 2)
-            {
-                view.Columns["ThirdGroupEvents"].HeaderText = groupNames[groupList[2]];
-            }
-            else
-            {
-                view.Columns["ThirdGroupEvents"].HeaderText = "Группа 3";
-            }
+            view.Columns["ThirdGroupEvents"].HeaderText = groupList.Count > 2 ?
+                groupNames[groupList[2]] : "Группа 3";
             view.Columns["ThirdGroupEvents"].Width = 150;
 
-            if (groupList.Count > 3)
-            {
-                view.Columns["FourthGroupEvents"].HeaderText = groupNames[groupList[3]];
-            }
-            else
-            {
-                view.Columns["FourthGroupEvents"].HeaderText = "Группа 4";
-            }
+            view.Columns["FourthGroupEvents"].HeaderText = groupList.Count > 3 ?
+                groupNames[groupList[3]] : "Группа 4";
             view.Columns["FourthGroupEvents"].Width = 150;
 
-            if (groupList.Count > 4)
-            {
-                view.Columns["FifthGroupEvents"].HeaderText = groupNames[groupList[4]];
-            }
-            else
-            {
-                view.Columns["FifthGroupEvents"].HeaderText = "Группа 5";
-            }
+            view.Columns["FifthGroupEvents"].HeaderText = groupList.Count > 4 ?
+                groupNames[groupList[4]] : "Группа 5";
             view.Columns["FifthGroupEvents"].Width = 150;
 
             view.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
@@ -248,10 +218,10 @@ namespace UchOtd.Schedule.Forms
                 {
                     var dowString = global::Schedule.Constants.Constants.DowLocal[int.Parse(gv.Datetime.Substring(0,1))] + gv.Datetime.Substring(1);
 
-                    var item = result.FirstOrDefault(ri => ri.DOWTime == dowString);
+                    var item = result.FirstOrDefault(ri => ri.DowTime == dowString);
                     if (item == null)
                     {
-                        item = new FiveGroupsView { DOWTime = dowString };
+                        item = new FiveGroupsView { DowTime = dowString };
                         result.Add(item);
                     }
 
@@ -277,7 +247,7 @@ namespace UchOtd.Schedule.Forms
                 }
 
                 result = result
-                    .OrderBy(g => global::Schedule.Constants.Constants.DowLocalReverse[g.DOWTime.Split(' ')[0]] * 2000 + int.Parse(g.DOWTime.Split(' ')[1].Split(':')[0]) * 60 + int.Parse(g.DOWTime.Split(' ')[1].Split(':')[1]))
+                    .OrderBy(g => global::Schedule.Constants.Constants.DowLocalReverse[g.DowTime.Split(' ')[0]] * 2000 + int.Parse(g.DowTime.Split(' ')[1].Split(':')[0]) * 60 + int.Parse(g.DowTime.Split(' ')[1].Split(':')[1]))
                     .ToList();
                 i++;
             }

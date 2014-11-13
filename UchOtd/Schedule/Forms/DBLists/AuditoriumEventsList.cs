@@ -29,7 +29,8 @@ namespace UchOtd.Schedule.Forms.DBLists
                 {
                     if (date.DayOfWeek == dow)
                     {
-                        var calendar = _repo.GetFirstFiltredCalendar(c => c.Date.Date == date.Date);
+                        DateTime localDate = date;
+                        var calendar = _repo.GetFirstFiltredCalendar(c => c.Date.Date == localDate.Date);
 
                         if (calendar == null)
                         {
@@ -150,16 +151,16 @@ namespace UchOtd.Schedule.Forms.DBLists
                     return;
                 }
 
-                var AEView = ((List<AuditoriumEventView>)eventsView.DataSource)[eventsView.SelectedCells[0].RowIndex];
+                var aeView = ((List<AuditoriumEventView>)eventsView.DataSource)[eventsView.SelectedCells[0].RowIndex];
 
-                var AE = _repo.GetAuditoriumEvent(AEView.AuditoriumEventId);
+                var ae = _repo.GetAuditoriumEvent(aeView.AuditoriumEventId);
 
-                AE.Name = eventName.Text;
-                AE.Calendar = calendar;
-                AE.Ring = _repo.GetRing((int)eventTime.SelectedValue);
-                AE.Auditorium = _repo.GetAuditorium((int)eventAuditorium.SelectedValue);
+                ae.Name = eventName.Text;
+                ae.Calendar = calendar;
+                ae.Ring = _repo.GetRing((int)eventTime.SelectedValue);
+                ae.Auditorium = _repo.GetAuditorium((int)eventAuditorium.SelectedValue);
 
-                _repo.UpdateAuditoriumEvent(AE);
+                _repo.UpdateAuditoriumEvent(ae);
 
                 RefreshView();
             }

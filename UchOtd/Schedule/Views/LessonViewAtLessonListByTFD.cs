@@ -4,19 +4,19 @@ using Schedule.DomainClasses.Main;
 
 namespace UchOtd.Schedule.Views
 {
-    public class LessonViewAtLessonListByTFD
+    public class LessonViewAtLessonListByTfd
     {
         public int LessonId { get; set; }
         public string CalendarDate { get; set; }
         public string RingTime { get; set; }
         public string AuditoriumName { get; set; }
 
-        public LessonViewAtLessonListByTFD()
+        public LessonViewAtLessonListByTfd()
         {
 
         }
 
-        public LessonViewAtLessonListByTFD(Lesson l)
+        public LessonViewAtLessonListByTfd(Lesson l)
         {
             LessonId = l.LessonId;
             CalendarDate = l.Calendar.Date.ToString("dd.MM.yyyy");
@@ -24,10 +24,10 @@ namespace UchOtd.Schedule.Views
             AuditoriumName = l.Auditorium.Name;
         }
 
-        public static List<LessonViewAtLessonListByTFD> FromLessonList(List<Lesson> list)
+        public static List<LessonViewAtLessonListByTfd> FromLessonList(List<Lesson> list)
         {
             return list
-                .Select(l => new LessonViewAtLessonListByTFD(l))
+                .Select(l => new LessonViewAtLessonListByTfd(l))
                 .ToList();
         }
     }

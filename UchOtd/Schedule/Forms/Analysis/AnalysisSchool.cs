@@ -18,12 +18,12 @@ namespace UchOtd.Schedule.Forms.Analysis
         // InitialLogLevel
         public LogLevel InitialLogLevel = LogLevel.Normal;
 
-        public List<LogMessage> log = new List<LogMessage>();
+        public List<LogMessage> Log = new List<LogMessage>();
         
         private readonly ScheduleRepository _repo;
 
-        CancellationTokenSource tokenSource;
-        CancellationToken cToken;
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
 
         public AnalysisSchool(ScheduleRepository repo)
         {
@@ -43,25 +43,23 @@ namespace UchOtd.Schedule.Forms.Analysis
             SetLogLevel(InitialLogLevel);
         }
 
-        private bool SetLogLevel(LogLevel LogLevel)
+        private void SetLogLevel(LogLevel level)
         {
             for(var i = 0; i < logLevel.Items.Count; i++)
             {
-                if (((LogLevel)logLevel.Items[i]).Level == LogLevel.Level)
+                if (((LogLevel)logLevel.Items[i]).Level == level.Level)
                 {
                     logLevel.SelectedIndex = i;
 
-                    return true;
+                    return;
                 }
             }
-
-            return false;
         }
 
         private void M(string messageText, LogLevel messageLogLevel)
         {
             var message = new LogMessage { Time = DateTime.Now, Level = messageLogLevel, Text = messageText };
-            log.Add(message);
+            Log.Add(message);
 
             if (CurrentLogLevel.Level >= messageLogLevel.Level)
             {
@@ -78,18 +76,18 @@ namespace UchOtd.Schedule.Forms.Analysis
         {
             start.Enabled = false;
 
-            if (tokenSource != null)
+            if (_tokenSource != null)
             {
-                tokenSource.Cancel();
+                _tokenSource.Cancel();
             }
 
-            tokenSource = new CancellationTokenSource();
-            cToken = tokenSource.Token;
+            _tokenSource = new CancellationTokenSource();
+            _cToken = _tokenSource.Token;
             
-            var analyseTask = Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(() =>
             {
                 var disciplineOrderAttributes = _repo
-                .GetFiltredCustomDisciplineAttributes(cda => cda.Key == "DisciplineOrder");
+                    .GetFiltredCustomDisciplineAttributes(cda => cda.Key == "DisciplineOrder");
 
                 if (disciplineOrderAttributes.Count == 0)
                 {
@@ -104,7 +102,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                     .Select(cda => cda.Discipline)
                     .ToList();
 
-                var dowCount = CountDOW(_repo, true);
+                var dowCount = CountDow(_repo, true);
 
                 M("", LogLevel.ErrorsOnly);
                 M("Общее количество дисциплин - " + disciplines.Count, LogLevel.ErrorsOnly);
@@ -114,11 +112,11 @@ namespace UchOtd.Schedule.Forms.Analysis
                 {
                     var discipline = disciplines[i];
 
-                    var disciplineTFD =
+                    var disciplineTfd =
                         _repo.GetFirstFiltredTeacherForDiscipline(
                             tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
 
-                    if (disciplineTFD == null)
+                    if (disciplineTfd == null)
                     {
                         // Дисциплина не назначена преподавателю => пропускаем
                         M("~ \"" + discipline.Name + "\" " + discipline.StudentGroup.Name + " - нет преподавателя.", 
@@ -127,35 +125,35 @@ namespace UchOtd.Schedule.Forms.Analysis
                         continue;
                     }
 
-                    var groupName = disciplineTFD.Discipline.StudentGroup.Name;
+                    var groupName = disciplineTfd.Discipline.StudentGroup.Name;
 
-                    var lessonsInSchedule = _repo.getTFDLessonCount(disciplineTFD.TeacherForDisciplineId);
+                    var lessonsInSchedule = _repo.GetTfdLessonCount(disciplineTfd.TeacherForDisciplineId);
                     var lessonsInPlan = (int)Math.Round((double)discipline.AuditoriumHours / 2);
 
                     var lessonsInSchedulePerWeekApproximation = HoursToPerWeek(lessonsInSchedule);
-                    var PlanPerWeek = discipline.AuditoriumHoursPerWeek;
+                    var planPerWeek = discipline.AuditoriumHoursPerWeek;
 
                     var lessonsLeftToSet = lessonsInPlan - lessonsInSchedule;
-                    var lessonsLeftToSetPerWeek = PlanPerWeek - lessonsInSchedulePerWeekApproximation;
+                    var lessonsLeftToSetPerWeek = planPerWeek - lessonsInSchedulePerWeekApproximation;
 
                     if (lessonsLeftToSetPerWeek < 0)
                     {
-                        M("~ > \"" + discipline.Name + "\" " + " - " + groupName + " " + lessonsInSchedulePerWeekApproximation + " / " + PlanPerWeek, LogLevel.ErrorsAndWarnings);
+                        M("~ > \"" + discipline.Name + "\" " + " - " + groupName + " " + lessonsInSchedulePerWeekApproximation + " / " + planPerWeek, LogLevel.ErrorsAndWarnings);
 
                         continue;
                     }
 
-                    if (lessonsLeftToSetPerWeek == 0)
+                    if (Math.Abs(lessonsLeftToSetPerWeek) < 0.4)
                     {
                         M("~ = \"" + discipline.Name + "\" - " + groupName + " - " + lessonsInSchedulePerWeekApproximation, LogLevel.Max);
 
                         continue;
                     }
 
-                    M("< \"" + discipline.Name + "\" - " + groupName + " " + PlanPerWeek + " / " + lessonsInSchedulePerWeekApproximation + " = " + PlanPerWeek, LogLevel.Normal);
+                    M("< \"" + discipline.Name + "\" - " + groupName + " " + planPerWeek + " / " + lessonsInSchedulePerWeekApproximation + " = " + planPerWeek, LogLevel.Normal);
 
                     var lessonsProposed = _repo.GetFiltredLessons(l =>
-                        l.TeacherForDiscipline.TeacherForDisciplineId == disciplineTFD.TeacherForDisciplineId &&
+                        l.TeacherForDiscipline.TeacherForDisciplineId == disciplineTfd.TeacherForDisciplineId &&
                         l.State == 2);
                     var lessonsProposedCount = lessonsProposed.Count;
 
@@ -182,7 +180,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                     // TODO:Поставить proposedDiff занятий
                     
 
-                    if (cToken.IsCancellationRequested)
+                    if (_cToken.IsCancellationRequested)
                     {
                         M("Анализ отменён.", LogLevel.ErrorsOnly);
                         break;
@@ -191,7 +189,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                 start.BeginInvoke(new Action(() => { start.Enabled = true; }));
 
-            }, cToken);
+            }, _cToken);
         }
 
         private double HoursToPerWeek(int lessonsInSchedule)
@@ -199,7 +197,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             return Math.Round((lessonsInSchedule * 2d) / 36d) / 2d;
         }
 
-        private Dictionary<int, int> CountDOW(ScheduleRepository repo, bool printOut)
+        private Dictionary<int, int> CountDow(ScheduleRepository repo, bool printOut)
         {
             var result = new Dictionary<int, int>();
             for (int i = 1; i <= 7; i++)
@@ -249,9 +247,9 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void cancel_Click(object sender, EventArgs e)
         {
-            if (tokenSource != null)
+            if (_tokenSource != null)
             {
-                tokenSource.Cancel();
+                _tokenSource.Cancel();
             }
         }
         
@@ -261,7 +259,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             messages.Clear();
 
-            foreach (var message in log.OrderBy(m => m.Time))
+            foreach (var message in Log.OrderBy(m => m.Time))
             {
                 if (CurrentLogLevel.Level >= message.Level.Level)
                 {

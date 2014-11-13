@@ -1,20 +1,20 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Windows.Forms;
 using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using UchOtd.Schedule.Views;
 
-namespace UchOtd.Schedule.Forms
+namespace UchOtd.Schedule.Forms.Analysis
 {
     public partial class DisciplinesAuditoriums : Form
     {
         private readonly ScheduleRepository _repo;
 
-        private Discipline selectedDiscipline;
+        private Discipline _selectedDiscipline;
 
         public DisciplinesAuditoriums(ScheduleRepository repo)
         {
@@ -76,10 +76,10 @@ namespace UchOtd.Schedule.Forms
             var discView = datasource[discList.SelectedIndex];
             var dicsId = discView.DisciplineId;
 
-            selectedDiscipline = _repo.GetDiscipline(dicsId);
+            _selectedDiscipline = _repo.GetDiscipline(dicsId);
 
             var audIds = _repo.GetFiltredCustomDisciplineAttributes(cda =>
-                    cda.Discipline.DisciplineId == selectedDiscipline.DisciplineId &&
+                    cda.Discipline.DisciplineId == _selectedDiscipline.DisciplineId &&
                     cda.Key == "DisciplineAuditorium")
                 .Select(cda => int.Parse(cda.Value))
                 .ToList();
@@ -98,7 +98,7 @@ namespace UchOtd.Schedule.Forms
 
                 if (selected && !discAudIds.Contains(audId))
                 {
-                    var newDiscAudAttribute = new CustomDisciplineAttribute(selectedDiscipline, "DisciplineAuditorium", audId.ToString(CultureInfo.InvariantCulture));
+                    var newDiscAudAttribute = new CustomDisciplineAttribute(_selectedDiscipline, "DisciplineAuditorium", audId.ToString(CultureInfo.InvariantCulture));
 
                     _repo.AddCustomDisciplineAttribute(newDiscAudAttribute);
 
@@ -110,7 +110,7 @@ namespace UchOtd.Schedule.Forms
                     
                     var discAudAttribute = _repo
                         .GetFirstFiltredCustomDisciplineAttribute(cda => 
-                            cda.Discipline.DisciplineId == selectedDiscipline.DisciplineId &&
+                            cda.Discipline.DisciplineId == _selectedDiscipline.DisciplineId &&
                             cda.Key == "DisciplineAuditorium");
 
                     if (discAudAttribute != null)
@@ -129,7 +129,7 @@ namespace UchOtd.Schedule.Forms
 
             foreach (var aud in allAuds)
             {
-                var newDiscAudAttribute = new CustomDisciplineAttribute(selectedDiscipline, "DisciplineAuditorium", aud.AuditoriumId.ToString(CultureInfo.InvariantCulture));
+                var newDiscAudAttribute = new CustomDisciplineAttribute(_selectedDiscipline, "DisciplineAuditorium", aud.AuditoriumId.ToString(CultureInfo.InvariantCulture));
 
                 _repo.AddCustomDisciplineAttribute(newDiscAudAttribute);
             }
@@ -141,7 +141,7 @@ namespace UchOtd.Schedule.Forms
         {
             var cdaIds = _repo
                 .GetFiltredCustomDisciplineAttributes(cda => 
-                    cda.Discipline.DisciplineId == selectedDiscipline.DisciplineId &&
+                    cda.Discipline.DisciplineId == _selectedDiscipline.DisciplineId &&
                     cda.Key == "DisciplineAuditorium")
                 .Select(cda => cda.CustomDisciplineAttributeId)
                 .ToList();

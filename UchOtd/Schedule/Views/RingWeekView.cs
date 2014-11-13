@@ -38,8 +38,7 @@ namespace UchOtd.Schedule.Views
 
             foreach (var ringWishes in filteredWishes)
             {
-                var ringWeekView = new RingWeekView();
-                ringWeekView.RingId = ringWishes.RingId;
+                var ringWeekView = new RingWeekView {RingId = ringWishes.RingId};
 
                 foreach (var dowWishes in ringWishes.RingWishes)
                 {

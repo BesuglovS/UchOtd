@@ -89,16 +89,18 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 foreach (var disc in discList)
                 {
-                    var tfd = _repo.GetFirstFiltredTeacherForDiscipline(tefd => tefd.Discipline.DisciplineId == disc.DisciplineId);
+                    var localDisc = disc;
+                    var tfd = _repo
+                        .GetFirstFiltredTeacherForDiscipline(tefd => 
+                            tefd.Discipline.DisciplineId == localDisc.DisciplineId);
 
-                    var diffList = new List<int>();
-                    diffList.Add(0);
+                    var diffList = new List<int> {0};
                     if (DifferenceByOne.Checked)
                     {
                         diffList.Add(-1);
                     }
 
-                    if ((tfd != null) && (!diffList.Contains(disc.AuditoriumHours - _repo.getTFDHours(tfd.TeacherForDisciplineId))))
+                    if ((tfd != null) && (!diffList.Contains(disc.AuditoriumHours - _repo.GetTfdHours(tfd.TeacherForDisciplineId))))
                     {
                         discListFiltered.Add(disc);
                     }
@@ -112,21 +114,15 @@ namespace UchOtd.Schedule.Forms.DBLists
                 discList = discList.Where(disc => disc.StudentGroup.Name.Contains(" + ")).ToList();                
             }
 
-            if (orderByGroupname.Checked)
-            {
-                discList = discList.OrderBy(disc => disc.StudentGroup.Name).ToList();
-            }
-            else
-            {
-                // ORDER BY NAME
-                discList = discList.OrderBy(disc => disc.Name).ToList();
-            }
+            discList = orderByGroupname.Checked ? 
+                discList.OrderBy(disc => disc.StudentGroup.Name).ToList() : 
+                discList.OrderBy(disc => disc.Name).ToList();
 
             Text = "Дисциплины - " + discList.Count();
 
             var discView = DisciplineView.DisciplinesToView(_repo, discList);
 
-            DiscipineListView.DataSource = discView.OrderBy(dv =>dv.TeacherFIO).ToList();
+            DiscipineListView.DataSource = discView.OrderBy(dv =>dv.TeacherFio).ToList();
 
             FormatView();
 
@@ -141,8 +137,8 @@ namespace UchOtd.Schedule.Forms.DBLists
             DiscipineListView.Columns["Name"].Width = 270;
             DiscipineListView.Columns["Name"].HeaderText = "Наименование дисциплины";
 
-            DiscipineListView.Columns["TeacherFIO"].Width = 80;
-            DiscipineListView.Columns["TeacherFIO"].HeaderText = "ФИО преподавателя";
+            DiscipineListView.Columns["TeacherFio"].Width = 80;
+            DiscipineListView.Columns["TeacherFio"].HeaderText = "ФИО преподавателя";
 
             DiscipineListView.Columns["ScheduleHours"].Width = 30;
             DiscipineListView.Columns["ScheduleHours"].HeaderText = "Часов в расписании";
@@ -349,29 +345,29 @@ namespace UchOtd.Schedule.Forms.DBLists
             }
         }
 
-        private Color PickPercentColor(int AuditoriumHours, int ScheduleHours)
+        private Color PickPercentColor(int auditoriumHours, int scheduleHours)
         {
-            if (ScheduleHours > AuditoriumHours+1)
+            if (scheduleHours > auditoriumHours+1)
             {
                 return Color.FromArgb(255, 0, 255);
             }
 
-            if (ScheduleHours == AuditoriumHours+1)
+            if (scheduleHours == auditoriumHours+1)
             {
                 return Color.FromArgb(200, 255, 0);
             }
             
-            if (ScheduleHours == AuditoriumHours)
+            if (scheduleHours == auditoriumHours)
             {
                 return Color.FromArgb(0, 255, 0);
             }
 
-            if (ScheduleHours >= AuditoriumHours * 0.9)
+            if (scheduleHours >= auditoriumHours * 0.9)
             {
                 return Color.FromArgb(255, 255, 0);
             }
             
-            if (ScheduleHours >= AuditoriumHours * 0.5)
+            if (scheduleHours >= auditoriumHours * 0.5)
             {
                 return Color.FromArgb(255, 128, 0);
             }
@@ -409,7 +405,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 foreach (var lessonId in lessonIds)
                 {
-                    _repo.RemoveLessonWOLog(lessonId);
+                    _repo.RemoveLessonWoLog(lessonId);
                 }
 
                 _repo.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
@@ -450,11 +446,14 @@ namespace UchOtd.Schedule.Forms.DBLists
                     continue;
                 }
 
-                var tfd = _repo.GetFirstFiltredTeacherForDiscipline(tefd => tefd.Discipline.DisciplineId == disc.DisciplineId);
+                var localDisc = disc;
+                var tfd = _repo
+                    .GetFirstFiltredTeacherForDiscipline(tefd => 
+                        tefd.Discipline.DisciplineId == localDisc.DisciplineId);
 
                 if (tfd != null)
                 {
-                    if (_repo.getTFDHours(tfd.TeacherForDisciplineId) == 0)
+                    if (_repo.GetTfdHours(tfd.TeacherForDisciplineId) == 0)
                     {
                         discList.Add(disc);
                     }
@@ -469,7 +468,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             var discView = DisciplineView.DisciplinesToView(_repo, discList);
 
-            DiscipineListView.DataSource = discView.OrderBy(dv => dv.TeacherFIO).ToList();
+            DiscipineListView.DataSource = discView.OrderBy(dv => dv.TeacherFio).ToList();
 
             FormatView();
 

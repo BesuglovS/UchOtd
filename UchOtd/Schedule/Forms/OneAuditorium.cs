@@ -31,7 +31,7 @@ namespace UchOtd.Schedule.Forms
 
         private void auditoriumList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var data = _repo.getAud((int)auditoriumList.SelectedValue, showProposed.Checked);
+            var data = _repo.GetAud((int)auditoriumList.SelectedValue, showProposed.Checked);
 
             PutAudsOnGrid(data);
         }

@@ -1,6 +1,6 @@
 ﻿namespace UchOtd.Forms
 {
-    partial class OpenDB
+    partial class OpenDb
     {
         /// <summary>
         /// Required designer variable.
@@ -205,7 +205,7 @@
             this.ClientSize = new System.Drawing.Size(655, 170);
             this.Controls.Add(this.actionPanel);
             this.Controls.Add(this.ChoosePanel);
-            this.Name = "OpenDB";
+            this.Name = "OpenDb";
             this.Text = "Выберите базу данных";
             this.Load += new System.EventHandler(this.OpenDB_Load);
             this.ChoosePanel.ResumeLayout(false);

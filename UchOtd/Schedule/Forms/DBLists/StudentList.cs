@@ -52,15 +52,15 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             var studentView = StudentView.StudentsToView(studentList);
             studentCombo.DataSource = studentView;
-            studentCombo.DisplayMember = "FIO";
+            studentCombo.DisplayMember = "Fio";
             studentCombo.ValueMember = "StudentId";
 
 
             StudentListView.DataSource = studentView;
             
             StudentListView.Columns["StudentId"].Visible = false;
-            StudentListView.Columns["FIO"].Width = 200;
-            StudentListView.Columns["FIO"].HeaderText = "Ф.И.О.";
+            StudentListView.Columns["Fio"].Width = 200;
+            StudentListView.Columns["Fio"].HeaderText = "Ф.И.О.";
             StudentListView.Columns["ZachNumber"].Width = 80;
             StudentListView.Columns["ZachNumber"].HeaderText = "№ зачётки";
             StudentListView.Columns["BirthDate"].Width = 80;

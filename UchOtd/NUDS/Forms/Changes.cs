@@ -4,10 +4,10 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using NUDispSchedule.Views;
 using Schedule.DomainClasses.Logs;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using UchOtd.NUDS.View;
 using UchOtd.Properties;
 using System.Globalization;
 
@@ -53,14 +53,14 @@ namespace UchOtd.NUDS.Forms
             datePicker.Value = initialCalendar.Date;            
         }
 
-        private void SetGroupChangesView(List<lleView> evtsView)
+        private void SetGroupChangesView(List<LleView> evtsView)
         {
             changesView.Columns.Clear();
             changesView.DataSource = evtsView;
             SetChangesView();
         }
 
-        private List<lleView> GetGroupChanges(int groupId, int calendarId)
+        private List<LleView> GetGroupChanges(int groupId, int calendarId)
         {
             var studentIds = _repo
                 .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
@@ -99,7 +99,7 @@ namespace UchOtd.NUDS.Forms
                     .ToList();
             }
 
-            var evtsView = lleView.ListFromLessonLogEvents(evts);
+            var evtsView = LleView.ListFromLessonLogEvents(evts);
             return evtsView;
         }
 

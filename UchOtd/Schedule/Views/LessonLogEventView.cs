@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Schedule.DomainClasses.Logs;
 
 namespace UchOtd.Schedule.Views
@@ -54,14 +55,7 @@ namespace UchOtd.Schedule.Views
 
         public static List<LessonLogEventView> FromEventList(List<LessonLogEvent> list)
         {
-            var result = new List<LessonLogEventView>();
-
-            foreach (var evt in list)
-            {
-                result.Add(new LessonLogEventView(evt));
-            }
-
-            return result;
-        }     
+            return list.Select(evt => new LessonLogEventView(evt)).ToList();
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace UchOtd.Schedule.Forms
 {
-    partial class teacherHours
+    partial class TeacherHours
     {
         /// <summary>
         /// Required designer variable.
@@ -108,7 +108,7 @@
             this.ClientSize = new System.Drawing.Size(731, 504);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
-            this.Name = "teacherHours";
+            this.Name = "TeacherHours";
             this.Text = "Часы по преподавателю";
             this.Load += new System.EventHandler(this.teacherHours_Load);
             this.controlsPanel.ResumeLayout(false);

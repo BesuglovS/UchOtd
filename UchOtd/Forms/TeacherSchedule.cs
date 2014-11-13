@@ -93,7 +93,7 @@ namespace UchOtd.Forms
             var lessonsGrouped = lessonList
                 .GroupBy(l => l.Ring.Time)
                 .ToDictionary(l => l.Key,
-                    l2 => l2.GroupBy(l3 => Constants.DOWEnToRu[(int) l3.Calendar.Date.DayOfWeek])
+                    l2 => l2.GroupBy(l3 => Constants.DowEnToRu[(int) l3.Calendar.Date.DayOfWeek])
                         .ToDictionary(ll => ll.Key,
                             ll => ll.GroupBy(l4 => l4.TeacherForDiscipline.TeacherForDisciplineId)
                                 .ToDictionary(l5 => l5.Key, l5 => l5.ToList())))
@@ -286,7 +286,7 @@ namespace UchOtd.Forms
             for (int i = 1; i <= 7; i++)
             {
                 scheduleView.Columns[i].Width = (scheduleView.Width - 76) / notEmptyDowColumnCount;
-                scheduleView.Columns[i].HeaderText = Constants.DOWRU[i];
+                scheduleView.Columns[i].HeaderText = Constants.DowRu[i];
             }
 
         }

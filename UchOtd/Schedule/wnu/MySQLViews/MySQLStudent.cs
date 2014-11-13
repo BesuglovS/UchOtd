@@ -2,9 +2,9 @@
 using System.Linq;
 using Schedule.DomainClasses.Main;
 
-namespace Schedule.wnu.MySQLViews
+namespace UchOtd.Schedule.wnu.MySQLViews
 {
-    public class MySQLStudent
+    public class MySqlStudent
     {
         public int StudentId { get; set; }
         public string F { get; set; }
@@ -20,7 +20,7 @@ namespace Schedule.wnu.MySQLViews
         public int PaidEdu { get; set; }
         public int Expelled { get; set; }
 
-        public MySQLStudent(Student student)
+        public MySqlStudent(Student student)
         {
             StudentId = student.StudentId;
             F = student.F;
@@ -37,9 +37,9 @@ namespace Schedule.wnu.MySQLViews
             Expelled = student.Expelled ? 1 : 0;
         }
 
-        public static List<MySQLStudent> FromStudentList(IEnumerable<Student> list)
+        public static List<MySqlStudent> FromStudentList(IEnumerable<Student> list)
         {
-            return list.Select(student => new MySQLStudent(student)).ToList();
+            return list.Select(student => new MySqlStudent(student)).ToList();
         }
     }
 }

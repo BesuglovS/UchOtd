@@ -26,16 +26,16 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void RefreshLists()
         {
-            var WithAudAttrs = _repo.GetFiltredCustomDisciplineAttributes(cda => cda.Key == "WithAud").ToList();
-            var WithAudDiscs = WithAudAttrs.Select(cda => cda.Discipline).ToList();
+            var withAudAttrs = _repo.GetFiltredCustomDisciplineAttributes(cda => cda.Key == "WithAud").ToList();
+            var withAudDiscs = withAudAttrs.Select(cda => cda.Discipline).ToList();
 
-            var WithAudView = DisciplineTextView.DisciplinesToView(WithAudDiscs);
+            var withAudView = DisciplineTextView.DisciplinesToView(withAudDiscs);
 
-            WithAudDiscsList.DataSource = WithAudView;
+            WithAudDiscsList.DataSource = withAudView;
             WithAudDiscsList.ValueMember = "DisciplineId";
             WithAudDiscsList.DisplayMember = "DisciplineSummary";
 
-            var allDiscsLeft = _repo.GetFiltredDisciplines(d => !WithAudDiscs.Select(di => di.DisciplineId).ToList().Contains(d.DisciplineId))
+            var allDiscsLeft = _repo.GetFiltredDisciplines(d => !withAudDiscs.Select(di => di.DisciplineId).ToList().Contains(d.DisciplineId))
                 .OrderBy(d => d.StudentGroup.Name)
                 .ThenBy(d => d.Name)
                 .ThenBy(d => d.AuditoriumHours)
@@ -88,25 +88,20 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             var discIds = new List<int>();
 
-            for (int i = 0; i < WithAudDiscsList.Items.Count; i++)
+            for (var i = 0; i < WithAudDiscsList.Items.Count; i++)
             {
-                bool selected = WithAudDiscsList.GetSelected(i);
-                if (selected)
+                if (WithAudDiscsList.GetSelected(i))
                 {
-                    int disciplineId = ((List<DisciplineTextView>)WithAudDiscsList.DataSource)[i].DisciplineId;
-
-                    discIds.Add(disciplineId);
+                    discIds.Add(((List<DisciplineTextView>)WithAudDiscsList.DataSource)[i].DisciplineId);
                 }
             }
 
-            foreach (var discId in discIds)
+            foreach (var withAudAttribute in discIds.Select(localDiscId => _repo
+                .GetFirstFiltredCustomDisciplineAttribute(cda => 
+                    cda.Discipline.DisciplineId == localDiscId && cda.Key == "WithAud"))
+                    .Where(withAudAttribute => withAudAttribute != null))
             {
-                var WithAudAttribute = _repo.GetFirstFiltredCustomDisciplineAttribute(cda => cda.Discipline.DisciplineId == discId && cda.Key == "WithAud");
-
-                if (WithAudAttribute != null)
-                {
-                    _repo.RemoveCustomDisciplineAttribute(WithAudAttribute.CustomDisciplineAttributeId);
-                }
+                _repo.RemoveCustomDisciplineAttribute(withAudAttribute.CustomDisciplineAttributeId);
             }
 
             RefreshLists();

@@ -30,14 +30,14 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BuildingLessons));
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.lessonsDate = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
-            this.building = new System.Windows.Forms.ComboBox();
+            this.buildingBox = new System.Windows.Forms.ComboBox();
             this.label175 = new System.Windows.Forms.Label();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.auditoriumsView = new System.Windows.Forms.DataGridView();
-            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.auditoriumsView)).BeginInit();
@@ -48,13 +48,23 @@
             this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.lessonsDate);
             this.controlsPanel.Controls.Add(this.label1);
-            this.controlsPanel.Controls.Add(this.building);
+            this.controlsPanel.Controls.Add(this.buildingBox);
             this.controlsPanel.Controls.Add(this.label175);
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(875, 50);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // showProposed
+            // 
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(496, 11);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(217, 17);
+            this.showProposed.TabIndex = 4;
+            this.showProposed.Text = "Показывать преполагаемые занятия";
+            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // lessonsDate
             // 
@@ -74,14 +84,14 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Дата";
             // 
-            // building
+            // buildingBox
             // 
-            this.building.FormattingEnabled = true;
-            this.building.Location = new System.Drawing.Point(61, 9);
-            this.building.Name = "building";
-            this.building.Size = new System.Drawing.Size(184, 21);
-            this.building.TabIndex = 1;
-            this.building.SelectedIndexChanged += new System.EventHandler(this.BuildingSelectedIndexChanged);
+            this.buildingBox.FormattingEnabled = true;
+            this.buildingBox.Location = new System.Drawing.Point(61, 9);
+            this.buildingBox.Name = "buildingBox";
+            this.buildingBox.Size = new System.Drawing.Size(184, 21);
+            this.buildingBox.TabIndex = 1;
+            this.buildingBox.SelectedIndexChanged += new System.EventHandler(this.BuildingSelectedIndexChanged);
             // 
             // label175
             // 
@@ -130,16 +140,6 @@
             this.auditoriumsView.Size = new System.Drawing.Size(875, 494);
             this.auditoriumsView.TabIndex = 0;
             // 
-            // showProposed
-            // 
-            this.showProposed.AutoSize = true;
-            this.showProposed.Location = new System.Drawing.Point(496, 11);
-            this.showProposed.Name = "showProposed";
-            this.showProposed.Size = new System.Drawing.Size(217, 17);
-            this.showProposed.TabIndex = 4;
-            this.showProposed.Text = "Показывать преполагаемые занятия";
-            this.showProposed.UseVisualStyleBackColor = true;
-            // 
             // BuildingLessons
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -165,7 +165,7 @@
         private System.Windows.Forms.Panel controlsPanel;
         private System.Windows.Forms.DateTimePicker lessonsDate;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox building;
+        private System.Windows.Forms.ComboBox buildingBox;
         private System.Windows.Forms.Label label175;
         private System.Windows.Forms.Panel viewPanel;
         private System.Windows.Forms.DataGridView auditoriumsView;

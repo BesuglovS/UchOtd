@@ -3,15 +3,15 @@ using System.Windows.Forms;
 
 namespace UchOtd.Forms
 {
-    public partial class OpenDB : Form
+    public partial class OpenDb : Form
     {
-        readonly StartupForm startupForm;
+        readonly StartupForm _startupForm;
 
-        public OpenDB(StartupForm StartupForm)
+        public OpenDb(StartupForm startupForm)
         {
             InitializeComponent();
 
-            startupForm = StartupForm;
+            _startupForm = startupForm;
         }
 
         private void Cancel_Click(object sender, EventArgs e)
@@ -27,7 +27,7 @@ namespace UchOtd.Forms
                     ";User ID = " + Properties.Settings.Default.DBUserName +
                     ";Password = " + Properties.Settings.Default.DBPassword;
 
-                startupForm._repo.ConnectionString = connectionString;
+                _startupForm.Repo.ConnectionString = connectionString;
 
                 Close();
             }
@@ -39,7 +39,7 @@ namespace UchOtd.Forms
                     ";User ID = " + Properties.Settings.Default.DBUserName +
                     ";Password = " + Properties.Settings.Default.DBPassword;
 
-                startupForm._repo.ConnectionString = connectionString;
+                _startupForm.Repo.ConnectionString = connectionString;
 
                 Close();
             }

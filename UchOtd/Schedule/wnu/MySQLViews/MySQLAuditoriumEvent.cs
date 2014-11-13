@@ -4,7 +4,7 @@ using Schedule.DomainClasses.Main;
 
 namespace UchOtd.Schedule.wnu.MySQLViews
 {
-    public class MySQLAuditoriumEvent
+    public class MySqlAuditoriumEvent
     {
         public int AuditoriumEventId { get; set; }
         public string Name { get; set; }
@@ -12,7 +12,7 @@ namespace UchOtd.Schedule.wnu.MySQLViews
         public int RingId { get; set; }
         public int AuditoriumId { get; set; }
 
-        public MySQLAuditoriumEvent(AuditoriumEvent evt)
+        public MySqlAuditoriumEvent(AuditoriumEvent evt)
         {
             AuditoriumEventId = evt.AuditoriumEventId;
             Name = evt.Name;
@@ -21,9 +21,9 @@ namespace UchOtd.Schedule.wnu.MySQLViews
             AuditoriumId = evt.Auditorium.AuditoriumId;
         }
 
-        public static List<MySQLAuditoriumEvent> FromAuditoriumEventList(IEnumerable<AuditoriumEvent> list)
+        public static List<MySqlAuditoriumEvent> FromAuditoriumEventList(IEnumerable<AuditoriumEvent> list)
         {
-            return list.Select(aEvt => new MySQLAuditoriumEvent(aEvt)).ToList();
+            return list.Select(aEvt => new MySqlAuditoriumEvent(aEvt)).ToList();
         }
     }
 }

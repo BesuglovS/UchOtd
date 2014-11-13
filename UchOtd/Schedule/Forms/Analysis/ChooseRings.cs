@@ -122,7 +122,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             RingsList.ClearSelected();
 
-            List<RingView> datasource = (List<RingView>)RingsList.DataSource;
+            var datasource = (List<RingView>)RingsList.DataSource;
 
             for (int i = 0; i < datasource.Count; i++)
             {

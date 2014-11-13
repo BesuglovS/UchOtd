@@ -1,36 +1,32 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 
 namespace UchOtd.Schedule.Views
 {
-    public class tfdView
+    public class TfdView
     {
-        public tfdView()
+        public TfdView()
         {
         }
 
-        public tfdView(TeacherForDiscipline tfd)
+        public TfdView(TeacherForDiscipline tfd)
         {
             TeacherForDisciplineId = tfd.TeacherForDisciplineId;
-            tfdSummary = tfd.Teacher.FIO + " " + tfd.Discipline.Name + " " +
+            TfdSummary = tfd.Teacher.FIO + " " + tfd.Discipline.Name + " " +
                 tfd.Discipline.AuditoriumHours + "@" +
                 tfd.Discipline.LectureHours + "/" + tfd.Discipline.PracticalHours + " " +
-                global::Schedule.Constants.Constants.Attestation[tfd.Discipline.Attestation] + " " + 
+                Constants.Attestation[tfd.Discipline.Attestation] + " " + 
                 tfd.Discipline.StudentGroup.Name;
         }
 
-        public static List<tfdView> tfdsToView(List<TeacherForDiscipline> tfdList)
+        public static List<TfdView> TfdsToView(List<TeacherForDiscipline> tfdList)
         {
-            var result = new List<tfdView>();
-            foreach (var tfd in tfdList)
-            {
-                result.Add(new tfdView(tfd));
-            }
-
-            return result;
+            return tfdList.Select(tfd => new TfdView(tfd)).ToList();
         }
 
         public int TeacherForDisciplineId { get; set; }
-        public string tfdSummary { get; set; }
+        public string TfdSummary { get; set; }
     }
 }

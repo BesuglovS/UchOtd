@@ -1,4 +1,4 @@
-﻿namespace Schedule.wnu
+﻿namespace UchOtd.Schedule.wnu
 {
     public class WnuUploadData
     {

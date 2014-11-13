@@ -2,9 +2,9 @@
 using System.Linq;
 using Schedule.DomainClasses.Logs;
 
-namespace Schedule.wnu.MySQLViews
+namespace UchOtd.Schedule.wnu.MySQLViews
 {
-    class MySQLLessonLogEvent
+    class MySqlLessonLogEvent
     {
 
         public int LessonLogEventId { get; set; }
@@ -14,7 +14,7 @@ namespace Schedule.wnu.MySQLViews
         public string PublicComment { get; set; }
         public string HiddenComment { get; set; }
 
-        public MySQLLessonLogEvent(LessonLogEvent logEvent)
+        public MySqlLessonLogEvent(LessonLogEvent logEvent)
         {
             LessonLogEventId = logEvent.LessonLogEventId;
             if (logEvent.OldLesson != null)
@@ -38,9 +38,9 @@ namespace Schedule.wnu.MySQLViews
             HiddenComment = logEvent.HiddenComment;
         }
 
-        public static List<MySQLLessonLogEvent> FromLessonLogList(IEnumerable<LessonLogEvent> list)
+        public static List<MySqlLessonLogEvent> FromLessonLogList(IEnumerable<LessonLogEvent> list)
         {
-            return list.Select(logEvent => new MySQLLessonLogEvent(logEvent)).ToList();
+            return list.Select(logEvent => new MySqlLessonLogEvent(logEvent)).ToList();
         }
     
     }

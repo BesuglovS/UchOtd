@@ -4,22 +4,22 @@ using Schedule.DomainClasses.Main;
 
 namespace UchOtd.Schedule.wnu.MySQLViews
 {
-    class MySQLAuditorium
+    class MySqlAuditorium
     {
         public int AuditoriumId { get; set; }
         public string Name { get; set; }
         public int BuildingId { get; set; }
 
-        public MySQLAuditorium(Auditorium auditorium)
+        public MySqlAuditorium(Auditorium auditorium)
         {
             AuditoriumId = auditorium.AuditoriumId;
             Name = auditorium.Name;
             BuildingId = auditorium.Building.BuildingId;
         }
 
-        public static List<MySQLAuditorium> FromAuditoriumList(IEnumerable<Auditorium> list)
+        public static List<MySqlAuditorium> FromAuditoriumList(IEnumerable<Auditorium> list)
         {
-            return list.Select(auditorium => new MySQLAuditorium(auditorium)).ToList();
+            return list.Select(auditorium => new MySqlAuditorium(auditorium)).ToList();
         }
     }
 }

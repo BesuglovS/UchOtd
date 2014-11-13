@@ -9,11 +9,11 @@ using UchOtd.Schedule.Views;
 
 namespace UchOtd.Schedule.Forms
 {
-    public partial class teacherHours : Form
+    public partial class TeacherHours : Form
     {
         private readonly ScheduleRepository _repo;
         
-        public teacherHours(ScheduleRepository repo)
+        public TeacherHours(ScheduleRepository repo)
         {
             InitializeComponent();
 
@@ -43,7 +43,7 @@ namespace UchOtd.Schedule.Forms
 
             var tfds = _repo.GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacherId);
 
-            var tfdInfo = TeacherForDisciplineView.FromTFDList(tfds, _repo);
+            var tfdInfo = TeacherForDisciplineView.FromTfdList(tfds, _repo);
 
             view.DataSource = tfdInfo;
 
@@ -52,7 +52,7 @@ namespace UchOtd.Schedule.Forms
 
         private void FormatView()
         {
-            view.Columns["tfdId"].Visible = false;
+            view.Columns["TfdId"].Visible = false;
 
             view.Columns["DisciplineId"].Visible = false;
 
@@ -78,29 +78,29 @@ namespace UchOtd.Schedule.Forms
             view.Columns["Attestation"].Width = 80;
         }
         
-        private Color PickPercentColor(int PlanHours, int ScheduleHours)
+        private Color PickPercentColor(int planHours, int scheduleHours)
         {
-            if (ScheduleHours > PlanHours + 1)
+            if (scheduleHours > planHours + 1)
             {
                 return Color.FromArgb(255, 0, 255);
             }
 
-            if (ScheduleHours == PlanHours + 1)
+            if (scheduleHours == planHours + 1)
             {
                 return Color.FromArgb(200, 255, 0);
             }
 
-            if (ScheduleHours == PlanHours)
+            if (scheduleHours == planHours)
             {
                 return Color.FromArgb(0, 255, 0);
             }
 
-            if (ScheduleHours >= PlanHours * 0.9)
+            if (scheduleHours >= planHours * 0.9)
             {
                 return Color.FromArgb(255, 255, 0);
             }
 
-            if (ScheduleHours >= PlanHours * 0.5)
+            if (scheduleHours >= planHours * 0.5)
             {
                 return Color.FromArgb(255, 128, 0);
             }

@@ -1,4 +1,4 @@
-﻿namespace UchOtd.Schedule.Forms
+﻿namespace UchOtd.Schedule.Forms.Analysis
 {
     partial class LastLesson
     {

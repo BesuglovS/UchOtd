@@ -1,4 +1,5 @@
-﻿using Schedule.DomainClasses.Session;
+﻿using System.Linq;
+using Schedule.DomainClasses.Session;
 using Schedule.Repositories;
 using System;
 using System.Collections.Generic;
@@ -20,40 +21,16 @@ namespace UchOtd.Views
         public DateTime ExamDateTime { get; set; }
         public string ExamAuditorium { get; set; }
 
-        public static List<ExamView> FromExamList(ScheduleRepository _repo, List<Exam> list)
+        public static List<ExamView> FromExamList(ScheduleRepository repo, List<Exam> list)
         {
-            var result = new List<ExamView>();
-
-            foreach (var exam in list)
-            {
-                var disc = _repo.GetFirstFiltredDisciplines(d => d.DisciplineId == exam.DisciplineId);
-
-
-                string consAud;
-                if (exam.ConsultationAuditoriumId != 0)
+            return (from exam in list
+                let disc = repo.GetFirstFiltredDisciplines(d => d.DisciplineId == exam.DisciplineId)
+                let consAud = exam.ConsultationAuditoriumId != 0 ? repo.GetAuditorium(exam.ConsultationAuditoriumId).Name : ""
+                let examAud = (exam.ExamAuditoriumId != 0) ? repo.GetAuditorium(exam.ExamAuditoriumId).Name : ""
+                select new ExamView
                 {
-                    consAud = _repo.GetAuditorium(exam.ConsultationAuditoriumId).Name;
-                }
-                else
-                {
-                    consAud = "";
-                }
-
-                var examAud = (exam.ExamAuditoriumId != 0) ? _repo.GetAuditorium(exam.ExamAuditoriumId).Name : "";
-
-                result.Add(new ExamView
-                {
-                    ExamId = exam.ExamId,
-                    ConsultationAuditorium = consAud,
-                    ConsultationDateTime = exam.ConsultationDateTime,
-                    DisciplineName = disc.Name,
-                    ExamAuditorium = examAud,
-                    ExamDateTime = exam.ExamDateTime,
-                    GroupName = disc.StudentGroup.Name
-                });
-            }
-
-            return result;
+                    ExamId = exam.ExamId, ConsultationAuditorium = consAud, ConsultationDateTime = exam.ConsultationDateTime, DisciplineName = disc.Name, ExamAuditorium = examAud, ExamDateTime = exam.ExamDateTime, GroupName = disc.StudentGroup.Name
+                }).ToList();
         }
     }
 }

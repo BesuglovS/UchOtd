@@ -1,6 +1,6 @@
 ﻿namespace UchOtd.Schedule.Forms
 {
-    partial class LessonListByTFD
+    partial class LessonListByTfd
     {
         /// <summary>
         /// Required designer variable.
@@ -96,7 +96,7 @@
             this.ClientSize = new System.Drawing.Size(949, 580);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
-            this.Name = "LessonListByTFD";
+            this.Name = "LessonListByTfd";
             this.Text = "Список пар по TFD";
             this.Load += new System.EventHandler(this.LessonListByTFD_Load);
             this.ResizeEnd += new System.EventHandler(this.LessonListByTFD_ResizeEnd);

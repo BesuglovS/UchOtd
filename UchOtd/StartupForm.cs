@@ -9,29 +9,27 @@ using UchOtd.Forms.Notes;
 using UchOtd.Repositories;
 using System.IO;
 using UchOtd.Core;
-using System.Net.NetworkInformation;
-using System.Text;
 using System.Collections.Generic;
 using UchOtd.Forms.Session;
 using UchOtd.Schedule;
-using Schedule.wnu;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Data.SqlClient;
 using System.Data;
 using System.Security.AccessControl;
 using UchOtd.Schedule.Forms;
+using UchOtd.Schedule.wnu;
 
 namespace UchOtd
 {
     public partial class StartupForm : Form
     {
-        public static bool school = false;
-        public static string DefaultDBName = "Schedule14151";
-        //public static string DefaultDBName = "School";
+        public static bool School = false;
+        public static string DefaultDbName = "Schedule14151";
+        //public static string DefaultDbName = "School";
 
-        public ScheduleRepository _repo;
-        public UchOtdRepository _UOrepo; 
+        public ScheduleRepository Repo;
+        public UchOtdRepository UOrepo; 
 
         bool _studentListFormOpened;
         public StudentList StudentListForm;
@@ -48,35 +46,35 @@ namespace UchOtd
         bool _buildingFormOpened;
         public BuildingLessons BuildingForm;
 
-        bool _NotesFormOpened;
+        bool _notesFormOpened;
         public Notes NotesForm;
 
-        bool _PhonesFormOpened;
+        bool _phonesFormOpened;
         public Phones PhonesForm;
 
-        bool _MainEditFormOpened;
+        bool _mainEditFormOpened;
         public MainEditForm EditForm;
 
-        bool _LessonsTFDFormOpened;
-        public LessonListByTFD LessonsByTFD;
+        bool _lessonsTfdFormOpened;
+        public LessonListByTfd LessonsByTfd;
 
         bool _teacherLessonsFormOpened;
-        public LessonListByTeacher teacherLessons;
+        public LessonListByTeacher TeacherLessons;
 
         bool _teacherHoursFormOpened;
-        public teacherHours teacherDiciplines;
+        public TeacherHours TeacherDiciplines;
 
         bool _dailyLessonsFormOpened;
-        public DailyLessons dailyLessons;
+        public DailyLessons DailyLessons;
 
         bool _sessionFormOpened;
-        public Session sessionForm;
+        public Session SessionForm;
 
         public StartupForm()
         {
             InitializeComponent();
 
-            BackupDBLast10Runs(DefaultDBName);
+            BackupDbLast10Runs(DefaultDbName);
 
             InitRepositories();
 
@@ -127,7 +125,7 @@ namespace UchOtd
                 var connectionString = sr.ReadLine();
                 sr.Close();
 
-                _repo.ConnectionString = connectionString;
+                Repo.ConnectionString = connectionString;
             }
 
             RefreshDbOrConnectionName();
@@ -136,10 +134,10 @@ namespace UchOtd
             _scheduleFormOpened = false;
             _teacherScheduleFormOpened = false;
             _buildingFormOpened = false;
-            _NotesFormOpened = false;
-            _PhonesFormOpened = false;
-            _MainEditFormOpened = false;
-            _LessonsTFDFormOpened = false;
+            _notesFormOpened = false;
+            _phonesFormOpened = false;
+            _mainEditFormOpened = false;
+            _lessonsTfdFormOpened = false;
             _teacherLessonsFormOpened = false;
             _teacherHoursFormOpened = false;
             _dailyLessonsFormOpened = false;
@@ -148,28 +146,28 @@ namespace UchOtd
             trayIcon.Visible = true;
         }
 
-        private void BackupDBLast10Runs(string dbName)
+        private void BackupDbLast10Runs(string dbName)
         {
             try
             {
-                const string AppDataPath = "D:\\UchOtd-DB-Backup";
+                const string appDataPath = "D:\\UchOtd-DB-Backup";
 
-                if (!Directory.Exists(AppDataPath))
+                if (!Directory.Exists(appDataPath))
                 {
-                    Directory.CreateDirectory(AppDataPath);
+                    Directory.CreateDirectory(appDataPath);
                 }
 
-                var filesInfo = new DirectoryInfo(AppDataPath).GetFiles("*.bak");
+                var filesInfo = new DirectoryInfo(appDataPath).GetFiles("*.bak");
                 if (filesInfo.Length >= 10)
                 {
-                    var extrafiles = new List<FileInfo> (new DirectoryInfo(AppDataPath).EnumerateFiles("*.bak"))
+                    var extrafiles = new List<FileInfo> (new DirectoryInfo(appDataPath).EnumerateFiles("*.bak"))
                         .OrderByDescending(f => f.LastWriteTime)
                         .Skip(9)
                         .ToList();
                     extrafiles.ForEach(f => f.Delete());
                 }
 
-                var filename = AppDataPath + "\\" + dbName + DateTime.Now.ToString("_dd-MMM_HH-mm-ss") + ".bak";
+                var filename = appDataPath + "\\" + dbName + DateTime.Now.ToString("_dd-MMM_HH-mm-ss") + ".bak";
 
                 BackupDB(dbName, filename);
                 
@@ -191,12 +189,15 @@ namespace UchOtd
 
         private void BackupDB(string dbName, string filename)
         {
-            SqlConnection sqlConnection1 = new SqlConnection("data source=tcp:127.0.0.1,1433;Database=" + dbName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
-            SqlCommand cmd = new SqlCommand();
-
-            cmd.CommandText = "BACKUP DATABASE " + dbName + " TO DISK = '" + filename + "' WITH FORMAT, MEDIANAME='" + dbName + "'";
-            cmd.CommandType = CommandType.Text;
-            cmd.Connection = sqlConnection1;
+            var sqlConnection1 = new SqlConnection("data source=tcp:127.0.0.1,1433;Database=" + dbName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+            var cmd = new SqlCommand
+            {
+                CommandText =
+                    "BACKUP DATABASE " + dbName + " TO DISK = '" + filename + "' WITH FORMAT, MEDIANAME='" + dbName +
+                    "'",
+                CommandType = CommandType.Text,
+                Connection = sqlConnection1
+            };
 
             sqlConnection1.Open();
 
@@ -206,19 +207,19 @@ namespace UchOtd
         }
 
         // Adds an ACL entry on the specified directory for the specified account. 
-        public static void AddDirectorySecurity(string FileName, string Account, FileSystemRights Rights, AccessControlType ControlType)
+        public static void AddDirectorySecurity(string fileName, string account, FileSystemRights rights, AccessControlType controlType)
         {
             // Create a new DirectoryInfo object.
-            DirectoryInfo dInfo = new DirectoryInfo(FileName);
+            var dInfo = new DirectoryInfo(fileName);
 
             // Get a DirectorySecurity object that represents the  
             // current security settings.
-            DirectorySecurity dSecurity = dInfo.GetAccessControl();
+            var dSecurity = dInfo.GetAccessControl();
 
             // Add the FileSystemAccessRule to the security settings. 
-            dSecurity.AddAccessRule(new FileSystemAccessRule(Account,
-                                                            Rights,
-                                                            ControlType));
+            dSecurity.AddAccessRule(new FileSystemAccessRule(account,
+                                                            rights,
+                                                            controlType));
 
             // Set the new access settings.
             dInfo.SetAccessControl(dSecurity);
@@ -253,12 +254,12 @@ namespace UchOtd
              */
 
             //_repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
-            _repo = new ScheduleRepository("data source=tcp:" + serverList[0] + ",1433;Database=" + DefaultDBName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
-            _UOrepo = new UchOtdRepository("data source=tcp:" + serverList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+            Repo = new ScheduleRepository("data source=tcp:" + serverList[0] + ",1433;Database=" + DefaultDbName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+            UOrepo = new UchOtdRepository("data source=tcp:" + serverList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
 
             PropagateIsActiveToStateIfNeeded();
 
-            if (school)
+            if (School)
             {
                 uploadTimer.Enabled = true;
             }
@@ -266,16 +267,17 @@ namespace UchOtd
 
         private void PropagateIsActiveToStateIfNeeded()
         {
-            var propagateOption = _repo.GetFirstFiltredConfigOption(co => co.Key == "_IsActivePropagatedToState");
+            var propagateOption = Repo.GetFirstFiltredConfigOption(co => co.Key == "_IsActivePropagatedToState");
 
             if (propagateOption == null)
             {
-                _repo.PropagateIsActiveToState();
+                Repo.PropagateIsActiveToState();
                 propagateOption = new ConfigOption { Key = "_IsActivePropagatedToState", Value = "" };
-                _repo.AddConfigOption(propagateOption);
+                Repo.AddConfigOption(propagateOption);
             }
         }
 
+        /*
         private static bool PingServerExistence(string server)
         {
             Ping pingSender = new Ping();
@@ -301,12 +303,13 @@ namespace UchOtd
 
             return (reply != null) && (reply.Status == IPStatus.Success);
         }
+         */
 
         private void RefreshDbOrConnectionName()
         {
-            if (_repo != null)
+            if (Repo != null)
             {
-                openDBToolStripMenuItem.Text = "Сменить базу данных (" + Utilities.ExtractDbOrConnectionName(_repo.ConnectionString) + ")";
+                openDBToolStripMenuItem.Text = "Сменить базу данных (" + Utilities.ExtractDbOrConnectionName(Repo.ConnectionString) + ")";
             }
             else
             {
@@ -352,7 +355,7 @@ namespace UchOtd
                 }
                 if (e.Key == Keys.L)
                 {
-                    ShowLessonListByTFD();
+                    ShowLessonListByTfd();
                 }
                 if (e.Key == Keys.D)
                 {
@@ -389,60 +392,60 @@ namespace UchOtd
         {
             if (_dailyLessonsFormOpened)
             {
-                dailyLessons.Activate();
-                dailyLessons.Focus();
+                DailyLessons.Activate();
+                DailyLessons.Focus();
                 return;
             }
 
-            dailyLessons = new DailyLessons(_repo);
+            DailyLessons = new DailyLessons(Repo);
             _dailyLessonsFormOpened = true;
-            dailyLessons.Show();
+            DailyLessons.Show();
             _dailyLessonsFormOpened = false;
         }
 
         private void ShowEditScheduleForm()
         {
-            if (_MainEditFormOpened)
+            if (_mainEditFormOpened)
             {
                 EditForm.Activate();
                 EditForm.Focus();
                 return;
             }
 
-            EditForm = new MainEditForm(_repo);
-            _MainEditFormOpened = true;
+            EditForm = new MainEditForm(Repo);
+            _mainEditFormOpened = true;
             EditForm.Show();
-            _MainEditFormOpened = false;
+            _mainEditFormOpened = false;
         }
 
         private void ShowPhonesForm()
         {
-            if (_PhonesFormOpened)
+            if (_phonesFormOpened)
             {
                 PhonesForm.Activate();
                 PhonesForm.Focus();
                 return;
             }
 
-            PhonesForm = new Phones(_UOrepo);
-            _PhonesFormOpened = true;
+            PhonesForm = new Phones(UOrepo);
+            _phonesFormOpened = true;
             PhonesForm.Show();
-            _PhonesFormOpened = false;
+            _phonesFormOpened = false;
         }
 
         private void ShowNotesForm()
         {
-            if (_NotesFormOpened)
+            if (_notesFormOpened)
             {
                 NotesForm.Activate();
                 NotesForm.Focus();
                 return;
             }
 
-            NotesForm = new Notes(_UOrepo);
-            _NotesFormOpened = true;
+            NotesForm = new Notes(UOrepo);
+            _notesFormOpened = true;
             NotesForm.Show();
-            _NotesFormOpened = false;
+            _notesFormOpened = false;
         }
         
         private void ShowBuildingForm()
@@ -454,7 +457,7 @@ namespace UchOtd
                 return;
             }
 
-            BuildingForm = new BuildingLessons(_repo);
+            BuildingForm = new BuildingLessons(Repo);
             _buildingFormOpened = true;
             BuildingForm.Show();
             _buildingFormOpened = false;
@@ -470,7 +473,7 @@ namespace UchOtd
                 return;
             }
 
-            TeacherScheduleForm = new TeacherSchedule(_repo);
+            TeacherScheduleForm = new TeacherSchedule(Repo);
             _teacherScheduleFormOpened = true;
             TeacherScheduleForm.Show();
             _teacherScheduleFormOpened = false;
@@ -485,7 +488,7 @@ namespace UchOtd
                 return;
             }
 
-            ScheduleForm = new ScheduleForm(_repo);
+            ScheduleForm = new ScheduleForm(Repo);
             _scheduleFormOpened = true;
             ScheduleForm.Show();
             _scheduleFormOpened = false;
@@ -500,7 +503,7 @@ namespace UchOtd
                 return;
             }
 
-            StudentListForm = new StudentList(_repo);
+            StudentListForm = new StudentList(Repo);
             _studentListFormOpened = true;
             StudentListForm.Show();
             _studentListFormOpened = false;
@@ -515,7 +518,7 @@ namespace UchOtd
                 return;
             }
 
-            ChangesForm = new Changes(_repo, 0);
+            ChangesForm = new Changes(Repo, 0);
             _changesFormOpened = true;
             ChangesForm.Show();
             _changesFormOpened = false;
@@ -570,8 +573,8 @@ namespace UchOtd
 
         private void openDBToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var openDBForm = new OpenDB(this);
-            openDBForm.Show();
+            var openDbForm = new OpenDb(this);
+            openDbForm.Show();
 
             RefreshDbOrConnectionName();
         }
@@ -583,22 +586,22 @@ namespace UchOtd
 
         private void списокПарПоДисциплинеAltLToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowLessonListByTFD();
+            ShowLessonListByTfd();
         }
 
-        private void ShowLessonListByTFD()
+        private void ShowLessonListByTfd()
         {            
-            if (_LessonsTFDFormOpened)
+            if (_lessonsTfdFormOpened)
             {
-                LessonsByTFD.Activate();
-                LessonsByTFD.Focus();
+                LessonsByTfd.Activate();
+                LessonsByTfd.Focus();
                 return;
             }
 
-            LessonsByTFD = new LessonListByTFD(_repo);
-            _LessonsTFDFormOpened = true;
-            LessonsByTFD.Show();
-            _LessonsTFDFormOpened = false;
+            LessonsByTfd = new LessonListByTfd(Repo);
+            _lessonsTfdFormOpened = true;
+            LessonsByTfd.Show();
+            _lessonsTfdFormOpened = false;
             
         }
 
@@ -611,14 +614,14 @@ namespace UchOtd
         {
             if (_teacherLessonsFormOpened)
             {
-                teacherLessons.Activate();
-                teacherLessons.Focus();
+                TeacherLessons.Activate();
+                TeacherLessons.Focus();
                 return;
             }
 
-            teacherLessons = new LessonListByTeacher(_repo);
+            TeacherLessons = new LessonListByTeacher(Repo);
             _teacherLessonsFormOpened = true;
-            teacherLessons.Show();
+            TeacherLessons.Show();
             _teacherLessonsFormOpened = false;            
         }
 
@@ -631,14 +634,14 @@ namespace UchOtd
         {
             if (_teacherHoursFormOpened)
             {
-                teacherDiciplines.Activate();
-                teacherDiciplines.Focus();
+                TeacherDiciplines.Activate();
+                TeacherDiciplines.Focus();
                 return;
             }
 
-            teacherDiciplines = new teacherHours(_repo);
+            TeacherDiciplines = new TeacherHours(Repo);
             _teacherHoursFormOpened = true;
-            teacherDiciplines.Show();
+            TeacherDiciplines.Show();
             _teacherHoursFormOpened = false;
         }
 
@@ -656,29 +659,29 @@ namespace UchOtd
         {
             if (_sessionFormOpened)
             {
-                sessionForm.Activate();
-                sessionForm.Focus();
+                SessionForm.Activate();
+                SessionForm.Focus();
                 return;
             }
 
-            sessionForm = new Session(_repo);
+            SessionForm = new Session(Repo);
             _sessionFormOpened = true;
-            sessionForm.Show();
+            SessionForm.Show();
             _sessionFormOpened = false;
         }
 
         private void uploadTimer_Tick(object sender, EventArgs e)
-        {            
-            Task t = Task.Factory.StartNew(() =>
+        {
+            Task.Factory.StartNew(() =>
             {
                 try
                 {
-                    WnuUpload.UploadSchedule(_repo, school ? "s_" : "");
+                    WnuUpload.UploadSchedule(Repo, School ? "s_" : "");
                 }
-                catch 
+                catch
                 {   
                 }                
-            });                         
-        }                
+            });
+        }
     }
 }
