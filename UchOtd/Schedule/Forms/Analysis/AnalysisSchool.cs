@@ -177,7 +177,37 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                     M("p < \"" + discipline.Name + "\" - " + groupName + " " + lessonsLeftToSet + " / " + lessonsProposedCount + " = " + proposedDiff, LogLevel.Normal);
 
-                    // TODO:Поставить proposedDiff занятий
+                    // TODO:Поставить proposedDiffPerWeekApproximation занятий
+
+                    // Находим звонки смены
+                    var shiftAttribute = _repo.GetFirstFiltredCustomStudentGroupAttribute(csga => csga.Key == "Shift" && csga.StudentGroup.StudentGroupId == discipline.StudentGroup.StudentGroupId);
+                    
+                    if (shiftAttribute == null)
+                    {
+                        M("ОШИБКА - Для группы " + discipline.StudentGroup.Name + " не задана смена", LogLevel.ErrorsOnly);
+
+                        start.Enabled = true;
+                        return;
+                    }
+
+                    var groupShiftId = int.Parse(shiftAttribute.Value);
+
+                    var groupShiftRings = _repo
+                        .GetFiltredShiftRings(sr => sr.Shift.ShiftId == groupShiftId)
+                        .Select(sr => sr.Ring)
+                        .ToList();                    
+                    // Находим звонки смены
+
+                    if (groupShiftRings.Count == 0)
+                    {
+                        var shift = _repo.GetShift(groupShiftId);
+                        M("ОШИБКА - Для смены " + shift.Name + " не заданы времена начала занятий", LogLevel.ErrorsOnly);
+
+                        start.Enabled = true;
+                        return;
+                    }
+
+
                     
 
                     if (_cToken.IsCancellationRequested)

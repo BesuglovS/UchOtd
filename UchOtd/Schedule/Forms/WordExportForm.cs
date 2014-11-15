@@ -70,9 +70,9 @@ namespace UchOtd.Schedule.Forms
             {
                 Parent = this,
                 Name = "cbFuture",
-                Text = "только будущие даты",
-                Checked = false,
-                Bounds = new Rectangle(230, 10 + (faculties.Count + 1)*25, 75, 25)
+                Text = "только будущие даты",                
+                Checked = true,
+                Bounds = new Rectangle(230, 10 + (faculties.Count + 1)*25, 200, 25)
             };
             Controls.Add(future);  
         }

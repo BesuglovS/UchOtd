@@ -14,6 +14,7 @@ namespace UchOtd.Schedule.Views.DBListViews
         public int ScheduleHours { get; set; }
         public string Attestation { get; set; } // 0 - ничего; 1 - зачёт; 2 - экзамен; 3 - зачёт и экзамен
         public int AuditoriumHours { get; set; }
+        public int ProposedHours { get; set; }
         public int AuditoriumHoursPerWeek { get; set; }
         public int LectureHours { get; set; }
         public int PracticalHours { get; set; }        
@@ -39,6 +40,7 @@ namespace UchOtd.Schedule.Views.DBListViews
             {
                 TeacherFio = tefd.Teacher.FIO;
                 ScheduleHours = repo.GetTfdHours(tefd.TeacherForDisciplineId);
+                ProposedHours = repo.GetTfdProposedHours(tefd.TeacherForDisciplineId);
             }
             else
             {

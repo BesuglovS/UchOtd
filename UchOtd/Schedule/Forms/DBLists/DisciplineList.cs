@@ -149,6 +149,9 @@ namespace UchOtd.Schedule.Forms.DBLists
             DiscipineListView.Columns["AuditoriumHours"].Width = 80;
             DiscipineListView.Columns["AuditoriumHours"].HeaderText = "Аудиторные часы";
 
+            DiscipineListView.Columns["ProposedHours"].Width = 80;
+            DiscipineListView.Columns["ProposedHours"].HeaderText = "Неутверждённые часы";
+
             DiscipineListView.Columns["AuditoriumHoursPerWeek"].Width = 80;
             DiscipineListView.Columns["AuditoriumHoursPerWeek"].HeaderText = "Аудиторные часы (в неделю / ШКОЛА)";
 

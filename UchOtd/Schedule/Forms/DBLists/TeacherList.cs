@@ -50,7 +50,13 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void TeacherList_Load(object sender, EventArgs e)
         {
-            RefreshView((int)RefreshType.FullRefresh);            
+            RefreshView((int)RefreshType.FullRefresh);
+
+            var teachers = _repo.GetAllTeachers();
+
+            remapToTeacherList.DisplayMember = "FIO";
+            remapToTeacherList.ValueMember = "TeacherId";
+            remapToTeacherList.DataSource = teachers.OrderBy(t => t.FIO).ToList();
         }
 
         private void RefreshView(int refreshType)
@@ -331,6 +337,39 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var addLessonForm = new AddLesson(_repo);
                 addLessonForm.Show();
             }
+        }
+
+        private void remapTfd_Click(object sender, EventArgs e)
+        {
+            if (TeacherListView.SelectedCells.Count == 0)
+            {
+                MessageBox.Show("Не выделен преподаватель для переназначения дисциплины.");
+                return;
+            }
+
+            if (TFDListView.SelectedCells.Count == 0)
+            {
+                MessageBox.Show("Не выделена дисциплина для переназначения.");
+                return;
+            }
+
+            var teacher = ((List<Teacher>)TeacherListView.DataSource)[TeacherListView.SelectedCells[0].RowIndex];
+
+            var discView = ((List<DisciplineView>)TFDListView.DataSource)[TFDListView.SelectedCells[0].RowIndex];
+
+            var tfdSelected = _repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacher.TeacherId && tfd.Discipline.DisciplineId == discView.DisciplineId);
+
+            if (tfdSelected == null)
+            {
+                MessageBox.Show("Назначение не найдено.");
+                return;
+            }
+
+            tfdSelected.Teacher = (Teacher)remapToTeacherList.SelectedItem;
+
+            _repo.UpdateTeacherForDiscipline(tfdSelected);
+
+            RefreshTeacherDisciplines(teacher);
         }
     }
 }

@@ -201,6 +201,12 @@ namespace UchOtd.Schedule.Forms.DBLists
                     return;
                 }
 
+                if (_repo.GetFiltredGroupsInFaculty(gif => gif.StudentGroup.StudentGroupId == studentGroup.StudentGroupId).Count > 0)
+                {
+                    MessageBox.Show("Группа есть в списке факультета.");
+                    return;
+                }
+
                 _repo.RemoveStudentGroup(studentGroup.StudentGroupId);
 
                 RefreshView((int)RefreshType.GroupsOnly);

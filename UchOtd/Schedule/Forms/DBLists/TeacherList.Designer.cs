@@ -60,6 +60,8 @@
             this.removeWithLessons = new System.Windows.Forms.Button();
             this.removeTFD = new System.Windows.Forms.Button();
             this.addTFD = new System.Windows.Forms.Button();
+            this.remapTfd = new System.Windows.Forms.Button();
+            this.remapToTeacherList = new System.Windows.Forms.ComboBox();
             this.LeftPanel.SuspendLayout();
             this.TeacherListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TeacherListView)).BeginInit();
@@ -373,6 +375,8 @@
             // 
             // TFDControlsPanel
             // 
+            this.TFDControlsPanel.Controls.Add(this.remapToTeacherList);
+            this.TFDControlsPanel.Controls.Add(this.remapTfd);
             this.TFDControlsPanel.Controls.Add(this.removeWithLessons);
             this.TFDControlsPanel.Controls.Add(this.removeTFD);
             this.TFDControlsPanel.Controls.Add(this.addTFD);
@@ -411,6 +415,24 @@
             this.addTFD.Text = "Добавить";
             this.addTFD.UseVisualStyleBackColor = true;
             this.addTFD.Click += new System.EventHandler(this.addTFD_Click);
+            // 
+            // remapTfd
+            // 
+            this.remapTfd.Location = new System.Drawing.Point(6, 32);
+            this.remapTfd.Name = "remapTfd";
+            this.remapTfd.Size = new System.Drawing.Size(208, 23);
+            this.remapTfd.TabIndex = 32;
+            this.remapTfd.Text = "Переназначить дисциплину";
+            this.remapTfd.UseVisualStyleBackColor = true;
+            this.remapTfd.Click += new System.EventHandler(this.remapTfd_Click);
+            // 
+            // remapToTeacherList
+            // 
+            this.remapToTeacherList.FormattingEnabled = true;
+            this.remapToTeacherList.Location = new System.Drawing.Point(220, 32);
+            this.remapToTeacherList.Name = "remapToTeacherList";
+            this.remapToTeacherList.Size = new System.Drawing.Size(456, 21);
+            this.remapToTeacherList.TabIndex = 33;
             // 
             // TeacherList
             // 
@@ -481,5 +503,7 @@
         private System.Windows.Forms.Button filterButton;
         private System.Windows.Forms.TextBox filter;
         private System.Windows.Forms.Panel freeDiscPanel;
+        private System.Windows.Forms.ComboBox remapToTeacherList;
+        private System.Windows.Forms.Button remapTfd;
     }
 }

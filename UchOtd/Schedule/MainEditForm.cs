@@ -511,7 +511,7 @@ namespace UchOtd.Schedule
 
                     foreach (var tfd in tfds)
                     {
-                        if (tfd.Discipline.AuditoriumHours == 0)
+                        if ((tfd.Discipline.AuditoriumHours == 0) || (!tfd.Discipline.Name.Contains("я куль")))
                         {
                             continue;
                         }
@@ -525,7 +525,7 @@ namespace UchOtd.Schedule
                         );
 
 
-                        var lessons = Repo.GetFiltredLessons(l => (l.State == 1) && l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
+                        var lessons = Repo.GetFiltredLessons(l => (l.State == 2) && l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
 
                         foreach (var lesson in lessons.OrderBy(l => l.Calendar.Date.Date))
                         {
@@ -1518,11 +1518,13 @@ namespace UchOtd.Schedule
 
         private void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
+            dayDelta_Click(sender, e);
+
             // Oops
             // ExportStudentsData("StudentsExport-1sem.txt");
             // ImportStudentData("StudentsExport-1sem.txt");
             // CopyINOGroupLessonsFromRealSchedule();
-            // ExportScheduleDates("Oops\\stat.txt");
+            //ExportScheduleDates("Oops\\stat.txt");
             // ExportFacultyGroups();
             // ExportDiscAuds("Auds.txt");
             // ExportGroupDisciplines("Oops\\Discs.txt");

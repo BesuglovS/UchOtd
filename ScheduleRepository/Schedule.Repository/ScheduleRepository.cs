@@ -720,7 +720,7 @@ namespace Schedule.Repositories
                 var studentGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == studentGroupId);
 
                 context.StudentGroups.Remove(studentGroup);
-                context.SaveChanges();
+                context.SaveChanges();                
             }
         }
 
@@ -1427,7 +1427,7 @@ namespace Schedule.Repositories
                     .Include(l => l.Auditorium.Building)
                     .Where(l => 
                         groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) && 
-                        (l.State == 1) || (l.State == 2))
+                        ((l.State == 1) || (l.State == 2)))
                     .ToList();
 
                 if (!putProposedLessons)
@@ -4274,6 +4274,16 @@ namespace Schedule.Repositories
                 return context.Lessons.Count(l =>
                     ((l.State == 1) || ((l.State == 2) && includeProposed)) && 
                     l.TeacherForDiscipline.TeacherForDisciplineId == tfdId) * 2;
+            }
+        }
+
+        public int GetTfdProposedHours(int tfdId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                return context.Lessons.Count(l =>
+                    (l.State == 2) &&
+                    (l.TeacherForDiscipline.TeacherForDisciplineId == tfdId)) * 2;
             }
         }
 
