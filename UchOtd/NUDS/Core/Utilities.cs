@@ -28,6 +28,7 @@ namespace UchOtd.NUDS.Core
             if (limitToExactGroup)
             {
                 result = repo
+                    .Lessons
                     .GetFiltredLessons(l =>
                         ((l.State == 1) || ((l.State == 2) && showProposed)) &&
                         (l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == groupId) &&
@@ -38,17 +39,20 @@ namespace UchOtd.NUDS.Core
             else
             {
                 var studentIds = repo
+                    .StudentsInGroups
                     .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
                     .Select(stig => stig.Student.StudentId)
                     .ToList();
 
                 var groupIds = repo
+                    .StudentsInGroups
                     .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
                     .Select(stig => stig.StudentGroup.StudentGroupId)
                     .Distinct()
                     .ToList();
 
                 result = repo
+                    .Lessons
                     .GetFiltredLessons(l =>
                         (groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId)) &&
                         (l.Calendar.Date.Date == date.Date) &&

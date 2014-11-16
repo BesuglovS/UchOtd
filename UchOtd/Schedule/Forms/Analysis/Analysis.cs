@@ -87,6 +87,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             Task.Factory.StartNew(() =>
             {
                 var disciplineOrderAttributes = _repo
+                    .CustomDisciplineAttributes
                     .GetFiltredCustomDisciplineAttributes(cda => cda.Key == "DisciplineOrder");
 
                 if (disciplineOrderAttributes.Count == 0)
@@ -113,8 +114,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                     var discipline = disciplines[i];
 
                     var disciplineTfd =
-                        _repo.GetFirstFiltredTeacherForDiscipline(
-                            tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
+                        _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
 
                     if (disciplineTfd == null)
                     {
@@ -127,7 +127,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                     var groupName = disciplineTfd.Discipline.StudentGroup.Name;
 
-                    var lessonsInSchedule = _repo.GetTfdLessonCount(disciplineTfd.TeacherForDisciplineId);
+                    var lessonsInSchedule = _repo.CommonFunctions.GetTfdLessonCount(disciplineTfd.TeacherForDisciplineId);
                     var lessonsInPlan = (int)Math.Round((double)discipline.AuditoriumHours / 2);
                     var lessonsLeftToSet = lessonsInPlan - lessonsInSchedule;
 
@@ -147,7 +147,9 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                     M("< \"" + discipline.Name + "\" - " + groupName + " " + lessonsInPlan + " / " + lessonsInSchedule + " = " + lessonsLeftToSet, LogLevel.Normal);
 
-                    var lessonsProposed = _repo.GetFiltredLessons(l =>
+                    var lessonsProposed = _repo
+                        .Lessons
+                        .GetFiltredLessons(l =>
                         l.TeacherForDiscipline.TeacherForDisciplineId == disciplineTfd.TeacherForDisciplineId &&
                         l.State == 2);
                     var lessonsProposedCount = lessonsProposed.Count;
@@ -195,7 +197,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 result.Add(i, 0);
             }
 
-            foreach (var calendar in repo.GetAllCalendars())
+            foreach (var calendar in repo.Calendars.GetAllCalendars())
             {
                 if (calendar.State == Calendar.Normal)
                 {

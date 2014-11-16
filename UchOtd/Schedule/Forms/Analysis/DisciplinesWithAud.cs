@@ -26,7 +26,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void RefreshLists()
         {
-            var withAudAttrs = _repo.GetFiltredCustomDisciplineAttributes(cda => cda.Key == "WithAud").ToList();
+            var withAudAttrs = _repo.CustomDisciplineAttributes.GetFiltredCustomDisciplineAttributes(cda => cda.Key == "WithAud").ToList();
             var withAudDiscs = withAudAttrs.Select(cda => cda.Discipline).ToList();
 
             var withAudView = DisciplineTextView.DisciplinesToView(withAudDiscs);
@@ -35,7 +35,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             WithAudDiscsList.ValueMember = "DisciplineId";
             WithAudDiscsList.DisplayMember = "DisciplineSummary";
 
-            var allDiscsLeft = _repo.GetFiltredDisciplines(d => !withAudDiscs.Select(di => di.DisciplineId).ToList().Contains(d.DisciplineId))
+            var allDiscsLeft = _repo.Disciplines.GetFiltredDisciplines(d => !withAudDiscs.Select(di => di.DisciplineId).ToList().Contains(d.DisciplineId))
                 .OrderBy(d => d.StudentGroup.Name)
                 .ThenBy(d => d.Name)
                 .ThenBy(d => d.AuditoriumHours)
@@ -69,11 +69,11 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             foreach (var discId in discIds)
             {
-                var disc = _repo.GetDiscipline(discId);
+                var disc = _repo.Disciplines.GetDiscipline(discId);
 
                 var newNotLastLessonAttribute = new CustomDisciplineAttribute(disc, "WithAud", "1");
 
-                _repo.AddCustomDisciplineAttribute(newNotLastLessonAttribute);
+                _repo.CustomDisciplineAttributes.AddCustomDisciplineAttribute(newNotLastLessonAttribute);
             }
 
             RefreshLists();
@@ -97,11 +97,13 @@ namespace UchOtd.Schedule.Forms.Analysis
             }
 
             foreach (var withAudAttribute in discIds.Select(localDiscId => _repo
+                .CustomDisciplineAttributes
                 .GetFirstFiltredCustomDisciplineAttribute(cda => 
                     cda.Discipline.DisciplineId == localDiscId && cda.Key == "WithAud"))
                     .Where(withAudAttribute => withAudAttribute != null))
             {
-                _repo.RemoveCustomDisciplineAttribute(withAudAttribute.CustomDisciplineAttributeId);
+                _repo.CustomDisciplineAttributes
+                    .RemoveCustomDisciplineAttribute(withAudAttribute.CustomDisciplineAttributeId);
             }
 
             RefreshLists();

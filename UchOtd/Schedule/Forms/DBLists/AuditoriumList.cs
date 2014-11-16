@@ -27,6 +27,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void RefreshView()
         {
             var audList = _repo
+                .Auditoriums
                 .GetAllAuditoriums()
                 .OrderBy(a => a.Name)
                 .ToList();
@@ -42,7 +43,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             AuditoriumListView.ClearSelection();
 
 
-            var buildings = _repo.GetAllBuildings()
+            var buildings = _repo.Buildings.GetAllBuildings()
                 .OrderBy(b => b.Name)
                 .ToList();
 
@@ -55,7 +56,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             var audView = ((List<AuditoriumView>)AuditoriumListView.DataSource)[e.RowIndex];
 
-            var aud = _repo.GetAuditorium(audView.AuditoriumId);
+            var aud = _repo.Auditoriums.GetAuditorium(audView.AuditoriumId);
 
             AudName.Text = aud.Name;
 
@@ -67,16 +68,16 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void add_Click(object sender, EventArgs e)
         {
-            if (_repo.FindAuditorium(AudName.Text) != null)
+            if (_repo.Auditoriums.FindAuditorium(AudName.Text) != null)
             {
                 MessageBox.Show("Такая аудитория уже есть.");
                 return;
             }
 
-            var building = _repo.GetBuilding((int)BuildingsList.SelectedValue);
+            var building = _repo.Buildings.GetBuilding((int)BuildingsList.SelectedValue);
 
             var newAuditorium = new Auditorium { Name = AudName.Text, Building = building };
-            _repo.AddAuditorium(newAuditorium);
+            _repo.Auditoriums.AddAuditorium(newAuditorium);
 
             RefreshView();
         }
@@ -87,14 +88,14 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var audView = ((List<AuditoriumView>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
 
-                var aud = _repo.GetAuditorium(audView.AuditoriumId);
+                var aud = _repo.Auditoriums.GetAuditorium(audView.AuditoriumId);
 
-                var building = _repo.GetBuilding((int)BuildingsList.SelectedValue);
+                var building = _repo.Buildings.GetBuilding((int)BuildingsList.SelectedValue);
 
                 aud.Name = AudName.Text;
                 aud.Building = building;
 
-                _repo.UpdateAuditorium(aud);
+                _repo.Auditoriums.UpdateAuditorium(aud);
 
                 RefreshView();
             }
@@ -106,13 +107,13 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var audView = ((List<AuditoriumView>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
 
-                if (_repo.GetFiltredLessons(l => l.Auditorium.AuditoriumId == audView.AuditoriumId).Count > 0)
+                if (_repo.Lessons.GetFiltredLessons(l => l.Auditorium.AuditoriumId == audView.AuditoriumId).Count > 0)
                 {
                     MessageBox.Show("Аудитория есть в расписании.");
                     return;
                 }
 
-                _repo.RemoveAuditorium(audView.AuditoriumId);
+                _repo.Auditoriums.RemoveAuditorium(audView.AuditoriumId);
 
                 RefreshView();
             }
@@ -124,19 +125,19 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var audView = ((List<AuditoriumView>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
 
-                var aud = _repo.GetAuditorium(audView.AuditoriumId);
+                var aud = _repo.Auditoriums.GetAuditorium(audView.AuditoriumId);
 
-                var audLessons = _repo.GetFiltredLessons(l => l.Auditorium.AuditoriumId == aud.AuditoriumId);
+                var audLessons = _repo.Lessons.GetFiltredLessons(l => l.Auditorium.AuditoriumId == aud.AuditoriumId);
 
                 if (audLessons.Count > 0)
                 {
                     foreach (var lesson in audLessons)
                     {
-                        _repo.RemoveLesson(lesson.LessonId);
+                        _repo.Lessons.RemoveLesson(lesson.LessonId);
                     }
                 }
 
-                _repo.RemoveAuditorium(aud.AuditoriumId);
+                _repo.Auditoriums.RemoveAuditorium(aud.AuditoriumId);
 
                 RefreshView();
             }
@@ -148,28 +149,28 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var audView = ((List<AuditoriumView>)AuditoriumListView.DataSource)[AuditoriumListView.SelectedCells[0].RowIndex];
 
-                var aud = _repo.GetAuditorium(audView.AuditoriumId);
+                var aud = _repo.Auditoriums.GetAuditorium(audView.AuditoriumId);
 
-                var replaceAud = _repo.FindAuditorium(newAuditorium.Text);
+                var replaceAud = _repo.Auditoriums.FindAuditorium(newAuditorium.Text);
 
                 if (replaceAud == null)
                 {
                     replaceAud = new Auditorium { Name = newAuditorium.Text };
-                    _repo.AddAuditorium(replaceAud);
+                    _repo.Auditoriums.AddAuditorium(replaceAud);
                 }
 
-                var audLessons = _repo.GetFiltredLessons(l => l.Auditorium.AuditoriumId == aud.AuditoriumId);
+                var audLessons = _repo.Lessons.GetFiltredLessons(l => l.Auditorium.AuditoriumId == aud.AuditoriumId);
 
                 if (audLessons.Count > 0)
                 {
                     foreach (var lesson in audLessons)
                     {
                         lesson.Auditorium = replaceAud;
-                        _repo.UpdateLesson(lesson);
+                        _repo.Lessons.UpdateLesson(lesson);
                     }                   
                 }
 
-                _repo.RemoveAuditorium(aud.AuditoriumId);
+                _repo.Auditoriums.RemoveAuditorium(aud.AuditoriumId);
 
                 RefreshView();
             }

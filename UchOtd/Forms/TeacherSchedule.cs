@@ -41,7 +41,7 @@ namespace UchOtd.Forms
 
         private void SetTeacherList()
         {
-            var tList = _repo.GetAllTeachers().OrderBy(t => t.FIO).ToList();
+            var tList = _repo.Teachers.GetAllTeachers().OrderBy(t => t.FIO).ToList();
 
             teacherList.DisplayMember = "FIO";
             teacherList.ValueMember = "TeacherId";
@@ -75,15 +75,17 @@ namespace UchOtd.Forms
                 int.TryParse(weekFilter.Text, out weekNum);
 
                 lessonList = _repo
+                    .Lessons
                     .GetFiltredLessons(l => 
                         l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
                         ((l.State == 1) || ((l.State == 2) && showProposed.Checked)) && 
-                        _repo.CalculateWeekNumber(l.Calendar.Date.Date) == weekNum)
+                        _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date.Date) == weekNum)
                     .ToList();
             }
             else
             {
                 lessonList = _repo
+                    .Lessons
                     .GetFiltredLessons(l => 
                         l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
                         ((l.State == 1) || ((l.State == 2) && showProposed.Checked)))
@@ -99,7 +101,7 @@ namespace UchOtd.Forms
                                 .ToDictionary(l5 => l5.Key, l5 => l5.ToList())))
                 .ToList();
 
-            var semesterStartsOption = _repo.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts");
+            var semesterStartsOption = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts");
             if (semesterStartsOption == null)
             {
                 return result;
@@ -318,7 +320,7 @@ namespace UchOtd.Forms
         {
             var result = GetTeacherScheduleToView();
 
-            var teacher = _repo.GetTeacher((int)(teacherList.SelectedValue));
+            var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
 
             WordExport.TeacherSchedule(result, teacher, false);
         }
@@ -327,7 +329,7 @@ namespace UchOtd.Forms
         {
             var result = GetTeacherScheduleToView();
 
-            var teacher = _repo.GetTeacher((int)(teacherList.SelectedValue));
+            var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
 
             WordExport.TeacherSchedule(result, teacher, true);
         }

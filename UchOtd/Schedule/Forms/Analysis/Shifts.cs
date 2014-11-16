@@ -27,7 +27,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void RefreshShifts()
         {
-            var allshifts = _repo.GetAllShifts();
+            var allshifts = _repo.Shifts.GetAllShifts();
 
             shiftsListBox.DisplayMember = "Name";
             shiftsListBox.ValueMember = "ShiftId";
@@ -38,7 +38,7 @@ namespace UchOtd.Schedule.Forms.Analysis
         {
             var selectedShiftId = shift.ShiftId;
 
-            var shiftRings = _repo.GetShiftRings(selectedShiftId);
+            var shiftRings = _repo.ShiftRings.GetShiftRings(selectedShiftId);
             var shiftRingIds = shiftRings.Select(r => r.RingId).ToList();
 
             var shiftRingsView = RingView.RingsToView(shiftRings.OrderBy(r => r.Time.TimeOfDay).ToList());
@@ -47,7 +47,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             ShiftRingsListBox.DisplayMember = "Time";
             ShiftRingsListBox.DataSource = shiftRingsView;
 
-            var ringsLeft = _repo.GetFiltredRings(r => !shiftRingIds.Contains(r.RingId));
+            var ringsLeft = _repo.Rings.GetFiltredRings(r => !shiftRingIds.Contains(r.RingId));
 
             var ringsLeftView = RingView.RingsToView(ringsLeft.OrderBy(r => r.Time.TimeOfDay).ToList());
 
@@ -71,7 +71,7 @@ namespace UchOtd.Schedule.Forms.Analysis
         {
             var newShift = new Shift(shiftName.Text);
 
-            _repo.AddShift(newShift);
+            _repo.Shifts.AddShift(newShift);
 
             RefreshShifts();
         }
@@ -84,7 +84,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                 selectedShift.Name = shiftName.Text;
 
-                _repo.UpdateShift(selectedShift);
+                _repo.Shifts.UpdateShift(selectedShift);
 
                 RefreshShifts();
             }
@@ -96,7 +96,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             {
                 var selectedShift = (Shift)shiftsListBox.SelectedItem;
 
-                _repo.RemoveShift(selectedShift.ShiftId);
+                _repo.Shifts.RemoveShift(selectedShift.ShiftId);
 
                 RefreshShifts();
             }
@@ -116,20 +116,23 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                     if (selected)
                     {
-                        selectedRings.Add(_repo.GetRing(ringId));
+                        selectedRings.Add(_repo.Rings.GetRing(ringId));
                     }
                 }
                 
                 foreach (var ring in selectedRings)
                 {
                     var localRing = ring;
-                    var foundedRing = _repo.GetFirstFiltredShiftRing(sr =>
+                    var foundedRing = _repo
+                        .ShiftRings
+                        .GetFirstFiltredShiftRing(sr =>
                     sr.Shift.ShiftId == selectedShift.ShiftId &&
                     sr.Ring.RingId == localRing.RingId);
 
                     if (foundedRing == null)
                     {
-                        _repo.AddShiftRing(new ShiftRing(selectedShift, ring));
+                        _repo.ShiftRings
+                            .AddShiftRing(new ShiftRing(selectedShift, ring));
                     }
                 }
             }
@@ -169,19 +172,20 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                     if (selected)
                     {
-                        selectedRings.Add(_repo.GetRing(ringId));
+                        selectedRings.Add(_repo.Rings.GetRing(ringId));
                     }
                 }
 
                 foreach (var ring in selectedRings)
                 {
-                    var foundedRing = _repo.GetFirstFiltredShiftRing(sr =>
+                    var foundedRing = _repo.ShiftRings
+                        .GetFirstFiltredShiftRing(sr =>
                         sr.Shift.ShiftId == selectedShift.ShiftId &&
                         sr.Ring.RingId == ring.RingId);
 
                     if (foundedRing != null)
                     {
-                        _repo.RemoveShiftRing(foundedRing.ShiftRingId);
+                        _repo.ShiftRings.RemoveShiftRing(foundedRing.ShiftRingId);
                     }
                 }
             }

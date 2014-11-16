@@ -24,6 +24,7 @@ namespace UchOtd.Schedule.Views
             var result = new List<RingWeekView>();
 
             var filteredWishes = repo
+                .TeacherWishes
                 .GetFiltredTeacherWishes(w => w.Teacher.TeacherId == teacher.TeacherId)
                 .GroupBy(w => w.Ring.RingId, (ringId, ringWishes) =>
                     new
@@ -68,12 +69,12 @@ namespace UchOtd.Schedule.Views
                     }
                 }
 
-                ringWeekView.RingTime = repo.GetRing(ringWeekView.RingId).Time.ToString("HH:mm");
+                ringWeekView.RingTime = repo.Rings.GetRing(ringWeekView.RingId).Time.ToString("HH:mm");
 
                 result.Add(ringWeekView);
             }
 
-            result = result.OrderBy(rwv => repo.GetRing(rwv.RingId).Time).ToList();
+            result = result.OrderBy(rwv => repo.Rings.GetRing(rwv.RingId).Time).ToList();
 
             return result;
         }
@@ -83,7 +84,7 @@ namespace UchOtd.Schedule.Views
             var groupedWishes = list
                 .GroupBy(w => w.Wish, 
                 (wish, wishes) => 
-                    new {wish, weeks = repo.GetWeekStringFromWishes(wishes) });
+                    new {wish, weeks = repo.CommonFunctions.GetWeekStringFromWishes(wishes) });
 
             var result = groupedWishes
                 .Aggregate("", (current, wish) => current + (wish.weeks + "@" + wish.wish + "; "));

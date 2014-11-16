@@ -24,7 +24,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void RefreshView()
         {
-            var optList = _repo.GetAllConfigOptions();
+            var optList = _repo.ConfigOptions.GetAllConfigOptions();
 
             if (!showInternalOptions.Checked)
             {
@@ -51,14 +51,14 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void add_Click(object sender, System.EventArgs e)
         {
-            if (_repo.FindConfigOption(optionKey.Text) != null)
+            if (_repo.ConfigOptions.FindConfigOption(optionKey.Text) != null)
             {
                 MessageBox.Show("Такая настройка уже есть.");
                 return;
             }
 
             var newConfigOption = new ConfigOption { Key = optionKey.Text, Value = optionValue.Text};
-            _repo.AddConfigOption(newConfigOption);
+            _repo.ConfigOptions.AddConfigOption(newConfigOption);
 
             RefreshView();
         }
@@ -72,7 +72,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 option.Key = optionKey.Text;
                 option.Value = optionValue.Text;
                 
-                _repo.UpdateConfigOption(option);
+                _repo.ConfigOptions.UpdateConfigOption(option);
 
                 RefreshView();
             }
@@ -84,7 +84,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var option = ((List<ConfigOption>)OptionsListView.DataSource)[OptionsListView.SelectedCells[0].RowIndex];
                 
-                _repo.RemoveConfigOption(option.ConfigOptionId);
+                _repo.ConfigOptions.RemoveConfigOption(option.ConfigOptionId);
 
                 RefreshView();
             }

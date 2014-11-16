@@ -29,12 +29,12 @@ namespace UchOtd.Schedule.Views
                 GroupName = tfd.Discipline.StudentGroup.Name, 
                 PlanHours = tfd.Discipline.AuditoriumHours, 
                 Attestation = Constants.Attestation[tfd.Discipline.Attestation],
-                ScheduleHours = repo.GetTfdHours(tfd.TeacherForDisciplineId),
-                HoursDone = repo.GetFiltredLessons(l => 
+                ScheduleHours = repo.CommonFunctions.GetTfdHours(tfd.TeacherForDisciplineId),
+                HoursDone = repo.Lessons.GetFiltredLessons(l => 
                     (l.State == 1) && 
                     l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId && 
                     (l.Calendar.Date.Date + l.Ring.Time.TimeOfDay) < DateTime.Now).Count*2, 
-                PlannedHours = repo.GetFiltredLessons(l => 
+                PlannedHours = repo.Lessons.GetFiltredLessons(l => 
                     l.State == 2 && 
                     l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId && 
                     (l.Calendar.Date.Date + l.Ring.Time.TimeOfDay) > DateTime.Now).Count*2

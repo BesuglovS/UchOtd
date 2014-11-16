@@ -1,4 +1,5 @@
-﻿using Schedule.DomainClasses.Session;
+﻿using Schedule.DomainClasses.Main;
+using Schedule.DomainClasses.Session;
 using Schedule.Repositories;
 using System;
 using System.Windows.Forms;
@@ -28,7 +29,7 @@ namespace UchOtd.Forms.Session
 
             if (_mode == ExamPropertiesMode.Edit)
             {
-                _exam = _repo.GetExam(examToUpdateId);
+                _exam = _repo.Exams.GetExam(examToUpdateId);
             }
 
             if (_mode == ExamPropertiesMode.New)
@@ -47,8 +48,9 @@ namespace UchOtd.Forms.Session
 
             if (_mode == ExamPropertiesMode.Edit)
             {
-                var disc = _repo.GetDiscipline(_exam.DisciplineId);
+                var disc = _repo.Disciplines.GetDiscipline(_exam.DisciplineId);
                 var teacher = _repo
+                    .TeacherForDisciplines
                     .GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == disc.DisciplineId)
                     .Teacher;
 
@@ -60,12 +62,12 @@ namespace UchOtd.Forms.Session
 
                 ConsDate.Value = (_exam.ConsultationDateTime == Constants.DefaultEmptyDateForEvent) ? 
                     Constants.DefaultEditDate : _exam.ConsultationDateTime;
-                var cAud = _repo.GetAuditorium(_exam.ConsultationAuditoriumId);
+                var cAud = _repo.Auditoriums.GetAuditorium(_exam.ConsultationAuditoriumId);
                 ConsAudBox.Text = (cAud != null) ? cAud.Name : "";
 
                 ExamDate.Value = (_exam.ExamDateTime == Constants.DefaultEmptyDateForEvent)
                     ? Constants.DefaultEditDate : _exam.ExamDateTime;
-                var eAud = _repo.GetAuditorium(_exam.ExamAuditoriumId);
+                var eAud = _repo.Auditoriums.GetAuditorium(_exam.ExamAuditoriumId);
                 ExamAudBox.Text = (eAud != null) ? eAud.Name : "";
             }
         }
@@ -80,20 +82,20 @@ namespace UchOtd.Forms.Session
                 ConsultationDateTime = ConsDate.Value
             };
 
-            var consAud = _repo.FindAuditorium(ConsAudBox.Text);
+            var consAud = _repo.Auditoriums.FindAuditorium(ConsAudBox.Text);
             if (consAud != null)
             {
                 newExam.ConsultationAuditoriumId = consAud.AuditoriumId;
             }
 
             newExam.ExamDateTime = ExamDate.Value;
-            var examAud = _repo.FindAuditorium(ExamAudBox.Text);
+            var examAud = _repo.Auditoriums.FindAuditorium(ExamAudBox.Text);
             if (examAud != null)
             {
                 newExam.ExamAuditoriumId = examAud.AuditoriumId;
             }
 
-            _repo.UpdateExam(newExam);
+            _repo.Exams.UpdateExam(newExam);
 
             Close();
         }

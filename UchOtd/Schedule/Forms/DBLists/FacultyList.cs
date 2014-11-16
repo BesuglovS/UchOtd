@@ -33,6 +33,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             if (refreshType == RefreshType.FacultiesOnly || refreshType == RefreshType.FullRefresh)
             {
                 var faculties = _repo
+                    .Faculties
                     .GetAllFaculties()
                     .OrderBy(f => f.SortingOrder)
                     .ToList();
@@ -67,6 +68,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 }
 
                 var facultyGroups = _repo
+                    .GroupsInFaculties
                     .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
                     .Select(gif => gif.StudentGroup)
                     .ToList();
@@ -81,7 +83,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void LoadStudentGroupList()
         {
-            var studentGroupList = _repo.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
+            var studentGroupList = _repo.StudentGroups.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
 
             GroupList.DisplayMember = "Name";
             GroupList.ValueMember = "StudentGroupId";
@@ -103,7 +105,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             SessionScheduleSigner.Text = faculty.DeanSigningSessionSchedule;
             
 
-            var facultyGroups = _repo.GetFacultyGroups(faculty.FacultyId).OrderBy(sg => sg.Name).ToList();
+            var facultyGroups = _repo.Faculties.GetFacultyGroups(faculty.FacultyId).OrderBy(sg => sg.Name).ToList();
 
             GroupsView.DataSource = facultyGroups;
 
@@ -119,7 +121,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             var newFaculty = new Faculty(FacultyName.Text, FacultyLetter.Text, sOrder,
                 TitleOfSemesterScheduleSigner.Text, SemesterScheduleSigner.Text, 
                 TitleOfSessionScheduleSigner.Text, SessionScheduleSigner.Text);
-            _repo.AddFaculty(newFaculty);
+            _repo.Faculties.AddFaculty(newFaculty);
 
             RefreshView(RefreshType.FacultiesOnly);
         }
@@ -142,7 +144,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 faculty.SessionSigningTitle = TitleOfSessionScheduleSigner.Text;
                 faculty.DeanSigningSessionSchedule = SessionScheduleSigner.Text;
 
-                _repo.UpdateFaculty(faculty);
+                _repo.Faculties.UpdateFaculty(faculty);
 
                 RefreshView(RefreshType.FacultiesOnly);
             }
@@ -154,13 +156,13 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var faculty = ((List<Faculty>)FacultiesListView.DataSource)[FacultiesListView.SelectedCells[0].RowIndex];
 
-                if (_repo.GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId).Any())
+                if (_repo.GroupsInFaculties.GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId).Any())
                 {
                     MessageBox.Show("К факультету привязаны группы.");
                     return;
                 }
 
-                _repo.RemoveFaculty(faculty.FacultyId);
+                _repo.Faculties.RemoveFaculty(faculty.FacultyId);
 
                 RefreshView(RefreshType.FullRefresh);
             }
@@ -173,16 +175,17 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var faculty = ((List<Faculty>)FacultiesListView.DataSource)[FacultiesListView.SelectedCells[0].RowIndex];
 
                 var gifIds = _repo
+                    .GroupsInFaculties
                     .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
                     .Select(gif => gif.GroupsInFacultyId)
                     .ToList();
 
                 foreach (var gifId in gifIds)
                 {
-                    _repo.RemoveGroupsInFaculty(gifId);
+                    _repo.GroupsInFaculties.RemoveGroupsInFaculty(gifId);
                 }
 
-                _repo.RemoveFaculty(faculty.FacultyId);
+                _repo.Faculties.RemoveFaculty(faculty.FacultyId);
             }
         }
 
@@ -193,7 +196,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 return;
             }
 
-            var groupToAdd = _repo.GetStudentGroup((int)GroupList.SelectedValue);
+            var groupToAdd = _repo.StudentGroups.GetStudentGroup((int)GroupList.SelectedValue);
 
             if (FacultiesListView.SelectedCells.Count > 0)
             {
@@ -201,7 +204,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 var gif = new GroupsInFaculty { StudentGroup = groupToAdd, Faculty = faculty };
 
-                _repo.AddGroupsInFaculty(gif);
+                _repo.GroupsInFaculties.AddGroupsInFaculty(gif);
 
                 RefreshView(RefreshType.GroupsOnly);
             }
@@ -224,9 +227,9 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 var studentGroup = ((List<StudentGroup>)GroupsView.DataSource)[GroupsView.SelectedCells[0].RowIndex];
 
-                var gif = _repo.FindGroupsInFaculty(studentGroup.Name, faculty.Name);
+                var gif = _repo.GroupsInFaculties.FindGroupsInFaculty(studentGroup.Name, faculty.Name);
 
-                _repo.RemoveGroupsInFaculty(gif.GroupsInFacultyId);
+                _repo.GroupsInFaculties.RemoveGroupsInFaculty(gif.GroupsInFacultyId);
 
                 RefreshView(RefreshType.GroupsOnly);
             }  

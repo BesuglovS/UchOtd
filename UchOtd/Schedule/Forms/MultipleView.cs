@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using Schedule.Repositories.Common;
 using UchOtd.Schedule.Views;
 using UchOtd.Schedule.Views.DBListViews;
 
@@ -23,6 +24,7 @@ namespace UchOtd.Schedule.Forms
         private void MultipleView_Load(object sender, EventArgs e)
         {
             var groups1 = _repo
+                .StudentGroups
                 .GetAllStudentGroups()
                 .Where(g => !g.Name.Contains(" + ") && !g.Name.Contains("I"))
                 .OrderBy(g => g.Name)
@@ -76,7 +78,7 @@ namespace UchOtd.Schedule.Forms
             }
             var groupNames = GetGroupNames(groupsList);
 
-            var groupsLessons = _repo.GetGroupedGroupsLessons(groupsList, showProposed.Checked);
+            var groupsLessons = _repo.CommonFunctions.GetGroupedGroupsLessons(groupsList, showProposed.Checked);
 
             List<FiveGroupsView> groupsEvents = CreateGroupsTableView(groupsLessons);
 
@@ -90,6 +92,7 @@ namespace UchOtd.Schedule.Forms
             var result = new Dictionary<int, string>();
 
             var groups = _repo
+                .StudentGroups
                 .GetAllStudentGroups()
                 .ToList();
 
@@ -141,7 +144,7 @@ namespace UchOtd.Schedule.Forms
             var plainGroupName = "";
             var nGroupName = "";
 
-            var group = _repo.GetFirstFiltredStudentGroups(sg => sg.StudentGroupId == groupId);
+            var group = _repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.StudentGroupId == groupId);
             
             if (group.Name.Contains(" (+Н)"))
             {
@@ -169,7 +172,7 @@ namespace UchOtd.Schedule.Forms
                     eventString += tfd.Teacher.FIO + Environment.NewLine;
                     eventString += "(" + item.Value.Item1 + ")" + Environment.NewLine;
 
-                    var audWeekList = item.Value.Item2.ToDictionary(l => _repo.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
+                    var audWeekList = item.Value.Item2.ToDictionary(l => _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
                     var grouped = audWeekList.GroupBy(a => a.Value);
 
                     var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
@@ -183,7 +186,7 @@ namespace UchOtd.Schedule.Forms
                         for (int j = 0; j < gcount; j++)
                         {
                             var jItem = enumerable.ElementAt(j);
-                            eventString += ScheduleRepository.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
+                            eventString += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
 
                             if (j != gcount - 1)
                             {

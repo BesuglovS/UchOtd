@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
@@ -35,12 +36,13 @@ namespace UchOtd.Schedule.Views.DBListViews
             PracticalHours = discipline.PracticalHours;
             StudentGroupName = discipline.StudentGroup.Name;
 
-            var tefd = repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
+            var tefd = repo.TeacherForDisciplines
+                .GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
             if (tefd != null)
             {
                 TeacherFio = tefd.Teacher.FIO;
-                ScheduleHours = repo.GetTfdHours(tefd.TeacherForDisciplineId);
-                ProposedHours = repo.GetTfdProposedHours(tefd.TeacherForDisciplineId);
+                ScheduleHours = repo.CommonFunctions.GetTfdHours(tefd.TeacherForDisciplineId);
+                ProposedHours = repo.CommonFunctions.GetTfdProposedHours(tefd.TeacherForDisciplineId);
             }
             else
             {

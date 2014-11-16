@@ -25,7 +25,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void RefreshView()
         {
-            var buildingsList = _repo.GetAllBuildings()
+            var buildingsList = _repo.Buildings.GetAllBuildings()
                 .OrderBy(b => b.Name)
                 .ToList();
 
@@ -40,7 +40,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void add_Click(object sender, EventArgs e)
         {
             var newBuilding = new Building(BuildingName.Text);
-            _repo.AddBuilding(newBuilding);
+            _repo.Buildings.AddBuilding(newBuilding);
 
             RefreshView();
         }
@@ -54,7 +54,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 building.Name = BuildingName.Text;
 
-                _repo.UpdateBuilding(building);
+                _repo.Buildings.UpdateBuilding(building);
 
                 RefreshView();
             }
@@ -66,13 +66,13 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var building = ((List<Building>)BuildingsListView.DataSource)[BuildingsListView.SelectedCells[0].RowIndex];
 
-                if (_repo.GetFiltredAuditoriums(a => a.Building.BuildingId == building.BuildingId).Any())
+                if (_repo.Auditoriums.GetFiltredAuditoriums(a => a.Building.BuildingId == building.BuildingId).Any())
                 {
                     MessageBox.Show("К корпусу привязаны аудитории.");
                     return;
                 }
 
-                _repo.RemoveBuilding(building.BuildingId);
+                _repo.Buildings.RemoveBuilding(building.BuildingId);
 
                 RefreshView();
             }

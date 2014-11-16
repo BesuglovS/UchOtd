@@ -30,7 +30,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                     if (date.DayOfWeek == dow)
                     {
                         DateTime localDate = date;
-                        var calendar = _repo.GetFirstFiltredCalendar(c => c.Date.Date == localDate.Date);
+                        var calendar = _repo.Calendars.GetFirstFiltredCalendar(c => c.Date.Date == localDate.Date);
 
                         if (calendar == null)
                         {
@@ -42,11 +42,11 @@ namespace UchOtd.Schedule.Forms.DBLists
                         {
                             Name = eventName.Text,
                             Calendar = calendar,
-                            Ring = _repo.GetRing((int)eventTime.SelectedValue),
-                            Auditorium = _repo.GetAuditorium((int)eventAuditorium.SelectedValue)
+                            Ring = _repo.Rings.GetRing((int)eventTime.SelectedValue),
+                            Auditorium = _repo.Auditoriums.GetAuditorium((int)eventAuditorium.SelectedValue)
                         };
 
-                        _repo.AddAuditoriumEvent(newEvent);
+                        _repo.AuditoriumEvents.AddAuditoriumEvent(newEvent);
                     }
 
                     date = date.AddDays(1);
@@ -55,7 +55,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             }
             else
             {
-                var calendar = _repo.GetFirstFiltredCalendar(c => c.Date.Date == eventDate.Value.Date);
+                var calendar = _repo.Calendars.GetFirstFiltredCalendar(c => c.Date.Date == eventDate.Value.Date);
 
                 if (calendar == null)
                 {
@@ -67,11 +67,11 @@ namespace UchOtd.Schedule.Forms.DBLists
                 {
                     Name = eventName.Text,
                     Calendar = calendar,
-                    Ring = _repo.GetRing((int)eventTime.SelectedValue),
-                    Auditorium = _repo.GetAuditorium((int)eventAuditorium.SelectedValue)
+                    Ring = _repo.Rings.GetRing((int)eventTime.SelectedValue),
+                    Auditorium = _repo.Auditoriums.GetAuditorium((int)eventAuditorium.SelectedValue)
                 };
 
-                _repo.AddAuditoriumEvent(newEvent);
+                _repo.AuditoriumEvents.AddAuditoriumEvent(newEvent);
             }
             RefreshView();
         }
@@ -87,6 +87,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                     date = eventsDate.Value;
                 }
                 eventsList = _repo
+                    .AuditoriumEvents
                     .GetAllAuditoriumEvents()
                     .Where(e => e.Calendar.Date.Date == date.Value.Date)
                     .ToList();
@@ -94,6 +95,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             else
             {
                 eventsList = _repo
+                    .AuditoriumEvents
                     .GetAllAuditoriumEvents();                
             }
 
@@ -114,15 +116,15 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void AuditoriumEventsList_Load(object sender, EventArgs e)
         {
-            var minDate = _repo.GetAllCalendars().OrderBy(c => c.Date).FirstOrDefault().Date;
-            var maxDate = _repo.GetAllCalendars().OrderBy(c => c.Date).LastOrDefault().Date;
+            var minDate = _repo.Calendars.GetAllCalendars().OrderBy(c => c.Date).FirstOrDefault().Date;
+            var maxDate = _repo.Calendars.GetAllCalendars().OrderBy(c => c.Date).LastOrDefault().Date;
             eventDate.MinDate = minDate;
             eventDate.MaxDate = maxDate;
 
             startDate.Value = minDate;
             finishDate.Value = minDate;
 
-            var ringsList = _repo.GetAllRings()
+            var ringsList = _repo.Rings.GetAllRings()
                 .OrderBy(r => r.Time.TimeOfDay)
                 .ToList();
             var ringsView = RingView.RingsToView(ringsList);
@@ -131,7 +133,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             eventTime.DisplayMember = "Time";
             eventTime.ValueMember = "RingId";
 
-            var auds = _repo.GetAllAuditoriums();
+            var auds = _repo.Auditoriums.GetAllAuditoriums();
             eventAuditorium.DataSource = auds;
             eventAuditorium.DisplayMember = "Name";
             eventAuditorium.ValueMember = "AuditoriumId";
@@ -143,7 +145,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             if (eventsView.SelectedCells.Count > 0)
             {
-                var calendar = _repo.GetFirstFiltredCalendar(c => c.Date == eventDate.Value);
+                var calendar = _repo.Calendars.GetFirstFiltredCalendar(c => c.Date == eventDate.Value);
 
                 if (calendar == null)
                 {
@@ -153,14 +155,14 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 var aeView = ((List<AuditoriumEventView>)eventsView.DataSource)[eventsView.SelectedCells[0].RowIndex];
 
-                var ae = _repo.GetAuditoriumEvent(aeView.AuditoriumEventId);
+                var ae = _repo.AuditoriumEvents.GetAuditoriumEvent(aeView.AuditoriumEventId);
 
                 ae.Name = eventName.Text;
                 ae.Calendar = calendar;
-                ae.Ring = _repo.GetRing((int)eventTime.SelectedValue);
-                ae.Auditorium = _repo.GetAuditorium((int)eventAuditorium.SelectedValue);
+                ae.Ring = _repo.Rings.GetRing((int)eventTime.SelectedValue);
+                ae.Auditorium = _repo.Auditoriums.GetAuditorium((int)eventAuditorium.SelectedValue);
 
-                _repo.UpdateAuditoriumEvent(ae);
+                _repo.AuditoriumEvents.UpdateAuditoriumEvent(ae);
 
                 RefreshView();
             }
@@ -179,7 +181,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 foreach (var id in eventIds)
                 {
-                    _repo.RemoveAuditoriumEvent(id);
+                    _repo.AuditoriumEvents.RemoveAuditoriumEvent(id);
                 }
 
                 RefreshView();
@@ -190,7 +192,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var audEventView = ((List<AuditoriumEventView>)eventsView.DataSource)[eventsView.SelectedCells[0].RowIndex];
 
-                _repo.RemoveAuditoriumEvent(audEventView.AuditoriumEventId);
+                _repo.AuditoriumEvents.RemoveAuditoriumEvent(audEventView.AuditoriumEventId);
 
                 RefreshView();
             }
@@ -199,7 +201,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void eventsView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             var evtId = ((List<AuditoriumEventView>)eventsView.DataSource)[e.RowIndex].AuditoriumEventId;
-            var evt = _repo.GetAuditoriumEvent(evtId);
+            var evt = _repo.AuditoriumEvents.GetAuditoriumEvent(evtId);
 
             eventName.Text = evt.Name;
             eventDate.Value = evt.Calendar.Date.Date;

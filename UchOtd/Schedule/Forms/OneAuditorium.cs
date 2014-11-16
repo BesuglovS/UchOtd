@@ -20,6 +20,7 @@ namespace UchOtd.Schedule.Forms
         private void OneAuditorium_Load(object sender, EventArgs e)
         {
             var auds = _repo
+                .Auditoriums
                 .GetAllAuditoriums()
                 .OrderBy(a => a.Name)
                 .ToList();
@@ -31,14 +32,14 @@ namespace UchOtd.Schedule.Forms
 
         private void auditoriumList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var data = _repo.GetAud((int)auditoriumList.SelectedValue, showProposed.Checked);
+            var data = _repo.CommonFunctions.GetAud((int)auditoriumList.SelectedValue, showProposed.Checked);
 
             PutAudsOnGrid(data);
         }
 
         private void PutAudsOnGrid(Dictionary<int, Dictionary<int, List<string>>> data)
         {
-            var rings = _repo.GetAllRings();            
+            var rings = _repo.Rings.GetAllRings();            
                         
 
             view.RowCount = 0;

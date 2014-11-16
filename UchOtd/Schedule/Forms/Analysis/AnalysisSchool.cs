@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Analyse;
 using Schedule.Repositories;
 using Schedule.Constants.Analysis;
 using Schedule.Constants;
@@ -87,6 +88,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             Task.Factory.StartNew(() =>
             {
                 var disciplineOrderAttributes = _repo
+                    .CustomDisciplineAttributes
                     .GetFiltredCustomDisciplineAttributes(cda => cda.Key == "DisciplineOrder");
 
                 if (disciplineOrderAttributes.Count == 0)
@@ -113,8 +115,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                     var discipline = disciplines[i];
 
                     var disciplineTfd =
-                        _repo.GetFirstFiltredTeacherForDiscipline(
-                            tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
+                        _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
 
                     if (disciplineTfd == null)
                     {
@@ -127,7 +128,9 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                     var groupName = disciplineTfd.Discipline.StudentGroup.Name;
 
-                    var lessonsInSchedule = _repo.GetTfdLessonCount(disciplineTfd.TeacherForDisciplineId);
+                    var lessonsInSchedule = _repo
+                        .CommonFunctions
+                        .GetTfdLessonCount(disciplineTfd.TeacherForDisciplineId);
                     var lessonsInPlan = (int)Math.Round((double)discipline.AuditoriumHours / 2);
 
                     var lessonsInSchedulePerWeekApproximation = HoursToPerWeek(lessonsInSchedule);
@@ -152,7 +155,9 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                     M("< \"" + discipline.Name + "\" - " + groupName + " " + planPerWeek + " / " + lessonsInSchedulePerWeekApproximation + " = " + planPerWeek, LogLevel.Normal);
 
-                    var lessonsProposed = _repo.GetFiltredLessons(l =>
+                    var lessonsProposed = _repo
+                        .Lessons
+                        .GetFiltredLessons(l =>
                         l.TeacherForDiscipline.TeacherForDisciplineId == disciplineTfd.TeacherForDisciplineId &&
                         l.State == 2);
                     var lessonsProposedCount = lessonsProposed.Count;
@@ -180,7 +185,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                     // TODO:Поставить proposedDiffPerWeekApproximation занятий
 
                     // Находим звонки смены
-                    var shiftAttribute = _repo.GetFirstFiltredCustomStudentGroupAttribute(csga => csga.Key == "Shift" && csga.StudentGroup.StudentGroupId == discipline.StudentGroup.StudentGroupId);
+                    var shiftAttribute = _repo
+                        .CustomStudentGroupAttributes
+                        .GetFirstFiltredCustomStudentGroupAttribute(csga => csga.Key == "Shift" && csga.StudentGroup.StudentGroupId == discipline.StudentGroup.StudentGroupId);
                     
                     if (shiftAttribute == null)
                     {
@@ -193,6 +200,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                     var groupShiftId = int.Parse(shiftAttribute.Value);
 
                     var groupShiftRings = _repo
+                        .ShiftRings
                         .GetFiltredShiftRings(sr => sr.Shift.ShiftId == groupShiftId)
                         .Select(sr => sr.Ring)
                         .ToList();                    
@@ -200,7 +208,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                     if (groupShiftRings.Count == 0)
                     {
-                        var shift = _repo.GetShift(groupShiftId);
+                        var shift = _repo.Shifts.GetShift(groupShiftId);
                         M("ОШИБКА - Для смены " + shift.Name + " не заданы времена начала занятий", LogLevel.ErrorsOnly);
 
                         start.Enabled = true;
@@ -235,7 +243,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 result.Add(i, 0);
             }
 
-            foreach (var calendar in repo.GetAllCalendars())
+            foreach (var calendar in repo.Calendars.GetAllCalendars())
             {
                 if (calendar.State == Calendar.Normal)
                 {

@@ -30,7 +30,7 @@ namespace UchOtd.Forms
 
         private void DaylyLessons_Load(object sender, EventArgs e)
         {
-            var faculties = _repo.GetAllFaculties();
+            var faculties = _repo.Faculties.GetAllFaculties();
 
             facultyFilter.ValueMember = "FacultyId";
             facultyFilter.DisplayMember = "Name";
@@ -81,6 +81,7 @@ namespace UchOtd.Forms
             if (isfacultyFiltered)
             {
                 data.Groups = _repo
+                    .GroupsInFaculties
                     .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == facultyFilterSelectedValue)
                     .Select(gif => gif.StudentGroup)
                     .ToList();
@@ -115,16 +116,18 @@ namespace UchOtd.Forms
 
                     var localGroup = group;
                     var studentIds = _repo
+                        .StudentsInGroups
                         .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == localGroup.StudentGroupId)
                         .ToList()
                         .Select(stig => stig.Student.StudentId);
 
                     var groupIds = _repo
+                        .StudentsInGroups
                         .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
                         .ToList()
                         .Select(stig => stig.StudentGroup.StudentGroupId);
 
-                    var dailyLessons = _repo.GetFiltredLessons(l =>
+                    var dailyLessons = _repo.Lessons.GetFiltredLessons(l =>
                         ((l.State == 1) || ((l.State == 2) && showProposed.Checked)) &&
                         l.Calendar.Date == lessonsDate.Value &&
                         groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
@@ -170,7 +173,7 @@ namespace UchOtd.Forms
                     int columnIndex1 = 1;
                     foreach (var group in lessonsData.LessonsData)
                     {
-                        view.Rows[0].Cells[columnIndex1].Value = _repo.GetStudentGroup(group.Key).Name;
+                        view.Rows[0].Cells[columnIndex1].Value = _repo.StudentGroups.GetStudentGroup(group.Key).Name;
 
                         columnIndex1++;
                     }
@@ -183,7 +186,7 @@ namespace UchOtd.Forms
                         //foreach (var group in result[ring.RingId])
                         for (int columnIndex = 1; columnIndex < view.Columns.Count; columnIndex++)
                         {
-                            var group = _repo.GetStudentGroup(lessonsData.Groups[columnIndex - 1].StudentGroupId);
+                            var group = _repo.StudentGroups.GetStudentGroup(lessonsData.Groups[columnIndex - 1].StudentGroupId);
 
                             if (lessonsData.LessonsData[group.StudentGroupId].ContainsKey(ring.RingId))
                             {
@@ -221,7 +224,7 @@ namespace UchOtd.Forms
         private List<StudentGroup> MainGroups()
         {
             return _repo
-                .GetFiltredStudentGroups(sg =>
+                .StudentGroups.GetFiltredStudentGroups(sg =>
                     !(sg.Name.Contains("-") || sg.Name.Contains("+") || sg.Name.Contains("I") ||
                     sg.Name.Length == 1 || sg.Name.Contains("(Н)") || sg.Name.Contains(".")))
                 .OrderBy(sg => sg.Name)

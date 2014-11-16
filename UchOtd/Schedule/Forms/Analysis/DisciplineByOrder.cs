@@ -26,7 +26,9 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void LoadDisciplines()
         {
-            var attributes = _repo.GetFiltredCustomDisciplineAttributes(cda => cda.Key == "DisciplineOrder").ToList();
+            var attributes = _repo
+                .CustomDisciplineAttributes
+                .GetFiltredCustomDisciplineAttributes(cda => cda.Key == "DisciplineOrder").ToList();
             var discIds = attributes.Select(a => a.Discipline.DisciplineId).ToList();
 
             var disciplineViews = attributes
@@ -37,7 +39,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 .Select(attribute => new DisciplineTextView(attribute.Discipline))
                 .ToList();
 
-            var discsLeft = _repo.GetFiltredDisciplines(d => !discIds.Contains(d.DisciplineId)).ToList();
+            var discsLeft = _repo.Disciplines.GetFiltredDisciplines(d => !discIds.Contains(d.DisciplineId)).ToList();
 
             disciplineViews
                 .AddRange(discsLeft
@@ -94,11 +96,11 @@ namespace UchOtd.Schedule.Forms.Analysis
             {                
                 var item = ((DisciplineTextView)discsView.Items[i]);
 
-                var disc = _repo.GetDiscipline(item.DisciplineId);
+                var disc = _repo.Disciplines.GetDiscipline(item.DisciplineId);
 
                 var orderAttr = new CustomDisciplineAttribute(disc, "DisciplineOrder", i.ToString(CultureInfo.InvariantCulture));
 
-                _repo.AddOrUpdateCustomDisciplineAttribute(orderAttr);
+                _repo.CustomDisciplineAttributes.AddOrUpdateCustomDisciplineAttribute(orderAttr);
             }
         }
     }

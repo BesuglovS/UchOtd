@@ -34,7 +34,7 @@ namespace UchOtd.Schedule.Views
             int discId;
             int.TryParse(cda.Value, out discId);
 
-            var disc2 = repo.GetDiscipline(discId);
+            var disc2 = repo.Disciplines.GetDiscipline(discId);
 
             if (disc2 != null)
             {

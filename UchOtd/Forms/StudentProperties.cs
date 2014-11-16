@@ -21,7 +21,7 @@ namespace UchOtd.Forms
 
             _studentList = parent;
             _repo = repo;
-            _student = _repo.GetStudent(studentId);
+            _student = _repo.Students.GetStudent(studentId);
             _mode = mode;
 
             if ((_student == null) && mode == StudentDetailsMode.Edit)
@@ -77,11 +77,13 @@ namespace UchOtd.Forms
             ExpelledBox.Checked = studentToSet.Expelled;
 
             var studentGroupIds = _repo
+                .StudentsInGroups
                 .GetFiltredStudentsInGroups(sig => sig.Student.StudentId == studentToSet.StudentId)
                 .Select(sig => sig.StudentGroup.StudentGroupId)
                 .ToList();
 
             var studentGroup = _repo
+                .StudentGroups
                 .GetFiltredStudentGroups(sg => 
                     studentGroupIds.Contains(sg.StudentGroupId) && 
                     !sg.Name.Contains('I') && !sg.Name.Contains('-') && 
@@ -95,6 +97,7 @@ namespace UchOtd.Forms
             }
 
             var groupsList = _repo
+                .StudentsInGroups
                 .GetFiltredStudentsInGroups(sig => sig.Student.StudentId == studentToSet.StudentId)
                 .Select(sig => sig.StudentGroup.Name)
                 .Where(groupname => groupname != studentGroup[0].Name)
@@ -134,13 +137,13 @@ namespace UchOtd.Forms
                     ZachNumber = IdNumBox.Text
                 };
 
-                _repo.AddStudent(s);
+                _repo.Students.AddStudent(s);
 
-                var group = _repo.FindStudentGroup(StudentGroupBox.Text);
+                var group = _repo.StudentGroups.FindStudentGroup(StudentGroupBox.Text);
                 if (group != null)
                 {
                     var sig = new StudentsInGroups(s, group);
-                    _repo.AddStudentsInGroups(sig);
+                    _repo.StudentsInGroups.AddStudentsInGroups(sig);
                 }
 
                 _studentList.UpdateSearchBoxItems();
@@ -150,7 +153,7 @@ namespace UchOtd.Forms
 
             if (_mode == StudentDetailsMode.Edit)
             {
-                var s = _repo.GetStudent(_student.StudentId);
+                var s = _repo.Students.GetStudent(_student.StudentId);
 
                 s.Address = AddressBox.Text;
                 s.BirthDate = BirthDateBox.Value;
@@ -165,7 +168,7 @@ namespace UchOtd.Forms
                 s.Starosta = StarostaBox.Checked;
                 s.ZachNumber = IdNumBox.Text;
 
-                _repo.UpdateStudent(s);
+                _repo.Students.UpdateStudent(s);
 
                 _studentList.UpdateSearchBoxItems();
                 DialogResult = DialogResult.OK;

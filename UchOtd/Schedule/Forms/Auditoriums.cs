@@ -30,7 +30,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingId = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.GetDowAuds(DayOfWeek.Monday, weekNum, buildingId, showProposed.Checked);
+            var auds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Monday, weekNum, buildingId, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -53,7 +53,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.GetDowAuds(DayOfWeek.Tuesday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Tuesday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -76,7 +76,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.GetDowAuds(DayOfWeek.Wednesday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Wednesday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -99,7 +99,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.GetDowAuds(DayOfWeek.Thursday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Thursday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -122,7 +122,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.GetDowAuds(DayOfWeek.Friday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Friday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -145,7 +145,7 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingNum = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.GetDowAuds(DayOfWeek.Saturday, weekNum, buildingNum, showProposed.Checked);
+            var auds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Saturday, weekNum, buildingNum, showProposed.Checked);
 
             if (ExportInWord.Checked)
             {
@@ -170,8 +170,8 @@ namespace UchOtd.Schedule.Forms
                 }
             }
 
-            var rings = _repo.GetAllRings();
-            var audsById = _repo.GetAllAuditoriums().ToDictionary(a => a.AuditoriumId, a => a.Name);
+            var rings = _repo.Rings.GetAllRings();
+            var audsById = _repo.Auditoriums.GetAllAuditoriums().ToDictionary(a => a.AuditoriumId, a => a.Name);
 
             audIdsList = audIdsList.OrderBy(id => audsById[id]).ToList();
 
@@ -247,7 +247,7 @@ namespace UchOtd.Schedule.Forms
 
         private void Auditoriums_Load(object sender, EventArgs e)
         {
-            var buildings = _repo.GetAllBuildings()
+            var buildings = _repo.Buildings.GetAllBuildings()
                 .OrderBy(b => b.Name)
                 .ToList();
 

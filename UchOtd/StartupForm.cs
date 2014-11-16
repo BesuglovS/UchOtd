@@ -125,7 +125,7 @@ namespace UchOtd
                 var connectionString = sr.ReadLine();
                 sr.Close();
 
-                Repo.ConnectionString = connectionString;
+                Repo.SetConnectionString(connectionString);
             }
 
             RefreshDbOrConnectionName();
@@ -232,28 +232,8 @@ namespace UchOtd
                 "127.0.0.1",
                 "uch-otd-disp"                
             };
-            /*
-            bool successPing = false;
-            int connectionIndex = 0;
-            do
-            {
-                var serverName = ServerList[connectionIndex];
-                if (PingServerExistence(serverName))
-                {
-                    successPing = true;
+            
 
-                    _repo = new ScheduleRepository("data source=tcp:" + serverName + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
-                    _UOrepo = new UchOtdRepository("data source=tcp:" + serverName + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
-                }
-            } while (!successPing && connectionIndex != ServerList.Count);
-
-            if (!successPing)
-            {
-                MessageBox.Show("Не удалось подключится к базе данных.");
-            }
-             */
-
-            //_repo = new ScheduleRepository("data source=tcp:" + ServerList[0] + ",1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
             Repo = new ScheduleRepository("data source=tcp:" + serverList[0] + ",1433;Database=" + DefaultDbName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
             UOrepo = new UchOtdRepository("data source=tcp:" + serverList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
 
@@ -267,13 +247,13 @@ namespace UchOtd
 
         private void PropagateIsActiveToStateIfNeeded()
         {
-            var propagateOption = Repo.GetFirstFiltredConfigOption(co => co.Key == "_IsActivePropagatedToState");
+            var propagateOption = Repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "_IsActivePropagatedToState");
 
             if (propagateOption == null)
             {
-                Repo.PropagateIsActiveToState();
+                Repo.CommonFunctions.PropagateIsActiveToState();
                 propagateOption = new ConfigOption { Key = "_IsActivePropagatedToState", Value = "" };
-                Repo.AddConfigOption(propagateOption);
+                Repo.ConfigOptions.AddConfigOption(propagateOption);
             }
         }
 
@@ -309,7 +289,7 @@ namespace UchOtd
         {
             if (Repo != null)
             {
-                openDBToolStripMenuItem.Text = "Сменить базу данных (" + Utilities.ExtractDbOrConnectionName(Repo.ConnectionString) + ")";
+                openDBToolStripMenuItem.Text = "Сменить базу данных (" + Utilities.ExtractDbOrConnectionName(Repo.GetConnectionString()) + ")";
             }
             else
             {

@@ -31,11 +31,12 @@ namespace UchOtd.Schedule.Forms.Analysis
         private void RefreshRings()
         {
             var teacherRingIds = _repo
+                .CustomTeacherAttributes
                 .GetFiltredCustomTeacherAttributes(cta => (cta.Teacher.TeacherId == _teacher.TeacherId) && (cta.Key == "TeacherRing"))
                 .Select(cta => int.Parse(cta.Value))
                 .ToList();
 
-            var allRingViews = RingView.RingsToView(_repo.GetAllRings().OrderBy(r => r.Time.TimeOfDay).ToList());
+            var allRingViews = RingView.RingsToView(_repo.Rings.GetAllRings().OrderBy(r => r.Time.TimeOfDay).ToList());
 
             RingsList.ValueMember = "RingId";
             RingsList.DisplayMember = "Time";
@@ -62,6 +63,7 @@ namespace UchOtd.Schedule.Forms.Analysis
         private void OK_Click(object sender, EventArgs e)
         {
             var teacherRingIds = _repo
+                .CustomTeacherAttributes
                 .GetFiltredCustomTeacherAttributes(cta => (cta.Teacher.TeacherId == _teacher.TeacherId) && (cta.Key == "TeacherRing"))
                 .Select(cta => int.Parse(cta.Value))
                 .ToList();
@@ -70,22 +72,22 @@ namespace UchOtd.Schedule.Forms.Analysis
             {
                 bool selected = RingsList.GetSelected(i);
                 int ringId = ((List<RingView>)RingsList.DataSource)[i].RingId;
-                var ring = _repo.GetRing(ringId);
+                var ring = _repo.Rings.GetRing(ringId);
 
                 if (selected && !teacherRingIds.Contains(ringId))
                 {
                     Wishes.NeedsUpdateAfterChoosingRings = true;
 
                     var newTeacherRingAttribute = new CustomTeacherAttribute(_teacher, "TeacherRing", ringId.ToString(CultureInfo.InvariantCulture));
-                    _repo.AddCustomTeacherAttribute(newTeacherRingAttribute);
+                    _repo.CustomTeacherAttributes.AddCustomTeacherAttribute(newTeacherRingAttribute);
 
                     var newTeacherWishList = new List<TeacherWish>();
 
                     newTeacherWishList.AddRange(
-                        _repo.GetAllCalendars()
+                        _repo.Calendars.GetAllCalendars()
                             .Select(calendar => new TeacherWish(_teacher, calendar, ring, 0)));
 
-                    _repo.AddTeacherWishRange(newTeacherWishList);
+                    _repo.TeacherWishes.AddTeacherWishRange(newTeacherWishList);
                 }
 
                 if (!selected && teacherRingIds.Contains(ringId))
@@ -93,21 +95,23 @@ namespace UchOtd.Schedule.Forms.Analysis
                     Wishes.NeedsUpdateAfterChoosingRings = true;
 
                     var teacherRingAttribute = _repo
+                        .CustomTeacherAttributes
                         .GetFirstFiltredCustomTeacherAttribute( cta =>
                         cta.Teacher.TeacherId == _teacher.TeacherId &&
                         cta.Key == "TeacherRing" &&
                         cta.Value == ringId.ToString(CultureInfo.InvariantCulture));
 
-                    _repo.RemoveCustomTeacherAttribute(teacherRingAttribute.CustomTeacherAttributeId);
+                    _repo.CustomTeacherAttributes.RemoveCustomTeacherAttribute(teacherRingAttribute.CustomTeacherAttributeId);
 
                     var teacherWishes = _repo
+                        .TeacherWishes
                         .GetFiltredTeacherWishes(tw =>
                             tw.Teacher.TeacherId == _teacher.TeacherId &&
                             tw.Ring.RingId == ringId);
 
                     foreach (var wish in teacherWishes)
                     {
-                        _repo.RemoveTeacherWish(wish.TeacherWishId);
+                        _repo.TeacherWishes.RemoveTeacherWish(wish.TeacherWishId);
                     }
                 }
             }

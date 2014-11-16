@@ -25,6 +25,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             var studentList = _repo
                 //.GetFiltredStudents(st => st.Expelled == false)
+                .Students
                 .GetAllStudents()
                 .OrderBy(st => st.F)
                 .ThenBy(st => st.I)
@@ -48,7 +49,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void LoadGroupList()
         {
-            var studentGroupList = _repo.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
+            var studentGroupList = _repo.StudentGroups.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
 
             groupsList.DataSource = studentGroupList;
             groupsList.DisplayMember = "Name";
@@ -63,7 +64,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             
             if ((refreshType == 1) || (refreshType == 3))
             {
-                var studentGroupList = _repo.GetAllStudentGroups();
+                var studentGroupList = _repo.StudentGroups.GetAllStudentGroups();
                 studentGroupList = studentGroupList.OrderBy(sg => sg.Name).ToList();
 
                 StudentGroupListView.DataSource = studentGroupList;
@@ -76,7 +77,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             if ((refreshType == 2) || (refreshType == 3))
             {
-                var groupStudents = _repo.GetGroupStudents(StudentGroupName.Text);
+                var groupStudents = _repo.Students.GetGroupStudents(StudentGroupName.Text);
 
                 if (groupStudents != null)
                 {
@@ -121,7 +122,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             StudentGroupName.Text = studentGroup.Name;
 
-            var groupStudents = _repo.GetGroupStudents(StudentGroupName.Text)
+            var groupStudents = _repo.Students.GetGroupStudents(StudentGroupName.Text)
                 .OrderBy(s => s.Expelled)
                 .ThenBy(s => s.F)
                 .ToList();
@@ -157,14 +158,14 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void add_Click(object sender, EventArgs e)
         {
-            if (_repo.FindStudentGroup(StudentGroupName.Text) != null)
+            if (_repo.StudentGroups.FindStudentGroup(StudentGroupName.Text) != null)
             {
                 MessageBox.Show("Такая группа уже есть.");
                 return;
             }
 
             var newStudentGroup = new StudentGroup { Name = StudentGroupName.Text };
-            _repo.AddStudentGroup(newStudentGroup);
+            _repo.StudentGroups.AddStudentGroup(newStudentGroup);
 
             RefreshView((int)RefreshType.GroupsOnly);
         }
@@ -177,7 +178,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 studentGroup.Name = StudentGroupName.Text;
 
-                _repo.UpdateStudentGroup(studentGroup);
+                _repo.StudentGroups.UpdateStudentGroup(studentGroup);
 
                 RefreshView((int)RefreshType.GroupsOnly);
             }
@@ -189,25 +190,27 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var studentGroup = ((List<StudentGroup>)StudentGroupListView.DataSource)[StudentGroupListView.SelectedCells[0].RowIndex];
 
-                if (_repo.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId).Count > 0)
+                if (_repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId).Count > 0)
                 {
                     MessageBox.Show("В группе есть студенты.");
                     return;
                 }
 
-                if (_repo.GetFiltredDisciplines(d => d.StudentGroup.StudentGroupId == studentGroup.StudentGroupId).Count > 0)
+                if (_repo.Disciplines.GetFiltredDisciplines(d => d.StudentGroup.StudentGroupId == studentGroup.StudentGroupId).Count > 0)
                 {
                     MessageBox.Show("Группа есть в учебном плане.");
                     return;
                 }
 
-                if (_repo.GetFiltredGroupsInFaculty(gif => gif.StudentGroup.StudentGroupId == studentGroup.StudentGroupId).Count > 0)
+                if (_repo
+                    .GroupsInFaculties
+                    .GetFiltredGroupsInFaculty(gif => gif.StudentGroup.StudentGroupId == studentGroup.StudentGroupId).Count > 0)
                 {
                     MessageBox.Show("Группа есть в списке факультета.");
                     return;
                 }
 
-                _repo.RemoveStudentGroup(studentGroup.StudentGroupId);
+                _repo.StudentGroups.RemoveStudentGroup(studentGroup.StudentGroupId);
 
                 RefreshView((int)RefreshType.GroupsOnly);
             }
@@ -219,25 +222,25 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var studentGroup = ((List<StudentGroup>)StudentGroupListView.DataSource)[StudentGroupListView.SelectedCells[0].RowIndex];
 
-                var studentsInGroup = _repo.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId);
+                var studentsInGroup = _repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId);
                 if (studentsInGroup.Count > 0)
                 {
                     foreach (var sig in studentsInGroup)
                     {
-                        _repo.RemoveStudentsInGroups(sig.StudentsInGroupsId);
+                        _repo.StudentsInGroups.RemoveStudentsInGroups(sig.StudentsInGroupsId);
                     }
                 }
 
-                var groupDisciplines = _repo.GetFiltredDisciplines(d => d.StudentGroup.StudentGroupId == studentGroup.StudentGroupId);
+                var groupDisciplines = _repo.Disciplines.GetFiltredDisciplines(d => d.StudentGroup.StudentGroupId == studentGroup.StudentGroupId);
                 if (groupDisciplines.Count > 0)
                 {
                     foreach (var disc in groupDisciplines)
                     {
-                        _repo.RemoveDiscipline(disc.DisciplineId);
+                        _repo.Disciplines.RemoveDiscipline(disc.DisciplineId);
                     }
                 }
 
-                _repo.RemoveStudentGroup(studentGroup.StudentGroupId);
+                _repo.StudentGroups.RemoveStudentGroup(studentGroup.StudentGroupId);
 
                 RefreshView((int)RefreshType.GroupsOnly);
             }
@@ -255,7 +258,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 return;
             }
 
-            var studentToAdd = _repo.GetStudent((int)StudentList.SelectedValue);            
+            var studentToAdd = _repo.Students.GetStudent((int)StudentList.SelectedValue);            
 
             if (StudentGroupListView.SelectedCells.Count > 0)
             {
@@ -263,7 +266,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 var sig = new StudentsInGroups { Student = studentToAdd, StudentGroup = studentGroup };
 
-                _repo.AddStudentsInGroups(sig);
+                _repo.StudentsInGroups.AddStudentsInGroups(sig);
 
                 RefreshView((int)RefreshType.StudentsOnly);
             }
@@ -283,13 +286,13 @@ namespace UchOtd.Schedule.Forms.DBLists
             if ((StudentsInGroupListView.SelectedCells.Count > 0) && (StudentGroupListView.SelectedCells.Count > 0))
             {
                 var studentView = ((List<StudentView>)StudentsInGroupListView.DataSource)[StudentsInGroupListView.SelectedCells[0].RowIndex];
-                var student = _repo.GetStudent(studentView.StudentId);
+                var student = _repo.Students.GetStudent(studentView.StudentId);
 
                 var studentGroup = ((List<StudentGroup>)StudentGroupListView.DataSource)[StudentGroupListView.SelectedCells[0].RowIndex];
 
-                var sig = _repo.FindStudentsInGroups(student, studentGroup);
+                var sig = _repo.StudentsInGroups.FindStudentsInGroups(student, studentGroup);
 
-                _repo.RemoveStudentsInGroups(sig.StudentsInGroupsId);
+                _repo.StudentsInGroups.RemoveStudentsInGroups(sig.StudentsInGroupsId);
 
                 RefreshView((int)RefreshType.StudentsOnly);
             }           
@@ -297,9 +300,10 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void addFromGroup_Click(object sender, EventArgs e)
         {
-            var groupToAdd = _repo.GetStudentGroup((int)groupsList.SelectedValue);
+            var groupToAdd = _repo.StudentGroups.GetStudentGroup((int)groupsList.SelectedValue);
 
             var studentsToAdd = _repo
+                .StudentsInGroups
                 .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupToAdd.StudentGroupId)
                 .Select(sig => sig.Student)
                 .Where(st => st.Expelled == false);
@@ -311,7 +315,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 foreach (var studentToAdd in studentsToAdd)
                 {
                     var sig = new StudentsInGroups { Student = studentToAdd, StudentGroup = studentGroup };
-                    _repo.AddStudentsInGroups(sig);
+                    _repo.StudentsInGroups.AddStudentsInGroups(sig);
                 }                
 
                 RefreshView((int)RefreshType.StudentsOnly);

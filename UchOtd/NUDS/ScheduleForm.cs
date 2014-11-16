@@ -39,6 +39,7 @@ namespace UchOtd.NUDS
             var groupName = groupList.Text;
 
             var filteredGroups = _repo
+                .StudentGroups
                 .GetFiltredStudentGroups(sg => 
                     !sg.Name.Contains('I') && !sg.Name.Contains('-') && !sg.Name.Contains('+'))
                 .OrderBy(sg => sg.Name)
@@ -50,7 +51,7 @@ namespace UchOtd.NUDS
             groupList.Text = groupName;
 
             datePicker.Value = DateTime.Now;
-            var calendars = _repo.GetAllCalendars();
+            var calendars = _repo.Calendars.GetAllCalendars();
             datePicker.MinDate = calendars.Select(c => c.Date).Min();
             datePicker.MaxDate = calendars.Select(c => c.Date).Max();
         }

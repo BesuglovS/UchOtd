@@ -31,7 +31,7 @@ namespace UchOtd.Forms
 
         private void BuildingLessonsLoad(object sender, EventArgs e)
         {
-            var buildings = _repo.GetAllBuildings()
+            var buildings = _repo.Buildings.GetAllBuildings()
                 .OrderBy(b => b.Name)
                 .ToList();
 
@@ -46,11 +46,11 @@ namespace UchOtd.Forms
                 buildingBox.SelectedValue = mainBuilding.BuildingId;
             }
 
-            var initialCalendar = _repo.GetFirstFiltredCalendar(c => c.Date.Date == DateTime.Now.Date);
+            var initialCalendar = _repo.Calendars.GetFirstFiltredCalendar(c => c.Date.Date == DateTime.Now.Date);
             if (initialCalendar == null)
             {
-                var ss = _repo.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts");
-                initialCalendar = _repo.GetFirstFiltredCalendar(c => c.Date == DateTime.ParseExact(ss.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture));
+                var ss = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts");
+                initialCalendar = _repo.Calendars.GetFirstFiltredCalendar(c => c.Date == DateTime.ParseExact(ss.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture));
             }
 
             lessonsDate.Value = initialCalendar.Date;
@@ -91,6 +91,7 @@ namespace UchOtd.Forms
             var calculateAudsTask = Task.Factory.StartNew(() =>
             {
                 var lessons = _repo
+                    .Lessons
                     .GetFiltredLessons(l =>
                         ((l.State == 1) || ((l.State == 2) && showProposed.Checked)) &&
                         l.Auditorium.Building.BuildingId == buildingId &&
@@ -98,6 +99,7 @@ namespace UchOtd.Forms
                 _cToken.ThrowIfCancellationRequested();
 
                 var evts = _repo
+                    .AuditoriumEvents
                     .GetFiltredAuditoriumEvents(ae =>
                         ae.Auditorium.Building.BuildingId == buildingId &&
                         ae.Calendar.Date.Date == viewDate
@@ -250,8 +252,8 @@ namespace UchOtd.Forms
         }
 
         public List<Auditorium> SortAuditoriums(List<Auditorium> list, int buildingIndex)
-        {   
-            var building = _repo.GetFirstFiltredBuilding(b => b.BuildingId == buildingIndex);
+        {
+            var building = _repo.Buildings.GetFirstFiltredBuilding(b => b.BuildingId == buildingIndex);
             if (building != null)
             {
                 if (building.Name == "ул. Молодогвардейская, 196")

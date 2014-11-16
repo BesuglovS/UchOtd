@@ -6,6 +6,7 @@ using System.Reflection;
 using Microsoft.Office.Interop.Word;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using Schedule.Repositories.Common;
 using UchOtd.NUDS.View;
 using UchOtd.Schedule.Views.DBListViews;
 using Shape = Microsoft.Office.Interop.Word.Shape;
@@ -35,11 +36,11 @@ namespace UchOtd.Core
             oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
 
-            var faculty = repo.GetFaculty(facultyId);
+            var faculty = repo.Faculties.GetFaculty(facultyId);
 
             var dow = Constants.DowLocal[dayOfWeek];
 
-            var schedule = repo.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, onlyFutureDates);
+            var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, onlyFutureDates);
 
             Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
             oPara1.Range.Text = "Расписание";
@@ -88,7 +89,7 @@ namespace UchOtd.Core
                 WdLineSpacing.wdLineSpaceSingle;
             if (dow == "Понедельник")
             {
-                var prorUchRabNameOption = repo.GetFirstFiltredConfigOption(co => co.Key == "Проректор по учебной работе");
+                var prorUchRabNameOption = repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Проректор по учебной работе");
                 var prorUchRabName = (prorUchRabNameOption == null) ? "" : prorUchRabNameOption.Value;
 
                 cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
@@ -141,7 +142,7 @@ namespace UchOtd.Core
 
             foreach (var group in schedule)
             {
-                var groupObject = repo.GetStudentGroup(group.Key);
+                var groupObject = repo.StudentGroups.GetStudentGroup(group.Key);
                 var groupName = groupObject.Name;
                 oTable.Cell(1, groupColumn).Range.Text = groupName.Replace(" (+Н)", "");
                 oTable.Cell(1, groupColumn).Range.ParagraphFormat.Alignment =
@@ -153,23 +154,23 @@ namespace UchOtd.Core
                     var plainGroupName = groupName.Replace(" (+Н)", "");
                     var nGroupName = groupName.Replace(" (+", "(");
 
-                    var plainGroupId = repo.FindStudentGroup(plainGroupName).StudentGroupId;
-                    var plainStudentIds = repo.GetAllStudentsInGroups()
+                    var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName).StudentGroupId;
+                    var plainStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                             .Where(sig => sig.StudentGroup.StudentGroupId == plainGroupId)
                             .Select(stig => stig.Student.StudentId)
                             .ToList();
-                    plainGroupsListIds.Add(group.Key, repo.GetAllStudentsInGroups()
+                    plainGroupsListIds.Add(group.Key, repo.StudentsInGroups.GetAllStudentsInGroups()
                             .Where(sig => plainStudentIds.Contains(sig.Student.StudentId))
                             .Select(stig => stig.StudentGroup.StudentGroupId)
                             .Distinct()
                             .ToList());
 
-                    var nGroupId = repo.FindStudentGroup(nGroupName).StudentGroupId;
-                    var nStudentIds = repo.GetAllStudentsInGroups()
+                    var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName).StudentGroupId;
+                    var nStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                             .Where(sig => sig.StudentGroup.StudentGroupId == nGroupId)
                             .Select(stig => stig.Student.StudentId)
                             .ToList();
-                    nGroupsListIds.Add(group.Key, repo.GetAllStudentsInGroups()
+                    nGroupsListIds.Add(group.Key, repo.StudentsInGroups.GetAllStudentsInGroups()
                             .Where(sig => nStudentIds.Contains(sig.Student.StudentId))
                             .Select(stig => stig.StudentGroup.StudentGroupId)
                             .Distinct()
@@ -225,7 +226,7 @@ namespace UchOtd.Core
                         timeTable.Range.Font.Bold = 0;
 
                         var tfdIndex = 0;
-                        foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CalculateWeekNumber(l.Calendar.Date)).Min()))
+                        foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min()))
                         {
                             var cellText = "";
                             // Discipline name
@@ -264,7 +265,7 @@ namespace UchOtd.Core
                                 cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
                             }
 
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
                             var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
@@ -278,7 +279,7 @@ namespace UchOtd.Core
                                 for (int j = 0; j < gcount; j++)
                                 {
                                     var jItem = enumerable.OrderBy(e => e.Select(ag => ag.Key).ToList().Min()).ElementAt(j);
-                                    cellText += ScheduleRepository.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
+                                    cellText += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
 
                                     if (j != gcount - 1)
                                     {
@@ -311,7 +312,7 @@ namespace UchOtd.Core
                 oPara3.Format.SpaceAfter = 0;
                 oPara3.Range.InsertParagraphAfter();
 
-                var headUchOtdNameOption = repo.GetFirstFiltredConfigOption(co => co.Key == "Начальник учебного отдела");
+                var headUchOtdNameOption = repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Начальник учебного отдела");
                 var headUchOtdName = (headUchOtdNameOption == null) ? "" : headUchOtdNameOption.Value;
 
                 oPara3 =
@@ -383,9 +384,9 @@ namespace UchOtd.Core
             oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
 
-            var faculty = repo.GetFaculty(facultyId);
+            var faculty = repo.Faculties.GetFaculty(facultyId);
 
-            var firstDaySchedule = repo.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
+            var firstDaySchedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
 
             var firstDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, firstDaySchedule, oDoc, oEndOfDoc, oWord, null, dayOfWeek);
 
@@ -393,7 +394,7 @@ namespace UchOtd.Core
 
             if (dayOfWeek != 7)
             {
-                var secondDaySchedule = repo.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter, false, false);
+                var secondDaySchedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter, false, false);
                 secondDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, secondDaySchedule, oDoc, oEndOfDoc, oWord, firstDayTable, dayOfWeek + 1);
             }
 
@@ -491,7 +492,7 @@ namespace UchOtd.Core
 
             foreach (var group in schedule)
             {
-                var groupObject = repo.GetStudentGroup(@group.Key);
+                var groupObject = repo.StudentGroups.GetStudentGroup(@group.Key);
                 var groupName = groupObject.Name;
 
                 oTable.Cell(tableRowOffset + 1, groupColumn).Range.Text = groupName.Replace(" (+Н)", "");
@@ -504,23 +505,23 @@ namespace UchOtd.Core
                     var plainGroupName = groupName.Replace(" (+Н)", "");
                     var nGroupName = groupName.Replace(" (+", "(");
 
-                    var plainGroupId = repo.FindStudentGroup(plainGroupName).StudentGroupId;
-                    var plainStudentIds = repo.GetAllStudentsInGroups()
+                    var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName).StudentGroupId;
+                    var plainStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                         .Where(sig => sig.StudentGroup.StudentGroupId == plainGroupId)
                         .Select(stig => stig.Student.StudentId)
                         .ToList();
-                    plainGroupsListIds.Add(@group.Key, repo.GetAllStudentsInGroups()
+                    plainGroupsListIds.Add(@group.Key, repo.StudentsInGroups.GetAllStudentsInGroups()
                         .Where(sig => plainStudentIds.Contains(sig.Student.StudentId))
                         .Select(stig => stig.StudentGroup.StudentGroupId)
                         .Distinct()
                         .ToList());
 
-                    var nGroupId = repo.FindStudentGroup(nGroupName).StudentGroupId;
-                    var nStudentIds = repo.GetAllStudentsInGroups()
+                    var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName).StudentGroupId;
+                    var nStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                         .Where(sig => sig.StudentGroup.StudentGroupId == nGroupId)
                         .Select(stig => stig.Student.StudentId)
                         .ToList();
-                    nGroupsListIds.Add(@group.Key, repo.GetAllStudentsInGroups()
+                    nGroupsListIds.Add(@group.Key, repo.StudentsInGroups.GetAllStudentsInGroups()
                         .Where(sig => nStudentIds.Contains(sig.Student.StudentId))
                         .Select(stig => stig.StudentGroup.StudentGroupId)
                         .Distinct()
@@ -580,7 +581,7 @@ namespace UchOtd.Core
                         foreach (
                             var tfdData in
                                 @group.Value[time].OrderBy(
-                                    tfd => tfd.Value.Item2.Select(l => repo.CalculateWeekNumber(l.Calendar.Date)).Min()))
+                                    tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min()))
                         {
                             var cellText = "";
                             // Discipline name
@@ -624,7 +625,7 @@ namespace UchOtd.Core
                                 cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
                             }
 
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CalculateWeekNumber(l.Calendar.Date),
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date),
                                 l => l.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
@@ -639,7 +640,7 @@ namespace UchOtd.Core
                                 for (int j = 0; j < gcount; j++)
                                 {
                                     var jItem = enumerable.OrderBy(e => e.Select(ag => ag.Key).ToList().Min()).ElementAt(j);
-                                    cellText += ScheduleRepository.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " +
+                                    cellText += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " +
                                                 jItem.Key;
 
                                     if (j != gcount - 1)
@@ -690,11 +691,11 @@ namespace UchOtd.Core
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
             int pageCounter = 0;
 
-            List<Faculty> facultiesList = repo.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
+            List<Faculty> facultiesList = repo.Faculties.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
 
             if (facultyFilter != -1)
             {
-                facultiesList = new List<Faculty> {repo.GetFaculty(facultyFilter)};
+                facultiesList = new List<Faculty> {repo.Faculties.GetFaculty(facultyFilter)};
             }
 
 
@@ -706,7 +707,7 @@ namespace UchOtd.Core
                 {
                     string dow = Constants.DowLocal[dayOfWeek];
 
-                    var schedule = repo.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, false, -1, false, futureDatesOnly);
+                    var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, false, -1, false, futureDatesOnly);
 
                     Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
                     oPara1.Range.Text = "Расписание";
@@ -757,7 +758,7 @@ namespace UchOtd.Core
                     {
                         if (!schoolHeader)
                         {
-                            var prorUchRabNameOption = repo.GetFirstFiltredConfigOption(co => co.Key == "Проректор по учебной работе");
+                            var prorUchRabNameOption = repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Проректор по учебной работе");
                             var prorUchRabName = (prorUchRabNameOption == null) ? "" : prorUchRabNameOption.Value;
 
                             cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
@@ -819,7 +820,7 @@ namespace UchOtd.Core
 
                     foreach (var group in schedule)
                     {
-                        var groupName = repo.GetStudentGroup(group.Key).Name;
+                        var groupName = repo.StudentGroups.GetStudentGroup(group.Key).Name;
                         oTable.Cell(1, groupColumn).Range.Text = groupName.Replace(" (+Н)", "");
                         oTable.Cell(1, groupColumn).Range.ParagraphFormat.Alignment =
                             WdParagraphAlignment.wdAlignParagraphCenter;
@@ -830,23 +831,23 @@ namespace UchOtd.Core
                             var plainGroupName = groupName.Replace(" (+Н)", "");
                             var nGroupName = groupName.Replace(" (+", "(");
 
-                            var plainGroupId = repo.FindStudentGroup(plainGroupName).StudentGroupId;
-                            var plainStudentIds = repo.GetAllStudentsInGroups()
+                            var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName).StudentGroupId;
+                            var plainStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => sig.StudentGroup.StudentGroupId == plainGroupId)
                                     .Select(stig => stig.Student.StudentId)
                                     .ToList();
-                            plainGroupsListIds.Add(group.Key, repo.GetAllStudentsInGroups()
+                            plainGroupsListIds.Add(group.Key, repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => plainStudentIds.Contains(sig.Student.StudentId))
                                     .Select(stig => stig.StudentGroup.StudentGroupId)
                                     .Distinct()
                                     .ToList());
 
-                            var nGroupId = repo.FindStudentGroup(nGroupName).StudentGroupId;
-                            var nStudentIds = repo.GetAllStudentsInGroups()
+                            var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName).StudentGroupId;
+                            var nStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => sig.StudentGroup.StudentGroupId == nGroupId)
                                     .Select(stig => stig.Student.StudentId)
                                     .ToList();
-                            nGroupsListIds.Add(group.Key, repo.GetAllStudentsInGroups()
+                            nGroupsListIds.Add(group.Key, repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => nStudentIds.Contains(sig.Student.StudentId))
                                     .Select(stig => stig.StudentGroup.StudentGroupId)
                                     .Distinct()
@@ -900,7 +901,7 @@ namespace UchOtd.Core
                                 timeTable.Range.Font.Bold = 0;
 
                                 var tfdIndex = 0;
-                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CalculateWeekNumber(l.Calendar.Date)).Min()))
+                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min()))
                                 {
                                     var cellText = "";
                                     cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
@@ -920,7 +921,7 @@ namespace UchOtd.Core
                                     cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
                                     cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
 
-                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
+                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
                                     var grouped = audWeekList.GroupBy(a => a.Value);
 
                                     var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
@@ -934,7 +935,7 @@ namespace UchOtd.Core
                                         for (int j = 0; j < gcount; j++)
                                         {
                                             var jItem = enumerable.OrderBy(e => e.Select(ag => ag.Key).ToList().Min()).ElementAt(j);
-                                            cellText += ScheduleRepository.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
+                                            cellText += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
 
                                             if (j != gcount - 1)
                                             {
@@ -967,7 +968,7 @@ namespace UchOtd.Core
                         oPara3.Format.SpaceAfter = 0;
                         oPara3.Range.InsertParagraphAfter();
 
-                        var headUchOtdNameOption = repo.GetFirstFiltredConfigOption(co => co.Key == "Начальник учебного отдела");
+                        var headUchOtdNameOption = repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Начальник учебного отдела");
                         var headUchOtdName = (headUchOtdNameOption == null) ? "" : headUchOtdNameOption.Value;
 
                         oPara3 =
@@ -1059,7 +1060,7 @@ namespace UchOtd.Core
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
             int pageCounter = 0;
 
-            List<Faculty> facultiesList = repo.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
+            List<Faculty> facultiesList = repo.Faculties.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
 
             foreach (var faculty in facultiesList)
             {
@@ -1079,7 +1080,7 @@ namespace UchOtd.Core
 
                     string dow = Constants.DowLocal[dayOfWeek];
 
-                    var schedule = repo.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, false, -1, false, onlyFutureDates);
+                    var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, false, -1, false, onlyFutureDates);
 
                     Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
                     oPara1.Range.Text = "Расписание";
@@ -1130,7 +1131,7 @@ namespace UchOtd.Core
                     {
                         if (!schoolHeader)
                         {
-                            var prorUchRabNameOption = repo.GetFirstFiltredConfigOption(co => co.Key == "Проректор по учебной работе");
+                            var prorUchRabNameOption = repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Проректор по учебной работе");
                             var prorUchRabName = (prorUchRabNameOption == null) ? "" : prorUchRabNameOption.Value;
 
                             cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
@@ -1192,7 +1193,7 @@ namespace UchOtd.Core
 
                     foreach (var group in schedule)
                     {
-                        var groupName = repo.GetStudentGroup(group.Key).Name;
+                        var groupName = repo.StudentGroups.GetStudentGroup(group.Key).Name;
                         oTable.Cell(1, groupColumn).Range.Text = groupName.Replace(" (+Н)", "");
                         oTable.Cell(1, groupColumn).Range.ParagraphFormat.Alignment =
                             WdParagraphAlignment.wdAlignParagraphCenter;
@@ -1203,23 +1204,23 @@ namespace UchOtd.Core
                             var plainGroupName = groupName.Replace(" (+Н)", "");
                             var nGroupName = groupName.Replace(" (+", "(");
 
-                            var plainGroupId = repo.FindStudentGroup(plainGroupName).StudentGroupId;
-                            var plainStudentIds = repo.GetAllStudentsInGroups()
+                            var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName).StudentGroupId;
+                            var plainStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => sig.StudentGroup.StudentGroupId == plainGroupId)
                                     .Select(stig => stig.Student.StudentId)
                                     .ToList();
-                            plainGroupsListIds.Add(group.Key, repo.GetAllStudentsInGroups()
+                            plainGroupsListIds.Add(group.Key, repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => plainStudentIds.Contains(sig.Student.StudentId))
                                     .Select(stig => stig.StudentGroup.StudentGroupId)
                                     .Distinct()
                                     .ToList());
 
-                            var nGroupId = repo.FindStudentGroup(nGroupName).StudentGroupId;
-                            var nStudentIds = repo.GetAllStudentsInGroups()
+                            var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName).StudentGroupId;
+                            var nStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => sig.StudentGroup.StudentGroupId == nGroupId)
                                     .Select(stig => stig.Student.StudentId)
                                     .ToList();
-                            nGroupsListIds.Add(group.Key, repo.GetAllStudentsInGroups()
+                            nGroupsListIds.Add(group.Key, repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => nStudentIds.Contains(sig.Student.StudentId))
                                     .Select(stig => stig.StudentGroup.StudentGroupId)
                                     .Distinct()
@@ -1273,7 +1274,7 @@ namespace UchOtd.Core
                                 timeTable.Range.Font.Bold = 0;
 
                                 var tfdIndex = 0;
-                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CalculateWeekNumber(l.Calendar.Date)).Min()))
+                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min()))
                                 {
                                     var cellText = "";
                                     cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
@@ -1293,7 +1294,7 @@ namespace UchOtd.Core
                                     cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
                                     cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
 
-                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
+                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
                                     var grouped = audWeekList.GroupBy(a => a.Value);
 
                                     var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
@@ -1307,7 +1308,7 @@ namespace UchOtd.Core
                                         for (int j = 0; j < gcount; j++)
                                         {
                                             var jItem = enumerable.OrderBy(e => e.Select(ag => ag.Key).ToList().Min()).ElementAt(j);
-                                            cellText += ScheduleRepository.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
+                                            cellText += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
 
                                             if (j != gcount - 1)
                                             {
@@ -1340,7 +1341,7 @@ namespace UchOtd.Core
                         oPara3.Format.SpaceAfter = 0;
                         oPara3.Range.InsertParagraphAfter();
 
-                        var headUchOtdNameOption = repo.GetFirstFiltredConfigOption(co => co.Key == "Начальник учебного отдела");
+                        var headUchOtdNameOption = repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Начальник учебного отдела");
                         var headUchOtdName = (headUchOtdNameOption == null) ? "" : headUchOtdNameOption.Value;
 
                         oPara3 =
@@ -1408,7 +1409,7 @@ namespace UchOtd.Core
 
         private static string DetectSemesterString(ScheduleRepository repo)
         {
-            var semesterSterts = repo.GetSemesterStarts();
+            var semesterSterts = repo.CommonFunctions.GetSemesterStarts();
             var ssYear = semesterSterts.Year;
 
             if (semesterSterts.Month > 6)
@@ -1438,16 +1439,16 @@ namespace UchOtd.Core
 
             int currentPageNum = 1;
 
-            var faculty = repo.GetFaculty(facultyId);
+            var faculty = repo.Faculties.GetFaculty(facultyId);
 
             for (int dayOfWeek = 1; dayOfWeek <= 5; dayOfWeek += 2)
             {
-                var firstDaySchedule = repo.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
+                var firstDaySchedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
 
                 var firstDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, firstDaySchedule, oDoc, oEndOfDoc, oWord, null, dayOfWeek);
 
 
-                var secondDaySchedule = repo.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter, false, false);
+                var secondDaySchedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter, false, false);
                 var secondDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, secondDaySchedule, oDoc, oEndOfDoc, oWord, firstDayTable, dayOfWeek + 1);
 
                 var fontSize = 10.5F;
@@ -1509,7 +1510,7 @@ namespace UchOtd.Core
             oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
 
-            var faculty = repo.GetFaculty(facultyId);
+            var faculty = repo.Faculties.GetFaculty(facultyId);
 
             Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
             oPara1.Range.Text = "Расписание";
@@ -1819,8 +1820,8 @@ namespace UchOtd.Core
                 }
             }
 
-            var rings = repo.GetAllRings();
-            var audsById = repo.GetAllAuditoriums().ToDictionary(a => a.AuditoriumId, a => a.Name);
+            var rings = repo.Rings.GetAllRings();
+            var audsById = repo.Auditoriums.GetAllAuditoriums().ToDictionary(a => a.AuditoriumId, a => a.Name);
 
             audIdsList = audIdsList.OrderBy(id => audsById[id]).ToList();
 
@@ -1930,7 +1931,7 @@ namespace UchOtd.Core
             oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
 
-            var faculty = repo.GetFaculty(facultyId);
+            var faculty = repo.Faculties.GetFaculty(facultyId);
 
             var oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null);
             if (dayOfWeek != 7)
@@ -1974,7 +1975,7 @@ namespace UchOtd.Core
             Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord,
             Table tableToContinue)
         {
-            var schedule = repo.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
+            var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
 
             var timeList = new List<string>();
             foreach (var group in schedule)
@@ -2029,7 +2030,7 @@ namespace UchOtd.Core
 
             foreach (var group in schedule)
             {
-                var groupObject = repo.GetStudentGroup(@group.Key);
+                var groupObject = repo.StudentGroups.GetStudentGroup(@group.Key);
                 var groupName = groupObject.Name;
                 oTable.Cell(tableRowOffset + 1, groupColumn).Range.Text = groupName;
                 oTable.Cell(tableRowOffset + 1, groupColumn).Range.ParagraphFormat.Alignment =
@@ -2077,7 +2078,7 @@ namespace UchOtd.Core
 
                         var groupDowTimeLessons = @group.Value[time]
                             .OrderBy(tfd => tfd.Value.Item2.Select(l =>
-                                repo.CalculateWeekNumber(l.Calendar.Date)).Min())
+                                repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min())
                             .ToList();
 
                         if (!((@group.Value[time].Count == 2) && ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт.")))))
@@ -2149,7 +2150,7 @@ namespace UchOtd.Core
                                 //cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
                             }
 
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CalculateWeekNumber(l.Calendar.Date),
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date),
                                 l => l.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
@@ -2164,7 +2165,7 @@ namespace UchOtd.Core
                                 for (int j = 0; j < gcount; j++)
                                 {
                                     var jItem = enumerable.OrderBy(e => e.Select(ag => ag.Key).ToList().Min()).ElementAt(j);
-                                    cellText += ScheduleRepository.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " +
+                                    cellText += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " +
                                                 jItem.Key;
 
                                     if (j != gcount - 1)
@@ -2223,7 +2224,7 @@ namespace UchOtd.Core
             bool weekFiltered, int weekFilter, bool weeksMarksVisible,
             Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord)
         {
-            var schedule = repo.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
+            var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
 
             var timeList = new List<string>();
             foreach (var group in schedule)
@@ -2268,7 +2269,7 @@ namespace UchOtd.Core
 
             foreach (var group in schedule)
             {
-                var groupObject = repo.GetStudentGroup(@group.Key);
+                var groupObject = repo.StudentGroups.GetStudentGroup(@group.Key);
                 var groupName = groupObject.Name;
                 oTable.Cell(1, groupColumn).Range.Text = groupName;
                 oTable.Cell(1, groupColumn).Range.Font.Bold = 1;
@@ -2324,7 +2325,7 @@ namespace UchOtd.Core
 
                         var groupDowTimeLessons = @group.Value[time]
                             .OrderBy(tfd => tfd.Value.Item2.Select(l =>
-                                repo.CalculateWeekNumber(l.Calendar.Date)).Min())
+                                repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min())
                             .ToList();
 
                         if (!((@group.Value[time].Count == 2) && ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт.")))))
@@ -2406,7 +2407,7 @@ namespace UchOtd.Core
 
                             String audText = "";
                             // Auditoriums
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CalculateWeekNumber(l.Calendar.Date),
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date),
                                 l => l.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
@@ -2421,7 +2422,7 @@ namespace UchOtd.Core
                                 for (int j = 0; j < gcount; j++)
                                 {
                                     var jItem = enumerable.OrderBy(e => e.Select(ag => ag.Key).ToList().Min()).ElementAt(j);
-                                    audText += ScheduleRepository.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " +
+                                    audText += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " +
                                                 ShortenAudName(jItem.Key);
 
                                     if (j != gcount - 1)
@@ -2538,17 +2539,17 @@ namespace UchOtd.Core
 
             int pageCounter = 0;
 
-            foreach (var faculty in repo.GetAllFaculties())
+            foreach (var faculty in repo.Faculties.GetAllFaculties())
             {
                 //var faculty = repo.GetFirstFiltredFaculty(f => f.SortingOrder == i);
 
-                var facultyGroups = repo.GetFacultyGroups(faculty.FacultyId);
+                var facultyGroups = repo.Faculties.GetFacultyGroups(faculty.FacultyId);
 
                 foreach (var group in facultyGroups)
                 {
-                    var sStarts = repo.GetSemesterStarts();
+                    var sStarts = repo.CommonFunctions.GetSemesterStarts();
 
-                    var groupLessons = repo.GetGroupedGroupLessons(group.StudentGroupId, sStarts, -1, false);
+                    var groupLessons = repo.Lessons.GetGroupedGroupLessons(group.StudentGroupId, sStarts, -1, false);
 
                     var groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons, false);
 
@@ -2634,11 +2635,11 @@ namespace UchOtd.Core
 
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
-            var group = repo.GetStudentGroup(groupId);
+            var group = repo.StudentGroups.GetStudentGroup(groupId);
 
-            var sStarts = repo.GetSemesterStarts();
+            var sStarts = repo.CommonFunctions.GetSemesterStarts();
 
-            var groupLessons = repo.GetGroupedGroupLessons(group.StudentGroupId, sStarts, -1, false);
+            var groupLessons = repo.Lessons.GetGroupedGroupLessons(group.StudentGroupId, sStarts, -1, false);
 
             List<GroupTableView> groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons, false);
 
@@ -2720,7 +2721,7 @@ namespace UchOtd.Core
             oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
 
-            var faculty = repo.GetFaculty(facultyId);
+            var faculty = repo.Faculties.GetFaculty(facultyId);
 
             Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
             oPara1.Range.Text = "Расписание " + DetectSemesterString(repo);

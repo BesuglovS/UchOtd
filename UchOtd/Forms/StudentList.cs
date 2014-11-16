@@ -33,12 +33,14 @@ namespace UchOtd.Forms
             searchBox.DataSource = null;
 
             var groups = _repo
+                .StudentGroups
                 .GetFiltredStudentGroups(sg => Utilities.MainGroups(sg.Name))
                 .OrderBy(g => g.Name)
                 .ToList();
             var searchList = StudentListView.FromGroupList(groups);
             
             var students = _repo
+                .Students
                 .GetFiltredStudents(s => !s.Expelled)
                 .OrderBy(s => s.F)
                 .ThenBy(s => s.I)                
@@ -77,6 +79,7 @@ namespace UchOtd.Forms
                         break;
                     case "studentGroup":
                         var groupStudents = _repo
+                            .StudentsInGroups
                             .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == id)
                             .Select(sig => sig.Student)
                             .OrderBy(s => s.Expelled)
@@ -191,7 +194,7 @@ namespace UchOtd.Forms
 
             var studentId = (int)viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["StudentId"].Value;
 
-            _repo.RemoveStudent(studentId);
+            _repo.Students.RemoveStudent(studentId);
         }
 
         private void viewGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)

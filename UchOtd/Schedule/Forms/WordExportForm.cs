@@ -25,7 +25,7 @@ namespace UchOtd.Schedule.Forms
         {
             _choice = new Dictionary<int, List<int>>();
 
-            var faculties = _repo.GetAllFaculties();
+            var faculties = _repo.Faculties.GetAllFaculties();
             for (int i = 0; i < faculties.Count; i++)                
             {
                 _choice.Add(faculties[i].FacultyId, new List<int>());

@@ -22,7 +22,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void GroupPeriods_Load(object sender, EventArgs e)
         {
-            var groups = _repo.GetAllStudentGroups()
+            var groups = _repo.StudentGroups.GetAllStudentGroups()
                 .OrderBy(g => g.Name)
                 .ToList();
 
@@ -30,7 +30,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             Group.DisplayMember = "Name";
             Group.DataSource = groups;
 
-            var groups2 = _repo.GetAllStudentGroups()
+            var groups2 = _repo.StudentGroups.GetAllStudentGroups()
                 .OrderBy(g => g.Name)
                 .ToList();
 
@@ -48,22 +48,27 @@ namespace UchOtd.Schedule.Forms.Analysis
             if ((filter.Text != "") && discnameFilter.Checked)
             {
                 periodsList = _repo
+                    .CustomStudentGroupAttributes
                     .GetFiltredCustomStudentGroupAttributes(csga => 
                         csga.Key == "StudentGroupPeriod" && 
                         csga.Value.Split('@')[0].Contains(filter.Text));
             }
             else
             {
-                periodsList = _repo.GetFiltredCustomStudentGroupAttributes(csga => csga.Key == "StudentGroupPeriod");
+                periodsList = _repo
+                    .CustomStudentGroupAttributes
+                    .GetFiltredCustomStudentGroupAttributes(csga => csga.Key == "StudentGroupPeriod");
             }
 
             if (groupnameFilter.Checked)
             {
                 var studentIds = _repo
+                    .StudentsInGroups
                     .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == (int)groupNameList.SelectedValue)
                     .ToList()
                     .Select(stig => stig.Student.StudentId);
                 var groupsListIds = _repo
+                    .StudentsInGroups
                     .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
                     .ToList()
                     .Select(stig => stig.StudentGroup.StudentGroupId);
@@ -95,7 +100,9 @@ namespace UchOtd.Schedule.Forms.Analysis
         private void PeriodsListView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             var view = ((List<GroupPeriodView>) PeriodsListView.DataSource)[e.RowIndex];
-            var groupPeriodAttribute = _repo.GetCustomStudentGroupAttribute(view.CustomStudentGroupAttributeId);
+            var groupPeriodAttribute = _repo
+                .CustomStudentGroupAttributes
+                .GetCustomStudentGroupAttribute(view.CustomStudentGroupAttributeId);
 
             var valueParts = groupPeriodAttribute.Value.Split('@');
 
@@ -109,12 +116,13 @@ namespace UchOtd.Schedule.Forms.Analysis
         {
             var newPeriod = new CustomStudentGroupAttribute
             {
-                StudentGroup = _repo.GetStudentGroup((int)Group.SelectedValue),
+                StudentGroup = _repo.StudentGroups.GetStudentGroup((int)Group.SelectedValue),
                 Key = "StudentGroupPeriod",
                 Value = PeriodName.Text + "@" + startOfPeriod.Value.ToString("dd.MM.yyyy") + "@" + endOfPeriod.Value.ToString("dd.MM.yyyy")
             };
 
-            _repo.AddCustomStudentGroupAttribute(newPeriod);
+            _repo.CustomStudentGroupAttributes
+                .AddCustomStudentGroupAttribute(newPeriod);
 
             RefreshView();
         }
@@ -124,14 +132,14 @@ namespace UchOtd.Schedule.Forms.Analysis
             if (PeriodsListView.SelectedCells.Count > 0)
             {
                 var view = ((List<GroupPeriodView>)PeriodsListView.DataSource)[PeriodsListView.SelectedCells[0].RowIndex];
-                var groupPeriod = _repo.GetCustomStudentGroupAttribute(view.CustomStudentGroupAttributeId);
+                var groupPeriod = _repo.CustomStudentGroupAttributes.GetCustomStudentGroupAttribute(view.CustomStudentGroupAttributeId);
 
-                
-                groupPeriod.StudentGroup = _repo.GetStudentGroup((int)Group.SelectedValue);
+
+                groupPeriod.StudentGroup = _repo.StudentGroups.GetStudentGroup((int)Group.SelectedValue);
                 groupPeriod.Key = "StudentGroupPeriod";
                 groupPeriod.Value = PeriodName.Text + "@" + startOfPeriod.Value.ToString("dd.MM.yyyy") + "@" + endOfPeriod.Value.ToString("dd.MM.yyyy");
 
-                _repo.UpdateCustomStudentGroupAttribute(groupPeriod);
+                _repo.CustomStudentGroupAttributes.UpdateCustomStudentGroupAttribute(groupPeriod);
 
                 RefreshView();
             }
@@ -143,7 +151,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             {
                 var view = ((List<GroupPeriodView>)PeriodsListView.DataSource)[PeriodsListView.SelectedCells[0].RowIndex];
 
-                _repo.RemoveCustomStudentGroupAttribute(view.CustomStudentGroupAttributeId);
+                _repo.CustomStudentGroupAttributes.RemoveCustomStudentGroupAttribute(view.CustomStudentGroupAttributeId);
 
                 RefreshView();
             }

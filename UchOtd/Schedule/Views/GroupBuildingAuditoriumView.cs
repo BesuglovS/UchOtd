@@ -26,13 +26,13 @@ namespace UchOtd.Schedule.Views
                 StudentGroup = attrList[0].StudentGroup.Name;
 
                 var building = attrList.FirstOrDefault(csga => csga.Key == "Building");
-                Building = (building != null) ? repo.GetBuilding(int.Parse(building.Value)).Name : "";
+                Building = (building != null) ? repo.Buildings.GetBuilding(int.Parse(building.Value)).Name : "";
 
                 var auditorium = attrList.FirstOrDefault(csga => csga.Key == "Auditorium");
-                Auditorium = (auditorium != null) ? repo.GetAuditorium(int.Parse(auditorium.Value)).Name : "";
+                Auditorium = (auditorium != null) ? repo.Auditoriums.GetAuditorium(int.Parse(auditorium.Value)).Name : "";
 
                 var shift = attrList.FirstOrDefault(csga => csga.Key == "Shift");
-                Shift = (shift != null) ? repo.GetShift(int.Parse(shift.Value)).Name : "";
+                Shift = (shift != null) ? repo.Shifts.GetShift(int.Parse(shift.Value)).Name : "";
             }
         }
 

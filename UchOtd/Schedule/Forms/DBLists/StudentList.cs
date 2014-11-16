@@ -18,7 +18,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             _repo = repo;
 
-            var groups = _repo.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
+            var groups = _repo.StudentGroups.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
             studentGroups.DataSource = groups;
             studentGroups.DisplayMember = "Name";
             studentGroups.ValueMember = "StudentGroupId";
@@ -35,14 +35,15 @@ namespace UchOtd.Schedule.Forms.DBLists
             if ((studentGroups.SelectedIndex != -1) && (studentGroups.SelectedValue is int))
             {
                 var studentIds = _repo
+                    .StudentsInGroups
                     .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == (int)studentGroups.SelectedValue)
                     .Select(sig => sig.Student.StudentId)
                     .ToList();
-                studentList = _repo.GetAllStudents().Where(s => studentIds.Contains(s.StudentId)).OrderBy(s => s.Expelled).ThenBy(s => s.F).ToList();
+                studentList = _repo.Students.GetAllStudents().Where(s => studentIds.Contains(s.StudentId)).OrderBy(s => s.Expelled).ThenBy(s => s.F).ToList();
             }
             else
             {
-                studentList = _repo.GetAllStudents().OrderBy(s => s.Expelled).ThenBy(s => s.F).ToList();
+                studentList = _repo.Students.GetAllStudents().OrderBy(s => s.Expelled).ThenBy(s => s.F).ToList();
             }
 
             if (fFilter != "")
@@ -86,7 +87,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void StudentListView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             var studentView = ((List<StudentView>)StudentListView.DataSource)[e.RowIndex];
-            var student = _repo.GetStudent(studentView.StudentId);
+            var student = _repo.Students.GetStudent(studentView.StudentId);
 
             FBox.Text = student.F;
             IBox.Text = student.I;
@@ -106,7 +107,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             if (checkZachNumberDistinction.Checked)
             {
-                if (_repo.FindStudent(ZachNumber.Text) != null)
+                if (_repo.Students.FindStudent(ZachNumber.Text) != null)
                 {
                     MessageBox.Show("Такой студент уже есть.");
                     return;
@@ -128,7 +129,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 ZachNumber = ZachNumber.Text
             };
 
-            _repo.AddStudent(newStudent);
+            _repo.Students.AddStudent(newStudent);
 
             RefreshView();
         }
@@ -138,7 +139,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             if (StudentListView.SelectedCells.Count > 0)
             {
                 var studentView = ((List<StudentView>)StudentListView.DataSource)[StudentListView.SelectedCells[0].RowIndex];
-                var student = _repo.GetStudent(studentView.StudentId);
+                var student = _repo.Students.GetStudent(studentView.StudentId);
 
                 student.F = FBox.Text;
                 student.I = IBox.Text;
@@ -153,7 +154,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 student.Starosta = Starosta.Checked;
                 student.ZachNumber = ZachNumber.Text;
 
-                _repo.UpdateStudent(student);
+                _repo.Students.UpdateStudent(student);
 
                 RefreshView();
             }
@@ -165,13 +166,13 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var studentView = ((List<StudentView>)StudentListView.DataSource)[StudentListView.SelectedCells[0].RowIndex];
 
-                if (_repo.GetFiltredStudentsInGroups(sig => sig.Student.StudentId == studentView.StudentId).Count > 0)
+                if (_repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.Student.StudentId == studentView.StudentId).Count > 0)
                 {
                     MessageBox.Show("Этот студент состоит в группах.");
                     return;
                 }
 
-                _repo.RemoveStudent(studentView.StudentId);
+                _repo.Students.RemoveStudent(studentView.StudentId);
 
                 RefreshView();
             }
@@ -183,17 +184,17 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var studentView = ((List<StudentView>)StudentListView.DataSource)[StudentListView.SelectedCells[0].RowIndex];
 
-                var studentGroupLinks = _repo.GetFiltredStudentsInGroups(sig => sig.Student.StudentId == studentView.StudentId);
+                var studentGroupLinks = _repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.Student.StudentId == studentView.StudentId);
 
                 if (studentGroupLinks.Count > 0)
                 {
                     foreach (var sig in studentGroupLinks)
                     {
-                        _repo.RemoveStudentsInGroups(sig.StudentsInGroupsId);
+                        _repo.StudentsInGroups.RemoveStudentsInGroups(sig.StudentsInGroupsId);
                     }
                 }
 
-                _repo.RemoveStudent(studentView.StudentId);
+                _repo.Students.RemoveStudent(studentView.StudentId);
 
                 RefreshView();
             }

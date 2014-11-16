@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Schedule.Views;
 
@@ -19,8 +21,7 @@ namespace UchOtd.Schedule.Forms
 
         private void AllChanges_Load(object sender, EventArgs e)
         {
-            var tfds = _repo
-                .GetAllTeacherForDiscipline()
+            var tfds = _repo.TeacherForDisciplines.GetAllTeacherForDiscipline()
                 .OrderBy(tfd => tfd.Teacher.FIO)
                 .ThenBy(tfd => tfd.Discipline.Name)
                 .ToList();
@@ -31,6 +32,7 @@ namespace UchOtd.Schedule.Forms
             tfdFilter.DataSource = tfdsView;
 
             var teachers = _repo
+                .Teachers
                 .GetAllTeachers()
                 .OrderBy(t => t.FIO)
                 .ToList();
@@ -45,6 +47,7 @@ namespace UchOtd.Schedule.Forms
         private void RefreshView()
         {
             var changes = _repo
+                .LessonLogEvents
                 .GetAllLessonLogEvents()
                 .OrderByDescending(lle => lle.DateTime)
                 .ToList();

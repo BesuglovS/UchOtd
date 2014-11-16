@@ -25,7 +25,8 @@ namespace UchOtd.Schedule.Forms.Analysis
         {
             var attributeNames = new List<string> { "Building", "Auditorium", "Shift" };
 
-            var items = _repo.GetFiltredCustomStudentGroupAttributes(csga => attributeNames.Contains(csga.Key));
+            var items = _repo.CustomStudentGroupAttributes
+                .GetFiltredCustomStudentGroupAttributes(csga => attributeNames.Contains(csga.Key));
             var views = GroupAttributesView.ItemsToView(_repo, items);
 
             itemsListView.DataSource = views;
@@ -42,7 +43,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void LoadLists()
         {
-            var groups = _repo.GetAllStudentGroups()
+            var groups = _repo.StudentGroups.GetAllStudentGroups()
                 .OrderBy(g => g.Name)
                 .ToList();
 
@@ -50,7 +51,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             group.DisplayMember = "Name";
             group.DataSource = groups;
 
-            var buildings = _repo.GetAllBuildings()
+            var buildings = _repo.Buildings.GetAllBuildings()
                 .OrderBy(b => b.Name)
                 .ToList();
 
@@ -58,7 +59,9 @@ namespace UchOtd.Schedule.Forms.Analysis
             building.DisplayMember = "Name";
             building.DataSource = buildings;
 
-            var auditoriums = _repo.GetAllAuditoriums()
+            var auditoriums = _repo
+                .Auditoriums
+                .GetAllAuditoriums()
                 .OrderBy(a => a.Name)
                 .ToList();
 
@@ -66,7 +69,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             auditorium.DisplayMember = "Name";
             auditorium.DataSource = auditoriums;
 
-            var shifts = _repo.GetAllShifts();
+            var shifts = _repo.Shifts.GetAllShifts();
 
             shift.ValueMember = "ShiftId";
             shift.DisplayMember = "Name";
@@ -93,7 +96,8 @@ namespace UchOtd.Schedule.Forms.Analysis
         private void itemsListView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             var view = ((List<GroupAttributesView>)itemsListView.DataSource)[e.RowIndex];
-            var items = _repo.GetFiltredCustomStudentGroupAttributes(csga => csga.StudentGroup.StudentGroupId == view.StudentGroupId);
+            var items = _repo.CustomStudentGroupAttributes
+                .GetFiltredCustomStudentGroupAttributes(csga => csga.StudentGroup.StudentGroupId == view.StudentGroupId);
 
             group.SelectedValue = view.StudentGroupId;
 
@@ -118,7 +122,9 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void add_Click(object sender, EventArgs e)
         {
-            var groupItems = _repo.GetFiltredCustomStudentGroupAttributes(csga => csga.StudentGroup.StudentGroupId == (int)group.SelectedValue);
+            var groupItems = _repo
+                .CustomStudentGroupAttributes
+                .GetFiltredCustomStudentGroupAttributes(csga => csga.StudentGroup.StudentGroupId == (int)group.SelectedValue);
 
             if (groupItems.Count != 0)
             {
@@ -133,7 +139,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                 Key = "Building",
                 Value = ((int)building.SelectedValue).ToString(CultureInfo.InvariantCulture)
             };
-            _repo.AddOrUpdateCustomStudentGroupAttribute(newBuildingAttribute);
+            _repo
+                .CustomStudentGroupAttributes
+                .AddOrUpdateCustomStudentGroupAttribute(newBuildingAttribute);
 
             var newAuditoriumAttrbute = new CustomStudentGroupAttribute
             {
@@ -141,7 +149,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                 Key = "Auditorium",
                 Value = ((int)auditorium.SelectedValue).ToString(CultureInfo.InvariantCulture)
             };
-            _repo.AddOrUpdateCustomStudentGroupAttribute(newAuditoriumAttrbute);
+            _repo
+                .CustomStudentGroupAttributes
+                .AddOrUpdateCustomStudentGroupAttribute(newAuditoriumAttrbute);
 
             var newShiftAttrbute = new CustomStudentGroupAttribute
             {
@@ -149,7 +159,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                 Key = "Shift",
                 Value = ((int)shift.SelectedValue).ToString(CultureInfo.InvariantCulture)
             };
-            _repo.AddOrUpdateCustomStudentGroupAttribute(newShiftAttrbute);
+            _repo
+                .CustomStudentGroupAttributes
+                .AddOrUpdateCustomStudentGroupAttribute(newShiftAttrbute);
 
             RefreshView();
         }
@@ -164,7 +176,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                     Key = "Building",
                     Value = ((int)building.SelectedValue).ToString(CultureInfo.InvariantCulture)
                 };
-                _repo.AddOrUpdateCustomStudentGroupAttribute(newBuildingAttribute);
+                _repo
+                    .CustomStudentGroupAttributes
+                    .AddOrUpdateCustomStudentGroupAttribute(newBuildingAttribute);
 
                 var newAuditoriumAttrbute = new CustomStudentGroupAttribute
                 {
@@ -172,7 +186,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                     Key = "Auditorium",
                     Value = ((int)auditorium.SelectedValue).ToString(CultureInfo.InvariantCulture)
                 };
-                _repo.AddOrUpdateCustomStudentGroupAttribute(newAuditoriumAttrbute);
+                _repo
+                    .CustomStudentGroupAttributes
+                    .AddOrUpdateCustomStudentGroupAttribute(newAuditoriumAttrbute);
 
                 var newShiftAttrbute = new CustomStudentGroupAttribute
                 {
@@ -180,7 +196,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                     Key = "Shift",
                     Value = ((int)shift.SelectedValue).ToString(CultureInfo.InvariantCulture)
                 };
-                _repo.AddOrUpdateCustomStudentGroupAttribute(newShiftAttrbute);
+                _repo
+                    .CustomStudentGroupAttributes
+                    .AddOrUpdateCustomStudentGroupAttribute(newShiftAttrbute);
 
                 RefreshView();
             }
@@ -193,12 +211,15 @@ namespace UchOtd.Schedule.Forms.Analysis
                 var groupId = ((List<GroupAttributesView>)itemsListView.DataSource)[itemsListView.SelectedCells[0].RowIndex].StudentGroupId;
 
                 var groupItemIds = _repo
+                    .CustomStudentGroupAttributes
                     .GetFiltredCustomStudentGroupAttributes(csga => csga.StudentGroup.StudentGroupId == groupId)
                     .Select(csga => csga.CustomStudentGroupAttributeId);
 
                 foreach (var csgaId in groupItemIds)
                 {
-                    _repo.RemoveCustomStudentGroupAttribute(csgaId);
+                    _repo
+                        .CustomStudentGroupAttributes
+                        .RemoveCustomStudentGroupAttribute(csgaId);
                 }                
 
                 RefreshView();

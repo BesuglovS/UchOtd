@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Schedule.Views;
 
@@ -20,7 +22,7 @@ namespace UchOtd.Schedule.Forms
         private void LessonListByTFD_Load(object sender, EventArgs e)
         {
             // TFD load
-            var tfdList = _repo.GetAllTeacherForDiscipline();
+            var tfdList = _repo.TeacherForDisciplines.GetAllTeacherForDiscipline();
             var tfdViewList = TfdView.TfdsToView(tfdList);
             tfdViewList = tfdViewList.OrderBy(tfdv => tfdv.TfdSummary).ToList();
 
@@ -32,6 +34,7 @@ namespace UchOtd.Schedule.Forms
         private void tfdBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             var lessons = _repo
+                .Lessons
                 .GetFiltredLessons(l =>
                     ((l.State == 1) || ((l.State == 2) && showProposed.Checked)) &&
                     l.TeacherForDiscipline.TeacherForDisciplineId == (int)tfdBox.SelectedValue)

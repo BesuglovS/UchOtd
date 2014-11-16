@@ -20,6 +20,7 @@ namespace UchOtd.Schedule.Forms
         private void LessonListByTeacher_Load(object sender, EventArgs e)
         {
             var teacherList = _repo
+                .Teachers
                 .GetAllTeachers()
                 .OrderBy(t => t.FIO)
                 .ToList();
@@ -32,6 +33,7 @@ namespace UchOtd.Schedule.Forms
         private void teacherBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             var lessons = _repo
+                .Lessons
                 .GetFiltredLessons(l =>
                     ((l.State == 1) || ((l.State == 2) && showProposed.Checked)) &&
                     l.TeacherForDiscipline.Teacher.TeacherId == (int)teacherBox.SelectedValue)

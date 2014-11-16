@@ -21,7 +21,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void add_Click(object sender, EventArgs e)
         {
-            if (_repo.FindCalendar(calendarDate.Value) != null)
+            if (_repo.Calendars.FindCalendar(calendarDate.Value) != null)
             {
                 MessageBox.Show("Эта дата уже есть.");
                 return;
@@ -32,7 +32,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 Date = calendarDate.Value.Date,
                 State = calendarState.SelectedIndex
             };
-            _repo.AddCalendar(newCalendar);
+            _repo.Calendars.AddCalendar(newCalendar);
 
             RefreshView();
         }
@@ -57,7 +57,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void RefreshView()
         {
-            var calendarList = _repo.GetAllCalendars().OrderBy(c => c.Date).ToList();
+            var calendarList = _repo.Calendars.GetAllCalendars().OrderBy(c => c.Date).ToList();
             var viewList = CalendarView.CalendarsToView(calendarList);
 
             CalendarListView.DataSource = viewList;
@@ -81,12 +81,12 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var view = ((List<CalendarView>)CalendarListView.DataSource)[CalendarListView.SelectedCells[0].RowIndex];
 
-                var cl = _repo.GetCalendar(view.CalendarId);
+                var cl = _repo.Calendars.GetCalendar(view.CalendarId);
 
                 cl.Date = calendarDate.Value;
                 cl.State = calendarState.SelectedIndex;
 
-                _repo.UpdateCalendar(cl);
+                _repo.Calendars.UpdateCalendar(cl);
 
                 RefreshView();
             }
@@ -98,13 +98,13 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var cl = ((List<CalendarView>)CalendarListView.DataSource)[CalendarListView.SelectedCells[0].RowIndex];
 
-                if (_repo.GetFiltredLessons(l => l.Calendar.CalendarId == cl.CalendarId).Count > 0)
+                if (_repo.Lessons.GetFiltredLessons(l => l.Calendar.CalendarId == cl.CalendarId).Count > 0)
                 {
                     MessageBox.Show("Дата есть в расписании.");
                     return;
                 }
 
-                _repo.RemoveCalendar(cl.CalendarId);
+                _repo.Calendars.RemoveCalendar(cl.CalendarId);
 
                 RefreshView();
             }
@@ -116,17 +116,17 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var cl = ((List<CalendarView>)CalendarListView.DataSource)[CalendarListView.SelectedCells[0].RowIndex];
 
-                var clLessons = _repo.GetFiltredLessons(l => l.Calendar.CalendarId == cl.CalendarId);
+                var clLessons = _repo.Lessons.GetFiltredLessons(l => l.Calendar.CalendarId == cl.CalendarId);
 
                 if (clLessons.Count > 0)
                 {
                     foreach (var lesson in clLessons)
                     {
-                        _repo.RemoveLesson(lesson.LessonId);
+                        _repo.Lessons.RemoveLesson(lesson.LessonId);
                     }
                 }
 
-                _repo.RemoveCalendar(cl.CalendarId);
+                _repo.Calendars.RemoveCalendar(cl.CalendarId);
 
                 RefreshView();
             }
@@ -146,10 +146,10 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             do
             {
-                if (_repo.FindCalendar(curDate) == null)
+                if (_repo.Calendars.FindCalendar(curDate) == null)
                 {
                     var newCalendar = new Calendar { Date = curDate };
-                    _repo.AddCalendar(newCalendar);
+                    _repo.Calendars.AddCalendar(newCalendar);
                 }                
 
                 RefreshView();

@@ -24,9 +24,9 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void FillDicsiplinesList(bool useFilter)
         {
-            var discIdsFromTfd = _repo.GetAllTeacherForDiscipline().Select(tfd => tfd.Discipline.DisciplineId);
+            var discIdsFromTfd = _repo.TeacherForDisciplines.GetAllTeacherForDiscipline().Select(tfd => tfd.Discipline.DisciplineId);
 
-            var disciplines = _repo.GetFiltredDisciplines(d => !discIdsFromTfd.Contains(d.DisciplineId));
+            var disciplines = _repo.Disciplines.GetFiltredDisciplines(d => !discIdsFromTfd.Contains(d.DisciplineId));
 
             if (useFilter && filter.Text != "")
             {
@@ -52,7 +52,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             RefreshView((int)RefreshType.FullRefresh);
 
-            var teachers = _repo.GetAllTeachers();
+            var teachers = _repo.Teachers.GetAllTeachers();
 
             remapToTeacherList.DisplayMember = "FIO";
             remapToTeacherList.ValueMember = "TeacherId";
@@ -63,7 +63,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             if ((refreshType == 1) || (refreshType == 3))
             {
-                var teachersList = _repo.GetAllTeachers();
+                var teachersList = _repo.Teachers.GetAllTeachers();
                 teachersList = teachersList.OrderBy(t => t.FIO).ToList();
 
                 TeacherListView.DataSource = teachersList;
@@ -93,7 +93,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void RefreshTeacherDisciplines(Teacher teacher)
         {
-            var teacherDisciplines = _repo.GetTeacherDisciplines(teacher);
+            var teacherDisciplines = _repo.Disciplines.GetTeacherDisciplines(teacher);
 
             var discView = DisciplineView.DisciplinesToView(_repo, teacherDisciplines);
 
@@ -112,14 +112,14 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void add_Click(object sender, EventArgs e)
         {
-            if (_repo.FindTeacher(teacherFIO.Text, teacherPhone.Text) != null)
+            if (_repo.Teachers.FindTeacher(teacherFIO.Text, teacherPhone.Text) != null)
             {
                 MessageBox.Show("Такой преподаватель уже есть.");
                 return;
             }
 
             var newTeacher = new Teacher { FIO = teacherFIO.Text, Phone = teacherPhone.Text };
-            _repo.AddTeacher(newTeacher);
+            _repo.Teachers.AddTeacher(newTeacher);
 
             RefreshView((int)RefreshType.TeachersOnly);
             
@@ -140,7 +140,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 teacher.FIO = teacherFIO.Text;
                 teacher.Phone = teacherPhone.Text;
 
-                _repo.UpdateTeacher(teacher);
+                _repo.Teachers.UpdateTeacher(teacher);
 
                 RefreshView((int)RefreshType.TeachersOnly);
             }
@@ -152,13 +152,13 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var teacher = ((List<Teacher>)TeacherListView.DataSource)[TeacherListView.SelectedCells[0].RowIndex];
 
-                if (_repo.GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacher.TeacherId).Count > 0)
+                if (_repo.TeacherForDisciplines.GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacher.TeacherId).Count > 0)
                 {
                     MessageBox.Show("На преподавателя записаны одна или более дисциплин.");
                     return;
                 }
 
-                _repo.RemoveTeacher(teacher.TeacherId);
+                _repo.Teachers.RemoveTeacher(teacher.TeacherId);
 
                 RefreshView((int)RefreshType.TeachersOnly);
             }
@@ -170,16 +170,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var teacher = ((List<Teacher>)TeacherListView.DataSource)[TeacherListView.SelectedCells[0].RowIndex];
 
-                var teacherTfDs = _repo.GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacher.TeacherId);
+                var teacherTfDs = _repo.TeacherForDisciplines.GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacher.TeacherId);
                 if (teacherTfDs.Count > 0)
                 {
                     foreach (var tfd in teacherTfDs)
                     {
-                        _repo.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
+                        _repo.TeacherForDisciplines.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
                     }
                 }
 
-                _repo.RemoveTeacher(teacher.TeacherId);
+                _repo.Teachers.RemoveTeacher(teacher.TeacherId);
 
                 RefreshView((int)RefreshType.FullRefresh);
             }
@@ -202,16 +202,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             var teacher = ((List<Teacher>)TeacherListView.DataSource)[TeacherListView.SelectedCells[0].RowIndex];
 
             var discView = ((List<DisciplineView>)AllDisciplinesList.DataSource)[AllDisciplinesList.SelectedCells[0].RowIndex];
-            var discipline = _repo.GetDiscipline(discView.DisciplineId);
+            var discipline = _repo.Disciplines.GetDiscipline(discView.DisciplineId);
 
-            if (_repo.GetFiltredTeacherForDiscipline(tfdisc => tfdisc.Discipline.DisciplineId == discipline.DisciplineId).Count != 0)
+            if (_repo.TeacherForDisciplines.GetFiltredTeacherForDiscipline(tfdisc => tfdisc.Discipline.DisciplineId == discipline.DisciplineId).Count != 0)
             {
                 MessageBox.Show("Дисциплина уже назначена.");
                 return;
             }
 
             var tfd = new TeacherForDiscipline { Teacher = teacher, Discipline = discipline };
-            _repo.AddTeacherForDiscipline(tfd);
+            _repo.TeacherForDisciplines.AddTeacherForDiscipline(tfd);
 
             RefreshTeacherDisciplines(teacher);
 
@@ -235,17 +235,17 @@ namespace UchOtd.Schedule.Forms.DBLists
             var teacher = ((List<Teacher>)TeacherListView.DataSource)[TeacherListView.SelectedCells[0].RowIndex];
 
             var discView = ((List<DisciplineView>)TFDListView.DataSource)[TFDListView.SelectedCells[0].RowIndex];
-            var discipline = _repo.GetDiscipline(discView.DisciplineId);
-            
-            var tfd = _repo.FindTeacherForDiscipline(teacher, discipline);
+            var discipline = _repo.Disciplines.GetDiscipline(discView.DisciplineId);
 
-            if (_repo.GetFiltredLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId).Count != 0)
+            var tfd = _repo.TeacherForDisciplines.FindTeacherForDiscipline(teacher, discipline);
+
+            if (_repo.Lessons.GetFiltredLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId).Count != 0)
             {
                 MessageBox.Show("У преподавателя по данной дисциплине есть занятия в расписании.");
                 return;
             }
 
-            _repo.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
+            _repo.TeacherForDisciplines.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
 
             RefreshTeacherDisciplines(teacher);
 
@@ -269,29 +269,30 @@ namespace UchOtd.Schedule.Forms.DBLists
             var teacher = ((List<Teacher>)TeacherListView.DataSource)[TeacherListView.SelectedCells[0].RowIndex];
 
             var discView = ((List<DisciplineView>)TFDListView.DataSource)[TFDListView.SelectedCells[0].RowIndex];
-            var discipline = _repo.GetDiscipline(discView.DisciplineId);
+            var discipline = _repo.Disciplines.GetDiscipline(discView.DisciplineId);
 
-            var tfd = _repo.FindTeacherForDiscipline(teacher, discipline);
+            var tfd = _repo.TeacherForDisciplines.FindTeacherForDiscipline(teacher, discipline);
 
-            var tfdLessons = _repo.GetFiltredLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
+            var tfdLessons = _repo.Lessons.GetFiltredLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
 
             var lessonIds = tfdLessons.Select(l => l.LessonId).ToList();
 
             var logIds = _repo
+                .LessonLogEvents
                 .GetFiltredLessonLogEvents(lle => ((lle.OldLesson != null) && lessonIds.Contains(lle.OldLesson.LessonId)) || ((lle.NewLesson != null) && lessonIds.Contains(lle.NewLesson.LessonId)))
                 .Select(lle => lle.LessonLogEventId);
 
             foreach (var evtId in logIds)
             {
-                _repo.RemoveLessonLogEvent(evtId);
+                _repo.LessonLogEvents.RemoveLessonLogEvent(evtId);
             }
 
             foreach (var lesson in tfdLessons)            
             {
-                _repo.RemoveLessonWoLog(lesson.LessonId);
+                _repo.Lessons.RemoveLessonWoLog(lesson.LessonId);
             }
 
-            _repo.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
+            _repo.TeacherForDisciplines.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
 
             RefreshTeacherDisciplines(teacher);
 
@@ -326,7 +327,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void TFDListView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             var discId = ((List<DisciplineView>)TFDListView.DataSource)[e.RowIndex].DisciplineId;
-            var tefd = _repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
+            var tefd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
             if (tefd != null)
             {
                 var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId);
@@ -357,7 +358,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             var discView = ((List<DisciplineView>)TFDListView.DataSource)[TFDListView.SelectedCells[0].RowIndex];
 
-            var tfdSelected = _repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacher.TeacherId && tfd.Discipline.DisciplineId == discView.DisciplineId);
+            var tfdSelected = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacher.TeacherId && tfd.Discipline.DisciplineId == discView.DisciplineId);
 
             if (tfdSelected == null)
             {
@@ -367,7 +368,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             tfdSelected.Teacher = (Teacher)remapToTeacherList.SelectedItem;
 
-            _repo.UpdateTeacherForDiscipline(tfdSelected);
+            _repo.TeacherForDisciplines.UpdateTeacherForDiscipline(tfdSelected);
 
             RefreshTeacherDisciplines(teacher);
         }

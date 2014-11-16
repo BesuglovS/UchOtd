@@ -22,14 +22,18 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void IncompatiblePairs_Load(object sender, EventArgs e)
         {
-            var discs1 = _repo.GetAllDisciplines()
+            var discs1 = _repo
+                .Disciplines
+                .GetAllDisciplines()
                 .OrderBy(d => d.StudentGroup.Name)
                 .ThenBy(d => d.Name)
                 .ThenBy(d => d.AuditoriumHours)
                 .ToList();
             var discsView1 = DisciplineTextView.DisciplinesToView(discs1);
 
-            var discs2 = _repo.GetAllDisciplines()
+            var discs2 = _repo
+                .Disciplines
+                .GetAllDisciplines()
                 .OrderBy(d => d.StudentGroup.Name)
                 .ThenBy(d => d.Name)
                 .ThenBy(d => d.AuditoriumHours)
@@ -50,7 +54,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void RefreshPairsView()
         {
-            var pairs = _repo.GetFiltredCustomDisciplineAttributes(cda => cda.Key == "IncompatiblePair").ToList();
+            var pairs = _repo.CustomDisciplineAttributes.GetFiltredCustomDisciplineAttributes(cda => cda.Key == "IncompatiblePair").ToList();
 
             var ipViews = IncompatiblePairView.FromCdaList(_repo, pairs);
 
@@ -70,7 +74,7 @@ namespace UchOtd.Schedule.Forms.Analysis
         private void AddPair_Click(object sender, EventArgs e)
         {
             var disc1Id = (int)disc1.SelectedValue;
-            var discipline1 = _repo.GetDiscipline(disc1Id);
+            var discipline1 = _repo.Disciplines.GetDiscipline(disc1Id);
 
             var disc2Id = (int)disc2.SelectedValue;
 
@@ -85,7 +89,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             var incompatiblePairAttribute = new CustomDisciplineAttribute(discipline1, "IncompatiblePair", disc2Id.ToString(CultureInfo.InvariantCulture));
 
-            _repo.AddCustomDisciplineAttribute(incompatiblePairAttribute);
+            _repo.CustomDisciplineAttributes.AddCustomDisciplineAttribute(incompatiblePairAttribute);
 
             RefreshPairsView();
         }
@@ -101,7 +105,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             var cdaId = ((List<IncompatiblePairView>)PairsView.DataSource)[rowIndex].CdaId;
 
-            _repo.RemoveCustomDisciplineAttribute(cdaId);
+            _repo.CustomDisciplineAttributes.RemoveCustomDisciplineAttribute(cdaId);
 
             RefreshPairsView();
         }

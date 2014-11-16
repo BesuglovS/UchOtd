@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
 using UchOtd.Schedule.Views;
@@ -23,6 +24,7 @@ namespace UchOtd.Schedule.Forms
         private void teacherHours_Load(object sender, EventArgs e)
         {
             var teachers = _repo
+                .Teachers
                 .GetAllTeachers()
                 .OrderBy(t => t.FIO)
                 .ToList();
@@ -41,7 +43,7 @@ namespace UchOtd.Schedule.Forms
         {
             var teacherId = (int)teachersList.SelectedValue;
 
-            var tfds = _repo.GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacherId);
+            var tfds = _repo.TeacherForDisciplines.GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacherId);
 
             var tfdInfo = TeacherForDisciplineView.FromTfdList(tfds, _repo);
 
@@ -121,7 +123,7 @@ namespace UchOtd.Schedule.Forms
         private void view_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             var discId = ((List<TeacherForDisciplineView>)view.DataSource)[e.RowIndex].DisciplineId;
-            var tefd = _repo.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
+            var tefd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
             if (tefd != null)
             {
                 var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId);

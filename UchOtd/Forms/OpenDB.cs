@@ -27,7 +27,7 @@ namespace UchOtd.Forms
                     ";User ID = " + Properties.Settings.Default.DBUserName +
                     ";Password = " + Properties.Settings.Default.DBPassword;
 
-                _startupForm.Repo.ConnectionString = connectionString;
+                _startupForm.Repo.SetConnectionString(connectionString);
 
                 Close();
             }
@@ -39,7 +39,7 @@ namespace UchOtd.Forms
                     ";User ID = " + Properties.Settings.Default.DBUserName +
                     ";Password = " + Properties.Settings.Default.DBPassword;
 
-                _startupForm.Repo.ConnectionString = connectionString;
+                _startupForm.Repo.SetConnectionString(connectionString);
 
                 Close();
             }
