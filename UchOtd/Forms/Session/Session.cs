@@ -517,7 +517,7 @@ namespace UchOtd.Forms.Session
         {
             examsView.RowHeadersVisible = true;
 
-            var audsById = _repo.Auditoriums.GetAllAuditoriums().ToDictionary(a => a.AuditoriumId, a => a.Name);
+            var audsById = _repo.Auditoriums.GetAll().ToDictionary(a => a.AuditoriumId, a => a.Name);
 
             var audList = new List<Auditorium>();
             foreach (var date in auds)
@@ -526,7 +526,7 @@ namespace UchOtd.Forms.Session
                 {
                     if (!audList.Select(aud => aud.AuditoriumId).Contains(a.Key))
                     {
-                        var aud = _repo.Auditoriums.GetAuditorium(a.Key);
+                        var aud = _repo.Auditoriums.Get(a.Key);
                         if (aud != null)
                         {
                             audList.Add(aud);

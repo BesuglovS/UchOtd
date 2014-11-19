@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Repositories;
 using UchOtd.Core;
@@ -11,6 +13,9 @@ namespace UchOtd.Schedule.Forms
     {
         private readonly ScheduleRepository _repo;
 
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
+
         public Auditoriums(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -18,7 +23,7 @@ namespace UchOtd.Schedule.Forms
             _repo = repo;
         }
 
-        private void Mon_Click(object sender, EventArgs e)
+        private async void Mon_Click(object sender, EventArgs e)
         {
             int weekNum = -1;
             int buildingId = -1;
@@ -30,130 +35,328 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingId = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Monday, weekNum, buildingId, showProposed.Checked);
+            var isShowProposed = showProposed.Checked;
+            var wordExport = ExportInWord.Checked;
 
-            if (ExportInWord.Checked)
+            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+
+            if (Mon.Text == "Понедельник")
             {
-                WordExport.AuditoriumsExport(_repo, auds, 1, PlusTeacherFIO.Checked);
-                return;
+                _cToken = _tokenSource.Token;
+
+                Mon.Text = "Отмена";
+
+                try
+                {
+                    auds = await Task.Run(() =>
+                    {
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Monday, weekNum, buildingId, isShowProposed);
+
+                        if (wordExport)
+                        {
+                            WordExport.AuditoriumsExport(_repo, localAuds, 1, PlusTeacherFIO.Checked, _cToken);
+
+                            return null;
+                        }
+
+                        return localAuds;
+                    }, _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
             }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            Mon.Text = "Понедельник";
             
-            PutAudsOnGrid(auds);
+            if (!wordExport && (auds != null))
+            {
+                PutAudsOnGrid(auds);
+            }
         }
 
-        private void Tue_Click(object sender, EventArgs e)
+        private async void Tue_Click(object sender, EventArgs e)
         {
             int weekNum = -1;
-            int buildingNum = -1;
+            int buildingId = -1;
             if (oneWeek.Checked)
             {
                 weekNum = (int)weekNumber.Value;
             }
             if (oneBuilding.Checked)
             {
-                buildingNum = (int)buildingList.SelectedValue;
+                buildingId = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Tuesday, weekNum, buildingNum, showProposed.Checked);
+            var isShowProposed = showProposed.Checked;
+            var wordExport = ExportInWord.Checked;
 
-            if (ExportInWord.Checked)
+            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+
+            if (Tue.Text == "Вторник")
             {
-                WordExport.AuditoriumsExport(_repo, auds, 2, PlusTeacherFIO.Checked);
-                return;
+                _cToken = _tokenSource.Token;
+
+                Tue.Text = "Отмена";
+
+                try
+                {
+                    auds = await Task.Run(() =>
+                    {
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Tuesday, weekNum, buildingId, isShowProposed);
+
+                        if (wordExport)
+                        {
+                            WordExport.AuditoriumsExport(_repo, localAuds, 2, PlusTeacherFIO.Checked, _cToken);
+
+                            return null;
+                        }
+
+                        return localAuds;
+                    }, _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
             }
 
-            PutAudsOnGrid(auds);
+            Tue.Text = "Вторник";
+
+            if (!wordExport && (auds != null))
+            {
+                PutAudsOnGrid(auds);
+            }
         }
 
-        private void Wed_Click(object sender, EventArgs e)
+        private async void Wed_Click(object sender, EventArgs e)
         {
             int weekNum = -1;
-            int buildingNum = -1;
+            int buildingId = -1;
             if (oneWeek.Checked)
             {
                 weekNum = (int)weekNumber.Value;
             }
             if (oneBuilding.Checked)
             {
-                buildingNum = (int)buildingList.SelectedValue;
+                buildingId = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Wednesday, weekNum, buildingNum, showProposed.Checked);
+            var isShowProposed = showProposed.Checked;
+            var wordExport = ExportInWord.Checked;
 
-            if (ExportInWord.Checked)
+            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+
+            if (Wed.Text == "Среда")
             {
-                WordExport.AuditoriumsExport(_repo, auds, 3, PlusTeacherFIO.Checked);
-                return;
+                _cToken = _tokenSource.Token;
+
+                Wed.Text = "Отмена";
+
+                try
+                {
+                    auds = await Task.Run(() =>
+                    {
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Wednesday, weekNum, buildingId, isShowProposed);
+
+                        if (wordExport)
+                        {
+                            WordExport.AuditoriumsExport(_repo, localAuds, 3, PlusTeacherFIO.Checked, _cToken);
+
+                            return null;
+                        }
+
+                        return localAuds;
+                    }, _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
             }
 
-            PutAudsOnGrid(auds);
+            Wed.Text = "Среда";
+
+            if (!wordExport && (auds != null))
+            {
+                PutAudsOnGrid(auds);
+            }
         }
 
-        private void Thu_Click(object sender, EventArgs e)
+        private async void Thu_Click(object sender, EventArgs e)
         {
             int weekNum = -1;
-            int buildingNum = -1;
+            int buildingId = -1;
             if (oneWeek.Checked)
             {
                 weekNum = (int)weekNumber.Value;
             }
             if (oneBuilding.Checked)
             {
-                buildingNum = (int)buildingList.SelectedValue;
+                buildingId = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Thursday, weekNum, buildingNum, showProposed.Checked);
+            var isShowProposed = showProposed.Checked;
+            var wordExport = ExportInWord.Checked;
 
-            if (ExportInWord.Checked)
+            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+
+            if (Thu.Text == "Четверг")
             {
-                WordExport.AuditoriumsExport(_repo, auds, 4, PlusTeacherFIO.Checked);
-                return;
+                _cToken = _tokenSource.Token;
+
+                Thu.Text = "Отмена";
+
+                try
+                {
+                    auds = await Task.Run(() =>
+                    {
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Thursday, weekNum, buildingId, isShowProposed);
+
+                        if (wordExport)
+                        {
+                            WordExport.AuditoriumsExport(_repo, localAuds, 4, PlusTeacherFIO.Checked, _cToken);
+
+                            return null;
+                        }
+
+                        return localAuds;
+                    }, _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
             }
 
-            PutAudsOnGrid(auds);
+            Thu.Text = "Четверг";
+
+            if (!wordExport && (auds != null))
+            {
+                PutAudsOnGrid(auds);
+            }
         }
 
-        private void Fri_Click(object sender, EventArgs e)
+        private async void Fri_Click(object sender, EventArgs e)
         {
             int weekNum = -1;
-            int buildingNum = -1;
+            int buildingId = -1;
             if (oneWeek.Checked)
             {
                 weekNum = (int)weekNumber.Value;
             }
             if (oneBuilding.Checked)
             {
-                buildingNum = (int)buildingList.SelectedValue;
+                buildingId = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Friday, weekNum, buildingNum, showProposed.Checked);
+            var isShowProposed = showProposed.Checked;
+            var wordExport = ExportInWord.Checked;
 
-            if (ExportInWord.Checked)
+            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+
+            if (Fri.Text == "Пятница")
             {
-                WordExport.AuditoriumsExport(_repo, auds, 5, PlusTeacherFIO.Checked);
-                return;
+                _cToken = _tokenSource.Token;
+
+                Fri.Text = "Отмена";
+
+                try
+                {
+                    auds = await Task.Run(() =>
+                    {
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Friday, weekNum, buildingId, isShowProposed);
+
+                        if (wordExport)
+                        {
+                            WordExport.AuditoriumsExport(_repo, localAuds, 5, PlusTeacherFIO.Checked, _cToken);
+
+                            return null;
+                        }
+
+                        return localAuds;
+                    }, _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
             }
 
-            PutAudsOnGrid(auds);
+            Fri.Text = "Пятница";
+
+            if (!wordExport && (auds != null))
+            {
+                PutAudsOnGrid(auds);
+            }
         }
 
-        private void Sat_Click(object sender, EventArgs e)
+        private async void Sat_Click(object sender, EventArgs e)
         {
             int weekNum = -1;
-            int buildingNum = -1;
+            int buildingId = -1;
             if (oneWeek.Checked)
             {
                 weekNum = (int)weekNumber.Value;
             }
             if (oneBuilding.Checked)
             {
-                buildingNum = (int)buildingList.SelectedValue;
+                buildingId = (int)buildingList.SelectedValue;
             }
-            var auds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Saturday, weekNum, buildingNum, showProposed.Checked);
+            var isShowProposed = showProposed.Checked;
+            var wordExport = ExportInWord.Checked;
 
-            if (ExportInWord.Checked)
+            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+
+            if (Sat.Text == "Суббота")
             {
-                WordExport.AuditoriumsExport(_repo, auds, 6, PlusTeacherFIO.Checked);
-                return;
+                _cToken = _tokenSource.Token;
+
+                Sat.Text = "Отмена";
+
+                try
+                {
+                    auds = await Task.Run(() =>
+                    {
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Saturday, weekNum, buildingId, isShowProposed);
+
+                        if (wordExport)
+                        {
+                            WordExport.AuditoriumsExport(_repo, localAuds, 6, PlusTeacherFIO.Checked, _cToken);
+
+                            return null;
+                        }
+
+                        return localAuds;
+                    }, _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
             }
 
-            PutAudsOnGrid(auds);
+            Sat.Text = "Суббота";
+
+            if (!wordExport && (auds != null))
+            {
+                PutAudsOnGrid(auds);
+            }
         }
 
         private void PutAudsOnGrid(Dictionary<int, Dictionary<int, List<string>>> auds)
@@ -171,7 +374,7 @@ namespace UchOtd.Schedule.Forms
             }
 
             var rings = _repo.Rings.GetAllRings();
-            var audsById = _repo.Auditoriums.GetAllAuditoriums().ToDictionary(a => a.AuditoriumId, a => a.Name);
+            var audsById = _repo.Auditoriums.GetAll().ToDictionary(a => a.AuditoriumId, a => a.Name);
 
             audIdsList = audIdsList.OrderBy(id => audsById[id]).ToList();
 
@@ -247,6 +450,8 @@ namespace UchOtd.Schedule.Forms
 
         private void Auditoriums_Load(object sender, EventArgs e)
         {
+            _tokenSource = new CancellationTokenSource();
+
             var buildings = _repo.Buildings.GetAllBuildings()
                 .OrderBy(b => b.Name)
                 .ToList();

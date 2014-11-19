@@ -61,7 +61,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             var auditoriums = _repo
                 .Auditoriums
-                .GetAllAuditoriums()
+                .GetAll()
                 .OrderBy(a => a.Name)
                 .ToList();
 

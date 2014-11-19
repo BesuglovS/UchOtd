@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Config;
 using Schedule.Repositories;
@@ -74,8 +75,8 @@ namespace UchOtd
         {
             InitializeComponent();
 
-            BackupDbLast10Runs(DefaultDbName);
-
+            Task.Run(() => BackupDbLast10Runs(DefaultDbName));
+            
             InitRepositories();
 
             // Контингент - Alt-S
@@ -652,16 +653,19 @@ namespace UchOtd
 
         private void uploadTimer_Tick(object sender, EventArgs e)
         {
-            Task.Factory.StartNew(() =>
+            var tokenSource = new CancellationTokenSource();
+            var cToken = tokenSource.Token;
+            
+            Task.Run(() =>
             {
                 try
                 {
-                    WnuUpload.UploadSchedule(Repo, School ? "s_" : "");
+                    WnuUpload.UploadSchedule(Repo, School ? "s_" : "", cToken);
                 }
                 catch
                 {   
                 }                
-            });
+            }, cToken);
         }
     }
 }

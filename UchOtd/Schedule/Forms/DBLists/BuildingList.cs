@@ -66,7 +66,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var building = ((List<Building>)BuildingsListView.DataSource)[BuildingsListView.SelectedCells[0].RowIndex];
 
-                if (_repo.Auditoriums.GetFiltredAuditoriums(a => a.Building.BuildingId == building.BuildingId).Any())
+                if (_repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).Any())
                 {
                     MessageBox.Show("К корпусу привязаны аудитории.");
                     return;

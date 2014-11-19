@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Microsoft.Office.Interop.Word;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
@@ -17,15 +18,15 @@ namespace UchOtd.Core
 {
     public static class WordExport
     {
-        public static void ExportSchedulePage(
-            ScheduleRepository repo, string filename, bool save, bool quit,
-            int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek,
-            bool weekFiltered, int weekFilter, bool weeksMarksVisible,
-            bool onlyFutureDates)
+        public static void ExportSchedulePage(ScheduleRepository repo, string filename, bool save, bool quit, 
+            int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, 
+            bool weeksMarksVisible, bool onlyFutureDates, CancellationToken cToken)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
+            cToken.ThrowIfCancellationRequested();
+            
             //Start Word and create a new document.
             _Application oWord = new Application { Visible = true };
             _Document oDoc = oWord.Documents.Add();
@@ -116,6 +117,8 @@ namespace UchOtd.Core
 
             Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
 
+            cToken.ThrowIfCancellationRequested();
+
             Table oTable = oDoc.Tables.Add(wrdRng, 1 + timeList.Count, 1 + schedule.Count);
             oTable.Borders.Enable = 1;
             oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
@@ -180,11 +183,15 @@ namespace UchOtd.Core
                 }
             }
 
+            cToken.ThrowIfCancellationRequested();
+
             var timeRowIndexList = new List<int>();
 
             var timeRowIndex = 2;
             foreach (var time in timeList.OrderBy(t => int.Parse(t.Split(':')[0]) * 60 + int.Parse(t.Split(':')[1])))
             {
+                cToken.ThrowIfCancellationRequested();
+
                 var hour = int.Parse(time.Substring(0, 2));
                 var minute = int.Parse(time.Substring(3, 2));
 
@@ -337,6 +344,8 @@ namespace UchOtd.Core
                 oPara3.Range.Font.Bold = 0;
                 oPara3.Format.SpaceAfter = 0;
             }
+
+            cToken.ThrowIfCancellationRequested();
 
             int pageCount;
             var fontSize = 10.5F;
@@ -1036,18 +1045,13 @@ namespace UchOtd.Core
 
         public static void ExportCustomSchedule(
             // facultyId, List od DOW
-            Dictionary<int, List<int>> facultyDow,
-            ScheduleRepository repo,
-            string filename,
-            bool save,
-            bool quit,
-            int lessonLength,
-            int daysOfWeek,
-            bool schoolHeader,
-            bool onlyFutureDates)
+            Dictionary<int, List<int>> facultyDow, ScheduleRepository repo, string filename, bool save, bool quit, 
+            int lessonLength, int daysOfWeek, bool schoolHeader, bool onlyFutureDates, CancellationToken cToken)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+            cToken.ThrowIfCancellationRequested();
 
             //Start Word and create a new document.
             _Application oWord = new Application { Visible = true };
@@ -1080,7 +1084,11 @@ namespace UchOtd.Core
 
                     string dow = Constants.DowLocal[dayOfWeek];
 
+                    cToken.ThrowIfCancellationRequested();
+
                     var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, false, -1, false, onlyFutureDates);
+
+                    cToken.ThrowIfCancellationRequested();
 
                     Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
                     oPara1.Range.Text = "Расписание";
@@ -1228,11 +1236,15 @@ namespace UchOtd.Core
                         }
                     }
 
+                    cToken.ThrowIfCancellationRequested();
+
                     var timeRowIndexList = new List<int>();
 
                     var timeRowIndex = 2;
                     foreach (var time in timeList.OrderBy(t => int.Parse(t.Split(':')[0]) * 60 + int.Parse(t.Split(':')[1])))
                     {
+                        cToken.ThrowIfCancellationRequested();
+
                         var hour = int.Parse(time.Substring(0, 2));
                         var minute = int.Parse(time.Substring(3, 2));
 
@@ -1369,6 +1381,8 @@ namespace UchOtd.Core
                         oPara3.Range.InsertParagraphAfter();
                     }
 
+                    cToken.ThrowIfCancellationRequested();
+
                     pageCounter++;
                     int pageCount;
                     float fontSize = 10.5F;
@@ -1493,12 +1507,11 @@ namespace UchOtd.Core
             System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
         }
 
-        public static void WordSchool(
-            ScheduleRepository repo, string filename, bool save, bool quit,
-            int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek,
-            bool weekFiltered, int weekFilter, bool weeksMarksVisible)
+        public static void WordSchool(ScheduleRepository repo, string filename, bool save, bool quit, int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, CancellationToken cToken)
         {
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+            cToken.ThrowIfCancellationRequested();
 
             //Start Word and create a new document.
             _Application oWord = new Application { Visible = true };
@@ -1570,7 +1583,11 @@ namespace UchOtd.Core
             cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
             cornerStamp.Line.Visible = Microsoft.Office.Core.MsoTriState.msoFalse;
 
-            Table oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null);
+            cToken.ThrowIfCancellationRequested();
+
+            Table oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null, cToken);
+
+            cToken.ThrowIfCancellationRequested();
 
             int pageCount;
             var fontSize = 10.5F;
@@ -1601,7 +1618,7 @@ namespace UchOtd.Core
             System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
         }
 
-        public static void TeacherSchedule(List<TeacherScheduleTimeView> result, Teacher teacher, bool landscape)
+        public static void TeacherSchedule(List<TeacherScheduleTimeView> result, Teacher teacher, bool landscape, CancellationToken cToken)
         {
             var isColumnEmpty = GetEmptyColumnIndexes(result);
             var columnTitles = new List<string>();
@@ -1780,10 +1797,12 @@ namespace UchOtd.Core
             return emptyColumn;
         }
 
-        public static void AuditoriumsExport(
-            ScheduleRepository repo, Dictionary<int, Dictionary<int, List<string>>> auds
-            , int dow, bool addTeacherFio)
+        public static void AuditoriumsExport(ScheduleRepository repo, 
+            Dictionary<int, Dictionary<int, List<string>>> auds, 
+            int dow, bool addTeacherFio, CancellationToken cToken)
         {
+            cToken.ThrowIfCancellationRequested();
+
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             //Start Word and create a new document.
@@ -1821,9 +1840,11 @@ namespace UchOtd.Core
             }
 
             var rings = repo.Rings.GetAllRings();
-            var audsById = repo.Auditoriums.GetAllAuditoriums().ToDictionary(a => a.AuditoriumId, a => a.Name);
+            var audsById = repo.Auditoriums.GetAll().ToDictionary(a => a.AuditoriumId, a => a.Name);
 
             audIdsList = audIdsList.OrderBy(id => audsById[id]).ToList();
+
+            cToken.ThrowIfCancellationRequested();
 
             Table oTable = oDoc.Tables.Add(wrdRng, 1 + auds.Count, 1 + audIdsList.Count);
             oTable.Borders.Enable = 1;
@@ -1845,13 +1866,14 @@ namespace UchOtd.Core
 
             for (int i = 0; i < auds.Count; i++)
             {
+                cToken.ThrowIfCancellationRequested();
+
                 var ct = rings.First(r => r.RingId == auds.Keys.ElementAt(i)).Time.ToString("H:mm");
 
                 oTable.Cell(2 + i, 1).Range.Text = ct;
                 oTable.Cell(2 + i, 1).Range.ParagraphFormat.Alignment =
                             WdParagraphAlignment.wdAlignParagraphCenter;
                 oTable.Cell(2 + i, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
-
 
                 for (int j = 0; j < audIdsList.Count; j++)
                 {
@@ -1895,6 +1917,7 @@ namespace UchOtd.Core
                 }
             }
 
+            cToken.ThrowIfCancellationRequested();
 
             int pageCount;
             var fontSize = 10.5F;
@@ -1914,10 +1937,7 @@ namespace UchOtd.Core
             System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
         }
 
-        public static void WordSchoolTwoDays(
-            ScheduleRepository repo, string filename, bool save, bool quit,
-            int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek,
-            bool weekFiltered, int weekFilter, bool weeksMarksVisible)
+        public static void WordSchoolTwoDays(ScheduleRepository repo, string filename, bool save, bool quit, int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, CancellationToken cToken)
         {
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
@@ -1933,10 +1953,10 @@ namespace UchOtd.Core
 
             var faculty = repo.Faculties.GetFaculty(facultyId);
 
-            var oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null);
+            var oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null, cToken);
             if (dayOfWeek != 7)
             {
-                oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, oTable);
+                oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, oTable, cToken);
             }
 
 
@@ -1969,13 +1989,13 @@ namespace UchOtd.Core
             System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
         }
 
-        private static Table GetAndPutDowSchedule(
-            ScheduleRepository repo, int lessonLength, int dayOfWeek,
-            bool weekFiltered, int weekFilter, bool weeksMarksVisible,
-            Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord,
-            Table tableToContinue)
+        private static Table GetAndPutDowSchedule(ScheduleRepository repo, int lessonLength, int dayOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord, Table tableToContinue, CancellationToken cToken)
         {
+            cToken.ThrowIfCancellationRequested();
+
             var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
+
+            cToken.ThrowIfCancellationRequested();
 
             var timeList = new List<string>();
             foreach (var group in schedule)
@@ -2043,6 +2063,9 @@ namespace UchOtd.Core
             var timeRowIndex = 2;
             foreach (var time in timeList.OrderBy(t => int.Parse(t.Split(':')[0]) * 60 + int.Parse(t.Split(':')[1])))
             {
+
+                cToken.ThrowIfCancellationRequested();
+
                 var hour = int.Parse(time.Substring(0, 2));
                 var minute = int.Parse(time.Substring(3, 2));
 
@@ -2219,12 +2242,13 @@ namespace UchOtd.Core
             return oTable;
         }
 
-        private static Table GetAndPutDowStartSchedule(
-            ScheduleRepository repo, int lessonLength, int dayOfWeek,
-            bool weekFiltered, int weekFilter, bool weeksMarksVisible,
-            Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord)
+        private static Table GetAndPutDowStartSchedule(ScheduleRepository repo, int lessonLength, int dayOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord, CancellationToken cToken)
         {
+            cToken.ThrowIfCancellationRequested();
+
             var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
+
+            cToken.ThrowIfCancellationRequested();
 
             var timeList = new List<string>();
             foreach (var group in schedule)
@@ -2287,6 +2311,8 @@ namespace UchOtd.Core
             var timeRowIndex = 2;
             foreach (var time in timeList.OrderBy(t => int.Parse(t.Split(':')[0]) * 60 + int.Parse(t.Split(':')[1])))
             {
+                cToken.ThrowIfCancellationRequested();
+
                 var hour = int.Parse(time.Substring(0, 2));
                 var minute = int.Parse(time.Substring(3, 2));
 
@@ -2523,8 +2549,10 @@ namespace UchOtd.Core
             return fioParts[0] + " " + fioParts[1].Substring(0, 1) + "." + fioParts[2].Substring(0, 1) + ".";
         }
 
-        public static void ExportSchedulePage(ScheduleRepository repo, MainEditForm form)
+        public static void ExportWholeScheduleOneGroupPerPage(ScheduleRepository repo, MainEditForm form, CancellationToken cToken)
         {
+            cToken.ThrowIfCancellationRequested();
+
             //Start Word and create a new document.
             _Application oWord = new Application { Visible = true };
             _Document oDoc = oWord.Documents.Add();
@@ -2547,6 +2575,8 @@ namespace UchOtd.Core
 
                 foreach (var group in facultyGroups)
                 {
+                    cToken.ThrowIfCancellationRequested();
+
                     var sStarts = repo.CommonFunctions.GetSemesterStarts();
 
                     var groupLessons = repo.Lessons.GetGroupedGroupLessons(group.StudentGroupId, sStarts, -1, false);
@@ -2578,6 +2608,8 @@ namespace UchOtd.Core
 
                     for (int j = 0; j < groupEvents.Count; j++)
                     {
+                        cToken.ThrowIfCancellationRequested();
+
                         oTable.Cell(j + 2, 1).Range.Text = groupEvents[j].Time;
                         oTable.Cell(j + 2, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
                         oTable.Cell(j + 2, 1).Range.ParagraphFormat.Alignment =
@@ -2616,13 +2648,14 @@ namespace UchOtd.Core
                     var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
                     endOfDoc.Font.Size = 1;
                     endOfDoc.InsertBreak(WdBreakType.wdSectionBreakNextPage);
-
                 }
             }
         }
 
-        public static void ExportGroupSchedulePage(ScheduleRepository repo, MainEditForm form, int groupId)
+        public static void ExportGroupSchedulePage(ScheduleRepository repo, MainEditForm form, int groupId, CancellationToken cToken)
         {
+            cToken.ThrowIfCancellationRequested();
+
             //Start Word and create a new document.
             _Application oWord = new Application { Visible = true };
             _Document oDoc = oWord.Documents.Add();
@@ -2639,7 +2672,11 @@ namespace UchOtd.Core
 
             var sStarts = repo.CommonFunctions.GetSemesterStarts();
 
+            cToken.ThrowIfCancellationRequested();
+
             var groupLessons = repo.Lessons.GetGroupedGroupLessons(group.StudentGroupId, sStarts, -1, false);
+
+            cToken.ThrowIfCancellationRequested();
 
             List<GroupTableView> groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons, false);
 
@@ -2668,6 +2705,8 @@ namespace UchOtd.Core
 
             for (int j = 0; j < groupEvents.Count; j++)
             {
+                cToken.ThrowIfCancellationRequested();
+
                 oTable.Cell(j + 2, 1).Range.Text = groupEvents[j].Time;
                 oTable.Cell(j + 2, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
                 oTable.Cell(j + 2, 1).Range.ParagraphFormat.Alignment =
@@ -2687,6 +2726,7 @@ namespace UchOtd.Core
                 oTable.Cell(j + 2, 7).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
             }
 
+            cToken.ThrowIfCancellationRequested();
 
             int pageCount;
             float fontSize = 10.5F;
@@ -2704,11 +2744,10 @@ namespace UchOtd.Core
             } while (pageCount > 1);
         }
 
-        public static void WordStartSchool(
-            ScheduleRepository repo, string filename, bool save, bool quit,
-            int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek,
-            bool weekFiltered, int weekFilter, bool weeksMarksVisible)
+        public static void WordStartSchool(ScheduleRepository repo, string filename, bool save, bool quit, int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, CancellationToken cToken)
         {
+            cToken.ThrowIfCancellationRequested();
+
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             //Start Word and create a new document.
@@ -2765,7 +2804,9 @@ namespace UchOtd.Core
             cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
             cornerStamp.Line.Visible = Microsoft.Office.Core.MsoTriState.msoFalse;
 
-            Table oTable = GetAndPutDowStartSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord);
+            cToken.ThrowIfCancellationRequested();
+
+            Table oTable = GetAndPutDowStartSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
 
             Table oTable2 = null;
 
@@ -2780,8 +2821,10 @@ namespace UchOtd.Core
                     WdLineSpacing.wdLineSpaceSingle;
                 oPara1.Range.InsertParagraphAfter();
 
-                oTable2 = GetAndPutDowStartSchedule(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord);
+                oTable2 = GetAndPutDowStartSchedule(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
             }
+
+            cToken.ThrowIfCancellationRequested();
 
             int pageCount;
             var fontSize = 10.5F;

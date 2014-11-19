@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
 using UchOtd.Schedule.Views;
@@ -13,6 +14,9 @@ namespace UchOtd.Schedule.Forms
     public partial class TeacherHours : Form
     {
         private readonly ScheduleRepository _repo;
+
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
         
         public TeacherHours(ScheduleRepository repo)
         {
@@ -23,6 +27,8 @@ namespace UchOtd.Schedule.Forms
 
         private void teacherHours_Load(object sender, EventArgs e)
         {
+            _tokenSource = new CancellationTokenSource();
+
             var teachers = _repo
                 .Teachers
                 .GetAllTeachers()
@@ -38,20 +44,7 @@ namespace UchOtd.Schedule.Forms
         {
             //RefreshView();
         }
-
-        private void RefreshView()
-        {
-            var teacherId = (int)teachersList.SelectedValue;
-
-            var tfds = _repo.TeacherForDisciplines.GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacherId);
-
-            var tfdInfo = TeacherForDisciplineView.FromTfdList(tfds, _repo);
-
-            view.DataSource = tfdInfo;
-
-            FormatView();
-        }
-
+        
         private void FormatView()
         {
             view.Columns["TfdId"].Visible = false;
@@ -136,9 +129,47 @@ namespace UchOtd.Schedule.Forms
             }
         }
 
-        private void update_Click(object sender, EventArgs e)
+        private async void update_Click(object sender, EventArgs e)
         {
-            RefreshView();
+            List<TeacherForDisciplineView> tfdInfo = null;
+
+            if (update.Text == "Обновить")
+            {
+                _cToken = _tokenSource.Token;
+
+                update.Text = "Отмена";
+
+                var teacherId = (int)teachersList.SelectedValue;
+
+                try
+                {
+                    tfdInfo = await Task.Run(() =>
+                    {
+                        var tfds = _repo.TeacherForDisciplines
+                        .GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacherId);
+
+                        return TeacherForDisciplineView.FromTfdList(tfds, _repo);
+                    }, _cToken);
+
+
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            update.Text = "Обновить";
+
+            if (tfdInfo != null)
+            {
+                view.DataSource = tfdInfo;
+
+                FormatView();
+            }
         }
     }
 }

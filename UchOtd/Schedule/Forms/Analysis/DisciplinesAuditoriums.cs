@@ -53,7 +53,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             var discAudIds = GetAudIdsFromSelectedDiscipline();
 
 
-            var allAuds = _repo.Auditoriums.GetAllAuditoriums().OrderBy(a => a.Name).ToList();
+            var allAuds = _repo.Auditoriums.GetAll().OrderBy(a => a.Name).ToList();
 
             audList.DisplayMember = "Name";
             audList.ValueMember = "AuditoriumId";
@@ -128,7 +128,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private void All_Click(object sender, EventArgs e)
         {
-            var allAuds = _repo.Auditoriums.GetAllAuditoriums();
+            var allAuds = _repo.Auditoriums.GetAll();
 
             foreach (var aud in allAuds)
             {

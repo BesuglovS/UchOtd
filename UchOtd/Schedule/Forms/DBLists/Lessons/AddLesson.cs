@@ -259,7 +259,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                     Auditorium aud;
                     if (audList.SelectedIndex != -1)
                     {
-                        aud = _repo.Auditoriums.GetAuditorium((int)audList.SelectedValue);
+                        aud = _repo.Auditoriums.Get((int)audList.SelectedValue);
                     }
                     else
                     {
@@ -273,15 +273,15 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                             }
                         }
 
-                        aud = _repo.Auditoriums.FindAuditorium(audWeekList[week]);
+                        aud = _repo.Auditoriums.Find(audWeekList[week]);
                         if (aud == null)
                         {
                             var firstBuilding = _repo.Buildings.GetFirstFiltredBuilding(b => true);
 
                             if (firstBuilding != null)
                             {
-                                _repo.Auditoriums.AddAuditorium(new Auditorium(audWeekList[week], firstBuilding));
-                                aud = _repo.Auditoriums.FindAuditorium(audWeekList[week]);
+                                _repo.Auditoriums.Add(new Auditorium(audWeekList[week], firstBuilding));
+                                aud = _repo.Auditoriums.Find(audWeekList[week]);
                             }
                         }
                     }

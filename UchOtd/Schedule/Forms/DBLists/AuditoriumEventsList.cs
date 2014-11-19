@@ -43,7 +43,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                             Name = eventName.Text,
                             Calendar = calendar,
                             Ring = _repo.Rings.GetRing((int)eventTime.SelectedValue),
-                            Auditorium = _repo.Auditoriums.GetAuditorium((int)eventAuditorium.SelectedValue)
+                            Auditorium = _repo.Auditoriums.Get((int)eventAuditorium.SelectedValue)
                         };
 
                         _repo.AuditoriumEvents.AddAuditoriumEvent(newEvent);
@@ -68,7 +68,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                     Name = eventName.Text,
                     Calendar = calendar,
                     Ring = _repo.Rings.GetRing((int)eventTime.SelectedValue),
-                    Auditorium = _repo.Auditoriums.GetAuditorium((int)eventAuditorium.SelectedValue)
+                    Auditorium = _repo.Auditoriums.Get((int)eventAuditorium.SelectedValue)
                 };
 
                 _repo.AuditoriumEvents.AddAuditoriumEvent(newEvent);
@@ -133,7 +133,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             eventTime.DisplayMember = "Time";
             eventTime.ValueMember = "RingId";
 
-            var auds = _repo.Auditoriums.GetAllAuditoriums();
+            var auds = _repo.Auditoriums.GetAll();
             eventAuditorium.DataSource = auds;
             eventAuditorium.DisplayMember = "Name";
             eventAuditorium.ValueMember = "AuditoriumId";
@@ -160,7 +160,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 ae.Name = eventName.Text;
                 ae.Calendar = calendar;
                 ae.Ring = _repo.Rings.GetRing((int)eventTime.SelectedValue);
-                ae.Auditorium = _repo.Auditoriums.GetAuditorium((int)eventAuditorium.SelectedValue);
+                ae.Auditorium = _repo.Auditoriums.Get((int)eventAuditorium.SelectedValue);
 
                 _repo.AuditoriumEvents.UpdateAuditoriumEvent(ae);
 

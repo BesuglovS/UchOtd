@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TeacherSchedule));
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.ExportInWordLandscape = new System.Windows.Forms.Button();
             this.ExportInWordPortrait = new System.Windows.Forms.Button();
             this.weekFilter = new System.Windows.Forms.ComboBox();
@@ -38,7 +39,6 @@
             this.teacherList = new System.Windows.Forms.ComboBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.scheduleView = new System.Windows.Forms.DataGridView();
-            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scheduleView)).BeginInit();
@@ -58,6 +58,16 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(974, 56);
             this.controlsPanel.TabIndex = 2;
+            // 
+            // showProposed
+            // 
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(460, 30);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(217, 17);
+            this.showProposed.TabIndex = 39;
+            this.showProposed.Text = "Показывать преполагаемые занятия";
+            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // ExportInWordLandscape
             // 
@@ -115,7 +125,6 @@
             this.teacherList.Name = "teacherList";
             this.teacherList.Size = new System.Drawing.Size(438, 21);
             this.teacherList.TabIndex = 0;
-            this.teacherList.SelectedIndexChanged += new System.EventHandler(this.TeacherListSelectedIndexChanged);
             this.teacherList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.teacherList_KeyDown);
             // 
             // viewPanel
@@ -141,16 +150,6 @@
             this.scheduleView.TabIndex = 0;
             this.scheduleView.TabStop = false;
             this.scheduleView.SelectionChanged += new System.EventHandler(this.ScheduleViewSelectionChanged);
-            // 
-            // showProposed
-            // 
-            this.showProposed.AutoSize = true;
-            this.showProposed.Location = new System.Drawing.Point(460, 30);
-            this.showProposed.Name = "showProposed";
-            this.showProposed.Size = new System.Drawing.Size(217, 17);
-            this.showProposed.TabIndex = 39;
-            this.showProposed.Text = "Показывать преполагаемые занятия";
-            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // TeacherSchedule
             // 

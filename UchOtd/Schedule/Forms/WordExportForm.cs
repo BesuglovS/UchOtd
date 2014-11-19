@@ -1,4 +1,6 @@
-﻿using Schedule.Constants;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Schedule.Constants;
 using Schedule.Repositories;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,9 @@ namespace UchOtd.Schedule.Forms
         private readonly ScheduleRepository _repo;
         Dictionary<int, List<int>> _choice;
 
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
+
         public WordExportForm(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -23,6 +28,8 @@ namespace UchOtd.Schedule.Forms
 
         private void WordExportForm_Load(object sender, EventArgs e)
         {
+            _tokenSource = new CancellationTokenSource();
+
             _choice = new Dictionary<int, List<int>>();
 
             var faculties = _repo.Faculties.GetAllFaculties();
@@ -81,6 +88,8 @@ namespace UchOtd.Schedule.Forms
         private void CheckBoxClicked(object sender, EventArgs e)
         {
             var checkBox = sender as CheckBox;
+            if (checkBox == null) return;
+
             var split = checkBox.Name.Split('_');
             var facultyId = int.Parse(split[1]);
             var dow = int.Parse(split[2]);
@@ -95,12 +104,36 @@ namespace UchOtd.Schedule.Forms
             }
         }
 
-        private void ExportButtonClick(object sender, EventArgs e)
+        private async void ExportButtonClick(object sender, EventArgs e)
         {
-            WordExport.ExportCustomSchedule(
-                _choice, _repo, "Расписание.docx", false, false, 
-                ((CheckBox)Controls.Find("cb90", false).First()).Checked ? 90 : 80, 6, MainEditForm.SchoolHeader,
-                ((CheckBox)Controls.Find("cbfuture", false).First()).Checked);
+            var button = (sender as Button);
+            if (button == null) return;
+
+            if (button.Text == "Экспорт")
+            {
+                _cToken = _tokenSource.Token;
+
+                button.Text = "Отмена";
+
+                var lesson8090Length = ((CheckBox)Controls.Find("cb90", false).First()).Checked ? 90 : 80;
+                var futureDatesOnly = ((CheckBox)Controls.Find("cbfuture", false).First()).Checked;
+
+                try
+                {
+                    await Task.Run(() => WordExport.ExportCustomSchedule(
+                                _choice, _repo, "Расписание.docx", false, false,
+                                lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, _cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            button.Text = "Экспорт";
         }
     }
 }

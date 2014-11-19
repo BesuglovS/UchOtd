@@ -62,12 +62,12 @@ namespace UchOtd.Forms.Session
 
                 ConsDate.Value = (_exam.ConsultationDateTime == Constants.DefaultEmptyDateForEvent) ? 
                     Constants.DefaultEditDate : _exam.ConsultationDateTime;
-                var cAud = _repo.Auditoriums.GetAuditorium(_exam.ConsultationAuditoriumId);
+                var cAud = _repo.Auditoriums.Get(_exam.ConsultationAuditoriumId);
                 ConsAudBox.Text = (cAud != null) ? cAud.Name : "";
 
                 ExamDate.Value = (_exam.ExamDateTime == Constants.DefaultEmptyDateForEvent)
                     ? Constants.DefaultEditDate : _exam.ExamDateTime;
-                var eAud = _repo.Auditoriums.GetAuditorium(_exam.ExamAuditoriumId);
+                var eAud = _repo.Auditoriums.Get(_exam.ExamAuditoriumId);
                 ExamAudBox.Text = (eAud != null) ? eAud.Name : "";
             }
         }
@@ -82,14 +82,14 @@ namespace UchOtd.Forms.Session
                 ConsultationDateTime = ConsDate.Value
             };
 
-            var consAud = _repo.Auditoriums.FindAuditorium(ConsAudBox.Text);
+            var consAud = _repo.Auditoriums.Find(ConsAudBox.Text);
             if (consAud != null)
             {
                 newExam.ConsultationAuditoriumId = consAud.AuditoriumId;
             }
 
             newExam.ExamDateTime = ExamDate.Value;
-            var examAud = _repo.Auditoriums.FindAuditorium(ExamAudBox.Text);
+            var examAud = _repo.Auditoriums.Find(ExamAudBox.Text);
             if (examAud != null)
             {
                 newExam.ExamAuditoriumId = examAud.AuditoriumId;

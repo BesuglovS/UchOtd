@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
@@ -12,6 +14,9 @@ namespace UchOtd.Schedule.Forms
     {
         readonly ScheduleRepository _repo;
 
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
+
         public AllChanges(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -21,6 +26,8 @@ namespace UchOtd.Schedule.Forms
 
         private void AllChanges_Load(object sender, EventArgs e)
         {
+            _tokenSource = new CancellationTokenSource();
+
             var tfds = _repo.TeacherForDisciplines.GetAllTeacherForDiscipline()
                 .OrderBy(tfd => tfd.Teacher.FIO)
                 .ThenBy(tfd => tfd.Discipline.Name)
@@ -40,55 +47,6 @@ namespace UchOtd.Schedule.Forms
             teacherFilter.DisplayMember = "FIO";
             teacherFilter.ValueMember = "TeacherId";
             teacherFilter.DataSource = teachers;
-            
-            //RefreshView();
-        }
-
-        private void RefreshView()
-        {
-            var changes = _repo
-                .LessonLogEvents
-                .GetAllLessonLogEvents()
-                .OrderByDescending(lle => lle.DateTime)
-                .ToList();
-
-            if (tfdFiltering.Checked)
-            {
-                changes = changes.Where(evt => 
-                    ((evt.OldLesson != null) && 
-                     (evt.OldLesson.TeacherForDiscipline.TeacherForDisciplineId == (int)tfdFilter.SelectedValue)) ||
-                    ((evt.NewLesson != null) &&
-                     (evt.NewLesson.TeacherForDiscipline.TeacherForDisciplineId == (int)tfdFilter.SelectedValue))).ToList();
-            }
-
-            if (teacherFiltering.Checked)
-            {
-                changes = changes.Where(evt =>
-                    ((evt.OldLesson != null) &&
-                     (evt.OldLesson.TeacherForDiscipline.Teacher.TeacherId == (int)teacherFilter.SelectedValue)) ||
-                    ((evt.NewLesson != null) &&
-                     (evt.NewLesson.TeacherForDiscipline.Teacher.TeacherId == (int)teacherFilter.SelectedValue))).ToList();
-            }
-
-            if (lessonDateFiltering.Checked)
-            {
-                changes = changes.Where(evt =>
-                    ((evt.OldLesson != null) &&
-                     (evt.OldLesson.Calendar.Date.Date == lessonDateFilter.Value.Date)) ||
-                    ((evt.NewLesson != null) &&
-                     (evt.NewLesson.Calendar.Date.Date == lessonDateFilter.Value.Date))).ToList();
-            }
-
-            if (eventDateFiltering.Checked)
-            {
-                changes = changes.Where(evt => evt.DateTime.Date == eventDateFilter.Value.Date).ToList();
-            }
-
-            var changesView = LessonLogEventView.FromEventList(changes);
-
-            view.DataSource = changesView;
-
-            FormatChangesView();
         }
 
         private void FormatChangesView()
@@ -115,9 +73,87 @@ namespace UchOtd.Schedule.Forms
             view.AutoResizeRows(DataGridViewAutoSizeRowsMode.AllCells);
         }
 
-        private void Refresh_Click(object sender, EventArgs e)
+        private async void Refresh_Click(object sender, EventArgs e)
         {
-            RefreshView();
+            if (UpdateView.Text == "Обновить")
+            {
+                _cToken = _tokenSource.Token;
+
+                UpdateView.Text = "Отмена";
+
+                var tfd = tfdFiltering.Checked;
+                var tfdId = (int) tfdFilter.SelectedValue;
+
+                var teacher = teacherFiltering.Checked;
+                var teacherId = (int) teacherFilter.SelectedValue;
+
+                var lessonDate = lessonDateFiltering.Checked;
+                var lessonDateValue = lessonDateFilter.Value.Date;
+
+                var eventDate = eventDateFiltering.Checked;
+                var eventDateValue = eventDateFilter.Value.Date;
+
+                List<LessonLogEventView> changesView = null;
+
+                try
+                {
+                    changesView = await Task.Run(() =>
+                    {
+                        var changes = _repo
+                                .LessonLogEvents
+                                .GetAllLessonLogEvents()
+                                .OrderByDescending(lle => lle.DateTime)
+                                .ToList();
+
+                        if (tfd)
+                        {
+                            changes = changes.Where(evt =>
+                                ((evt.OldLesson != null) &&
+                                 (evt.OldLesson.TeacherForDiscipline.TeacherForDisciplineId == tfdId)) ||
+                                ((evt.NewLesson != null) &&
+                                 (evt.NewLesson.TeacherForDiscipline.TeacherForDisciplineId == tfdId))).ToList();
+                        }
+
+                        if (teacher)
+                        {
+                            changes = changes.Where(evt =>
+                                ((evt.OldLesson != null) &&
+                                 (evt.OldLesson.TeacherForDiscipline.Teacher.TeacherId == teacherId)) ||
+                                ((evt.NewLesson != null) &&
+                                 (evt.NewLesson.TeacherForDiscipline.Teacher.TeacherId == teacherId))).ToList();
+                        }
+
+                        if (lessonDate)
+                        {
+                            changes = changes.Where(evt =>
+                                ((evt.OldLesson != null) &&
+                                 (evt.OldLesson.Calendar.Date.Date == lessonDateValue)) ||
+                                ((evt.NewLesson != null) &&
+                                 (evt.NewLesson.Calendar.Date.Date == lessonDateValue))).ToList();
+                        }
+
+                        if (eventDate)
+                        {
+                            changes = changes.Where(evt => evt.DateTime.Date == eventDateValue).ToList();
+                        }
+
+                        return LessonLogEventView.FromEventList(changes);
+                    }, _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+
+                view.DataSource = changesView;
+
+                FormatChangesView();
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            UpdateView.Text = "Обновить";
         }
     }
 }

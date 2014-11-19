@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using Schedule.DataLayer;
 using Schedule.DomainClasses.Main;
 
@@ -9,7 +10,7 @@ namespace Schedule.Repositories.Repositories.Main
 {
     public class AuditoriumsRepository : BaseRepository<Auditorium>
     {
-        public List<Auditorium> GetAllAuditoriums()
+        public override ICollection<Auditorium> GetAll()
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -17,31 +18,31 @@ namespace Schedule.Repositories.Repositories.Main
             }
         }
 
-        public List<Auditorium> GetFiltredAuditoriums(Func<Auditorium, bool> condition)
+        public override ICollection<Auditorium> FindAll(Expression<Func<Auditorium, bool>> condition)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Auditoriums.Include(a => a.Building).ToList().Where(condition).ToList();
+                return context.Auditoriums.Include(a => a.Building).Where(condition).ToList();
             }
         }
 
-        public Auditorium GetFirstFiltredAuditoriums(Func<Auditorium, bool> condition)
+        public override Auditorium Find(Expression<Func<Auditorium, bool>> condition)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Auditoriums.Include(a => a.Building).ToList().FirstOrDefault(condition);
+                return context.Auditoriums.Include(a => a.Building).FirstOrDefault(condition);
             }
         }
 
-        public Auditorium GetAuditorium(int auditoriumId)
+        public override Auditorium Get(int id)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Auditoriums.Include(a => a.Building).FirstOrDefault(a => a.AuditoriumId == auditoriumId);
+                return context.Auditoriums.Include(a => a.Building).FirstOrDefault(a => a.AuditoriumId == id);
             }
         }
 
-        public Auditorium FindAuditorium(string name)
+        public Auditorium Find(string name)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -49,7 +50,7 @@ namespace Schedule.Repositories.Repositories.Main
             }
         }
 
-        public void AddAuditorium(Auditorium aud)
+        public override Auditorium Add(Auditorium aud)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -60,31 +61,39 @@ namespace Schedule.Repositories.Repositories.Main
                 context.Auditoriums.Add(aud);
                 context.SaveChanges();
             }
+
+            return aud;
         }
 
-        public void UpdateAuditorium(Auditorium aud)
+        public override Auditorium Update(Auditorium aud, int id)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                var curAud = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == aud.AuditoriumId);
+                if (aud == null) return null;
+
+                var curAud = context.Set<Auditorium>().Find(id);
 
                 if (curAud != null)
                 {
-                    curAud.Name = aud.Name;
+                    context.Entry(curAud).CurrentValues.SetValues(aud);
+
                     curAud.Building = context.Buildings.FirstOrDefault(b => b.BuildingId == aud.Building.BuildingId);
                 }
 
                 context.SaveChanges();
+
+                return curAud;
             }
         }
 
-        public void RemoveAuditorium(int auditoriumId)
+        public override void Delete(Auditorium aud)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                var aud = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == auditoriumId);
+                /*var aud = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == auditoriumId);
 
-                context.Auditoriums.Remove(aud);
+                context.Auditoriums.Remove(aud);*/
+                context.Set<Auditorium>().Remove(aud);
                 context.SaveChanges();
             }
         }

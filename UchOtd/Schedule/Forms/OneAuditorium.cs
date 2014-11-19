@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Repositories;
+using UchOtd.Schedule.wnu;
 
 namespace UchOtd.Schedule.Forms
 {
     public partial class OneAuditorium : Form
     {
         private readonly ScheduleRepository _repo;
+
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
 
         public OneAuditorium(ScheduleRepository repo)
         {
@@ -21,7 +27,7 @@ namespace UchOtd.Schedule.Forms
         {
             var auds = _repo
                 .Auditoriums
-                .GetAllAuditoriums()
+                .GetAll()
                 .OrderBy(a => a.Name)
                 .ToList();
 
@@ -30,11 +36,34 @@ namespace UchOtd.Schedule.Forms
             auditoriumList.DataSource = auds;
         }
 
-        private void auditoriumList_SelectedIndexChanged(object sender, EventArgs e)
+        private async void auditoriumList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var data = _repo.CommonFunctions.GetAud((int)auditoriumList.SelectedValue, showProposed.Checked);
+            if (_tokenSource != null)
+            {
+                _tokenSource.Cancel();
+            }
 
-            PutAudsOnGrid(data);
+            _tokenSource = new CancellationTokenSource();
+            _cToken = _tokenSource.Token;
+
+            Dictionary<int, Dictionary<int, List<string>>> data = null;
+            
+            var auditoriumId = (int) auditoriumList.SelectedValue;
+            var isShowProposed = showProposed.Checked;
+
+            try
+            {
+                data = await Task.Run(() => 
+                    _repo.CommonFunctions.GetAud(auditoriumId, isShowProposed, _cToken), _cToken);
+            }
+            catch (OperationCanceledException exc)
+            {
+            }
+
+            if (data != null)
+            {
+                PutAudsOnGrid(data);
+            }
         }
 
         private void PutAudsOnGrid(Dictionary<int, Dictionary<int, List<string>>> data)

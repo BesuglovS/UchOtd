@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Schedule.DataLayer;
 using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
@@ -318,7 +319,7 @@ namespace Schedule.Repositories.Common
             return (dateTime - ssWeeksMonday).Days / 7 + 1;
         }
 
-        public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> GetGroupedGroupsLessons(List<int> groupListIds, bool showProposed)
+        public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> GetGroupedGroupsLessons(List<int> groupListIds, bool showProposed, CancellationToken cToken)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -327,6 +328,8 @@ namespace Schedule.Repositories.Common
 
                 foreach (var groupId in groupListIds)
                 {
+                    cToken.ThrowIfCancellationRequested();
+
                     result.Add(groupId, new Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>());
 
                     var studentIds = context.StudentsInGroups
@@ -369,7 +372,8 @@ namespace Schedule.Repositories.Common
 
                     foreach (var dateTimeLessons in groupedLessons)
                     {
-                        //var dowLocal = Constants.Constants.DOWLocal[DateTimeLessons.DOW];
+                        cToken.ThrowIfCancellationRequested();
+
                         var dowLocal = dateTimeLessons.DOW;
 
                         result[groupId].Add(dowLocal + " " + dateTimeLessons.time, new Dictionary<int, Tuple<string, List<Lesson>>>());
@@ -591,9 +595,12 @@ namespace Schedule.Repositories.Common
 
         // data   - Dictionary<RingId, Dictionary <dow, List<Dictionary<tfd, List<Lesson>>>>>
         // result - Dictionary<RingId, Dictionary <dow, List<tfd/Event-string>>>
-        public Dictionary<int, Dictionary<int, List<string>>> GetAud(int auditoriumId, bool showProposed)
+        public Dictionary<int, Dictionary<int, List<string>>> GetAud(int auditoriumId, 
+            bool showProposed, CancellationToken cToken)
         {
             var data = new Dictionary<int, Dictionary<int, Dictionary<int, List<Lesson>>>>();
+
+            cToken.ThrowIfCancellationRequested();
 
             var audLessons = _repo.Lessons.GetFiltredLessons(l =>
                 l.Auditorium.AuditoriumId == auditoriumId &&
@@ -619,6 +626,8 @@ namespace Schedule.Repositories.Common
 
                 data[lesson.Ring.RingId][Constants.Constants.DowRemap[(int)lesson.Calendar.Date.DayOfWeek]][lesson.TeacherForDiscipline.TeacherForDisciplineId].Add(lesson);
             }
+
+            cToken.ThrowIfCancellationRequested();
 
             var rings = _repo.Rings.GetAllRings().ToDictionary(r => r.RingId, r => r.Time);
 
@@ -650,6 +659,8 @@ namespace Schedule.Repositories.Common
             var eventId = 0;
             var eventsIds = new Dictionary<int, string>();
             var eventsData = new Dictionary<int, Dictionary<int, Dictionary<int, List<AuditoriumEvent>>>>();
+
+            cToken.ThrowIfCancellationRequested();
 
             foreach (var evt in dowEvents)
             {
@@ -684,8 +695,12 @@ namespace Schedule.Repositories.Common
                 eventsData[evt.Ring.RingId][Constants.Constants.DowRemap[(int)evt.Calendar.Date.DayOfWeek]][curEventId].Add(evt);
             }
 
+            cToken.ThrowIfCancellationRequested();
+
             foreach (var ring in eventsData)
             {
+                cToken.ThrowIfCancellationRequested();
+
                 if (!result.ContainsKey(ring.Key))
                 {
                     result.Add(ring.Key, new Dictionary<int, List<string>>());
@@ -713,6 +728,8 @@ namespace Schedule.Repositories.Common
                     }
                 }
             }
+
+            cToken.ThrowIfCancellationRequested();
 
             result = result.OrderBy(r => rings[r.Key].TimeOfDay).ToDictionary(r => r.Key, r => r.Value);
 

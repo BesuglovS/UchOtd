@@ -1,14 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Office.Interop.Word;
 using Schedule.Repositories;
 using UchOtd.Schedule.Views;
+using Task = System.Threading.Tasks.Task;
 
 namespace UchOtd.Schedule.Forms
 {
     public partial class LessonListByTeacher : Form
     {
         private readonly ScheduleRepository _repo;
+
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
 
         public LessonListByTeacher(ScheduleRepository repo)
         {
@@ -30,22 +37,51 @@ namespace UchOtd.Schedule.Forms
             teacherBox.DataSource = teacherList;
         }
 
-        private void teacherBox_SelectedIndexChanged(object sender, EventArgs e)
+        private async void teacherBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var lessons = _repo
-                .Lessons
-                .GetFiltredLessons(l =>
-                    ((l.State == 1) || ((l.State == 2) && showProposed.Checked)) &&
-                    l.TeacherForDiscipline.Teacher.TeacherId == (int)teacherBox.SelectedValue)
-                .OrderBy(l => l.Calendar.Date)
-                .ThenBy(l => l.Ring.Time.TimeOfDay)
-                .ToList();
+            if (_tokenSource != null)
+            {
+                _tokenSource.Cancel();
+            }
 
-            var lessonsView = LessonViewAtLessonListByTeacher.FromLessonList(lessons);
+            _tokenSource = new CancellationTokenSource();
+            _cToken = _tokenSource.Token;
 
-            view.DataSource = lessonsView;
+            List<LessonViewAtLessonListByTeacher> lessonsView = null;
 
-            FormatView();
+            try
+            {
+                var teacherId = (int) teacherBox.SelectedValue;
+                var isShowProposed = showProposed.Checked;
+
+                lessonsView = await Task.Run(() =>
+                {
+                    var lessons = _repo
+                        .Lessons
+                        .GetFiltredLessons(l =>
+                            ((l.State == 1) || ((l.State == 2) && isShowProposed)) &&
+                            l.TeacherForDiscipline.Teacher.TeacherId == teacherId)
+                        .OrderBy(l => l.Calendar.Date)
+                        .ThenBy(l => l.Ring.Time.TimeOfDay)
+                        .ToList();
+
+                    _cToken.ThrowIfCancellationRequested();
+
+                    return LessonViewAtLessonListByTeacher.FromLessonList(lessons);
+                }, _cToken);
+            }
+            catch (OperationCanceledException exc)
+            {
+                
+            }
+
+
+            if (lessonsView != null)
+            {
+                view.DataSource = lessonsView;
+
+                FormatView();
+            }
         }
 
         private void FormatView()

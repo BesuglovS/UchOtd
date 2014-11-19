@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
@@ -17,6 +19,9 @@ namespace UchOtd.Forms
     public partial class TeacherSchedule : Form
     {
         private readonly ScheduleRepository _repo;
+
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
 
         public TeacherSchedule(ScheduleRepository repo)
         {
@@ -33,6 +38,8 @@ namespace UchOtd.Forms
 
         private void TeacherScheduleLoad(object sender, EventArgs e)
         {
+            _tokenSource = new CancellationTokenSource();
+            
             Left = (Screen.PrimaryScreen.Bounds.Width - Width) / 2;
             Top = (Screen.PrimaryScreen.Bounds.Height - Height) / 2;
 
@@ -48,38 +55,23 @@ namespace UchOtd.Forms
             teacherList.DataSource = tList;
 
         }
-
-        private void TeacherListSelectedIndexChanged(object sender, EventArgs e)
+        
+        private List<TeacherScheduleTimeView> GetTeacherScheduleToView(int teacherId, bool isWeekFiltered, int weekNumber, bool showingProposed, CancellationToken cToken)
         {
-            UpdateTeacherSchedule();
-        }
-
-        private void UpdateTeacherSchedule()
-        {
-            var result = GetTeacherScheduleToView();
-
-            scheduleView.DataSource = result;
-
-            FormatView();
-        }
-
-        private List<TeacherScheduleTimeView> GetTeacherScheduleToView()
-        {
+            cToken.ThrowIfCancellationRequested();
+            
             var result = new List<TeacherScheduleTimeView>();
 
-            var teacherId = (int) (teacherList.SelectedValue);
+            
             List<Lesson> lessonList;
-            if (weekFiltered.Checked)
+            if (isWeekFiltered)
             {
-                int weekNum;
-                int.TryParse(weekFilter.Text, out weekNum);
-
                 lessonList = _repo
                     .Lessons
                     .GetFiltredLessons(l => 
                         l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
-                        ((l.State == 1) || ((l.State == 2) && showProposed.Checked)) && 
-                        _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date.Date) == weekNum)
+                        ((l.State == 1) || ((l.State == 2) && showingProposed)) && 
+                        _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date.Date) == weekNumber)
                     .ToList();
             }
             else
@@ -88,7 +80,7 @@ namespace UchOtd.Forms
                     .Lessons
                     .GetFiltredLessons(l => 
                         l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
-                        ((l.State == 1) || ((l.State == 2) && showProposed.Checked)))
+                        ((l.State == 1) || ((l.State == 2) && showingProposed)))
                     .ToList();
             }
 
@@ -101,6 +93,8 @@ namespace UchOtd.Forms
                                 .ToDictionary(l5 => l5.Key, l5 => l5.ToList())))
                 .ToList();
 
+            cToken.ThrowIfCancellationRequested();
+
             var semesterStartsOption = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts");
             if (semesterStartsOption == null)
             {
@@ -109,6 +103,8 @@ namespace UchOtd.Forms
 
             foreach (var time in lessonsGrouped.OrderBy(lg => lg.Key.TimeOfDay))
             {
+                cToken.ThrowIfCancellationRequested();
+
                 var tstv = new TeacherScheduleTimeView {Time = time.Key.ToString("H:mm")};
 
                 foreach (var timeDowLessons in time.Value)
@@ -311,27 +307,130 @@ namespace UchOtd.Forms
             }
         }
 
-        private void refresh_Click(object sender, EventArgs e)
+        private async void refresh_Click(object sender, EventArgs e)
         {
-            UpdateTeacherSchedule();
+            List<TeacherScheduleTimeView> result = null;
+
+            if (refresh.Text == "Обновить")
+            {
+                _cToken = _tokenSource.Token;
+
+                refresh.Text = "Отмена";
+
+                var teacherId = (int) teacherList.SelectedValue;
+                var isWeekFiltered = weekFiltered.Checked;
+                int weekNum = -1;
+                if (isWeekFiltered)
+                {
+                    int.TryParse(weekFilter.Text, out weekNum);
+                }
+                var isShowProposed = showProposed.Checked;
+
+                try
+                {
+                    result = await Task.Run(() =>
+                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, _cToken),
+                        _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            refresh.Text = "Обновить";
+
+            if (result != null)
+            {
+                scheduleView.DataSource = result;
+
+                FormatView();
+            }
         }
 
-        private void WordExport_Click(object sender, EventArgs e)
+        private async void WordExport_Click(object sender, EventArgs e)
         {
-            var result = GetTeacherScheduleToView();
+            if (ExportInWordPortrait.Text == "Word (портретная)")
+            {
+                _cToken = _tokenSource.Token;
 
-            var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
+                ExportInWordPortrait.Text = "Отмена";
 
-            WordExport.TeacherSchedule(result, teacher, false);
+                var isWeekFiltered = weekFiltered.Checked;
+                int weekNum = -1;
+                if (isWeekFiltered)
+                {
+                    int.TryParse(weekFilter.Text, out weekNum);
+                }
+                var isShowProposed = showProposed.Checked;
+
+                try
+                {
+                    var teacherId = (int)teacherList.SelectedValue;
+
+                    var result = await Task.Run(() => 
+                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, _cToken),
+                        _cToken);
+
+                    var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
+
+                    WordExport.TeacherSchedule(result, teacher, false, _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            ExportInWordPortrait.Text = "Word (портретная)";
         }
 
-        private void ExportInWordLandscape_Click(object sender, EventArgs e)
+        private async void ExportInWordLandscape_Click(object sender, EventArgs e)
         {
-            var result = GetTeacherScheduleToView();
+            if (ExportInWordLandscape.Text == "Word (ландшафтная)")
+            {
+                _cToken = _tokenSource.Token;
 
-            var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
+                ExportInWordLandscape.Text = "Отмена";
 
-            WordExport.TeacherSchedule(result, teacher, true);
+                var isWeekFiltered = weekFiltered.Checked;
+                int weekNum = -1;
+                if (isWeekFiltered)
+                {
+                    int.TryParse(weekFilter.Text, out weekNum);
+                }
+                var isShowProposed = showProposed.Checked;
+                
+                try
+                {
+                    var teacherId = (int)teacherList.SelectedValue;
+
+                    var result = await Task.Run(() => 
+                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, _cToken),
+                        _cToken);
+
+                    var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
+
+                    WordExport.TeacherSchedule(result, teacher, true, _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            ExportInWordLandscape.Text = "Word (ландшафтная)";
+            
+            
         }
     }
 }

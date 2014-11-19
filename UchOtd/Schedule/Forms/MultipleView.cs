@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
@@ -14,6 +16,9 @@ namespace UchOtd.Schedule.Forms
     {
         readonly ScheduleRepository _repo;
 
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
+
         public MultipleView(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -23,6 +28,8 @@ namespace UchOtd.Schedule.Forms
 
         private void MultipleView_Load(object sender, EventArgs e)
         {
+            _tokenSource = new CancellationTokenSource();
+
             var groups1 = _repo
                 .StudentGroups
                 .GetAllStudentGroups()
@@ -53,7 +60,7 @@ namespace UchOtd.Schedule.Forms
             group5.DataSource = groups5;
         }
 
-        private void update_Click(object sender, EventArgs e)
+        private async void update_Click(object sender, EventArgs e)
         {
             var groupsList = new List<int>();
             if ((int)group1.SelectedValue != -1)
@@ -78,13 +85,43 @@ namespace UchOtd.Schedule.Forms
             }
             var groupNames = GetGroupNames(groupsList);
 
-            var groupsLessons = _repo.CommonFunctions.GetGroupedGroupsLessons(groupsList, showProposed.Checked);
+            List<FiveGroupsView> groupsEvents = null;
+            
+            if (update.Text == "Update")
+            {
+                _cToken = _tokenSource.Token;
 
-            List<FiveGroupsView> groupsEvents = CreateGroupsTableView(groupsLessons);
+                update.Text = "Отмена";
 
-            view.DataSource = groupsEvents;
+                var repo = _repo;
+                var isShowProposed = showProposed.Checked;
 
-            FormatView(groupsList, groupNames);
+                try
+                {
+                    groupsEvents = await Task.Run(() =>
+                    {
+                        var groupsLessons = repo.CommonFunctions.GetGroupedGroupsLessons(groupsList, isShowProposed,
+                            _cToken);
+                        return CreateGroupsTableView(groupsLessons, _cToken);
+                    }, _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            update.Text = "Update";
+
+            if (groupsEvents != null)
+            {
+                view.DataSource = groupsEvents;
+
+                FormatView(groupsList, groupNames);
+            }
         }
 
         private Dictionary<int, string> GetGroupNames(IEnumerable<int> groupsList)
@@ -208,15 +245,17 @@ namespace UchOtd.Schedule.Forms
             return result;
         }
 
-        public List<FiveGroupsView> CreateGroupsTableView(Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> groupsLessons)
+        public List<FiveGroupsView> CreateGroupsTableView(Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> groupsLessons, CancellationToken cToken)
         {
             var result = new List<FiveGroupsView>();
 
             var i = 1;
             foreach (var group in groupsLessons)
             {
+                cToken.ThrowIfCancellationRequested();
+
                 var groupView = CreateGroupView(group.Key, group.Value);
-                
+
                 foreach (var gv in groupView)
                 {
                     var dowString = global::Schedule.Constants.Constants.DowLocal[int.Parse(gv.Datetime.Substring(0,1))] + gv.Datetime.Substring(1);

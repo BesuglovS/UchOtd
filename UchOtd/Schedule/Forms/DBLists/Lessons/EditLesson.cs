@@ -197,7 +197,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                     {
                         TeacherForDiscipline = _repo.TeacherForDisciplines.GetTeacherForDiscipline(int.Parse(_curLessons.Keys.ElementAt(_curTfdIndex).Split('+')[0])),
                         Ring = _ring,
-                        Auditorium = _repo.Auditoriums.FindAuditorium(newAuds[weekNumber]),
+                        Auditorium = _repo.Auditoriums.Find(newAuds[weekNumber]),
                         State = 1
                     };
 
@@ -245,7 +245,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 var lesson = new Lesson { 
                     TeacherForDiscipline = curTfd,
                     Ring = _ring,
-                    Auditorium = _repo.Auditoriums.FindAuditorium(newAuds[week]),
+                    Auditorium = _repo.Auditoriums.Find(newAuds[week]),
                     State = 1
                 };
 

@@ -330,7 +330,7 @@ namespace Schedule.Repositories.Repositories.Session
                             }
                         }
 
-                        var consAud = Repo.Auditoriums.GetAuditorium(exam.ConsultationAuditoriumId);
+                        var consAud = Repo.Auditoriums.Get(exam.ConsultationAuditoriumId);
                         string consAudName = "";
                         if (consAud != null)
                         {
@@ -371,7 +371,7 @@ namespace Schedule.Repositories.Repositories.Session
                             }
                         }
 
-                        var examAud = Repo.Auditoriums.GetAuditorium(exam.ExamAuditoriumId);
+                        var examAud = Repo.Auditoriums.Get(exam.ExamAuditoriumId);
                         string examAudName = "";
                         if (examAud != null)
                         {

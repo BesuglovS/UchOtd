@@ -6,7 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Office.Interop.Word;
 using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
@@ -19,6 +21,8 @@ using UchOtd.Schedule.Forms.DBLists;
 using UchOtd.Schedule.Forms.Analysis;
 using UchOtd.Schedule.Forms;
 using UchOtd.Schedule.wnu;
+using Application = System.Windows.Forms.Application;
+using Task = System.Threading.Tasks.Task;
 using Utilities = UchOtd.Core.Utilities;
 
 namespace UchOtd.Schedule
@@ -29,6 +33,9 @@ namespace UchOtd.Schedule
 
         public static bool SchoolHeader = false;
 
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
+
         public MainEditForm(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -38,6 +45,8 @@ namespace UchOtd.Schedule
 
         private void MainFormLoad(object sender, EventArgs e)
         {
+            _tokenSource = new CancellationTokenSource();
+
             LoadLists();
 
             if (Repo != null)
@@ -117,24 +126,59 @@ namespace UchOtd.Schedule
             }
         }
 
-        private void ShowGroupLessonsClick(object sender, EventArgs e)
+        public List<GroupTableView> GetGroupSchedule(int groupId, bool showProposed, CancellationToken cToken)
         {
             var sStarts = Repo.CommonFunctions.GetSemesterStarts();
-            
+
             int weekNum = -1;
             if (weekFiltered.Checked)
-            {                
-                int.TryParse(WeekFilter.Text, out weekNum);                
+            {
+                int.TryParse(WeekFilter.Text, out weekNum);
             }
 
-            var groupLessons = Repo.Lessons.GetGroupedGroupLessons((int)groupList.SelectedValue, sStarts, weekNum, showProposedLessons.Checked);
-            
-            List<GroupTableView> groupEvents = CreateGroupTableView((int)groupList.SelectedValue, groupLessons, showProposedLessons.Checked);
+            cToken.ThrowIfCancellationRequested();
 
-            ScheduleView.DataSource = groupEvents;
+            var groupLessons = Repo.Lessons.GetGroupedGroupLessons(groupId, sStarts, weekNum, showProposed);
 
-            ScheduleView.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-            UpdateViewWidth();
+            cToken.ThrowIfCancellationRequested();
+
+            return CreateGroupTableView(groupId, groupLessons, showProposed);
+        }
+
+        private async void ShowGroupLessonsClick(object sender, EventArgs e)
+        {
+            if (showGroupLessons.Text == "Go")
+            {
+                _cToken = _tokenSource.Token;
+
+                var cancelled = false;
+
+                showGroupLessons.Text = "Отмена";
+
+                var groupId = (int) groupList.SelectedValue;
+                var showProposed = showProposedLessons.Checked;
+
+                try
+                {
+                    ScheduleView.DataSource = await Task.Run(() => GetGroupSchedule(groupId, showProposed, _cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                    cancelled = true;
+                }
+
+                if (!cancelled)
+                {
+                    ScheduleView.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                    UpdateViewWidth();
+                }
+
+                showGroupLessons.Text = "Go";
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
         }
 
         private void UpdateViewWidth()
@@ -606,7 +650,7 @@ namespace UchOtd.Schedule
                     {
                         var calendar = Repo.Calendars.GetFirstFiltredCalendar(c => c.Date.Date == lesson.Calendar.Date.Date);
                         var ring = Repo.Rings.GetFirstFiltredRing(r => r.Time.TimeOfDay == lesson.Ring.Time.TimeOfDay);
-                        var auditorium = Repo.Auditoriums.GetFirstFiltredAuditoriums(a => a.Name == lesson.Auditorium.Name);
+                        var auditorium = Repo.Auditoriums.Find(a => a.Name == lesson.Auditorium.Name);
 
                         if ((calendar == null) || (ring == null) || (auditorium == null))
                         {
@@ -785,7 +829,7 @@ namespace UchOtd.Schedule
 
         private List<Lesson> SchoolAudLessons()
         {
-            var aSchool = Repo.Auditoriums.GetFiltredAuditoriums(a => a.Name.Contains("ШКОЛА"))[0];
+            var aSchool = Repo.Auditoriums.Find(a => a.Name.Contains("ШКОЛА"));
             var ll = Repo.Lessons.GetFiltredLessons(l => l.Auditorium.AuditoriumId == aSchool.AuditoriumId && l.Calendar.Date > DateTime.Now && (l.State == 1));
             return ll;
         }
@@ -844,9 +888,8 @@ namespace UchOtd.Schedule
             sw.Close();
         }
 
-        private void AuditoriumCollisions()
+        private void AuditoriumCollisions(CancellationToken cToken)
         {
-
             var activeLessons = Repo.Lessons.GetAllActiveLessons();
 
             var sw = new StreamWriter("kaput.txt");
@@ -857,10 +900,6 @@ namespace UchOtd.Schedule
                     if ((i.Calendar.CalendarId == j.Calendar.CalendarId) && (i.Ring.RingId == j.Ring.RingId) && (i.Auditorium.AuditoriumId == j.Auditorium.AuditoriumId) &&
                         (i.LessonId != j.LessonId))
                     {
-                        if ((i.TeacherForDiscipline.Teacher.FIO == "Хенкин Валерий Анатольевич") && ((j.TeacherForDiscipline.Teacher.FIO == "Хенкин Валерий Анатольевич")))
-                        {
-                            break;
-                        }
                         sw.WriteLine(
                             i.Calendar.Date.Date + "\t" + i.Ring.Time.TimeOfDay + "\t" +
                             i.Auditorium.Name + "\t" +
@@ -870,6 +909,8 @@ namespace UchOtd.Schedule
                             j.TeacherForDiscipline.Discipline.Name + "\t" + j.TeacherForDiscipline.Discipline.StudentGroup.Name + "\t" + j.TeacherForDiscipline.Teacher.FIO);
                     }
                 }
+
+                cToken.ThrowIfCancellationRequested();
             }
             sw.Close();
         }
@@ -922,9 +963,31 @@ namespace UchOtd.Schedule
             addLessonForm.Show();
         }
 
-        private void LoadToSiteClick(object sender, EventArgs e)
+        private async void LoadToSiteClick(object sender, EventArgs e)
         {
-            WnuUpload.UploadSchedule(Repo, "");
+            if (LoadToSite.Text == "Загрузить на сайт")
+            {
+                _cToken = _tokenSource.Token;
+
+                LoadToSite.Text = "Отмена";
+
+                var repo = Repo;
+                var uploadDbPrefix = uploadPrefix.Text;
+
+                try
+                {
+                    await Task.Run(() => WnuUpload.UploadSchedule(repo, uploadDbPrefix, _cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            LoadToSite.Text = "Загрузить на сайт";
         }
 
         private void MainViewCellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -1000,9 +1063,28 @@ namespace UchOtd.Schedule
             sr3.Close();
         }
 
-        private void AuditoriumKaputClick(object sender, EventArgs e)
+        private async void AuditoriumKaputClick(object sender, EventArgs e)
         {
-            AuditoriumCollisions();
+            if (auditoriumKaput.Text == "Коллизии аудиторий")
+            {
+                _cToken = _tokenSource.Token;
+
+                auditoriumKaput.Text = "Отмена";
+                
+                try
+                {
+                    await Task.Run(() => AuditoriumCollisions(_cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            auditoriumKaput.Text = "Коллизии аудиторий";
         }
 
         private void ФакультетыгруппыToolStripMenuItemClick(object sender, EventArgs e)
@@ -1011,26 +1093,66 @@ namespace UchOtd.Schedule
             facultyListForm.Show();
         }
 
-        private void ActiveLessonsCount_Click(object sender, EventArgs e)
+        private async void ActiveLessonsCount_Click(object sender, EventArgs e)
         {
-            var allDiscLessonCount = Repo.Disciplines.GetAllDisciplines().Select(d => d.AuditoriumHours).Sum() / 2;
+            if (ActiveLessonsCount.Text == "%")
+            {
+                _cToken = _tokenSource.Token;
+
+                ActiveLessonsCount.Text = "X";
+
+                var repo = Repo;
+                var uploadDbPrefix = uploadPrefix.Text;
+
+                try
+                {
+                    await Task.Run(() => PlanCompletionPercentage(_cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            ActiveLessonsCount.Text = "%";
+        }
+
+        private void PlanCompletionPercentage(CancellationToken cToken)
+        {
+            cToken.ThrowIfCancellationRequested();
+
+            var allDiscLessonCount = Repo.Disciplines.GetAllDisciplines().Select(d => d.AuditoriumHours).Sum()/2;
             var activeLessonsCount = Repo.Lessons.GetAllActiveLessons().Count();
-            var diff = allDiscLessonCount - activeLessonsCount;            
-            String message = activeLessonsCount + " (" + String.Format("{0:0.00}%", (double)activeLessonsCount * 100 / allDiscLessonCount) + ") / " + allDiscLessonCount
-                + " =>  " + diff + " (" + String.Format("{0:0.00}%", (double)diff * 100 / allDiscLessonCount) + ")";
+            var diff = allDiscLessonCount - activeLessonsCount;
+            String message = activeLessonsCount + " (" +
+                             String.Format("{0:0.00}%", (double) activeLessonsCount*100/allDiscLessonCount) + ") / " +
+                             allDiscLessonCount
+                             + " =>  " + diff + " (" +
+                             String.Format("{0:0.00}%", (double) diff*100/allDiscLessonCount) + ")";
+
+            cToken.ThrowIfCancellationRequested();
 
             var discCount = Repo.Disciplines.GetAllDisciplines().Count;
             var touchedDiscs = Repo
                 .Disciplines
-                .GetFiltredDisciplines(d => 
+                .GetFiltredDisciplines(d =>
                     (d.AuditoriumHours == 0) ||
-                    (Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == d.DisciplineId) == null) ||
-                    (Repo.CommonFunctions.GetTfdHours(Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == d.DisciplineId).TeacherForDisciplineId) != 0))
+                    (Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
+                        tfd => tfd.Discipline.DisciplineId == d.DisciplineId) == null) ||
+                    (Repo.CommonFunctions.GetTfdHours(
+                        Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
+                            tfd => tfd.Discipline.DisciplineId == d.DisciplineId).TeacherForDisciplineId) != 0))
                 .Count;
             var diff2 = discCount - touchedDiscs;
 
-            message += Environment.NewLine + touchedDiscs + " (" + String.Format("{0:0.00}%", (double)touchedDiscs * 100 / discCount) + ") / " + discCount
-                + " =>  " + diff2 + " (" + String.Format("{0:0.00}%", (double)diff2 * 100 / discCount) + ")";
+            cToken.ThrowIfCancellationRequested();
+
+            message += Environment.NewLine + touchedDiscs + " (" +
+                       String.Format("{0:0.00}%", (double) touchedDiscs*100/discCount) + ") / " + discCount
+                       + " =>  " + diff2 + " (" + String.Format("{0:0.00}%", (double) diff2*100/discCount) + ")";
 
             MessageBox.Show(message, "В парах / В дисциплинах");
         }
@@ -1299,14 +1421,47 @@ namespace UchOtd.Schedule
             disciplineForm.Height = (int) Math.Round(height * 0.42);
         }
 
-        private void CreatePDF_Click(object sender, EventArgs e)
+        private async void CreatePDF_Click(object sender, EventArgs e)
         {
-            var facultyId = (int)FacultyList.SelectedValue;
-            var facultyName = Repo.Faculties.GetFaculty(facultyId).Name;
-            var ruDow = DOWList.SelectedIndex + 1;
+            if (CreatePDF.Text == "PDF")
+            {
+                _cToken = _tokenSource.Token;
 
-            var facultyDowLessons = Repo.Lessons.GetFacultyDowSchedule(facultyId, ruDow, false, -1, false, false);
-            PdfExport.ExportSchedulePage(facultyDowLessons, facultyName, "Export.pdf", DOWList.Text, Repo, true, false, false);
+                CreatePDF.Text = "Отмена";
+
+                var facultyId = (int)FacultyList.SelectedValue;
+                var facultyName = Repo.Faculties.GetFaculty(facultyId).Name;
+                var ruDow = DOWList.SelectedIndex + 1;
+
+                try
+                {
+                    await Task.Run(() => PdfPageExport(facultyId, ruDow, facultyName, _cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            CreatePDF.Text = "PDF";
+        }
+
+        private void PdfPageExport(int facultyId, int ruDow, string facultyName, CancellationToken cToken)
+        {
+            cToken.ThrowIfCancellationRequested();
+
+            var facultyDowLessons = Repo.Lessons
+                .GetFacultyDowSchedule(facultyId, ruDow, false, -1, false, false);
+
+            cToken.ThrowIfCancellationRequested();
+
+            PdfExport.ExportSchedulePage(facultyDowLessons, facultyName, "Export.pdf",
+                DOWList.Text, Repo, true, false, false);
+
+            cToken.ThrowIfCancellationRequested();
 
             Process.Start("Export.pdf");
         }
@@ -1503,16 +1658,39 @@ namespace UchOtd.Schedule
             sw.Close();
         }
 
-        private void WordExport_Click(object sender, EventArgs e)
+        private async void WordExport_Click(object sender, EventArgs e)
         {
-            var facultyId = (int)FacultyList.SelectedValue;            
-            var ruDow = DOWList.SelectedIndex + 1;
-            int weekFilter;
-            int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+            if (WordExportButton.Text == "Word")
+            {
+                _cToken = _tokenSource.Token;
 
-            WordExport.ExportSchedulePage(
-                Repo, "Расписание.docx", false, false, cb90.Checked ? 90 : 80, facultyId, ruDow, 6,
-                wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked, OnlyFutureDatesExportInWord.Checked);
+                WordExportButton.Text = "Отмена";
+
+                var repo = Repo;
+                var length80Or90 = cb90.Checked ? 90 : 80;
+                var facultyId = (int)FacultyList.SelectedValue;
+                var ruDow = DOWList.SelectedIndex + 1;
+                var wordWeekFiltered = wordExportWeekFiltered.Checked;
+                int weekFilter;
+                int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+                var onlyFutureDates = OnlyFutureDatesExportInWord.Checked;
+
+                try
+                {
+                    await Task.Run(() => WordExport.ExportSchedulePage(
+                    repo, "Расписание.docx", false, false, length80Or90, facultyId, ruDow, 6,
+                    wordWeekFiltered, weekFilter, !wordWeekFiltered, onlyFutureDates, _cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+            
+            WordExportButton.Text = "Word";
         }
 
         private void WordCustom_Click(object sender, EventArgs e)
@@ -1612,57 +1790,140 @@ namespace UchOtd.Schedule
             }*/
         }
 
-        private void WordSchool_Click_1(object sender, EventArgs e)
+        private async void WordSchool_Click_1(object sender, EventArgs e)
         {
-            var facultyId = (int)FacultyList.SelectedValue;
-            var ruDow = DOWList.SelectedIndex + 1;
-            int weekFilter;
-            int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+            if (WordSchool.Text == "Word (ШКОЛА)")
+            {
+                _cToken = _tokenSource.Token;
 
-            WordExport.WordSchool(
-                Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
-                wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
+                WordSchool.Text = "Отмена";
+
+                var facultyId = (int)FacultyList.SelectedValue;
+                var ruDow = DOWList.SelectedIndex + 1;
+                int weekFilter;
+                int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+                var wordWeekFiltered = wordExportWeekFiltered.Checked;
+
+                try
+                {
+                    await Task.Run(() => WordExport.WordSchool(
+                            Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
+                            wordWeekFiltered, weekFilter, !wordWeekFiltered, _cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            WordSchool.Text = "Word (ШКОЛА)";
         }
 
-        private void WordSchool2_Click(object sender, EventArgs e)
+        private async void WordSchool2_Click(object sender, EventArgs e)
         {
-            var facultyId = (int)FacultyList.SelectedValue;
-            var ruDow = DOWList.SelectedIndex + 1;
-            int weekFilter;
-            int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+            if (WordSchool2.Text == "Word (ШКОЛА) 2 дн.")
+            {
+                _cToken = _tokenSource.Token;
 
-            WordExport.WordSchoolTwoDays(
-                Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
-                wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
+                WordSchool2.Text = "Отмена";
+
+                var facultyId = (int)FacultyList.SelectedValue;
+                var ruDow = DOWList.SelectedIndex + 1;
+                int weekFilter;
+                int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+                var wordWeekFiltered = wordExportWeekFiltered.Checked;
+
+                try
+                {
+                    await Task.Run(() => WordExport.WordSchoolTwoDays(
+                                Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
+                                wordWeekFiltered, weekFilter, !wordWeekFiltered, _cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            WordSchool2.Text = "Word (ШКОЛА) 2 дн.";
         }
 
         private void happyBirthday_Click(object sender, EventArgs e)
         {
-            var message = Repo
-                .Students
-                .GetFiltredStudents(s => !s.Expelled)
-                .Where(student => DateTime.Now.Date == student.BirthDate.Date)
-                .Aggregate("", (current, student) => 
-                    current + (student.F + " " + student.I + " " + student.O +
-                    " ( " + (DateTime.Now.Year - student.BirthDate.Year) + " / " + 
-                    student.BirthDate.Year + " )" + Environment.NewLine));
-
-            if (message == "")
+            Task.Run(() =>
             {
-                message = "Нету дома никого.";
+                var message = Repo
+                    .Students
+                    .GetFiltredStudents(s => !s.Expelled)
+                    .Where(student => DateTime.Now.Date == student.BirthDate.Date)
+                    .Aggregate("", (current, student) =>
+                        current + (student.F + " " + student.I + " " + student.O +
+                                   " ( " + (DateTime.Now.Year - student.BirthDate.Year) + " / " +
+                                   student.BirthDate.Year + " )" + Environment.NewLine));
+
+                if (message == "")
+                {
+                    message = "Нету дома никого.";
+                }
+
+                MessageBox.Show(message, "Happy");
+            });
+        }
+
+        private async void OnePageGroupScheduleWordExport_Click(object sender, EventArgs e)
+        {
+            if (OnePageGroupScheduleWordExport.Text == "Экспорт в Word - одна группа")
+            {
+                _cToken = _tokenSource.Token;
+
+                OnePageGroupScheduleWordExport.Text = "Отмена";
+
+                var groupId = (int)groupList.SelectedValue;
+
+                try
+                {
+                    await Task.Run(() => WordExport.ExportGroupSchedulePage(Repo, this, groupId, _cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
             }
 
-            MessageBox.Show(message, "Happy");
+            OnePageGroupScheduleWordExport.Text = "Экспорт в Word - одна группа";
         }
 
-        private void OnePageGroupScheduleWordExport_Click(object sender, EventArgs e)
+        private async void WordWholeScheduleOneGroupOnePage_Click(object sender, EventArgs e)
         {
-            WordExport.ExportGroupSchedulePage(Repo, this, (int)groupList.SelectedValue);
-        }
+            if (WordWholeScheduleOneGroupOnePage.Text == "Всё расписание в Word 1 группа на 1 стр.")
+            {
+                _cToken = _tokenSource.Token;
 
-        private void WordWholeScheduleOneGroupOnePage_Click(object sender, EventArgs e)
-        {
-            WordExport.ExportSchedulePage(Repo, this);            
+                WordWholeScheduleOneGroupOnePage.Text = "Отмена";
+                
+                try
+                {
+                    await Task.Run(() => WordExport.ExportWholeScheduleOneGroupPerPage(Repo, this, _cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            WordWholeScheduleOneGroupOnePage.Text = "Всё расписание в Word 1 группа на 1 стр.";
         }
 
         private void BackupUpload_Click(object sender, EventArgs e)
@@ -1673,16 +1934,36 @@ namespace UchOtd.Schedule
             WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak", "httpdocs/upload/DB-Backup/" + ToDBName.Text + ".bak");
         }
 
-        private void startSchoolWordExport_Click(object sender, EventArgs e)
+        private async void startSchoolWordExport_Click(object sender, EventArgs e)
         {
-            var facultyId = (int)FacultyList.SelectedValue;
-            var ruDow = DOWList.SelectedIndex + 1;
-            int weekFilter;
-            int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+            if (startSchoolWordExport.Text == "Word (1-7)")
+            {
+                _cToken = _tokenSource.Token;
 
-            WordExport.WordStartSchool(
-                Repo, "Расписание.docx", false, false, 40, facultyId, ruDow, 6,
-                wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
+                startSchoolWordExport.Text = "Отмена";
+
+                var facultyId = (int)FacultyList.SelectedValue;
+                var ruDow = DOWList.SelectedIndex + 1;
+                int weekFilter;
+                int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+                var wordWeekFiltered = wordExportWeekFiltered.Checked;
+
+                try
+                {
+                    await Task.Run(() => WordExport.WordStartSchool(
+                            Repo, "Расписание.docx", false, false, 40, facultyId, ruDow, 6,
+                            wordWeekFiltered, weekFilter, !wordWeekFiltered, _cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            startSchoolWordExport.Text = "Word (1-7)";
         }
 
         private void корпусаToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1742,16 +2023,39 @@ namespace UchOtd.Schedule
 
         private void removeAllProposedLessons_Click(object sender, EventArgs e)
         {
-            var proposedLessonsIds = Repo
-                .Lessons
-                .GetFiltredLessons(l => l.State == 2)
-                .Select(l => l.LessonId)
-                .ToList();
-
-            foreach (var lessonId in proposedLessonsIds)
+            if (removeAllProposedLessons.Text == "Удалить все преполагаемые уроки")
             {
-                Repo.Lessons.RemoveLesson(lessonId);
+                _cToken = _tokenSource.Token;
+
+                removeAllProposedLessons.Text = "Отмена";
+                
+                try
+                {
+                    Task.Run(() =>
+                    {
+                        var proposedLessonsIds = Repo
+                            .Lessons
+                            .GetFiltredLessons(l => l.State == 2)
+                            .Select(l => l.LessonId)
+                            .ToList();
+
+                        foreach (var lessonId in proposedLessonsIds)
+                        {
+                            Repo.Lessons.RemoveLesson(lessonId);
+                            _cToken.ThrowIfCancellationRequested();
+                        }
+                    }, _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
             }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            removeAllProposedLessons.Text = "Удалить все преполагаемые уроки";
         }
 
         private void периодыГруппToolStripMenuItem_Click(object sender, EventArgs e)
