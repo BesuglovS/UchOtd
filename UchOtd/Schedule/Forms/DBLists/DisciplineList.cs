@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Constants;
 using Schedule.DomainClasses.Main;
@@ -16,6 +18,9 @@ namespace UchOtd.Schedule.Forms.DBLists
     {
         private readonly ScheduleRepository _repo;
 
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
+
         public DisciplineList(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -25,6 +30,8 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void DisciplineListLoad(object sender, EventArgs e)
         {
+            _tokenSource = new CancellationTokenSource();
+
             Attestation.Items.Clear();
             foreach (var attestationForm in Constants.Attestation)
             {
@@ -54,76 +61,107 @@ namespace UchOtd.Schedule.Forms.DBLists
             //RefreshView();
         }
 
-        private void RefreshView()
+        private async void RefreshView()
         {
-            List<Discipline> discList;
+            List<DisciplineView> discView = null;
+                       
 
-            if ((filter.Text != "") && discnameFilter.Checked)
+            if (refresh.Text == "Обновить")
             {
-                discList = _repo.Disciplines.GetFiltredDisciplines(disc => disc.Name.Contains(filter.Text));
+                _cToken = _tokenSource.Token;
+
+                refresh.Text = "Отмена";
+
+                var filterText = filter.Text;
+                var discNameF = discnameFilter.Checked;
+                var groupNameF = groupnameFilter.Checked;
+                var hourFitF = HoursFitFiltered.Checked;
+                var mixedGroupsF = mixedGroups.Checked;
+                var groupId = (int)groupNameList.SelectedValue;
+
+                try
+                {
+                    discView = await Task.Run(() => {
+                        List<Discipline> discList = null;
+
+                        if ((filter.Text != "") && discnameFilter.Checked)
+                        {
+                            discList = _repo.Disciplines.GetFiltredDisciplines(disc => disc.Name.Contains(filter.Text));
+                        }
+                        else
+                        {
+                            discList = _repo.Disciplines.GetAllDisciplines();
+                        }
+
+                        if (groupnameFilter.Checked)
+                        {
+                            var studentIds = _repo
+                                .StudentsInGroups
+                                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
+                                .ToList()
+                                .Select(stig => stig.Student.StudentId);
+                            var groupsListIds = _repo
+                                .StudentsInGroups
+                                .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                                .ToList()
+                                .Select(stig => stig.StudentGroup.StudentGroupId);
+
+                            discList = discList
+                                .Where(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId))
+                                .ToList();
+                        }
+
+                        if (HoursFitFiltered.Checked)
+                        {
+                            var discListFiltered = new List<Discipline>();
+
+                            foreach (var disc in discList)
+                            {
+                                var localDisc = disc;
+                                var tfd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tefd =>
+                                    tefd.Discipline.DisciplineId == localDisc.DisciplineId);
+
+                                var diffList = new List<int> { 0 };
+                                if (DifferenceByOne.Checked)
+                                {
+                                    diffList.Add(-1);
+                                }
+
+                                if ((tfd != null) && (!diffList.Contains(disc.AuditoriumHours - _repo.CommonFunctions.GetTfdHours(tfd.TeacherForDisciplineId))))
+                                {
+                                    discListFiltered.Add(disc);
+                                }
+                            }
+
+                            discList = discListFiltered;
+                        }
+
+                        if (mixedGroups.Checked)
+                        {
+                            discList = discList.Where(disc => disc.StudentGroup.Name.Contains(" + ")).ToList();
+                        }
+
+                        discList = orderByGroupname.Checked ?
+                            discList.OrderBy(disc => disc.StudentGroup.Name).ToList() :
+                            discList.OrderBy(disc => disc.Name).ToList();
+
+                        return DisciplineView.DisciplinesToView(_repo, discList).OrderBy(dv => dv.TeacherFio).ToList();
+                    }, _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
             }
             else
             {
-                discList = _repo.Disciplines.GetAllDisciplines(); 
+                _tokenSource.Cancel();
             }
 
-            if (groupnameFilter.Checked)
-            {
-                var studentIds = _repo
-                    .StudentsInGroups
-                    .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == (int)groupNameList.SelectedValue)
-                    .ToList()
-                    .Select(stig => stig.Student.StudentId);
-                var groupsListIds = _repo
-                    .StudentsInGroups
-                    .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
-                    .ToList()
-                    .Select(stig => stig.StudentGroup.StudentGroupId);
+            Text = "Дисциплины - " + discView.Count();
 
-                discList = discList
-                    .Where(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId))
-                    .ToList();
-            }
-
-            if (HoursFitFiltered.Checked)
-            {
-                var discListFiltered = new List<Discipline>();
-
-                foreach (var disc in discList)
-                {
-                    var localDisc = disc;
-                    var tfd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tefd => 
-                        tefd.Discipline.DisciplineId == localDisc.DisciplineId);
-
-                    var diffList = new List<int> {0};
-                    if (DifferenceByOne.Checked)
-                    {
-                        diffList.Add(-1);
-                    }
-
-                    if ((tfd != null) && (!diffList.Contains(disc.AuditoriumHours - _repo.CommonFunctions.GetTfdHours(tfd.TeacherForDisciplineId))))
-                    {
-                        discListFiltered.Add(disc);
-                    }
-                }
-
-                discList = discListFiltered;
-            }
-
-            if (mixedGroups.Checked)
-            {
-                discList = discList.Where(disc => disc.StudentGroup.Name.Contains(" + ")).ToList();                
-            }
-
-            discList = orderByGroupname.Checked ? 
-                discList.OrderBy(disc => disc.StudentGroup.Name).ToList() : 
-                discList.OrderBy(disc => disc.Name).ToList();
-
-            Text = "Дисциплины - " + discList.Count();
-
-            var discView = DisciplineView.DisciplinesToView(_repo, discList);
-
-            DiscipineListView.DataSource = discView.OrderBy(dv =>dv.TeacherFio).ToList();
+            refresh.Text = "Обновить";
+            
+            DiscipineListView.DataSource = discView;
 
             FormatView();
 

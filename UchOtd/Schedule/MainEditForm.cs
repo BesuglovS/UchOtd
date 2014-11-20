@@ -126,14 +126,14 @@ namespace UchOtd.Schedule
             }
         }
 
-        public List<GroupTableView> GetGroupSchedule(int groupId, bool showProposed, CancellationToken cToken)
+        public List<GroupTableView> GetGroupSchedule(int groupId, bool showProposed, CancellationToken cToken, bool isWeekFilered, int weekFilterNum)
         {
             var sStarts = Repo.CommonFunctions.GetSemesterStarts();
 
             int weekNum = -1;
-            if (weekFiltered.Checked)
+            if (isWeekFilered)
             {
-                int.TryParse(WeekFilter.Text, out weekNum);
+                weekNum = weekFilterNum;
             }
 
             cToken.ThrowIfCancellationRequested();
@@ -157,10 +157,13 @@ namespace UchOtd.Schedule
 
                 var groupId = (int) groupList.SelectedValue;
                 var showProposed = showProposedLessons.Checked;
+                var isWeekFilered = weekFiltered.Checked;
+                int weekFilterNum = -1;
+                int.TryParse(WeekFilter.Text, out weekFilterNum);
 
                 try
                 {
-                    ScheduleView.DataSource = await Task.Run(() => GetGroupSchedule(groupId, showProposed, _cToken), _cToken);
+                    ScheduleView.DataSource = await Task.Run(() => GetGroupSchedule(groupId, showProposed, _cToken, isWeekFilered, weekFilterNum), _cToken);
                 }
                 catch (OperationCanceledException exc)
                 {
