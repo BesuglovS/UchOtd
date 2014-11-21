@@ -2268,7 +2268,7 @@ namespace UchOtd.Core
             oTable.Borders.Enable = 1;
             oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
             oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
-            oTable.Range.Font.Size = 10;
+            oTable.Range.Font.Size = 11;
             oTable.Range.Font.Bold = 0;
 
             oTable.Columns[1].Width = oWord.CentimetersToPoints(2.44f);
@@ -2301,7 +2301,7 @@ namespace UchOtd.Core
                     WdParagraphAlignment.wdAlignParagraphCenter;
                 oTable.Cell(1, groupColumn).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
 
-                oTable.Cell(1, groupColumn + 1).Range.Text = "Ауд.";
+                oTable.Cell(1, groupColumn + 1).Range.Text = "Ауд";
                 oTable.Cell(1, groupColumn + 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
                 groupColumn += 2;
             }
@@ -2326,7 +2326,7 @@ namespace UchOtd.Core
 
 
                 timeRowIndexList.Add(timeRowIndex);
-                oTable.Cell(timeRowIndex, 1).Range.Text = time + " - " +
+                oTable.Cell(timeRowIndex, 1).Range.Text = time + "-" +
                                                           hour.ToString("D2") + ":" + minute.ToString("D2");
                 oTable.Cell(timeRowIndex, 1).Range.Font.Bold = 1;
                 oTable.Cell(timeRowIndex, 1).Range.ParagraphFormat.Alignment =
@@ -2412,7 +2412,8 @@ namespace UchOtd.Core
                             cellText += discName + Environment.NewLine;
 
                             // Teacher FIO
-                            String teacherFio = ShortenFio(tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO);
+                            var ommitInitials = @group.Value[time].Count != 1;
+                            String teacherFio = ShortenFio(tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO, ommitInitials);
                             cellText += teacherFio;
 
                             // Total weeks
@@ -2473,6 +2474,9 @@ namespace UchOtd.Core
 
 
                             timeTable.Cell(1, tfdIndex + 1).Range.Text = cellText;
+                            timeTable.Cell(1, tfdIndex + 1).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+                            
                             /*
                              * FIO in one line
                             var lineSpacing = timeTable.Cell(1, tfdIndex + 1).Range.ParagraphFormat.LineSpacing;
@@ -2496,7 +2500,7 @@ namespace UchOtd.Core
                             }
                             else
                             {
-                                oTable.Cell(timeRowIndex, columnGroupIndex + 1).Range.Text = audCellText + " / " + audText;
+                                oTable.Cell(timeRowIndex, columnGroupIndex + 1).Range.Text = audCellText + "/ " + audText;
                             }
 
                             oTable.Cell(timeRowIndex, columnGroupIndex + 1).VerticalAlignment =
@@ -2537,7 +2541,7 @@ namespace UchOtd.Core
             return (audName.StartsWith("Ауд. ")) ? audName.Substring(5) : audName;
         }
 
-        private static string ShortenFio(string fio)
+        private static string ShortenFio(string fio, bool ommitInitials)
         {
             List<string> fioParts = fio.Split(' ').ToList();
 
@@ -2546,7 +2550,9 @@ namespace UchOtd.Core
                 return fio;
             }
             
-            return fioParts[0] + " " + fioParts[1].Substring(0, 1) + "." + fioParts[2].Substring(0, 1) + ".";
+            return ommitInitials?
+                 fioParts[0]
+                :fioParts[0] + " " + fioParts[1].Substring(0, 1) + "." + fioParts[2].Substring(0, 1) + ".";
         }
 
         public static void ExportWholeScheduleOneGroupPerPage(ScheduleRepository repo, MainEditForm form, CancellationToken cToken)

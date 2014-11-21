@@ -230,7 +230,7 @@ namespace UchOtd
         {
             var serverList = new List<string>
             { 
-                "127.0.0.1",
+                //"127.0.0.1",
                 "uch-otd-disp"                
             };
             
