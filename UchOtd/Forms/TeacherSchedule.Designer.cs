@@ -39,6 +39,7 @@
             this.teacherList = new System.Windows.Forms.ComboBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.scheduleView = new System.Windows.Forms.DataGridView();
+            this.ExportAllTeachersInWord = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scheduleView)).BeginInit();
@@ -46,6 +47,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.ExportAllTeachersInWord);
             this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.ExportInWordLandscape);
             this.controlsPanel.Controls.Add(this.ExportInWordPortrait);
@@ -56,7 +58,7 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(974, 56);
+            this.controlsPanel.Size = new System.Drawing.Size(1085, 56);
             this.controlsPanel.TabIndex = 2;
             // 
             // showProposed
@@ -133,7 +135,7 @@
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 56);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(974, 624);
+            this.viewPanel.Size = new System.Drawing.Size(1085, 624);
             this.viewPanel.TabIndex = 4;
             // 
             // scheduleView
@@ -146,16 +148,26 @@
             this.scheduleView.Location = new System.Drawing.Point(0, 0);
             this.scheduleView.Name = "scheduleView";
             this.scheduleView.ReadOnly = true;
-            this.scheduleView.Size = new System.Drawing.Size(974, 624);
+            this.scheduleView.Size = new System.Drawing.Size(1085, 624);
             this.scheduleView.TabIndex = 0;
             this.scheduleView.TabStop = false;
             this.scheduleView.SelectionChanged += new System.EventHandler(this.ScheduleViewSelectionChanged);
+            // 
+            // ExportAllTeachersInWord
+            // 
+            this.ExportAllTeachersInWord.Location = new System.Drawing.Point(973, 10);
+            this.ExportAllTeachersInWord.Name = "ExportAllTeachersInWord";
+            this.ExportAllTeachersInWord.Size = new System.Drawing.Size(101, 35);
+            this.ExportAllTeachersInWord.TabIndex = 40;
+            this.ExportAllTeachersInWord.Text = "Word (все преподаватели)";
+            this.ExportAllTeachersInWord.UseVisualStyleBackColor = true;
+            this.ExportAllTeachersInWord.Click += new System.EventHandler(this.ExportAllTeachersInWord_Click);
             // 
             // TeacherSchedule
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(974, 680);
+            this.ClientSize = new System.Drawing.Size(1085, 680);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -184,5 +196,6 @@
         private System.Windows.Forms.Button ExportInWordPortrait;
         private System.Windows.Forms.Button ExportInWordLandscape;
         private System.Windows.Forms.CheckBox showProposed;
+        private System.Windows.Forms.Button ExportAllTeachersInWord;
     }
 }

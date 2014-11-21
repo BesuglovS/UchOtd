@@ -8,6 +8,7 @@ using Microsoft.Office.Interop.Word;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using Schedule.Repositories.Common;
+using UchOtd.Forms;
 using UchOtd.NUDS.View;
 using UchOtd.Schedule.Views.DBListViews;
 using Shape = Microsoft.Office.Interop.Word.Shape;
@@ -1197,11 +1198,12 @@ namespace UchOtd.Core
 
                     var plainGroupsListIds = new Dictionary<int, List<int>>();
                     var nGroupsListIds = new Dictionary<int, List<int>>();
-
+                    var plainNGroupIds = new Dictionary<int, Tuple<int, int>>();
 
                     foreach (var group in schedule)
                     {
-                        var groupName = repo.StudentGroups.GetStudentGroup(group.Key).Name;
+                        var groupObject = repo.StudentGroups.GetStudentGroup(group.Key);
+                        var groupName = groupObject.Name;
                         oTable.Cell(1, groupColumn).Range.Text = groupName.Replace(" (+Н)", "");
                         oTable.Cell(1, groupColumn).Range.ParagraphFormat.Alignment =
                             WdParagraphAlignment.wdAlignParagraphCenter;
@@ -1233,6 +1235,8 @@ namespace UchOtd.Core
                                     .Select(stig => stig.StudentGroup.StudentGroupId)
                                     .Distinct()
                                     .ToList());
+
+                            plainNGroupIds.Add(groupObject.StudentGroupId, new Tuple<int, int>(plainGroupId, nGroupId));
                         }
                     }
 
@@ -1295,11 +1299,20 @@ namespace UchOtd.Core
                                     {
                                         if (plainGroupsListIds[group.Key].Contains(groupId) && nGroupsListIds[group.Key].Contains(groupId))
                                         {
-                                            //cellText += " (+Н)";
+                                            cellText += " (+Н)";
                                         }
                                         if (!plainGroupsListIds[group.Key].Contains(groupId) && nGroupsListIds[group.Key].Contains(groupId))
                                         {
                                             cellText += " (Н)";
+                                        }
+                                    }
+
+                                    var tfdGroupId = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+                                    if ((tfdGroupId != group.Key))
+                                    {
+                                        if ((!plainNGroupIds.ContainsKey(group.Key)) || ((tfdGroupId != plainNGroupIds[group.Key].Item1) && (tfdGroupId != plainNGroupIds[group.Key].Item2)))
+                                        {
+                                            cellText += " (" + tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.Name + ")";
                                         }
                                     }
                                     cellText += Environment.NewLine;
@@ -2861,6 +2874,140 @@ namespace UchOtd.Core
             {
                 oWord.Quit();
             }
+
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+        }
+
+        public static void TeachersSchedule(ScheduleRepository repo, TeacherSchedule tsForm, CancellationToken cToken)
+        {
+            var teachers = repo.Teachers.GetAllTeachers().OrderBy(t => t.FIO).ToList();
+
+            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+            int pageCounter = 0;
+
+            //Start Word and create a new document.
+            _Application oWord = new Application { Visible = true };
+            _Document oDoc = oWord.Documents.Add();
+
+            oDoc.PageSetup.Orientation = WdOrientation.wdOrientPortrait;
+            oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
+
+            foreach (var teacher in teachers)
+            {
+                var result = tsForm.GetTeacherScheduleToView(teacher.TeacherId, false, -1, false, cToken);
+
+                var isColumnEmpty = GetEmptyColumnIndexes(result);
+                var columnTitles = new List<string>();
+                var columnIndexes = new List<int>();
+                for (int i = 1; i <= 7; i++)
+                {
+                    if (!isColumnEmpty[i])
+                    {
+                        columnTitles.Add(Constants.DowLocal[i]);
+                        columnIndexes.Add(i);
+                    }
+                }
+
+                Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
+                oPara1.Range.Text = "Расписание СГОАН (" + teacher.FIO + ")";
+                oPara1.Range.Font.Bold = 0;
+                oPara1.Range.Font.Size = 10;
+                oPara1.Range.ParagraphFormat.LineSpacingRule =
+                    WdLineSpacing.wdLineSpaceSingle;
+                oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                oPara1.SpaceAfter = 0;
+                oPara1.Range.InsertParagraphAfter();
+
+                Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+
+                var dowCount = isColumnEmpty.Count(dow => !dow.Value);
+
+                Table oTable = oDoc.Tables.Add(wrdRng, 1 + result.Count, 1 + dowCount);
+                oTable.Borders.Enable = 1;
+                oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+                oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                oTable.Range.Font.Size = 10;
+                oTable.Range.Font.Bold = 0;
+
+                oTable.Cell(1, 1).Range.Text = "Время";
+                oTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphCenter;
+
+                oTable.Columns[1].Width = oWord.CentimetersToPoints(2.44f);
+                float colWidth = 16.3F / dowCount;
+                for (int i = 0; i < dowCount; i++)
+                {
+                    oTable.Columns[i + 2].Width = oWord.CentimetersToPoints(colWidth);
+                    oTable.Cell(1, i + 2).Range.Text = columnTitles[i];
+                    oTable.Cell(1, i + 2).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphCenter;
+                }
+
+                for (int i = 0; i < result.Count; i++)
+                {
+                    oTable.Cell(2 + i, 1).Range.Text = result[i].Time;
+                    oTable.Cell(2 + i, 1).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+                    oTable.Cell(2 + i, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+                    for (int j = 0; j < dowCount; j++)
+                    {
+                        var dowIndex = columnIndexes[j];
+                        switch (dowIndex)
+                        {
+                            case 1:
+                                oTable.Cell(2 + i, 2 + j).Range.Text = result[i].MonLessons;
+                                break;
+                            case 2:
+                                oTable.Cell(2 + i, 2 + j).Range.Text = result[i].TueLessons;
+                                break;
+                            case 3:
+                                oTable.Cell(2 + i, 2 + j).Range.Text = result[i].WedLessons;
+                                break;
+                            case 4:
+                                oTable.Cell(2 + i, 2 + j).Range.Text = result[i].ThuLessons;
+                                break;
+                            case 5:
+                                oTable.Cell(2 + i, 2 + j).Range.Text = result[i].FriLessons;
+                                break;
+                            case 6:
+                                oTable.Cell(2 + i, 2 + j).Range.Text = result[i].SatLessons;
+                                break;
+                            case 7:
+                                oTable.Cell(2 + i, 2 + j).Range.Text = result[i].SunLessons;
+                                break;
+                        }
+
+                        oTable.Cell(2 + i, 2 + j).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+                    }
+                }
+
+                pageCounter++;
+                int pageCount;
+                float fontSize = 10.5F;
+                do
+                {
+                    fontSize -= 0.5F;
+                    oTable.Range.Font.Size = fontSize;
+
+                    if (fontSize <= 3)
+                    {
+                        break;
+                    }
+
+                    pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
+                } while (pageCount > pageCounter);
+
+                var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                endOfDoc.Font.Size = 1;
+                endOfDoc.InsertBreak(WdBreakType.wdSectionBreakNextPage);
+            }
+
+            oDoc.Undo();
 
             System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
         }

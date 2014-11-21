@@ -56,7 +56,7 @@ namespace UchOtd.Forms
 
         }
         
-        private List<TeacherScheduleTimeView> GetTeacherScheduleToView(int teacherId, bool isWeekFiltered, int weekNumber, bool showingProposed, CancellationToken cToken)
+        public List<TeacherScheduleTimeView> GetTeacherScheduleToView(int teacherId, bool isWeekFiltered, int weekNumber, bool showingProposed, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
             
@@ -83,6 +83,8 @@ namespace UchOtd.Forms
                         ((l.State == 1) || ((l.State == 2) && showingProposed)))
                     .ToList();
             }
+
+            var teacherBuildingsCount = lessonList.Select(l => l.Auditorium.Building.BuildingId).Distinct().Count();
 
             var lessonsGrouped = lessonList
                 .GroupBy(l => l.Ring.Time)
@@ -126,27 +128,33 @@ namespace UchOtd.Forms
                             .ToList();
                         message += "(" + Utilities.GatherWeeksToString(weekList) + ")";
                         message += Environment.NewLine;
-                        var audWeeks = new Dictionary<string, List<int>>();
+                        var audWeeks = new Dictionary<Auditorium, List<int>>();
                         foreach (var lesson in tfdBundle.Value)
                         {
-                            if (!audWeeks.ContainsKey(lesson.Auditorium.Name))
+                            if (!audWeeks.ContainsKey(lesson.Auditorium))
                             {
-                                audWeeks.Add(lesson.Auditorium.Name, new List<int>());
+                                audWeeks.Add(lesson.Auditorium, new List<int>());
                             }
 
-                            audWeeks[lesson.Auditorium.Name].Add(Utilities.WeekFromDate(lesson.Calendar.Date, semesterStartsDate));
+                            audWeeks[lesson.Auditorium].Add(Utilities.WeekFromDate(lesson.Calendar.Date, semesterStartsDate));
                         }
                         var sortedWeeks = audWeeks.OrderBy(aw => aw.Value.Min());
                         if (sortedWeeks.Count() == 1)
                         {
-                            message += audWeeks.ElementAt(0).Key;
+                            var aud = audWeeks.ElementAt(0).Key;
+                            message += aud.Name;
+                            if (teacherBuildingsCount != 1)
+                            {
+                                message += " (" + aud.Building.Name + ")";
+                            }
                         }
                         else
                         {
                             message = sortedWeeks
                                 .Aggregate(message, (current, kvp) =>
                                     current +
-                                    (Utilities.GatherWeeksToString(kvp.Value) + " - " + kvp.Key +
+                                    (Utilities.GatherWeeksToString(kvp.Value) + " - " + kvp.Key.Name +
+                                    ((teacherBuildingsCount != 1) ? (" (" + kvp.Key.Building.Name + ")") : "") +
                                      Environment.NewLine));
                         }
 
@@ -429,8 +437,31 @@ namespace UchOtd.Forms
             }
 
             ExportInWordLandscape.Text = "Word (ландшафтная)";
-            
-            
+        }
+
+        private async void ExportAllTeachersInWord_Click(object sender, EventArgs e)
+        {
+            if (ExportAllTeachersInWord.Text == "Word (все преподаватели)")
+            {
+                _cToken = _tokenSource.Token;
+                var repo = _repo;
+
+                ExportAllTeachersInWord.Text = "Отмена";
+                
+                try
+                {
+                    await Task.Run(() => WordExport.TeachersSchedule(repo, this, _cToken), _cToken);
+                }
+                catch (OperationCanceledException exc)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            ExportAllTeachersInWord.Text = "Word (все преподаватели)";
         }
     }
 }

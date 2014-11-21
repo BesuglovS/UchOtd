@@ -44,10 +44,12 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 _selectedBuildingId = (int)(sender as RadioButton).Tag;
             }
 
+            /*
             if (StartupForm.School)
             {
                 RefreshLists();
             }
+            */ 
         }
 
         private string DetectBuildingByGroupName(string groupName)
@@ -82,6 +84,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             _repo.Buildings.GetBuilding(_selectedBuildingId);
 
             // TFD list
+            /*
             var allTfdList = _repo.TeacherForDisciplines.GetAllTeacherForDiscipline();
             var tfdList = (
                     from tfd in allTfdList
@@ -97,6 +100,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             teacherForDisciplineBox.DisplayMember = "TfdSummary";
             teacherForDisciplineBox.ValueMember = "TeacherForDisciplineId";
             teacherForDisciplineBox.DataSource = tfdViewList;
+             */
         }
 
         private void AddLesson_Load(object sender, EventArgs e)
