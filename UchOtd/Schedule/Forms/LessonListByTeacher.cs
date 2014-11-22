@@ -70,7 +70,7 @@ namespace UchOtd.Schedule.Forms
                     return LessonViewAtLessonListByTeacher.FromLessonList(lessons);
                 }, _cToken);
             }
-            catch (OperationCanceledException exc)
+            catch (OperationCanceledException)
             {
                 
             }

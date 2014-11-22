@@ -149,7 +149,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                         return DisciplineView.DisciplinesToView(_repo, discList).OrderBy(dv => dv.TeacherFio).ToList();
                     }, _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }

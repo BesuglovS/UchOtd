@@ -2354,35 +2354,16 @@ namespace UchOtd.Core
                         oTable.Cell(timeRowIndex, columnGroupIndex).VerticalAlignment =
                             WdCellVerticalAlignment.wdCellAlignVerticalCenter;
 
-                        var timeTable = oDoc.Tables.Add(oTable.Cell(timeRowIndex, columnGroupIndex).Range, 1, @group.Value[time].Count);
-                        /*
-                        for (int i = 0; i < @group.Value[time].Count - 1; i++)
-                        {
-                            timeTable.Columns.Add();
-                        }
-                         */
-
                         var groupDowTimeLessons = @group.Value[time]
                             .OrderBy(tfd => tfd.Value.Item2.Select(l =>
                                 repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min())
                             .ToList();
 
-                        if (!((@group.Value[time].Count == 2) && ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт.")))))
-                        {
-                            for (int i = 0; i < @group.Value[time].Count - 1; i++)
-                            {
-                                timeTable.Cell(1, i + 1).Borders[WdBorderType.wdBorderRight].Visible = true;
-                            }
-                        }
-                        timeTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
-                        timeTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
-                        timeTable.Range.Font.Size = 10;
-                        timeTable.Range.Font.Bold = 0;
+
+                        
 
                         var tfdIndex = 0;
-
-
-
+                        
                         if (groupDowTimeLessons.Count() == 2)
                         {
                             if (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.") &&
@@ -2403,9 +2384,81 @@ namespace UchOtd.Core
                             rng.Borders[WdBorderType.wdBorderDiagonalUp].LineStyle = WdLineStyle.wdLineStyleSingle;
                         }
 
-                        foreach (var tfdData in groupDowTimeLessons)
+
+                        var groupObject = repo.StudentGroups.GetStudentGroup(@group.Key);
+                        var subGroupOne = repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupObject.Name + "1");
+                        var subGroupTwo = repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupObject.Name + "2");
+
+                        if (groupDowTimeLessons.Count() == 2)
                         {
+                            if (((subGroupOne != null) && (subGroupTwo != null)) && 
+                                ((groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId) &&
+                                 (groupDowTimeLessons[1].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId)))
+                            {
+                                var tmp = groupDowTimeLessons[0];
+                                groupDowTimeLessons[0] = groupDowTimeLessons[1];
+                                groupDowTimeLessons[1] = tmp;
+                            }
+                        }
+
+                        var addSubGroupColumn = 0;
+
+                        if ((groupDowTimeLessons.Count() == 1) &&
+                            (subGroupOne != null) &&
+                            (groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId))
+                        {
+                            addSubGroupColumn = 1;
+
+                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Lesson>>>(-1, null);
+                            groupDowTimeLessons.Add(emptytfd);
+                        }
+
+                        if ((groupDowTimeLessons.Count() == 1) &&
+                            (subGroupTwo != null) &&
+                            (groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId))
+                        {
+                            addSubGroupColumn = 1;
+
+                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Lesson>>>(-1, null);
+                            groupDowTimeLessons.Add(emptytfd);
+
+                            var tmp = groupDowTimeLessons[0];
+                            groupDowTimeLessons[0] = groupDowTimeLessons[1];
+                            groupDowTimeLessons[1] = tmp;
+                        }
+
+                        var timeTable = oDoc.Tables.Add(oTable.Cell(timeRowIndex, columnGroupIndex).Range, 1, @group.Value[time].Count + addSubGroupColumn);
+
+                        if (!((groupDowTimeLessons.Count == 2) && 
+                            (((groupDowTimeLessons[0].Value != null) && (groupDowTimeLessons[1].Value != null)) &&
+                             ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт."))))))
+                        {
+                            for (int i = 0; i < groupDowTimeLessons.Count - 1; i++)
+                            {
+                                timeTable.Cell(1, i + 1).Borders[WdBorderType.wdBorderRight].Visible = true;
+                            }
+                        }
+
+
+                        timeTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+                        timeTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                        timeTable.Range.Font.Size = 10;
+                        timeTable.Range.Font.Bold = 0;
+                       
+
+                        //foreach (var tfdData in groupDowTimeLessons)
+                        for (int i = 0; i < groupDowTimeLessons.Count; i++)                            
+                        {
+                            var tfdData = groupDowTimeLessons[i];
+
                             var cellText = "";
+
+                            if (tfdData.Value == null)
+                            {
+                                tfdIndex++;
+
+                                continue;
+                            }
 
                             var discName = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
 

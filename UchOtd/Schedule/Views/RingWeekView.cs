@@ -4,6 +4,7 @@ using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace UchOtd.Schedule.Views
 {
@@ -19,9 +20,11 @@ namespace UchOtd.Schedule.Views
         public string SatWishes { get; set; }
         public string SunWishes { get; set; }
 
-        public static List<RingWeekView> GetRingWeekView(ScheduleRepository repo, Teacher teacher)
+        public static List<RingWeekView> GetRingWeekView(ScheduleRepository repo, Teacher teacher, CancellationToken cToken)
         {
             var result = new List<RingWeekView>();
+
+            cToken.ThrowIfCancellationRequested();
 
             var filteredWishes = repo
                 .TeacherWishes
@@ -37,9 +40,13 @@ namespace UchOtd.Schedule.Views
                     }
                 );
 
+            cToken.ThrowIfCancellationRequested();
+
             foreach (var ringWishes in filteredWishes)
             {
-                var ringWeekView = new RingWeekView {RingId = ringWishes.RingId};
+                cToken.ThrowIfCancellationRequested();
+
+                var ringWeekView = new RingWeekView {RingId = ringWishes.RingId};                
 
                 foreach (var dowWishes in ringWishes.RingWishes)
                 {

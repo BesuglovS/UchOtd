@@ -106,7 +106,7 @@ namespace UchOtd.Schedule.Forms
                         return CreateGroupsTableView(groupsLessons, _cToken);
                     }, _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }

@@ -341,7 +341,7 @@ namespace UchOtd.Forms
                         GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, _cToken),
                         _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -391,7 +391,7 @@ namespace UchOtd.Forms
 
                     WordExport.TeacherSchedule(result, teacher, false, _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -433,7 +433,7 @@ namespace UchOtd.Forms
 
                     WordExport.TeacherSchedule(result, teacher, true, _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -460,7 +460,7 @@ namespace UchOtd.Forms
                 {
                     await Task.Run(() => WordExport.TeachersSchedule(repo, this, _cToken), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }

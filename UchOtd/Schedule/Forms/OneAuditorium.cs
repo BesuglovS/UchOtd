@@ -56,7 +56,7 @@ namespace UchOtd.Schedule.Forms
                 data = await Task.Run(() => 
                     _repo.CommonFunctions.GetAud(auditoriumId, isShowProposed, _cToken), _cToken);
             }
-            catch (OperationCanceledException exc)
+            catch (OperationCanceledException)
             {
             }
 

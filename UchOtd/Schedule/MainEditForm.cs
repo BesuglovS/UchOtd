@@ -166,7 +166,7 @@ namespace UchOtd.Schedule
                 {
                     ScheduleView.DataSource = await Task.Run(() => GetGroupSchedule(groupId, showProposed, _cToken, isWeekFilered, weekFilterNum), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                     cancelled = true;
                 }
@@ -984,7 +984,7 @@ namespace UchOtd.Schedule
                 {
                     await Task.Run(() => WnuUpload.UploadSchedule(repo, uploadDbPrefix, _cToken), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -1083,7 +1083,7 @@ namespace UchOtd.Schedule
                 {
                     await Task.Run(() => AuditoriumCollisions(_cToken), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -1117,7 +1117,7 @@ namespace UchOtd.Schedule
                 {
                     await Task.Run(() => PlanCompletionPercentage(_cToken), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -1447,7 +1447,7 @@ namespace UchOtd.Schedule
                 {
                     await Task.Run(() => PdfPageExport(facultyId, ruDow, facultyName, _cToken), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -1693,7 +1693,7 @@ namespace UchOtd.Schedule
                     repo, "Расписание.docx", false, false, length80Or90, facultyId, ruDow, 6,
                     wordWeekFiltered, weekFilter, !wordWeekFiltered, onlyFutureDates, _cToken), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -1735,7 +1735,7 @@ namespace UchOtd.Schedule
                 wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
         }
 
-        private async void BIGREDBUTTON_Click(object sender, EventArgs e)
+        private void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
             /*
             BIGREDBUTTON.Text = "Waiting";
@@ -1775,7 +1775,7 @@ namespace UchOtd.Schedule
             var c1 = Repo.Auditoriums.Count();
             var c2 = await Repo.Auditoriums.CountAsync();
             */
-            var eprst = 999;
+            //var eprst = 999;
 
 
             //dayDelta_Click(sender, e);
@@ -1824,7 +1824,7 @@ namespace UchOtd.Schedule
                             Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
                             wordWeekFiltered, weekFilter, !wordWeekFiltered, _cToken), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -1858,7 +1858,7 @@ namespace UchOtd.Schedule
                                 Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
                                 wordWeekFiltered, weekFilter, !wordWeekFiltered, _cToken), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -1908,7 +1908,7 @@ namespace UchOtd.Schedule
                 {
                     await Task.Run(() => WordExport.ExportGroupSchedulePage(Repo, this, groupId, _cToken), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -1934,7 +1934,7 @@ namespace UchOtd.Schedule
                 {
                     await Task.Run(() => WordExport.ExportWholeScheduleOneGroupPerPage(Repo, this, _cToken), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -1976,7 +1976,7 @@ namespace UchOtd.Schedule
                             Repo, "Расписание.docx", false, false, 40, facultyId, ruDow, 6,
                             wordWeekFiltered, weekFilter, !wordWeekFiltered, _cToken), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -2070,7 +2070,7 @@ namespace UchOtd.Schedule
                         }
                     }, _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }

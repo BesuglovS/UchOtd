@@ -216,8 +216,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                     }
 
 
-                    
 
+
+                    
                     if (_cToken.IsCancellationRequested)
                     {
                         M("Анализ отменён.", LogLevel.ErrorsOnly);

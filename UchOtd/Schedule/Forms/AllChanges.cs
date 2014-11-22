@@ -141,7 +141,7 @@ namespace UchOtd.Schedule.Forms
                         return LessonLogEventView.FromEventList(changes);
                     }, _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
 

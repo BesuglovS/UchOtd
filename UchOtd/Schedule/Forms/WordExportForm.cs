@@ -125,7 +125,7 @@ namespace UchOtd.Schedule.Forms
                                 _choice, _repo, "Расписание.docx", false, false,
                                 lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, _cToken), _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }

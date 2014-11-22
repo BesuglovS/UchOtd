@@ -63,7 +63,7 @@ namespace UchOtd.Schedule.Forms
                         return localAuds;
                     }, _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -121,7 +121,7 @@ namespace UchOtd.Schedule.Forms
                         return localAuds;
                     }, _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -179,7 +179,7 @@ namespace UchOtd.Schedule.Forms
                         return localAuds;
                     }, _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -237,7 +237,7 @@ namespace UchOtd.Schedule.Forms
                         return localAuds;
                     }, _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -295,7 +295,7 @@ namespace UchOtd.Schedule.Forms
                         return localAuds;
                     }, _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
@@ -353,7 +353,7 @@ namespace UchOtd.Schedule.Forms
                         return localAuds;
                     }, _cToken);
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }

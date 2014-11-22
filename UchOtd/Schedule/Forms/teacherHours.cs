@@ -154,7 +154,7 @@ namespace UchOtd.Schedule.Forms
 
 
                 }
-                catch (OperationCanceledException exc)
+                catch (OperationCanceledException)
                 {
                 }
             }
