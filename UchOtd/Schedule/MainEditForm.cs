@@ -153,7 +153,8 @@ namespace UchOtd.Schedule
 
                 var cancelled = false;
 
-                showGroupLessons.Text = "Отмена";
+                showGroupLessons.Text = "";
+                showGroupLessons.Image = UchOtd.Properties.Resources.Loading;
 
                 var groupId = (int) groupList.SelectedValue;
                 var showProposed = showProposedLessons.Checked;
@@ -176,6 +177,7 @@ namespace UchOtd.Schedule
                     UpdateViewWidth();
                 }
 
+                showGroupLessons.Image = null;
                 showGroupLessons.Text = "Go";
             }
             else
@@ -972,7 +974,8 @@ namespace UchOtd.Schedule
             {
                 _cToken = _tokenSource.Token;
 
-                LoadToSite.Text = "Отмена";
+                LoadToSite.Text = "";
+                LoadToSite.Image = UchOtd.Properties.Resources.Loading;
 
                 var repo = Repo;
                 var uploadDbPrefix = uploadPrefix.Text;
@@ -990,6 +993,7 @@ namespace UchOtd.Schedule
                 _tokenSource.Cancel();
             }
 
+            LoadToSite.Image = null;
             LoadToSite.Text = "Загрузить на сайт";
         }
 
@@ -1072,7 +1076,8 @@ namespace UchOtd.Schedule
             {
                 _cToken = _tokenSource.Token;
 
-                auditoriumKaput.Text = "Отмена";
+                auditoriumKaput.Text = "";
+                auditoriumKaput.Image = UchOtd.Properties.Resources.Loading;
                 
                 try
                 {
@@ -1087,6 +1092,7 @@ namespace UchOtd.Schedule
                 _tokenSource.Cancel();
             }
 
+            auditoriumKaput.Image = null;
             auditoriumKaput.Text = "Коллизии аудиторий";
         }
 
@@ -1430,7 +1436,8 @@ namespace UchOtd.Schedule
             {
                 _cToken = _tokenSource.Token;
 
-                CreatePDF.Text = "Отмена";
+                CreatePDF.Text = "";
+                CreatePDF.Image = UchOtd.Properties.Resources.Loading;
 
                 var facultyId = (int)FacultyList.SelectedValue;
                 var facultyName = Repo.Faculties.GetFaculty(facultyId).Name;
@@ -1449,6 +1456,7 @@ namespace UchOtd.Schedule
                 _tokenSource.Cancel();
             }
 
+            CreatePDF.Image = null;
             CreatePDF.Text = "PDF";
         }
 
@@ -1667,7 +1675,8 @@ namespace UchOtd.Schedule
             {
                 _cToken = _tokenSource.Token;
 
-                WordExportButton.Text = "Отмена";
+                WordExportButton.Text = "";
+                WordExportButton.Image = UchOtd.Properties.Resources.Loading;
 
                 var repo = Repo;
                 var length80Or90 = cb90.Checked ? 90 : 80;
@@ -1692,7 +1701,8 @@ namespace UchOtd.Schedule
             {
                 _tokenSource.Cancel();
             }
-            
+
+            WordExportButton.Image = null;
             WordExportButton.Text = "Word";
         }
 
@@ -1799,7 +1809,8 @@ namespace UchOtd.Schedule
             {
                 _cToken = _tokenSource.Token;
 
-                WordSchool.Text = "Отмена";
+                WordSchool.Text = "";
+                WordSchool.Image = UchOtd.Properties.Resources.Loading;
 
                 var facultyId = (int)FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
@@ -1822,6 +1833,7 @@ namespace UchOtd.Schedule
                 _tokenSource.Cancel();
             }
 
+            WordSchool.Image = null;
             WordSchool.Text = "Word (ШКОЛА)";
         }
 
@@ -1831,7 +1843,8 @@ namespace UchOtd.Schedule
             {
                 _cToken = _tokenSource.Token;
 
-                WordSchool2.Text = "Отмена";
+                WordSchool2.Text = "";
+                WordSchool2.Image = UchOtd.Properties.Resources.Loading;
 
                 var facultyId = (int)FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
@@ -1854,6 +1867,7 @@ namespace UchOtd.Schedule
                 _tokenSource.Cancel();
             }
 
+            WordSchool2.Image = null;
             WordSchool2.Text = "Word (ШКОЛА) 2 дн.";
         }
 
@@ -1885,7 +1899,8 @@ namespace UchOtd.Schedule
             {
                 _cToken = _tokenSource.Token;
 
-                OnePageGroupScheduleWordExport.Text = "Отмена";
+                OnePageGroupScheduleWordExport.Text = "";
+                OnePageGroupScheduleWordExport.Image = UchOtd.Properties.Resources.Loading;
 
                 var groupId = (int)groupList.SelectedValue;
 
@@ -1902,6 +1917,7 @@ namespace UchOtd.Schedule
                 _tokenSource.Cancel();
             }
 
+            OnePageGroupScheduleWordExport.Image = null;
             OnePageGroupScheduleWordExport.Text = "Экспорт в Word - одна группа";
         }
 
@@ -1911,7 +1927,8 @@ namespace UchOtd.Schedule
             {
                 _cToken = _tokenSource.Token;
 
-                WordWholeScheduleOneGroupOnePage.Text = "Отмена";
+                WordWholeScheduleOneGroupOnePage.Text = "";
+                WordWholeScheduleOneGroupOnePage.Image = UchOtd.Properties.Resources.Loading;
                 
                 try
                 {
@@ -1926,6 +1943,7 @@ namespace UchOtd.Schedule
                 _tokenSource.Cancel();
             }
 
+            WordWholeScheduleOneGroupOnePage.Image = null;
             WordWholeScheduleOneGroupOnePage.Text = "Всё расписание в Word 1 группа на 1 стр.";
         }
 
@@ -1943,7 +1961,8 @@ namespace UchOtd.Schedule
             {
                 _cToken = _tokenSource.Token;
 
-                startSchoolWordExport.Text = "Отмена";
+                startSchoolWordExport.Text = "";
+                startSchoolWordExport.Image = UchOtd.Properties.Resources.Loading;
 
                 var facultyId = (int)FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
@@ -1966,6 +1985,7 @@ namespace UchOtd.Schedule
                 _tokenSource.Cancel();
             }
 
+            startSchoolWordExport.Image = null;
             startSchoolWordExport.Text = "Word (1-7)";
         }
 
@@ -2030,7 +2050,8 @@ namespace UchOtd.Schedule
             {
                 _cToken = _tokenSource.Token;
 
-                removeAllProposedLessons.Text = "Отмена";
+                removeAllProposedLessons.Text = "";
+                removeAllProposedLessons.Image = UchOtd.Properties.Resources.Loading;
                 
                 try
                 {
@@ -2058,6 +2079,7 @@ namespace UchOtd.Schedule
                 _tokenSource.Cancel();
             }
 
+            removeAllProposedLessons.Image = null;
             removeAllProposedLessons.Text = "Удалить все преполагаемые уроки";
         }
 

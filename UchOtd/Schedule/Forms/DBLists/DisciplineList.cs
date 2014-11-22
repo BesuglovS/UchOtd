@@ -70,7 +70,8 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 _cToken = _tokenSource.Token;
 
-                refresh.Text = "Отмена";
+                refresh.Text = "";
+                refresh.Image = UchOtd.Properties.Resources.Loading;
 
                 var filterText = filter.Text;
                 var discNameF = discnameFilter.Checked;
@@ -159,6 +160,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             Text = "Дисциплины - " + discView.Count();
 
+            refresh.Image = null;
             refresh.Text = "Обновить";
             
             DiscipineListView.DataSource = discView;

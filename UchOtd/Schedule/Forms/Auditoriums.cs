@@ -44,7 +44,8 @@ namespace UchOtd.Schedule.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                Mon.Text = "Отмена";
+                Mon.Text = "";
+                Mon.Image = UchOtd.Properties.Resources.Loading;
 
                 try
                 {
@@ -71,6 +72,7 @@ namespace UchOtd.Schedule.Forms
                 _tokenSource.Cancel();
             }
 
+            Mon.Image = null;
             Mon.Text = "Понедельник";
             
             if (!wordExport && (auds != null))
@@ -100,7 +102,8 @@ namespace UchOtd.Schedule.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                Tue.Text = "Отмена";
+                Tue.Text = "";
+                Tue.Image = UchOtd.Properties.Resources.Loading;
 
                 try
                 {
@@ -127,6 +130,7 @@ namespace UchOtd.Schedule.Forms
                 _tokenSource.Cancel();
             }
 
+            Tue.Image = null;
             Tue.Text = "Вторник";
 
             if (!wordExport && (auds != null))
@@ -156,7 +160,8 @@ namespace UchOtd.Schedule.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                Wed.Text = "Отмена";
+                Wed.Text = "";
+                Wed.Image = UchOtd.Properties.Resources.Loading;
 
                 try
                 {
@@ -183,6 +188,7 @@ namespace UchOtd.Schedule.Forms
                 _tokenSource.Cancel();
             }
 
+            Wed.Image = null;
             Wed.Text = "Среда";
 
             if (!wordExport && (auds != null))
@@ -212,7 +218,8 @@ namespace UchOtd.Schedule.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                Thu.Text = "Отмена";
+                Thu.Text = "";
+                Thu.Image = UchOtd.Properties.Resources.Loading;
 
                 try
                 {
@@ -239,6 +246,7 @@ namespace UchOtd.Schedule.Forms
                 _tokenSource.Cancel();
             }
 
+            Thu.Image = null;
             Thu.Text = "Четверг";
 
             if (!wordExport && (auds != null))
@@ -268,7 +276,8 @@ namespace UchOtd.Schedule.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                Fri.Text = "Отмена";
+                Fri.Text = "";
+                Fri.Image = UchOtd.Properties.Resources.Loading;
 
                 try
                 {
@@ -295,6 +304,7 @@ namespace UchOtd.Schedule.Forms
                 _tokenSource.Cancel();
             }
 
+            Fri.Image = null;
             Fri.Text = "Пятница";
 
             if (!wordExport && (auds != null))
@@ -324,7 +334,8 @@ namespace UchOtd.Schedule.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                Sat.Text = "Отмена";
+                Sat.Text = "";
+                Sat.Image = UchOtd.Properties.Resources.Loading;
 
                 try
                 {
@@ -351,6 +362,7 @@ namespace UchOtd.Schedule.Forms
                 _tokenSource.Cancel();
             }
 
+            Sat.Image = null;
             Sat.Text = "Суббота";
 
             if (!wordExport && (auds != null))

@@ -113,7 +113,8 @@ namespace UchOtd.Schedule.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                button.Text = "Отмена";
+                button.Text = "";
+                button.Image = UchOtd.Properties.Resources.Loading;
 
                 var lesson8090Length = ((CheckBox)Controls.Find("cb90", false).First()).Checked ? 90 : 80;
                 var futureDatesOnly = ((CheckBox)Controls.Find("cbfuture", false).First()).Checked;
@@ -133,6 +134,7 @@ namespace UchOtd.Schedule.Forms
                 _tokenSource.Cancel();
             }
 
+            button.Image = null;
             button.Text = "Экспорт";
         }
     }

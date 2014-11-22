@@ -79,7 +79,8 @@ namespace UchOtd.Schedule.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                UpdateView.Text = "Отмена";
+                UpdateView.Text = "";
+                UpdateView.Image = UchOtd.Properties.Resources.Loading;
 
                 var tfd = tfdFiltering.Checked;
                 var tfdId = (int) tfdFilter.SelectedValue;
@@ -153,6 +154,7 @@ namespace UchOtd.Schedule.Forms
                 _tokenSource.Cancel();
             }
 
+            UpdateView.Image = null;
             UpdateView.Text = "Обновить";
         }
     }

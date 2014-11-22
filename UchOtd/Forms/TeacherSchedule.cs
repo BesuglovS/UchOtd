@@ -323,7 +323,8 @@ namespace UchOtd.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                refresh.Text = "Отмена";
+                refresh.Image = UchOtd.Properties.Resources.Loading;
+                refresh.Text = "";
 
                 var teacherId = (int) teacherList.SelectedValue;
                 var isWeekFiltered = weekFiltered.Checked;
@@ -349,7 +350,9 @@ namespace UchOtd.Forms
                 _tokenSource.Cancel();
             }
 
+            refresh.Image = null;
             refresh.Text = "Обновить";
+            
 
             if (result != null)
             {
@@ -365,7 +368,8 @@ namespace UchOtd.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                ExportInWordPortrait.Text = "Отмена";
+                ExportInWordPortrait.Text = "";
+                ExportInWordPortrait.Image = UchOtd.Properties.Resources.Loading;
 
                 var isWeekFiltered = weekFiltered.Checked;
                 int weekNum = -1;
@@ -396,6 +400,7 @@ namespace UchOtd.Forms
                 _tokenSource.Cancel();
             }
 
+            ExportInWordPortrait.Image = null;
             ExportInWordPortrait.Text = "Word (портретная)";
         }
 
@@ -405,7 +410,8 @@ namespace UchOtd.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                ExportInWordLandscape.Text = "Отмена";
+                ExportInWordLandscape.Text = "";
+                ExportInWordLandscape.Image = UchOtd.Properties.Resources.Loading;
 
                 var isWeekFiltered = weekFiltered.Checked;
                 int weekNum = -1;
@@ -436,6 +442,7 @@ namespace UchOtd.Forms
                 _tokenSource.Cancel();
             }
 
+            ExportInWordLandscape.Image = null;
             ExportInWordLandscape.Text = "Word (ландшафтная)";
         }
 
@@ -446,7 +453,8 @@ namespace UchOtd.Forms
                 _cToken = _tokenSource.Token;
                 var repo = _repo;
 
-                ExportAllTeachersInWord.Text = "Отмена";
+                ExportAllTeachersInWord.Text = "";
+                ExportAllTeachersInWord.Image = UchOtd.Properties.Resources.Loading;
                 
                 try
                 {
@@ -461,6 +469,7 @@ namespace UchOtd.Forms
                 _tokenSource.Cancel();
             }
 
+            ExportAllTeachersInWord.Image = null;
             ExportAllTeachersInWord.Text = "Word (все преподаватели)";
         }
     }

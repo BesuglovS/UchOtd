@@ -137,7 +137,8 @@ namespace UchOtd.Schedule.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                update.Text = "Отмена";
+                update.Text = "";
+                update.Image = UchOtd.Properties.Resources.Loading;
 
                 var teacherId = (int)teachersList.SelectedValue;
 
@@ -162,6 +163,7 @@ namespace UchOtd.Schedule.Forms
                 _tokenSource.Cancel();
             }
 
+            update.Image = null;
             update.Text = "Обновить";
 
             if (tfdInfo != null)
