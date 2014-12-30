@@ -151,5 +151,63 @@ namespace UchOtd.Schedule.Forms.DBLists
                 RefreshView();
             }
         }
+
+        private void EightyToNinety_Click(object sender, EventArgs e)
+        {
+            var replaceList = new Dictionary<TimeSpan, TimeSpan> { 
+                { new TimeSpan(8, 0, 0), new TimeSpan(7, 30, 0) },
+                { new TimeSpan(9, 25, 0), new TimeSpan(9, 5, 0) },
+                { new TimeSpan(11, 5, 0), new TimeSpan(10, 50, 0) },
+                { new TimeSpan(12, 35, 0), new TimeSpan(12, 25, 0) },                
+                { new TimeSpan(15, 40, 0), new TimeSpan(15, 35, 0) },
+                { new TimeSpan(17, 5, 0), new TimeSpan(17, 20, 0) },
+                { new TimeSpan(18, 35, 0), new TimeSpan(19, 0, 0) }
+            };
+
+            foreach (var ring in _repo.Rings.GetAllRings())
+            {
+                if (replaceList.ContainsKey(ring.Time.TimeOfDay))
+                {
+                    var newTime = replaceList[ring.Time.TimeOfDay];
+                    var newRingTime = new DateTime(2000, 1, 1,
+                        newTime.Hours, newTime.Minutes, newTime.Seconds);
+
+                    ring.Time = newRingTime;
+
+                    _repo.Rings.UpdateRing(ring);
+                }
+            }
+
+            RefreshView();
+        }
+
+        private void NinetyToEighty_Click(object sender, EventArgs e)
+        {
+            var replaceList = new Dictionary<TimeSpan, TimeSpan> { 
+                { new TimeSpan(7, 30, 0), new TimeSpan(8, 0, 0) },
+                { new TimeSpan(9, 5, 0), new TimeSpan(9, 25, 0) },
+                { new TimeSpan(10, 50, 0), new TimeSpan(11, 5, 0) },
+                { new TimeSpan(12, 25, 0), new TimeSpan(12, 35, 0) },
+                { new TimeSpan(15, 35, 0), new TimeSpan(15, 40, 0) },
+                { new TimeSpan(17, 20, 0), new TimeSpan(17, 5, 0) },
+                { new TimeSpan(19, 0, 0), new TimeSpan(18, 35, 0) }
+            };
+
+            foreach (var ring in _repo.Rings.GetAllRings())
+            {
+                if (replaceList.ContainsKey(ring.Time.TimeOfDay))
+                {
+                    var newTime = replaceList[ring.Time.TimeOfDay];
+                    var newRingTime = new DateTime(2000, 1, 1,
+                        newTime.Hours, newTime.Minutes, newTime.Seconds);
+
+                    ring.Time = newRingTime;
+
+                    _repo.Rings.UpdateRing(ring);
+                }
+            }
+
+            RefreshView();
+        }
     }
 }

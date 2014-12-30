@@ -79,13 +79,16 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var hourFitF = HoursFitFiltered.Checked;
                 var mixedGroupsF = mixedGroups.Checked;
                 var groupId = (int)groupNameList.SelectedValue;
+                var noCultureF = noCulture.Checked;
+                var withExamsOnlyF = WithExamsOnly.Checked;
+                var orderbyGroupNameF = orderByGroupname.Checked;
 
                 try
                 {
                     discView = await Task.Run(() => {
                         List<Discipline> discList = null;
 
-                        if ((filter.Text != "") && discnameFilter.Checked)
+                        if ((filterText != "") && discnameFilter.Checked)
                         {
                             discList = _repo.Disciplines.GetFiltredDisciplines(disc => disc.Name.Contains(filter.Text));
                         }
@@ -94,7 +97,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                             discList = _repo.Disciplines.GetAllDisciplines();
                         }
 
-                        if (groupnameFilter.Checked)
+                        if (groupNameF)
                         {
                             var studentIds = _repo
                                 .StudentsInGroups
@@ -142,11 +145,21 @@ namespace UchOtd.Schedule.Forms.DBLists
                             discList = discList.Where(disc => disc.StudentGroup.Name.Contains(" + ")).ToList();
                         }
 
-                        discList = orderByGroupname.Checked ?
+                        if (noCultureF)
+                        {
+                            discList = discList.Where(d => !d.Name.ToLower().Contains("физическая культура")).ToList();
+                        }
+
+                        if (withExamsOnlyF)
+                        {
+                            discList = discList.Where(d => (d.Attestation == 2) || (d.Attestation == 3)).ToList();
+                        }
+
+                        discList = orderbyGroupNameF ?
                             discList.OrderBy(disc => disc.StudentGroup.Name).ToList() :
                             discList.OrderBy(disc => disc.Name).ToList();
 
-                        return DisciplineView.DisciplinesToView(_repo, discList).OrderBy(dv => dv.TeacherFio).ToList();
+                        return DisciplineView.DisciplinesToView(_repo, discList).OrderBy(v => v.TeacherFio).ToList();
                     }, _cToken);
                 }
                 catch (OperationCanceledException)

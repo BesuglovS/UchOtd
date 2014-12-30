@@ -89,12 +89,13 @@ namespace Schedule.Repositories.Repositories.Main
         public override void Delete(Auditorium aud)
         {
             using (var context = new ScheduleContext(ConnectionString))
-            {
-                /*var aud = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == auditoriumId);
-
-                context.Auditoriums.Remove(aud);*/
-                context.Set<Auditorium>().Remove(aud);
-                context.SaveChanges();
+            {                
+                var audFound = context.Set<Auditorium>().FirstOrDefault(a => a.AuditoriumId == aud.AuditoriumId);
+                if (audFound != null)
+                {
+                    context.Set<Auditorium>().Remove(audFound);
+                    context.SaveChanges();
+                }
             }
         }
 

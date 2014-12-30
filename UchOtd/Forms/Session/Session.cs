@@ -58,6 +58,7 @@ namespace UchOtd.Forms.Session
                 .StudentGroups
                 .GetFiltredStudentGroups(sg => 
                     !(sg.Name.Contains("-") || sg.Name.Contains("I") || sg.Name.Contains(".")))
+                .OrderBy(sg => sg.Name)
                 .ToList();
 
 

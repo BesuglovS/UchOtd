@@ -1047,7 +1047,8 @@ namespace UchOtd.Core
         public static void ExportCustomSchedule(
             // facultyId, List od DOW
             Dictionary<int, List<int>> facultyDow, ScheduleRepository repo, string filename, bool save, bool quit, 
-            int lessonLength, int daysOfWeek, bool schoolHeader, bool onlyFutureDates, CancellationToken cToken)
+            int lessonLength, int daysOfWeek, bool schoolHeader, bool onlyFutureDates, 
+            bool weekFiltered, int weekFilter, CancellationToken cToken)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
@@ -1087,7 +1088,7 @@ namespace UchOtd.Core
 
                     cToken.ThrowIfCancellationRequested();
 
-                    var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, false, -1, false, onlyFutureDates);
+                    var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, onlyFutureDates);
 
                     cToken.ThrowIfCancellationRequested();
 
@@ -2651,7 +2652,7 @@ namespace UchOtd.Core
 
                     var sStarts = repo.CommonFunctions.GetSemesterStarts();
 
-                    var groupLessons = repo.Lessons.GetGroupedGroupLessons(group.StudentGroupId, sStarts, -1, false);
+                    var groupLessons = repo.Lessons.GetGroupedGroupLessons(group.StudentGroupId, sStarts, -1, false, false);
 
                     var groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons, false);
 
@@ -2724,7 +2725,9 @@ namespace UchOtd.Core
             }
         }
 
-        public static void ExportGroupSchedulePage(ScheduleRepository repo, MainEditForm form, int groupId, CancellationToken cToken)
+        public static void ExportGroupSchedulePage(ScheduleRepository repo, MainEditForm form, int groupId,
+            bool weekFilteredF, int weekFilterNum,
+            bool onlyFutureDates, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
 
@@ -2746,7 +2749,12 @@ namespace UchOtd.Core
 
             cToken.ThrowIfCancellationRequested();
 
-            var groupLessons = repo.Lessons.GetGroupedGroupLessons(group.StudentGroupId, sStarts, -1, false);
+            var weekFilter = -1;
+            if (weekFilteredF)
+            {
+                weekFilter = weekFilterNum;
+            }
+            var groupLessons = repo.Lessons.GetGroupedGroupLessons(group.StudentGroupId, sStarts, weekFilter, false, onlyFutureDates);
 
             cToken.ThrowIfCancellationRequested();
 

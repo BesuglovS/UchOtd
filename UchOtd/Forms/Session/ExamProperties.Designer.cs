@@ -114,7 +114,7 @@
             this.ExamDate.Name = "ExamDate";
             this.ExamDate.Size = new System.Drawing.Size(148, 20);
             this.ExamDate.TabIndex = 57;
-            this.ExamDate.Value = new System.DateTime(2014, 1, 9, 10, 0, 0, 0);
+            this.ExamDate.Value = new System.DateTime(2015, 1, 12, 0, 0, 0, 0);
             // 
             // ConsDate
             // 
@@ -124,7 +124,7 @@
             this.ConsDate.Name = "ConsDate";
             this.ConsDate.Size = new System.Drawing.Size(126, 20);
             this.ConsDate.TabIndex = 56;
-            this.ConsDate.Value = new System.DateTime(2014, 1, 9, 10, 0, 0, 0);
+            this.ConsDate.Value = new System.DateTime(2015, 1, 12, 0, 0, 0, 0);
             // 
             // Exam
             // 

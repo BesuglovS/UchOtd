@@ -25,7 +25,7 @@ namespace UchOtd
 {
     public partial class StartupForm : Form
     {
-        public static bool School = true;
+        public static bool School = false;
         public static string DefaultDbName = "Schedule14151";
         //public static string DefaultDbName = "School";
 

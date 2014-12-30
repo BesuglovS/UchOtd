@@ -126,7 +126,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        public List<GroupTableView> GetGroupSchedule(int groupId, bool showProposed, CancellationToken cToken, bool isWeekFilered, int weekFilterNum)
+        public List<GroupTableView> GetGroupSchedule(int groupId, bool showProposed, CancellationToken cToken, bool isWeekFilered, int weekFilterNum, bool onlyFutureDates)
         {
             var sStarts = Repo.CommonFunctions.GetSemesterStarts();
 
@@ -138,7 +138,7 @@ namespace UchOtd.Schedule
 
             cToken.ThrowIfCancellationRequested();
 
-            var groupLessons = Repo.Lessons.GetGroupedGroupLessons(groupId, sStarts, weekNum, showProposed);
+            var groupLessons = Repo.Lessons.GetGroupedGroupLessons(groupId, sStarts, weekNum, showProposed, onlyFutureDates);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -161,10 +161,11 @@ namespace UchOtd.Schedule
                 var isWeekFilered = weekFiltered.Checked;
                 int weekFilterNum = -1;
                 int.TryParse(WeekFilter.Text, out weekFilterNum);
+                var onlyFutureDates = OnlyFutureDatesExportInWord.Checked;
 
                 try
                 {
-                    ScheduleView.DataSource = await Task.Run(() => GetGroupSchedule(groupId, showProposed, _cToken, isWeekFilered, weekFilterNum), _cToken);
+                    ScheduleView.DataSource = await Task.Run(() => GetGroupSchedule(groupId, showProposed, _cToken, isWeekFilered, weekFilterNum, onlyFutureDates), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -331,8 +332,6 @@ namespace UchOtd.Schedule
                     var item = dt.Value.ElementAt(i);
                     var tfd = item.Value.Item2[0].TeacherForDiscipline;
                     var state = item.Value.Item2[0].State;
-
-
 
                     var discName = tfd.Discipline.Name;
                     if (tfd.Discipline.StudentGroup.StudentGroupId != groupId &&
@@ -546,14 +545,14 @@ namespace UchOtd.Schedule
         {
             String semesterString = (Repo.CommonFunctions.GetSemesterStarts().Month > 6) ? " (1 семестр)" : " (2 семестр)";
 
-            
+            /*
             foreach (var faculty in Repo.Faculties.GetAllFaculties().OrderBy(f => f.SortingOrder))
-            {
+            {*/
             //var faculty = _repo.GetFirstFiltredFaculty(f => f.Letter == "Г");
-
+            /*
                 foreach (var group in Repo.Faculties.GetFacultyGroups(faculty.FacultyId))
-                {
-                    //var group = _repo.GetFirstFiltredStudentGroups(sg => sg.Name == "12 Т");
+                {*/
+            var group = Repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == "12 Т");
 
                     AppendToFile(filename, "*" + group.Name + semesterString);
 
@@ -572,11 +571,7 @@ namespace UchOtd.Schedule
                     var tfds = Repo.TeacherForDisciplines.GetFiltredTeacherForDiscipline(tfd => groupsListIds.Contains(tfd.Discipline.StudentGroup.StudentGroupId));
 
                     foreach (var tfd in tfds)
-                    {
-                        if ((tfd.Discipline.AuditoriumHours == 0) || (!tfd.Discipline.Name.Contains("я куль")))
-                        {
-                            continue;
-                        }
+                    {                        
 
                         var sb = new StringBuilder();
                         sb.Append(
@@ -587,7 +582,7 @@ namespace UchOtd.Schedule
                         );
 
 
-                        var lessons = Repo.Lessons.GetFiltredLessons(l => (l.State == 2) && l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
+                        var lessons = Repo.Lessons.GetFiltredLessons(l => (l.State == 1) && l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
 
                         foreach (var lesson in lessons.OrderBy(l => l.Calendar.Date.Date))
                         {
@@ -596,8 +591,8 @@ namespace UchOtd.Schedule
 
                         AppendToFile(filename, sb.ToString());
                     }            
-                }
-            }
+              //  }
+            //}
         }
 
         private static void AppendToFile(String filename, String line)
@@ -1133,8 +1128,8 @@ namespace UchOtd.Schedule
         {
             cToken.ThrowIfCancellationRequested();
 
-            var allDiscLessonCount = Repo.Disciplines.GetAllDisciplines().Select(d => d.AuditoriumHours).Sum()/2;
-            var activeLessonsCount = Repo.Lessons.GetAllActiveLessons().Count();
+            var allDiscLessonCount = Repo.Disciplines.GetAllDisciplines().Where(d => !d.Name.Contains("я куль")).Select(d => d.AuditoriumHours).Sum() / 2;
+            var activeLessonsCount = Repo.Lessons.GetAllActiveLessons().Where(l => !l.TeacherForDiscipline.Discipline.Name.Contains("я куль")).Count();
             var diff = allDiscLessonCount - activeLessonsCount;
             String message = activeLessonsCount + " (" +
                              String.Format("{0:0.00}%", (double) activeLessonsCount*100/allDiscLessonCount) + ") / " +
@@ -1154,6 +1149,7 @@ namespace UchOtd.Schedule
                     (Repo.CommonFunctions.GetTfdHours(
                         Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
                             tfd => tfd.Discipline.DisciplineId == d.DisciplineId).TeacherForDisciplineId) != 0))
+                
                 .Count;
             var diff2 = discCount - touchedDiscs;
 
@@ -1242,89 +1238,92 @@ namespace UchOtd.Schedule
 
         private void dayDelta_Click(object sender, EventArgs e)
         {
-            // facultyId + DOW
-            var result = new List<Tuple<int, DayOfWeek>>();
+            Task.Run(new Action(() => { 
+                        
+                // facultyId + DOW
+                var result = new List<Tuple<int, DayOfWeek>>();
 
-            var evts = Repo.LessonLogEvents.GetFiltredLessonLogEvents(lle => lle.DateTime.Date == DateTime.Now.Date);
+                var evts = Repo.LessonLogEvents.GetFiltredLessonLogEvents(lle => lle.DateTime.Date == DateTime.Now.Date);
 
-            var fg = Repo.GroupsInFaculties.GetAllGroupsInFaculty()
-                .GroupBy(gif => gif.Faculty.FacultyId, 
-                         gif => gif.StudentGroup.StudentGroupId)
-                .ToList();
+                var fg = Repo.GroupsInFaculties.GetAllGroupsInFaculty()
+                    .GroupBy(gif => gif.Faculty.FacultyId, 
+                             gif => gif.StudentGroup.StudentGroupId)
+                    .ToList();
 
             
-            foreach (var ev in evts)
-            {   
-                int studentGroupId;
-                if (ev.OldLesson != null)
-                {
-                    studentGroupId = ev.OldLesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
-
-                    var studentIds = Repo
-                        .StudentsInGroups
-                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroupId)
-                        .Select(sig => sig.Student.StudentId)
-                        .ToList();
-
-                    var facultyScheduleChanged = (
-                            from faculty in fg
-                            where Repo
-                                .StudentsInGroups
-                                .GetFiltredStudentsInGroups(sig => 
-                                studentIds.Contains(sig.Student.StudentId) &&
-                                faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
-                            select faculty.Key)
-                        .ToList();
-
-                    var localEvent = ev;
-                    foreach (var dowFacTuple in facultyScheduleChanged
-                        .Select(faculty => Tuple.Create(faculty, localEvent.OldLesson.Calendar.Date.DayOfWeek))
-                        .Where(dowFacTuple => !result.Contains(dowFacTuple)))
+                foreach (var ev in evts)
+                {   
+                    int studentGroupId;
+                    if (ev.OldLesson != null)
                     {
-                        result.Add(dowFacTuple);
+                        studentGroupId = ev.OldLesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+
+                        var studentIds = Repo
+                            .StudentsInGroups
+                            .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroupId)
+                            .Select(sig => sig.Student.StudentId)
+                            .ToList();
+
+                        var facultyScheduleChanged = (
+                                from faculty in fg
+                                where Repo
+                                    .StudentsInGroups
+                                    .GetFiltredStudentsInGroups(sig => 
+                                    studentIds.Contains(sig.Student.StudentId) &&
+                                    faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
+                                select faculty.Key)
+                            .ToList();
+
+                        var localEvent = ev;
+                        foreach (var dowFacTuple in facultyScheduleChanged
+                            .Select(faculty => Tuple.Create(faculty, localEvent.OldLesson.Calendar.Date.DayOfWeek))
+                            .Where(dowFacTuple => !result.Contains(dowFacTuple)))
+                        {
+                            result.Add(dowFacTuple);
+                        }
                     }
-                }
 
                 
 
-                if (ev.NewLesson != null)
-                {
-                    studentGroupId = ev.NewLesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
-
-                    var studentIds = Repo
-                        .StudentsInGroups
-                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroupId)
-                        .Select(sig => sig.Student.StudentId)
-                        .ToList();
-
-                    var facultyScheduleChanged = (
-                            from faculty in fg
-                            where Repo
-                                .StudentsInGroups
-                                .GetFiltredStudentsInGroups(sig => 
-                                studentIds.Contains(sig.Student.StudentId) &&
-                                faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
-                            select faculty.Key)
-                        .ToList();
-
-                    var localEvent = ev;
-                    foreach (var dowFacTuple in facultyScheduleChanged
-                        .Select(faculty => Tuple.Create(faculty, localEvent.NewLesson.Calendar.Date.DayOfWeek))
-                        .Where(dowFacTuple => !result.Contains(dowFacTuple)))
+                    if (ev.NewLesson != null)
                     {
-                        result.Add(dowFacTuple);
-                    }
-                }                
-            }
+                        studentGroupId = ev.NewLesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
 
-            var messageString = result
-                .OrderBy(df => df.Item1)
-                .ThenBy(df => df.Item2)
-                .Aggregate("", (current, dowFac) => 
-                    current + (Repo.Faculties.GetFaculty(dowFac.Item1).Letter + " - " + 
-                    Constants.DowLocal[Constants.DowRemap[(int) dowFac.Item2]] + Environment.NewLine));
+                        var studentIds = Repo
+                            .StudentsInGroups
+                            .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroupId)
+                            .Select(sig => sig.Student.StudentId)
+                            .ToList();
 
-            MessageBox.Show(messageString, "Изменения на сегодня");
+                        var facultyScheduleChanged = (
+                                from faculty in fg
+                                where Repo
+                                    .StudentsInGroups
+                                    .GetFiltredStudentsInGroups(sig => 
+                                    studentIds.Contains(sig.Student.StudentId) &&
+                                    faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
+                                select faculty.Key)
+                            .ToList();
+
+                        var localEvent = ev;
+                        foreach (var dowFacTuple in facultyScheduleChanged
+                            .Select(faculty => Tuple.Create(faculty, localEvent.NewLesson.Calendar.Date.DayOfWeek))
+                            .Where(dowFacTuple => !result.Contains(dowFacTuple)))
+                        {
+                            result.Add(dowFacTuple);
+                        }
+                    }                
+                }
+
+                var messageString = result
+                    .OrderBy(df => df.Item1)
+                    .ThenBy(df => df.Item2)
+                    .Aggregate("", (current, dowFac) => 
+                        current + (Repo.Faculties.GetFaculty(dowFac.Item1).Letter + " - " + 
+                        Constants.DowLocal[Constants.DowRemap[(int) dowFac.Item2]] + Environment.NewLine));
+
+                MessageBox.Show(messageString, "Изменения на сегодня");
+            }));
         }
 
         private void MainForm_ResizeEnd(object sender, EventArgs e)
@@ -1738,6 +1737,34 @@ namespace UchOtd.Schedule
         private void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
             /*
+            var dates = new List<DateTime>();
+            dates.Add(new DateTime(2014, 12, 17));
+            dates.Add(new DateTime(2014, 12, 18));
+            dates.Add(new DateTime(2014, 12, 19));
+
+            var lessonList = Repo.Lessons.GetFiltredLessons(l => dates.Contains(l.Calendar.Date.Date) && l.IsActive);
+
+            var tList = lessonList
+                .GroupBy(l => l.TeacherForDiscipline.Teacher.FIO)
+                .ToList();
+
+            foreach (var t in tList.OrderBy(te => te.Key))
+            {
+                LogInFile("t.txt", t.Key);
+
+                foreach (var lesson in t.OrderBy(les => les.Calendar.Date.Date + les.Ring.Time.TimeOfDay))
+                {
+                    LogInFile("t.txt", lesson.Calendar.Date.ToString("dd.MM.yyyy") + " " + lesson.Ring.Time.ToString("H:mm") + " " + 
+                        lesson.TeacherForDiscipline.Discipline.Name + " " + lesson.TeacherForDiscipline.Discipline.StudentGroup.Name);
+                }
+
+                LogInFile("t.txt", "");
+            }
+
+            var eprst = 999;
+             */
+            
+            /*
             BIGREDBUTTON.Text = "Waiting";
             var result = await Repo.Lessons.FindAllAsync(l => l.State == 0);
             BIGREDBUTTON.Text = "BIG RED BUTTON";
@@ -1784,7 +1811,7 @@ namespace UchOtd.Schedule
             // ExportStudentsData("StudentsExport-1sem.txt");
             // ImportStudentData("StudentsExport-1sem.txt");
             // CopyINOGroupLessonsFromRealSchedule();
-            //ExportScheduleDates("Oops\\stat.txt");
+            // ExportScheduleDates("Oops\\stat.txt");
             // ExportFacultyGroups();
             // ExportDiscAuds("Auds.txt");
             // ExportGroupDisciplines("Oops\\Discs.txt");
@@ -1801,6 +1828,57 @@ namespace UchOtd.Schedule
                     Repo.UpdateDiscipline(disc);
                 }
             }*/
+
+            //Task.Run(new Action(() => DetectWindows("windows.txt")));            
+        }
+
+        private void DetectWindows(string filename)
+        {
+            foreach (var student in Repo.Students.GetFiltredStudents(s => !s.Expelled).OrderBy(s => s.F).ThenBy(s => s.I))
+            {
+                var calendars = Repo.Calendars.GetFiltredCalendars(c => c.Date.Date >= DateTime.Now.Date);
+
+                var studentGroupIds = Repo
+                    .StudentsInGroups
+                    .GetFiltredStudentsInGroups(sig => sig.Student.StudentId == student.StudentId)
+                    .Select(sig => sig.StudentGroup.StudentGroupId)
+                    .ToList();
+
+                if (studentGroupIds.Count != 0)
+                {
+
+                    foreach (var calendar in calendars)
+                    {
+                        var studentLessons = Repo
+                            .Lessons
+                            .GetFiltredLessons(l => 
+                                studentGroupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) &&
+                                l.Calendar.CalendarId == calendar.CalendarId &&
+                                l.IsActive)
+                            .OrderBy(l => l.Ring.Time.TimeOfDay)
+                            .ToList();
+
+                        for (int i = 1; i < studentLessons.Count(); i++)
+                        {
+                            if ((studentLessons[i].Ring.Time.TimeOfDay - studentLessons[i - 1].Ring.Time.TimeOfDay) > TimeSpan.FromMinutes(120))
+                            {
+                                LogInFile(filename, "Студент " + student.F + " " + student.I + " " + student.O + " - " +
+                                    calendar.Date.ToString("dd.MM.yyyy") + " " + 
+                                    studentLessons[i - 1].Ring.Time.ToString("H:mm") + " (" + studentLessons[i - 1].TeacherForDiscipline.Discipline.Name + ") " +
+                                    studentLessons[i].Ring.Time.ToString("H:mm") + " (" + studentLessons[i].TeacherForDiscipline.Discipline.Name + ") "
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void LogInFile(string filename, string message)
+        {
+            var sw = new StreamWriter(filename, true);
+            sw.WriteLine(message);
+            sw.Close();
         }
 
         private async void WordSchool_Click_1(object sender, EventArgs e)
@@ -1895,6 +1973,10 @@ namespace UchOtd.Schedule
 
         private async void OnePageGroupScheduleWordExport_Click(object sender, EventArgs e)
         {
+            var onlyFutureDatesF = OnlyFutureDatesExportInWord.Checked;
+            var weekFilteredF = weekFiltered.Checked;
+            var weekFilterNum = int.Parse(WeekFilter.Text);
+
             if (OnePageGroupScheduleWordExport.Text == "Экспорт в Word - одна группа")
             {
                 _cToken = _tokenSource.Token;
@@ -1906,7 +1988,7 @@ namespace UchOtd.Schedule
 
                 try
                 {
-                    await Task.Run(() => WordExport.ExportGroupSchedulePage(Repo, this, groupId, _cToken), _cToken);
+                    await Task.Run(() => WordExport.ExportGroupSchedulePage(Repo, this, groupId, weekFilteredF, weekFilterNum, onlyFutureDatesF, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -1950,9 +2032,13 @@ namespace UchOtd.Schedule
         private void BackupUpload_Click(object sender, EventArgs e)
         {
             string dbName = (FromDBName.Text == "") ? Repo.ExtractDbName(Repo.GetConnectionString()) : FromDBName.Text;
+            dbName = StartupForm.School ? "s_" : "" + dbName;
+
+            string toDBName = (ToDBName.Text == "") ? Repo.ExtractDbName(Repo.GetConnectionString()) : ToDBName.Text;
+            toDBName = StartupForm.School ? "s_" : "" + toDBName;
             
             Repo.BackupDb(Application.StartupPath + "\\" + dbName + ".bak");
-            WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak", "httpdocs/upload/DB-Backup/" + ToDBName.Text + ".bak");
+            WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak", "httpdocs/upload/DB-Backup/" + toDBName + ".bak");
         }
 
         private async void startSchoolWordExport_Click(object sender, EventArgs e)

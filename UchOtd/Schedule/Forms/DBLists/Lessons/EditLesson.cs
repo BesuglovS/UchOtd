@@ -40,7 +40,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
         {
             var sStarts = _repo.CommonFunctions.GetSemesterStarts();
 
-            var gl = _repo.Lessons.GetGroupedGroupLessons(_groupId, sStarts, -1, _putProposedLesson);
+            var gl = _repo.Lessons.GetGroupedGroupLessons(_groupId, sStarts, -1, _putProposedLesson, false);
 
             _curLessons = new Dictionary<string, Tuple<string, List<Lesson>>>();
             if (gl.ContainsKey(_dow + " " + _time))

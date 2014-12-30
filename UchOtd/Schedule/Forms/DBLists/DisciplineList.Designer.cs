@@ -54,6 +54,8 @@
             this.viewPanel = new System.Windows.Forms.Panel();
             this.DiscipineListView = new System.Windows.Forms.DataGridView();
             this.filterPanel = new System.Windows.Forms.Panel();
+            this.WithExamsOnly = new System.Windows.Forms.CheckBox();
+            this.noCulture = new System.Windows.Forms.CheckBox();
             this.zeroHours = new System.Windows.Forms.Button();
             this.orderByGroupname = new System.Windows.Forms.CheckBox();
             this.mixedGroups = new System.Windows.Forms.CheckBox();
@@ -300,7 +302,7 @@
             this.ListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ListPanel.Location = new System.Drawing.Point(233, 0);
             this.ListPanel.Name = "ListPanel";
-            this.ListPanel.Size = new System.Drawing.Size(999, 630);
+            this.ListPanel.Size = new System.Drawing.Size(1196, 630);
             this.ListPanel.TabIndex = 28;
             // 
             // viewPanel
@@ -309,21 +311,20 @@
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 67);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(999, 563);
+            this.viewPanel.Size = new System.Drawing.Size(1196, 563);
             this.viewPanel.TabIndex = 2;
             // 
             // DiscipineListView
             // 
             this.DiscipineListView.AllowUserToAddRows = false;
             this.DiscipineListView.AllowUserToDeleteRows = false;
-            this.DiscipineListView.AllowUserToResizeColumns = false;
             this.DiscipineListView.AllowUserToResizeRows = false;
             this.DiscipineListView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DiscipineListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DiscipineListView.Location = new System.Drawing.Point(0, 0);
             this.DiscipineListView.Name = "DiscipineListView";
             this.DiscipineListView.ReadOnly = true;
-            this.DiscipineListView.Size = new System.Drawing.Size(999, 563);
+            this.DiscipineListView.Size = new System.Drawing.Size(1196, 563);
             this.DiscipineListView.TabIndex = 0;
             this.DiscipineListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DiscipineListViewCellClick);
             this.DiscipineListView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DiscipineListView_CellFormatting);
@@ -331,6 +332,8 @@
             // 
             // filterPanel
             // 
+            this.filterPanel.Controls.Add(this.WithExamsOnly);
+            this.filterPanel.Controls.Add(this.noCulture);
             this.filterPanel.Controls.Add(this.zeroHours);
             this.filterPanel.Controls.Add(this.orderByGroupname);
             this.filterPanel.Controls.Add(this.mixedGroups);
@@ -346,12 +349,32 @@
             this.filterPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.filterPanel.Location = new System.Drawing.Point(0, 0);
             this.filterPanel.Name = "filterPanel";
-            this.filterPanel.Size = new System.Drawing.Size(999, 67);
+            this.filterPanel.Size = new System.Drawing.Size(1196, 67);
             this.filterPanel.TabIndex = 1;
+            // 
+            // WithExamsOnly
+            // 
+            this.WithExamsOnly.AutoSize = true;
+            this.WithExamsOnly.Location = new System.Drawing.Point(948, 7);
+            this.WithExamsOnly.Name = "WithExamsOnly";
+            this.WithExamsOnly.Size = new System.Drawing.Size(139, 17);
+            this.WithExamsOnly.TabIndex = 15;
+            this.WithExamsOnly.Text = "Только с экзаменами";
+            this.WithExamsOnly.UseVisualStyleBackColor = true;
+            // 
+            // noCulture
+            // 
+            this.noCulture.AutoSize = true;
+            this.noCulture.Location = new System.Drawing.Point(763, 24);
+            this.noCulture.Name = "noCulture";
+            this.noCulture.Size = new System.Drawing.Size(158, 17);
+            this.noCulture.TabIndex = 14;
+            this.noCulture.Text = "без физической культуры";
+            this.noCulture.UseVisualStyleBackColor = true;
             // 
             // zeroHours
             // 
-            this.zeroHours.Location = new System.Drawing.Point(763, 29);
+            this.zeroHours.Location = new System.Drawing.Point(763, 41);
             this.zeroHours.Name = "zeroHours";
             this.zeroHours.Size = new System.Drawing.Size(179, 23);
             this.zeroHours.TabIndex = 13;
@@ -464,7 +487,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1232, 630);
+            this.ClientSize = new System.Drawing.Size(1429, 630);
             this.Controls.Add(this.ListPanel);
             this.Controls.Add(this.controlsPanel);
             this.Name = "DisciplineList";
@@ -521,5 +544,7 @@
         private System.Windows.Forms.CheckBox checkForDoubleDiscsOnAdding;
         private System.Windows.Forms.TextBox AuditoriumHoursPerWeek;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox noCulture;
+        private System.Windows.Forms.CheckBox WithExamsOnly;
     }
 }

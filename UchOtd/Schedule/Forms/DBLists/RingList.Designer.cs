@@ -38,6 +38,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.RingTime = new System.Windows.Forms.DateTimePicker();
             this.newRing = new System.Windows.Forms.DateTimePicker();
+            this.EightyToNinety = new System.Windows.Forms.Button();
+            this.NinetyToEighty = new System.Windows.Forms.Button();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RingListView)).BeginInit();
             this.SuspendLayout();
@@ -145,11 +147,33 @@
             this.newRing.Size = new System.Drawing.Size(197, 20);
             this.newRing.TabIndex = 19;
             // 
-            // RingForm
+            // EightyToNinety
+            // 
+            this.EightyToNinety.Location = new System.Drawing.Point(9, 231);
+            this.EightyToNinety.Name = "EightyToNinety";
+            this.EightyToNinety.Size = new System.Drawing.Size(198, 23);
+            this.EightyToNinety.TabIndex = 20;
+            this.EightyToNinety.Text = "80 => 90 (8 звонков)";
+            this.EightyToNinety.UseVisualStyleBackColor = true;
+            this.EightyToNinety.Click += new System.EventHandler(this.EightyToNinety_Click);
+            // 
+            // NinetyToEighty
+            // 
+            this.NinetyToEighty.Location = new System.Drawing.Point(10, 260);
+            this.NinetyToEighty.Name = "NinetyToEighty";
+            this.NinetyToEighty.Size = new System.Drawing.Size(198, 23);
+            this.NinetyToEighty.TabIndex = 21;
+            this.NinetyToEighty.Text = "90 => 80 (8 звонков)";
+            this.NinetyToEighty.UseVisualStyleBackColor = true;
+            this.NinetyToEighty.Click += new System.EventHandler(this.NinetyToEighty_Click);
+            // 
+            // RingList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(502, 466);
+            this.Controls.Add(this.NinetyToEighty);
+            this.Controls.Add(this.EightyToNinety);
             this.Controls.Add(this.newRing);
             this.Controls.Add(this.RingTime);
             this.Controls.Add(this.ListPanel);
@@ -159,7 +183,7 @@
             this.Controls.Add(this.update);
             this.Controls.Add(this.add);
             this.Controls.Add(this.label1);
-            this.Name = "RingForm";
+            this.Name = "RingList";
             this.Text = "Звонки";
             this.Load += new System.EventHandler(this.RingForm_Load);
             this.ListPanel.ResumeLayout(false);
@@ -181,5 +205,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.DateTimePicker RingTime;
         private System.Windows.Forms.DateTimePicker newRing;
+        private System.Windows.Forms.Button EightyToNinety;
+        private System.Windows.Forms.Button NinetyToEighty;
     }
 }

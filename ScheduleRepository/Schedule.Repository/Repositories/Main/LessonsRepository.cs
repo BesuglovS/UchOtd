@@ -253,7 +253,7 @@ namespace Schedule.Repositories.Repositories.Main
         }
 
         public Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>> GetGroupedGroupLessons
-            (int groupId, DateTime semesterStarts, int weekfilter, bool putProposedLessons)
+            (int groupId, DateTime semesterStarts, int weekfilter, bool putProposedLessons, bool onlyFutureDates)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -277,8 +277,13 @@ namespace Schedule.Repositories.Repositories.Main
                     .Include(l => l.Auditorium.Building)
                     .Where(l =>
                         groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) &&
-                        ((l.State == 1) || (l.State == 2)))
+                         ((l.State == 1) || (l.State == 2)))
                     .ToList();
+
+                if (onlyFutureDates)
+                {
+                    primaryList = primaryList.Where(l => DateTime.Now.Date <= l.Calendar.Date.Date).ToList();
+                }
 
                 if (!putProposedLessons)
                 {

@@ -10,8 +10,8 @@ namespace Schedule.DataLayer
     public class ScheduleContext : DbContext
     {
         public ScheduleContext()
-            //: base("data source=tcp:127.0.0.1,1433;Database=School;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
-            :base("data source=tcp:127.0.0.1,1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
+            : base("data source=tcp:127.0.0.1,1433;Database=Fake14151TU;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
+            //:base("data source=tcp:uch-otd-disp,1433;Database=Schedule14151;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
         {
         }
 
