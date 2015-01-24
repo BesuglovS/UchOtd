@@ -25,8 +25,8 @@ namespace UchOtd
 {
     public partial class StartupForm : Form
     {
-        public static bool School = false;
-        public static string DefaultDbName = "Schedule14151";
+        public const bool School = false;
+        private const string DefaultDbName = "Schedule14152";
         //public static string DefaultDbName = "School";
 
         public ScheduleRepository Repo;
@@ -170,7 +170,7 @@ namespace UchOtd
 
                 var filename = appDataPath + "\\" + dbName + DateTime.Now.ToString("_dd-MMM_HH-mm-ss") + ".bak";
 
-                BackupDB(dbName, filename);
+                BackupDb(dbName, filename);
                 
             }
             catch (Exception exc)
@@ -182,13 +182,13 @@ namespace UchOtd
                     sw.Close();
                 }
                 catch
-                {                                        
+                {
+                    // ignored
                 }
-                
             }
         }
 
-        private void BackupDB(string dbName, string filename)
+        private void BackupDb(string dbName, string filename)
         {
             var sqlConnection1 = new SqlConnection("data source=tcp:127.0.0.1,1433;Database=" + dbName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
             var cmd = new SqlCommand
@@ -238,23 +238,9 @@ namespace UchOtd
             Repo = new ScheduleRepository("data source=tcp:" + serverList[0] + ",1433;Database=" + DefaultDbName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
             UOrepo = new UchOtdRepository("data source=tcp:" + serverList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
 
-            PropagateIsActiveToStateIfNeeded();
-
             if (School)
             {
                 uploadTimer.Enabled = true;
-            }
-        }
-
-        private void PropagateIsActiveToStateIfNeeded()
-        {
-            var propagateOption = Repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "_IsActivePropagatedToState");
-
-            if (propagateOption == null)
-            {
-                Repo.CommonFunctions.PropagateIsActiveToState();
-                propagateOption = new ConfigOption { Key = "_IsActivePropagatedToState", Value = "" };
-                Repo.ConfigOptions.AddConfigOption(propagateOption);
             }
         }
 
@@ -663,8 +649,9 @@ namespace UchOtd
                     WnuUpload.UploadSchedule(Repo, School ? "s_" : "", cToken);
                 }
                 catch
-                {   
-                }                
+                {
+                    // ignored
+                }
             }, cToken);
         }
     }

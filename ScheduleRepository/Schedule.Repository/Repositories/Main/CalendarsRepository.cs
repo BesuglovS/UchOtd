@@ -46,7 +46,7 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Calendars.FirstOrDefault(c => c.Date == date);
+                return context.Calendars.ToList().FirstOrDefault(cal => cal.Date.Date == date.Date);
             }
         }
 

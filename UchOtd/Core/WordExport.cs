@@ -2447,11 +2447,8 @@ namespace UchOtd.Core
                         timeTable.Range.Font.Bold = 0;
                        
 
-                        //foreach (var tfdData in groupDowTimeLessons)
-                        for (int i = 0; i < groupDowTimeLessons.Count; i++)                            
+                        foreach (var tfdData in groupDowTimeLessons)
                         {
-                            var tfdData = groupDowTimeLessons[i];
-
                             var cellText = "";
 
                             if (tfdData.Value == null)
@@ -2517,7 +2514,7 @@ namespace UchOtd.Core
                                 {
                                     var jItem = enumerable.OrderBy(e => e.Select(ag => ag.Key).ToList().Min()).ElementAt(j);
                                     audText += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " +
-                                                ShortenAudName(jItem.Key);
+                                               ShortenAudName(jItem.Key);
 
                                     if (j != gcount - 1)
                                     {
@@ -2527,13 +2524,13 @@ namespace UchOtd.Core
                             }
 
                             if ((groupDowTimeLessons.Count == 1) &&
-                               (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.")))
+                                (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.")))
                             {
                                 cellText = Environment.NewLine + cellText;
                             }
 
                             if ((groupDowTimeLessons.Count == 1) &&
-                               (groupDowTimeLessons[0].Value.Item1.Contains("(нечёт.")))
+                                (groupDowTimeLessons[0].Value.Item1.Contains("(нечёт.")))
                             {
                                 cellText = cellText + Environment.NewLine;
                             }

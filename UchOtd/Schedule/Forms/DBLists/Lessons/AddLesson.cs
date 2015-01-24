@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using Schedule.Constants;
+using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using Schedule.Repositories.Common;
 using UchOtd.Schedule.Core;
 using UchOtd.Schedule.Views;
 using UchOtd.Schedule.Views.DBListViews;
+using Calendar = Schedule.DomainClasses.Main.Calendar;
 
 namespace UchOtd.Schedule.Forms.DBLists.Lessons
 {
@@ -213,16 +216,19 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             var ringIds = rings.Select(r => r.RingId).ToList();
             
             
-            var calendarIdsList = (
+            var calendarsList = (
                     from week in weekList
                     select _repo.CommonFunctions.GetDateFromDowAndWeek((int)DayOfWeekListBox.SelectedValue, week)
                     into date
                     select _repo.Calendars.FindCalendar(date)
                     into calendar
                     where calendar != null
-                    select calendar.CalendarId)
+                    select calendar)
                 .ToList();
 
+            var calendarIdsList = calendarsList.Select(c => c.CalendarId).ToList();
+
+            // Есть уроки в это время
             var groupsLessons = _repo
                 .Lessons
                 .GetFiltredLessons(
@@ -240,7 +246,43 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                     return;
                 }
             }
-            
+            // Есть уроки в это время
+
+            // Есть практика/каникулы и т.п. в это время
+            var periods =
+                _repo.CustomStudentGroupAttributes.GetFiltredCustomStudentGroupAttributes(
+                    csga => studentGroupsIds.Contains(csga.StudentGroup.StudentGroupId) && csga.Value.EndsWith("+"));
+
+            var lessonsPeriods = new List<CustomStudentGroupAttribute>();
+
+            foreach (var period in periods)
+            {
+                var startDate = DateTime.ParseExact(period.Value.Split('@')[1], "dd.MM.yyyy",
+                    CultureInfo.InvariantCulture);
+
+                var endDate = DateTime.ParseExact(period.Value.Split('@')[2], "dd.MM.yyyy",
+                    CultureInfo.InvariantCulture);
+
+                foreach (var calendar in calendarsList)
+                {
+                    if ((calendar.Date.Date >= startDate.Date) && (calendar.Date.Date <= endDate.Date))
+                    {
+                        lessonsPeriods.Add(period);
+                    }
+                }
+                
+            }
+
+            if (lessonsPeriods.Count != 0)
+            {                
+                var outOfMind = MessageBox.Show("У студентов группы есть периоды без занятий в это время. Всё равно добавить?", "ЕГГОГ", MessageBoxButtons.YesNo);
+                if (outOfMind == DialogResult.No)
+                {
+                    return;
+                }
+            }
+
+            // Есть практика/каникулы и т.п. в это время
                         
             var audWeekList = Utilities.GetAudWeeksList(auditoriums.Text);
 

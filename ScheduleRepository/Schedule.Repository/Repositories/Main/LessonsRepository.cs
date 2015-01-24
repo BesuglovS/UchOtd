@@ -15,7 +15,6 @@ namespace Schedule.Repositories.Repositories.Main
     public class LessonsRepository: BaseRepository<Lesson>
     {
         private ScheduleRepository _repo;
-        public string ConnectionString { get; set; }
 
         public LessonsRepository(ScheduleRepository repo)
         {
@@ -147,7 +146,8 @@ namespace Schedule.Repositories.Repositories.Main
                         }
                         );
                 }
-                context.SaveChanges();
+                
+                context.SaveChanges();                
             }
         }
 

@@ -30,6 +30,8 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.button3 = new System.Windows.Forms.Button();
+            this.OnlyFutureDatesExportInWord = new System.Windows.Forms.CheckBox();
             this.removeAllProposedLessons = new System.Windows.Forms.Button();
             this.analyseSchool = new System.Windows.Forms.Button();
             this.analyse = new System.Windows.Forms.Button();
@@ -95,7 +97,6 @@
             this.сменыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.OnlyFutureDatesExportInWord = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -104,6 +105,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.button3);
             this.controlsPanel.Controls.Add(this.OnlyFutureDatesExportInWord);
             this.controlsPanel.Controls.Add(this.removeAllProposedLessons);
             this.controlsPanel.Controls.Add(this.analyseSchool);
@@ -151,6 +153,26 @@
             this.controlsPanel.Size = new System.Drawing.Size(967, 169);
             this.controlsPanel.TabIndex = 0;
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(871, 114);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(84, 23);
+            this.button3.TabIndex = 68;
+            this.button3.Text = "txtBackup";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // OnlyFutureDatesExportInWord
+            // 
+            this.OnlyFutureDatesExportInWord.AutoSize = true;
+            this.OnlyFutureDatesExportInWord.Location = new System.Drawing.Point(668, 82);
+            this.OnlyFutureDatesExportInWord.Name = "OnlyFutureDatesExportInWord";
+            this.OnlyFutureDatesExportInWord.Size = new System.Drawing.Size(155, 17);
+            this.OnlyFutureDatesExportInWord.TabIndex = 67;
+            this.OnlyFutureDatesExportInWord.Text = "только последующие дни";
+            this.OnlyFutureDatesExportInWord.UseVisualStyleBackColor = true;
+            // 
             // removeAllProposedLessons
             // 
             this.removeAllProposedLessons.Location = new System.Drawing.Point(460, 80);
@@ -184,6 +206,8 @@
             // showProposedLessons
             // 
             this.showProposedLessons.AutoSize = true;
+            this.showProposedLessons.Checked = true;
+            this.showProposedLessons.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showProposedLessons.Location = new System.Drawing.Point(12, 86);
             this.showProposedLessons.Name = "showProposedLessons";
             this.showProposedLessons.Size = new System.Drawing.Size(210, 17);
@@ -738,16 +762,6 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // OnlyFutureDatesExportInWord
-            // 
-            this.OnlyFutureDatesExportInWord.AutoSize = true;
-            this.OnlyFutureDatesExportInWord.Location = new System.Drawing.Point(668, 82);
-            this.OnlyFutureDatesExportInWord.Name = "OnlyFutureDatesExportInWord";
-            this.OnlyFutureDatesExportInWord.Size = new System.Drawing.Size(155, 17);
-            this.OnlyFutureDatesExportInWord.TabIndex = 67;
-            this.OnlyFutureDatesExportInWord.Text = "только последующие дни";
-            this.OnlyFutureDatesExportInWord.UseVisualStyleBackColor = true;
-            // 
             // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -841,6 +855,7 @@
         private System.Windows.Forms.ToolStripMenuItem дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem сменыToolStripMenuItem;
         private System.Windows.Forms.CheckBox OnlyFutureDatesExportInWord;
+        private System.Windows.Forms.Button button3;
     }
 }
 

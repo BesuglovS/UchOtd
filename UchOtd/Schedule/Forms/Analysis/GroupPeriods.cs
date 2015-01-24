@@ -110,6 +110,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             PeriodName.Text = valueParts[0];
             startOfPeriod.Value = DateTime.ParseExact(valueParts[1], "dd.MM.yyyy", CultureInfo.InvariantCulture);
             endOfPeriod.Value = DateTime.ParseExact(valueParts[2], "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            noLessonsPeriod.Checked = (valueParts[3] == "+");
         }
 
         private void add_Click(object sender, EventArgs e)
@@ -118,7 +119,8 @@ namespace UchOtd.Schedule.Forms.Analysis
             {
                 StudentGroup = _repo.StudentGroups.GetStudentGroup((int)Group.SelectedValue),
                 Key = "StudentGroupPeriod",
-                Value = PeriodName.Text + "@" + startOfPeriod.Value.ToString("dd.MM.yyyy") + "@" + endOfPeriod.Value.ToString("dd.MM.yyyy")
+                Value = PeriodName.Text + "@" + startOfPeriod.Value.ToString("dd.MM.yyyy") + "@" + endOfPeriod.Value.ToString("dd.MM.yyyy") +
+                    "@" + (noLessonsPeriod.Checked ? "+" : "-")
             };
 
             _repo.CustomStudentGroupAttributes
@@ -137,7 +139,8 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                 groupPeriod.StudentGroup = _repo.StudentGroups.GetStudentGroup((int)Group.SelectedValue);
                 groupPeriod.Key = "StudentGroupPeriod";
-                groupPeriod.Value = PeriodName.Text + "@" + startOfPeriod.Value.ToString("dd.MM.yyyy") + "@" + endOfPeriod.Value.ToString("dd.MM.yyyy");
+                groupPeriod.Value = PeriodName.Text + "@" + startOfPeriod.Value.ToString("dd.MM.yyyy") + "@" + endOfPeriod.Value.ToString("dd.MM.yyyy") +
+                    "@" + (noLessonsPeriod.Checked ? "+" : "-");
 
                 _repo.CustomStudentGroupAttributes.UpdateCustomStudentGroupAttribute(groupPeriod);
 

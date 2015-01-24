@@ -273,23 +273,23 @@ namespace Schedule.Repositories.Repositories.Session
         }
 
         public Dictionary<DateTime, Dictionary<int, List<SessionEvent>>>
-            GetFacultyExams(ScheduleRepository Repo, List<int> groupIds)
+            GetFacultyExams(ScheduleRepository repo, List<int> groupIds)
         {
             // Дата - (id группы + список строк)
             var result = new Dictionary<DateTime, Dictionary<int, List<SessionEvent>>>();
 
             foreach (var groupId in groupIds)
             {
-                var groupExams = GetGroupActiveExams(Repo, groupId, false);
+                var groupExams = GetGroupActiveExams(repo, groupId, false);
 
                 foreach (var exam in groupExams)
                 {
                     var examGroups = new List<int>();
-                    var discipline = Repo.Disciplines.GetDiscipline(exam.DisciplineId);
+                    var discipline = repo.Disciplines.GetDiscipline(exam.DisciplineId);
 
                     string fio = "";
 
-                    var tfd = Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tefd => tefd.Discipline.DisciplineId == discipline.DisciplineId);
+                    var tfd = repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tefd => tefd.Discipline.DisciplineId == discipline.DisciplineId);
                     if (tfd != null)
                     {
                         fio = tfd.Teacher.FIO;
@@ -297,11 +297,11 @@ namespace Schedule.Repositories.Repositories.Session
 
                     if (!groupIds.Contains(discipline.StudentGroup.StudentGroupId))
                     {
-                        var studentIds = Repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == discipline.StudentGroup.StudentGroupId)
+                        var studentIds = repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == discipline.StudentGroup.StudentGroupId)
                             .ToList()
                             .Select(stig => stig.Student.StudentId);
 
-                        var groupsListIds = Repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                        var groupsListIds = repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
                             .ToList()
                             .Select(stig => stig.StudentGroup.StudentGroupId);
 
@@ -330,7 +330,7 @@ namespace Schedule.Repositories.Repositories.Session
                             }
                         }
 
-                        var consAud = Repo.Auditoriums.Get(exam.ConsultationAuditoriumId);
+                        var consAud = repo.Auditoriums.Get(exam.ConsultationAuditoriumId);
                         string consAudName = "";
                         if (consAud != null)
                         {
@@ -371,7 +371,7 @@ namespace Schedule.Repositories.Repositories.Session
                             }
                         }
 
-                        var examAud = Repo.Auditoriums.Get(exam.ExamAuditoriumId);
+                        var examAud = repo.Auditoriums.Get(exam.ExamAuditoriumId);
                         string examAudName = "";
                         if (examAud != null)
                         {

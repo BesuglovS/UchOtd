@@ -1854,7 +1854,7 @@ namespace UchOtd.Schedule
                             .GetFiltredLessons(l => 
                                 studentGroupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) &&
                                 l.Calendar.CalendarId == calendar.CalendarId &&
-                                l.IsActive)
+                                l.State == 1)
                             .OrderBy(l => l.Ring.Time.TimeOfDay)
                             .ToList();
 
@@ -2034,11 +2034,11 @@ namespace UchOtd.Schedule
             string dbName = (FromDBName.Text == "") ? Repo.ExtractDbName(Repo.GetConnectionString()) : FromDBName.Text;
             dbName = StartupForm.School ? "s_" : "" + dbName;
 
-            string toDBName = (ToDBName.Text == "") ? Repo.ExtractDbName(Repo.GetConnectionString()) : ToDBName.Text;
-            toDBName = StartupForm.School ? "s_" : "" + toDBName;
+            string toDbName = (ToDBName.Text == "") ? Repo.ExtractDbName(Repo.GetConnectionString()) : ToDBName.Text;
+            toDbName = StartupForm.School ? "s_" : "" + toDbName;
             
             Repo.BackupDb(Application.StartupPath + "\\" + dbName + ".bak");
-            WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak", "httpdocs/upload/DB-Backup/" + toDBName + ".bak");
+            WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak", "httpdocs/upload/DB-Backup/" + toDbName + ".bak");
         }
 
         private async void startSchoolWordExport_Click(object sender, EventArgs e)
@@ -2191,6 +2191,11 @@ namespace UchOtd.Schedule
         {
             var shiftsForm = new Shifts(Repo);
             shiftsForm.Show();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Repo.TxtBackup("backup.txt");
         }
     }
 }

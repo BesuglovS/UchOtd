@@ -21,7 +21,10 @@ namespace UchOtd.Schedule.Views.DBListViews
             CalendarId = calendar.CalendarId;
             Date = calendar.Date;
             State = calendar.State;
-            StateString = Constants.CalendarStateDescription[calendar.State];
+            if (Constants.CalendarStateDescription.ContainsKey(calendar.State))
+            {
+                StateString = Constants.CalendarStateDescription[calendar.State];
+            }
         }
 
         public static List<CalendarView> CalendarsToView(List<Calendar> list)

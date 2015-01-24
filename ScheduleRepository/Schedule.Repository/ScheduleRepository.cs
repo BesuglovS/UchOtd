@@ -230,5 +230,18 @@ namespace Schedule.Repositories
         public void Dispose()
         {
         }
+
+        public void TxtBackup(string filename)
+        {
+            var sw = new StreamWriter(filename);
+
+            foreach (var aud in Auditoriums.GetAll())
+            {
+                sw.WriteLine(aud.AuditoriumId);
+                sw.WriteLine(aud.Building.BuildingId);
+            }
+
+            sw.Close();
+        }
     }
 }

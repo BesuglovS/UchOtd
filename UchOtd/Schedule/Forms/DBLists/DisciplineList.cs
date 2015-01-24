@@ -171,7 +171,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 _tokenSource.Cancel();
             }
 
-            Text = "Дисциплины - " + discView.Count();
+            Text = "Дисциплины - " + ((discView != null) ? discView.Count().ToString() : "");
 
             refresh.Image = null;
             refresh.Text = "Обновить";

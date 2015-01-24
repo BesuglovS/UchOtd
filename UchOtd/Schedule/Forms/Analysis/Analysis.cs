@@ -109,12 +109,11 @@ namespace UchOtd.Schedule.Forms.Analysis
                 M("Общее количество дисциплин - " + disciplines.Count, LogLevel.ErrorsOnly);
                 M("", LogLevel.ErrorsOnly);
                 
-                for (int i = 0; i < disciplines.Count; i++)
+                foreach (var discipline in disciplines)
                 {
-                    var discipline = disciplines[i];
-
+                    var discipline1 = discipline;
                     var disciplineTfd =
-                        _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
+                        _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discipline1.DisciplineId);
 
                     if (disciplineTfd == null)
                     {
@@ -150,8 +149,8 @@ namespace UchOtd.Schedule.Forms.Analysis
                     var lessonsProposed = _repo
                         .Lessons
                         .GetFiltredLessons(l =>
-                        l.TeacherForDiscipline.TeacherForDisciplineId == disciplineTfd.TeacherForDisciplineId &&
-                        l.State == 2);
+                            l.TeacherForDiscipline.TeacherForDisciplineId == disciplineTfd.TeacherForDisciplineId &&
+                            l.State == 2);
                     var lessonsProposedCount = lessonsProposed.Count;
 
                     var proposedDiff = lessonsLeftToSet - lessonsProposedCount;

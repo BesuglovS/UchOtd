@@ -54,6 +54,7 @@
             this.startOfPeriod = new System.Windows.Forms.DateTimePicker();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.noLessonsPeriod = new System.Windows.Forms.CheckBox();
             this.filterPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PeriodsListView)).BeginInit();
             this.viewPanel.SuspendLayout();
@@ -71,7 +72,7 @@
             // 
             // reloadGroupList
             // 
-            this.reloadGroupList.Location = new System.Drawing.Point(88, 213);
+            this.reloadGroupList.Location = new System.Drawing.Point(88, 236);
             this.reloadGroupList.Name = "reloadGroupList";
             this.reloadGroupList.Size = new System.Drawing.Size(115, 81);
             this.reloadGroupList.TabIndex = 103;
@@ -126,7 +127,7 @@
             // 
             // remove
             // 
-            this.remove.Location = new System.Drawing.Point(8, 271);
+            this.remove.Location = new System.Drawing.Point(8, 294);
             this.remove.Name = "remove";
             this.remove.Size = new System.Drawing.Size(75, 23);
             this.remove.TabIndex = 31;
@@ -136,7 +137,7 @@
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(8, 242);
+            this.update.Location = new System.Drawing.Point(8, 265);
             this.update.Name = "update";
             this.update.Size = new System.Drawing.Size(75, 23);
             this.update.TabIndex = 30;
@@ -162,7 +163,7 @@
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(7, 213);
+            this.add.Location = new System.Drawing.Point(7, 236);
             this.add.Name = "add";
             this.add.Size = new System.Drawing.Size(75, 23);
             this.add.TabIndex = 6;
@@ -269,6 +270,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.noLessonsPeriod);
             this.controlsPanel.Controls.Add(this.endOfPeriod);
             this.controlsPanel.Controls.Add(this.startOfPeriod);
             this.controlsPanel.Controls.Add(this.label3);
@@ -289,14 +291,14 @@
             // 
             // endOfPeriod
             // 
-            this.endOfPeriod.Location = new System.Drawing.Point(8, 177);
+            this.endOfPeriod.Location = new System.Drawing.Point(8, 200);
             this.endOfPeriod.Name = "endOfPeriod";
             this.endOfPeriod.Size = new System.Drawing.Size(200, 20);
             this.endOfPeriod.TabIndex = 107;
             // 
             // startOfPeriod
             // 
-            this.startOfPeriod.Location = new System.Drawing.Point(8, 122);
+            this.startOfPeriod.Location = new System.Drawing.Point(8, 145);
             this.startOfPeriod.Name = "startOfPeriod";
             this.startOfPeriod.Size = new System.Drawing.Size(200, 20);
             this.startOfPeriod.TabIndex = 106;
@@ -304,7 +306,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(4, 157);
+            this.label3.Location = new System.Drawing.Point(4, 180);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(83, 13);
             this.label3.TabIndex = 105;
@@ -313,11 +315,21 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(5, 102);
+            this.label2.Location = new System.Drawing.Point(5, 125);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 13);
             this.label2.TabIndex = 104;
             this.label2.Text = "Начало периода";
+            // 
+            // noLessonsPeriod
+            // 
+            this.noLessonsPeriod.AutoSize = true;
+            this.noLessonsPeriod.Location = new System.Drawing.Point(8, 99);
+            this.noLessonsPeriod.Name = "noLessonsPeriod";
+            this.noLessonsPeriod.Size = new System.Drawing.Size(137, 17);
+            this.noLessonsPeriod.TabIndex = 108;
+            this.noLessonsPeriod.Text = "Нет занятий в период";
+            this.noLessonsPeriod.UseVisualStyleBackColor = true;
             // 
             // GroupPeriods
             // 
@@ -368,5 +380,6 @@
         private System.Windows.Forms.DateTimePicker startOfPeriod;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox noLessonsPeriod;
     }
 }

@@ -15,8 +15,7 @@
             Auditorium = auditorium;
         }
 
-        public int LessonId { get; set; }
-        public bool IsActive { get; set; }
+        public int LessonId { get; set; }        
         public int State { get; set; }
         public virtual TeacherForDiscipline TeacherForDiscipline { get; set; }
         public virtual Calendar Calendar { get; set; }

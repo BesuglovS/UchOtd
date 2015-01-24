@@ -792,15 +792,7 @@ namespace Schedule.Repositories.Common
                     l.TeacherForDiscipline.TeacherForDisciplineId == tfdId);
             }
         }
-
-        public void PropagateIsActiveToState()
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                context.Database.ExecuteSqlCommand("UPDATE dbo.Lessons SET State = IsActive");
-            }
-        }
-
+        
         public DateTime GetSemesterStarts()
         {
             using (var context = new ScheduleContext(ConnectionString))
