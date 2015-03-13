@@ -10,6 +10,7 @@ using System.Globalization;
 using Microsoft.Office.Core;
 using UchOtd.Views;
 using UchOtd.Schedule.wnu.MySQLViews;
+using Schedule.Constants;
 
 namespace UchOtd.Forms.Session
 {
@@ -81,6 +82,16 @@ namespace UchOtd.Forms.Session
             FacultyList.DisplayMember = "Letter";
             FacultyList.ValueMember = "FacultyId";
             FacultyList.DataSource = faculties;
+
+            siteToUpload.Items.Clear();
+            foreach (var siteEndPoint in Constants.SitesUploadEndPoints)
+            {
+                siteToUpload.Items.Add(siteEndPoint);
+            }
+            if (Constants.SitesUploadEndPoints.Count > 0)
+            {
+                siteToUpload.SelectedIndex = 0;
+            }
         }
 
         private void BigRedButton_Click(object sender, EventArgs e)
@@ -177,12 +188,12 @@ namespace UchOtd.Forms.Session
             var mySqlExams = MySqlExam.FromExamList(_repo.Exams.GetAllExamRecords());
             var wud = new WnuUploadData { tableSelector = "exams", data = jsonSerializer.Serialize(mySqlExams) };
             string json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            WnuUpload.UploadTableData(json, siteToUpload.Text);
 
             var mySqLlogEvents = MySqlExamLogEvent.FromLogEventList(_repo.Exams.GetAllLogEvents());
             wud = new WnuUploadData { tableSelector = "examsLogEvents", data = jsonSerializer.Serialize(mySqLlogEvents) };
             json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json);
+            WnuUpload.UploadTableData(json, siteToUpload.Text);
         }
         
         private void WordExport_Click(object sender, EventArgs e)

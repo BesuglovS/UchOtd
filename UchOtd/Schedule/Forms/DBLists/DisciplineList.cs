@@ -82,6 +82,8 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var noCultureF = noCulture.Checked;
                 var withExamsOnlyF = WithExamsOnly.Checked;
                 var orderbyGroupNameF = orderByGroupname.Checked;
+                var noArtF = noArt.Checked;
+                var noPostF = noPost.Checked;
 
                 try
                 {
@@ -153,6 +155,21 @@ namespace UchOtd.Schedule.Forms.DBLists
                         if (withExamsOnlyF)
                         {
                             discList = discList.Where(d => (d.Attestation == 2) || (d.Attestation == 3)).ToList();
+                        }
+
+                        if (noArtF)
+                        {
+                            discList = discList.Where(d => !d.StudentGroup.Name.Contains(" И")).ToList();
+                        }
+
+                        if (noPostF)
+                        {
+                            discList =
+                                discList.Where(
+                                    d =>
+                                        !(d.StudentGroup.Name.StartsWith("1 ") || 
+                                          d.StudentGroup.Name.StartsWith("2 ") ||
+                                          d.StudentGroup.Name.StartsWith("3 "))).ToList();
                         }
 
                         discList = orderbyGroupNameF ?
@@ -503,9 +520,21 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             foreach (var disc in _repo.Disciplines.GetAllDisciplines())
             {
-                if (disc.AuditoriumHours == 0)
+                if ((disc.AuditoriumHours == 0) || 
+                    ((noCulture.Checked) && (disc.Name.ToLower().Contains("физическая культура"))) ||  // без физической культуры по чекбоксу
+                    ((noArt.Checked) && (disc.StudentGroup.Name.Contains(" И")))) // без факультета искусств по чекбоксу
                 {
                     continue;
+                }
+
+                if (noPost.Checked)
+                {
+                    if (disc.StudentGroup.Name.StartsWith("1 ") ||
+                        disc.StudentGroup.Name.StartsWith("2 ") ||
+                        disc.StudentGroup.Name.StartsWith("3 "))
+                    {
+                        continue;
+                    }
                 }
 
                 var localDisc = disc;

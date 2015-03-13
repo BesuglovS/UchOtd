@@ -54,6 +54,7 @@
             this.viewPanel = new System.Windows.Forms.Panel();
             this.DiscipineListView = new System.Windows.Forms.DataGridView();
             this.filterPanel = new System.Windows.Forms.Panel();
+            this.noArt = new System.Windows.Forms.CheckBox();
             this.WithExamsOnly = new System.Windows.Forms.CheckBox();
             this.noCulture = new System.Windows.Forms.CheckBox();
             this.zeroHours = new System.Windows.Forms.Button();
@@ -68,6 +69,7 @@
             this.groupnameFilter = new System.Windows.Forms.CheckBox();
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.filter = new System.Windows.Forms.TextBox();
+            this.noPost = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -332,6 +334,8 @@
             // 
             // filterPanel
             // 
+            this.filterPanel.Controls.Add(this.noPost);
+            this.filterPanel.Controls.Add(this.noArt);
             this.filterPanel.Controls.Add(this.WithExamsOnly);
             this.filterPanel.Controls.Add(this.noCulture);
             this.filterPanel.Controls.Add(this.zeroHours);
@@ -351,6 +355,16 @@
             this.filterPanel.Name = "filterPanel";
             this.filterPanel.Size = new System.Drawing.Size(1196, 67);
             this.filterPanel.TabIndex = 1;
+            // 
+            // noArt
+            // 
+            this.noArt.AutoSize = true;
+            this.noArt.Location = new System.Drawing.Point(948, 27);
+            this.noArt.Name = "noArt";
+            this.noArt.Size = new System.Drawing.Size(155, 17);
+            this.noArt.TabIndex = 16;
+            this.noArt.Text = "без факультета искусств";
+            this.noArt.UseVisualStyleBackColor = true;
             // 
             // WithExamsOnly
             // 
@@ -483,6 +497,16 @@
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
             // 
+            // noPost
+            // 
+            this.noPost.AutoSize = true;
+            this.noPost.Location = new System.Drawing.Point(950, 48);
+            this.noPost.Name = "noPost";
+            this.noPost.Size = new System.Drawing.Size(113, 17);
+            this.noPost.TabIndex = 17;
+            this.noPost.Text = "без аспирантуры";
+            this.noPost.UseVisualStyleBackColor = true;
+            // 
             // DisciplineList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -546,5 +570,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox noCulture;
         private System.Windows.Forms.CheckBox WithExamsOnly;
+        private System.Windows.Forms.CheckBox noArt;
+        private System.Windows.Forms.CheckBox noPost;
     }
 }

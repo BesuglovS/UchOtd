@@ -61,5 +61,13 @@ namespace Schedule.Constants
             LogLevel.Normal,
             LogLevel.Max
         };
+
+        public static List<String> SitesUploadEndPoints = new List<string>()
+        {
+            "http://wiki.nayanova.edu/_php/includes/",
+            "http://besuglovs.ru/wnu/_php/includes/"
+        };
+
+        public static int schoolEndPointIndex = 0;
     }
 }

@@ -43,8 +43,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.controlsPanel = new System.Windows.Forms.Panel();
-            this.FacultyList = new System.Windows.Forms.ComboBox();
             this.oneFaculty = new System.Windows.Forms.CheckBox();
+            this.FacultyList = new System.Windows.Forms.ComboBox();
+            this.siteToUpload = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.examsView)).BeginInit();
             this.viewPanel.SuspendLayout();
             this.controlsPanel.SuspendLayout();
@@ -96,9 +97,9 @@
             // 
             // TeacherSchedule
             // 
-            this.TeacherSchedule.Location = new System.Drawing.Point(301, 42);
+            this.TeacherSchedule.Location = new System.Drawing.Point(392, 42);
             this.TeacherSchedule.Name = "TeacherSchedule";
-            this.TeacherSchedule.Size = new System.Drawing.Size(376, 23);
+            this.TeacherSchedule.Size = new System.Drawing.Size(285, 23);
             this.TeacherSchedule.TabIndex = 10;
             this.TeacherSchedule.Text = "GO";
             this.TeacherSchedule.UseVisualStyleBackColor = true;
@@ -107,9 +108,9 @@
             // TeacherList
             // 
             this.TeacherList.FormattingEnabled = true;
-            this.TeacherList.Location = new System.Drawing.Point(301, 16);
+            this.TeacherList.Location = new System.Drawing.Point(392, 16);
             this.TeacherList.Name = "TeacherList";
-            this.TeacherList.Size = new System.Drawing.Size(376, 21);
+            this.TeacherList.Size = new System.Drawing.Size(285, 21);
             this.TeacherList.TabIndex = 9;
             // 
             // UpdateView
@@ -134,9 +135,9 @@
             // 
             // upload
             // 
-            this.upload.Location = new System.Drawing.Point(221, 16);
+            this.upload.Location = new System.Drawing.Point(314, 16);
             this.upload.Name = "upload";
-            this.upload.Size = new System.Drawing.Size(74, 49);
+            this.upload.Size = new System.Drawing.Size(72, 49);
             this.upload.TabIndex = 4;
             this.upload.Text = "Загрузить на сайт";
             this.upload.UseVisualStyleBackColor = true;
@@ -190,6 +191,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.siteToUpload);
             this.controlsPanel.Controls.Add(this.oneFaculty);
             this.controlsPanel.Controls.Add(this.FacultyList);
             this.controlsPanel.Controls.Add(this.Auditoriums);
@@ -210,14 +212,6 @@
             this.controlsPanel.Size = new System.Drawing.Size(763, 124);
             this.controlsPanel.TabIndex = 2;
             // 
-            // FacultyList
-            // 
-            this.FacultyList.FormattingEnabled = true;
-            this.FacultyList.Location = new System.Drawing.Point(182, 74);
-            this.FacultyList.Name = "FacultyList";
-            this.FacultyList.Size = new System.Drawing.Size(53, 21);
-            this.FacultyList.TabIndex = 14;
-            // 
             // oneFaculty
             // 
             this.oneFaculty.AutoSize = true;
@@ -227,6 +221,22 @@
             this.oneFaculty.TabIndex = 15;
             this.oneFaculty.Text = "один факультет";
             this.oneFaculty.UseVisualStyleBackColor = true;
+            // 
+            // FacultyList
+            // 
+            this.FacultyList.FormattingEnabled = true;
+            this.FacultyList.Location = new System.Drawing.Point(182, 74);
+            this.FacultyList.Name = "FacultyList";
+            this.FacultyList.Size = new System.Drawing.Size(53, 21);
+            this.FacultyList.TabIndex = 14;
+            // 
+            // siteToUpload
+            // 
+            this.siteToUpload.FormattingEnabled = true;
+            this.siteToUpload.Location = new System.Drawing.Point(222, 31);
+            this.siteToUpload.Name = "siteToUpload";
+            this.siteToUpload.Size = new System.Drawing.Size(86, 21);
+            this.siteToUpload.TabIndex = 16;
             // 
             // Session
             // 
@@ -265,5 +275,6 @@
         private System.Windows.Forms.Panel controlsPanel;
         private System.Windows.Forms.CheckBox oneFaculty;
         private System.Windows.Forms.ComboBox FacultyList;
+        private System.Windows.Forms.ComboBox siteToUpload;
     }
 }

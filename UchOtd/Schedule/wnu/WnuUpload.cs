@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -11,7 +12,7 @@ namespace UchOtd.Schedule.wnu
 {
     public static class WnuUpload
     {
-        public static string UploadHttpPath = "http://wiki.nayanova.edu/_php/includes/";
+        
         public static string UploadFtpPath = "ftp://wiki.nayanova.edu/";
         //public static string UploadPath = "http://localhost/phpstorm/wnu/_php/includes/";
 
@@ -38,10 +39,10 @@ namespace UchOtd.Schedule.wnu
             response.Close();
         }
 
-        public static string UploadTableData(string postData)
+        public static string UploadTableData(string postData, string uploadEndPoint)
         {
             // Create a request using a URL that can receive a post. 
-            WebRequest request = WebRequest.Create(UploadHttpPath + "import.php");
+            WebRequest request = WebRequest.Create(uploadEndPoint + "import.php");
 
             // Set the Method property of the request to POST.
             request.Method = "POST";
@@ -80,7 +81,7 @@ namespace UchOtd.Schedule.wnu
             return "dataStream == null";
         }
 
-        public static void UploadSchedule(ScheduleRepository repo, string databaseTablesPrefix, CancellationToken cToken)
+        public static void UploadSchedule(ScheduleRepository repo, string databaseTablesPrefix, string uploadEndPoint, CancellationToken cToken)
         {
             var jsonSerializer = new JavaScriptSerializer {MaxJsonLength = 10000000};
 
@@ -90,14 +91,14 @@ namespace UchOtd.Schedule.wnu
             var mySqlAuditoriums = MySqlAuditorium.FromAuditoriumList(allAuditoriums);
             var wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "auditoriums", data = jsonSerializer.Serialize(mySqlAuditoriums) };
             string json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
             var allBuildings = repo.Buildings.GetAllBuildings();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "buildings", data = jsonSerializer.Serialize(allBuildings) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -105,7 +106,7 @@ namespace UchOtd.Schedule.wnu
             var mySqlCalendars = MySqlCalendar.FromCalendarList(calendars);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "calendars", data = jsonSerializer.Serialize(mySqlCalendars) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -113,7 +114,7 @@ namespace UchOtd.Schedule.wnu
             var mySqlRings = MySqlRing.FromRingList(rings);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "rings", data = jsonSerializer.Serialize(mySqlRings) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -121,21 +122,21 @@ namespace UchOtd.Schedule.wnu
             var mySqlStudents = MySqlStudent.FromStudentList(students);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "students", data = jsonSerializer.Serialize(mySqlStudents) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
             var studentGroups = repo.StudentGroups.GetAllStudentGroups();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "studentGroups", data = jsonSerializer.Serialize(studentGroups) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
             var teachers = repo.Teachers.GetAllTeachers();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "teachers", data = jsonSerializer.Serialize(teachers) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -143,7 +144,7 @@ namespace UchOtd.Schedule.wnu
             var mySqlDisciplines = MySqlDiscipline.FromDisciplineList(disciplines);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "disciplines", data = jsonSerializer.Serialize(mySqlDisciplines) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -151,7 +152,7 @@ namespace UchOtd.Schedule.wnu
             var mySqlStudentsInGroups = MySqlStudentsInGroups.FromStudentsInGroupsList(studentsInGroups);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "studentsInGroups", data = jsonSerializer.Serialize(mySqlStudentsInGroups) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -159,45 +160,60 @@ namespace UchOtd.Schedule.wnu
             var mySqlTeacherForDisciplines = MySqlTeacherForDiscipline.FromTeacherForDisciplineList(teacherForDisciplines);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "teacherForDisciplines", data = jsonSerializer.Serialize(mySqlTeacherForDisciplines) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
+            int splitCount = 3000;
             var lessons = repo.Lessons.GetFiltredLessons(l => l.State == 0 || l.State == 1);
-            var mySqlLessons = MySqlLesson.FromLessonList(lessons);
-            wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "lessons", data = jsonSerializer.Serialize(mySqlLessons) };
-            json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            var partsCount = Math.Ceiling((double)lessons.Count / splitCount);
 
+            for (int i = 0; i < partsCount; i++)
+            {
+                var lessonsChunk = lessons.Skip(i * splitCount).Take(splitCount).ToList();
+                var mySqlLessons = MySqlLesson.FromLessonList(lessonsChunk);
+                wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "lessons", append = (i == 0) ? "" : "1", data = jsonSerializer.Serialize(mySqlLessons) };
+                json = jsonSerializer.Serialize(wud);
+                UploadTableData(json, uploadEndPoint);
+            }
+            
             cToken.ThrowIfCancellationRequested();
 
             var configs = repo.ConfigOptions.GetAllConfigOptions();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "configs", data = jsonSerializer.Serialize(configs) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
-            var lessonsLog = repo.LessonLogEvents.GetAllLessonLogEvents();
-            var mySqlLogEvent = MySqlLessonLogEvent.FromLessonLogList(lessonsLog);
-            wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "lessonLogEvents", data = jsonSerializer.Serialize(mySqlLogEvent) };
-            json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            splitCount = 3000;
+            var lessonsLogEvents = repo.LessonLogEvents.GetAllLessonLogEvents();
+            partsCount = Math.Ceiling((double)lessonsLogEvents.Count / splitCount);
+
+            for (int i = 0; i < partsCount; i++)
+            {
+                var lessonLogEventsChunk = lessonsLogEvents.Skip(i * splitCount).Take(splitCount).ToList();
+                var mySqlLogEvent = MySqlLessonLogEvent.FromLessonLogList(lessonLogEventsChunk);
+                wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "lessonLogEvents", append = (i == 0) ? "" : "1", data = jsonSerializer.Serialize(mySqlLogEvent) };
+                json = jsonSerializer.Serialize(wud);
+                UploadTableData(json, uploadEndPoint);
+            }
 
             cToken.ThrowIfCancellationRequested();
-
+            
             var auditoriumEvents = repo.AuditoriumEvents.GetAllAuditoriumEvents();
             var mySqlauditoriumEvents = MySqlAuditoriumEvent.FromAuditoriumEventList(auditoriumEvents);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "auditoriumEvents", data = jsonSerializer.Serialize(mySqlauditoriumEvents) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
+             
 
             cToken.ThrowIfCancellationRequested();
 
             var faculties = repo.Faculties.GetAllFaculties();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "faculties", data = jsonSerializer.Serialize(faculties) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -205,7 +221,7 @@ namespace UchOtd.Schedule.wnu
             var mySqlgifs = MySqlGroupsInFaculty.FromGroupsInFacultyList(gifs);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "GroupsInFaculties", data = jsonSerializer.Serialize(mySqlgifs) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json);
+            UploadTableData(json, uploadEndPoint);
         }
     }
 }

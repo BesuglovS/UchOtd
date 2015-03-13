@@ -124,6 +124,16 @@ namespace UchOtd.Schedule
             {
                 WeekFilter.Items.Add(i);
             }
+
+            siteToUpload.Items.Clear();
+            foreach (var siteEndPoint in Constants.SitesUploadEndPoints)
+            {
+                siteToUpload.Items.Add(siteEndPoint);
+            }
+            if (Constants.SitesUploadEndPoints.Count > 0)
+            {
+                siteToUpload.SelectedIndex = 0;
+            }
         }
 
         public List<GroupTableView> GetGroupSchedule(int groupId, bool showProposed, CancellationToken cToken, bool isWeekFilered, int weekFilterNum, bool onlyFutureDates)
@@ -974,10 +984,11 @@ namespace UchOtd.Schedule
 
                 var repo = Repo;
                 var uploadDbPrefix = uploadPrefix.Text;
+                var siteToUploadName = siteToUpload.Text;
 
                 try
                 {
-                    await Task.Run(() => WnuUpload.UploadSchedule(repo, uploadDbPrefix, _cToken), _cToken);
+                    await Task.Run(() => WnuUpload.UploadSchedule(repo, uploadDbPrefix, siteToUploadName, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -1494,8 +1505,8 @@ namespace UchOtd.Schedule
         private void DownloadAndRestore_Click(object sender, EventArgs e)
         {
             var wc = new WebClient();
-            //wc.DownloadFile("http://wiki.nayanova.edu/upload/DB-Backup/" + DBRestoreName.Text + ".bak", Application.StartupPath + "\\" + DBRestoreName.Text + ".bak");
-            //Repo.RestoreDB(DBRestoreName.Text, Application.StartupPath + "\\" + DBRestoreName.Text + ".bak");
+            wc.DownloadFile("http://wiki.nayanova.edu/upload/DB-Backup/" + FromDBName.Text + ".bak", Application.StartupPath + "\\" + ToDBName.Text + ".bak");
+            Repo.RestoreDb(ToDBName.Text, Application.StartupPath + "\\" + ToDBName.Text + ".bak");
         }
 
         private void WholeScheduleDatesExport_Click(object sender, EventArgs e)
@@ -1736,6 +1747,8 @@ namespace UchOtd.Schedule
 
         private void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
+            var lle = Repo.LessonLogEvents.GetAllLessonLogEvents().ToList();
+            var eprst = 999;
             /*
             var dates = new List<DateTime>();
             dates.Add(new DateTime(2014, 12, 17));
@@ -1763,7 +1776,7 @@ namespace UchOtd.Schedule
 
             var eprst = 999;
              */
-            
+
             /*
             BIGREDBUTTON.Text = "Waiting";
             var result = await Repo.Lessons.FindAllAsync(l => l.State == 0);
@@ -1975,7 +1988,8 @@ namespace UchOtd.Schedule
         {
             var onlyFutureDatesF = OnlyFutureDatesExportInWord.Checked;
             var weekFilteredF = weekFiltered.Checked;
-            var weekFilterNum = int.Parse(WeekFilter.Text);
+            var weekFilterNum = 0;
+            int.TryParse(WeekFilter.Text, out weekFilterNum);
 
             if (OnePageGroupScheduleWordExport.Text == "Экспорт в Word - одна группа")
             {
@@ -1988,10 +2002,18 @@ namespace UchOtd.Schedule
 
                 try
                 {
-                    await Task.Run(() => WordExport.ExportGroupSchedulePage(Repo, this, groupId, weekFilteredF, weekFilterNum, onlyFutureDatesF, _cToken), _cToken);
+                    await
+                        Task.Run(
+                            () =>
+                                WordExport.ExportGroupSchedulePage(Repo, this, groupId, weekFilteredF, weekFilterNum,
+                                    onlyFutureDatesF, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
+                }
+                catch (Exception exc)
+                {
+                    var eprst = 999;
                 }
             }
             else

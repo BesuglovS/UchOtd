@@ -18,6 +18,7 @@ using System.Linq;
 using System.Data.SqlClient;
 using System.Data;
 using System.Security.AccessControl;
+using Schedule.Constants;
 using UchOtd.Schedule.Forms;
 using UchOtd.Schedule.wnu;
 
@@ -646,7 +647,7 @@ namespace UchOtd
             {
                 try
                 {
-                    WnuUpload.UploadSchedule(Repo, School ? "s_" : "", cToken);
+                    WnuUpload.UploadSchedule(Repo, Constants.SitesUploadEndPoints[Constants.schoolEndPointIndex], School ? "s_" : "", cToken);
                 }
                 catch
                 {

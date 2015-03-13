@@ -97,6 +97,7 @@
             this.сменыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
+            this.siteToUpload = new System.Windows.Forms.ComboBox();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -105,6 +106,7 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.siteToUpload);
             this.controlsPanel.Controls.Add(this.button3);
             this.controlsPanel.Controls.Add(this.OnlyFutureDatesExportInWord);
             this.controlsPanel.Controls.Add(this.removeAllProposedLessons);
@@ -232,6 +234,7 @@
             this.ToDBName.Name = "ToDBName";
             this.ToDBName.Size = new System.Drawing.Size(88, 20);
             this.ToDBName.TabIndex = 61;
+            this.ToDBName.Text = "Schedule14152";
             // 
             // DownloadRestore
             // 
@@ -241,6 +244,7 @@
             this.DownloadRestore.TabIndex = 60;
             this.DownloadRestore.Text = "Download + restore";
             this.DownloadRestore.UseVisualStyleBackColor = true;
+            this.DownloadRestore.Click += new System.EventHandler(this.DownloadAndRestore_Click);
             // 
             // FromDBName
             // 
@@ -248,6 +252,7 @@
             this.FromDBName.Name = "FromDBName";
             this.FromDBName.Size = new System.Drawing.Size(100, 20);
             this.FromDBName.TabIndex = 59;
+            this.FromDBName.Text = "Schedule14152";
             // 
             // BackupUpload
             // 
@@ -291,9 +296,9 @@
             // 
             // uploadPrefix
             // 
-            this.uploadPrefix.Location = new System.Drawing.Point(306, 27);
+            this.uploadPrefix.Location = new System.Drawing.Point(306, 25);
             this.uploadPrefix.Name = "uploadPrefix";
-            this.uploadPrefix.Size = new System.Drawing.Size(31, 20);
+            this.uploadPrefix.Size = new System.Drawing.Size(81, 20);
             this.uploadPrefix.TabIndex = 53;
             // 
             // happyBirthday
@@ -422,9 +427,9 @@
             // 
             // CreatePDF
             // 
-            this.CreatePDF.Location = new System.Drawing.Point(460, 54);
+            this.CreatePDF.Location = new System.Drawing.Point(552, 54);
             this.CreatePDF.Name = "CreatePDF";
-            this.CreatePDF.Size = new System.Drawing.Size(197, 23);
+            this.CreatePDF.Size = new System.Drawing.Size(105, 23);
             this.CreatePDF.TabIndex = 29;
             this.CreatePDF.Text = "PDF";
             this.CreatePDF.UseVisualStyleBackColor = true;
@@ -464,7 +469,7 @@
             // 
             this.ManyGroups.Location = new System.Drawing.Point(206, 54);
             this.ManyGroups.Name = "ManyGroups";
-            this.ManyGroups.Size = new System.Drawing.Size(112, 23);
+            this.ManyGroups.Size = new System.Drawing.Size(79, 23);
             this.ManyGroups.TabIndex = 16;
             this.ManyGroups.Text = "Много групп";
             this.ManyGroups.UseVisualStyleBackColor = true;
@@ -492,16 +497,16 @@
             // FacultyList
             // 
             this.FacultyList.FormattingEnabled = true;
-            this.FacultyList.Location = new System.Drawing.Point(459, 27);
+            this.FacultyList.Location = new System.Drawing.Point(507, 27);
             this.FacultyList.Name = "FacultyList";
-            this.FacultyList.Size = new System.Drawing.Size(98, 21);
+            this.FacultyList.Size = new System.Drawing.Size(50, 21);
             this.FacultyList.TabIndex = 10;
             // 
             // auditoriumKaput
             // 
-            this.auditoriumKaput.Location = new System.Drawing.Point(324, 54);
+            this.auditoriumKaput.Location = new System.Drawing.Point(419, 54);
             this.auditoriumKaput.Name = "auditoriumKaput";
-            this.auditoriumKaput.Size = new System.Drawing.Size(129, 23);
+            this.auditoriumKaput.Size = new System.Drawing.Size(127, 23);
             this.auditoriumKaput.TabIndex = 9;
             this.auditoriumKaput.Text = "Коллизии аудиторий";
             this.auditoriumKaput.UseVisualStyleBackColor = true;
@@ -509,9 +514,9 @@
             // 
             // LoadToSite
             // 
-            this.LoadToSite.Location = new System.Drawing.Point(343, 25);
+            this.LoadToSite.Location = new System.Drawing.Point(393, 25);
             this.LoadToSite.Name = "LoadToSite";
-            this.LoadToSite.Size = new System.Drawing.Size(110, 23);
+            this.LoadToSite.Size = new System.Drawing.Size(108, 23);
             this.LoadToSite.TabIndex = 6;
             this.LoadToSite.Text = "Загрузить на сайт";
             this.LoadToSite.UseVisualStyleBackColor = true;
@@ -762,6 +767,14 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
+            // siteToUpload
+            // 
+            this.siteToUpload.FormattingEnabled = true;
+            this.siteToUpload.Location = new System.Drawing.Point(306, 51);
+            this.siteToUpload.Name = "siteToUpload";
+            this.siteToUpload.Size = new System.Drawing.Size(107, 21);
+            this.siteToUpload.TabIndex = 69;
+            // 
             // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -856,6 +869,7 @@
         private System.Windows.Forms.ToolStripMenuItem сменыToolStripMenuItem;
         private System.Windows.Forms.CheckBox OnlyFutureDatesExportInWord;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.ComboBox siteToUpload;
     }
 }
 

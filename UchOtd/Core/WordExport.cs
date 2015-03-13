@@ -1829,6 +1829,7 @@ namespace UchOtd.Core
             oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
             oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
 
+            /*
             Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
             oPara1.Range.Text = Constants.DowLocal[dow];
             oPara1.Range.Font.Bold = 0;
@@ -1838,6 +1839,7 @@ namespace UchOtd.Core
             oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
             oPara1.SpaceAfter = 0;
             oPara1.Range.InsertParagraphAfter();
+            */
 
             Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
 
@@ -1866,6 +1868,10 @@ namespace UchOtd.Core
             oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
             oTable.Range.Font.Size = 10;
             oTable.Range.Font.Bold = 0;
+
+            oTable.Cell(1, 1).Range.Text = Constants.DowLocal[dow];
+            oTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
+                        WdParagraphAlignment.wdAlignParagraphCenter;
 
             oTable.Columns[1].Width = oWord.CentimetersToPoints(2.44f);
             float colWidth = 25.64F / audIdsList.Count;

@@ -79,7 +79,7 @@ namespace UchOtd.Schedule.Forms
                 Name = "cbFuture",
                 Text = "только будущие даты",                
                 Checked = true,
-                Bounds = new Rectangle(230, 10 + (faculties.Count + 1)*25, 200, 25)
+                Bounds = new Rectangle(210, 10 + (faculties.Count + 1)*25, 150, 25)
             };
             Controls.Add(future);
 
@@ -89,7 +89,7 @@ namespace UchOtd.Schedule.Forms
                 Name = "weekFiltered",
                 Text = "Фильтр/неделя",
                 Checked = false,
-                Bounds = new Rectangle(430, 10 + (faculties.Count + 1) * 25, 100, 25)
+                Bounds = new Rectangle(360, 10 + (faculties.Count + 1) * 25, 120, 25)
             };
             Controls.Add(weekFiltered);
 
@@ -98,13 +98,15 @@ namespace UchOtd.Schedule.Forms
             {
                 Parent = this,
                 Name = "weekFilter",
-                Bounds = new Rectangle(530, 10 + (faculties.Count + 1) * 25, 100, 25)
+                Bounds = new Rectangle(480, 10 + (faculties.Count + 1) * 25, 100, 25)
             };
             for (int i = 1; i <= 18; i++)
             {
                 weekFilter.Items.Add(i);
             }
             Controls.Add(weekFilter);
+
+            Height = (faculties.Count + 1)*25 + 100;
         }
 
 
