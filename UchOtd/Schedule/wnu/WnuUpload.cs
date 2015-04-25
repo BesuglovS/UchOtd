@@ -224,5 +224,18 @@ namespace UchOtd.Schedule.wnu
             json = jsonSerializer.Serialize(wud);
             UploadTableData(json, uploadEndPoint);
         }
+
+        public static void UploadNotes(ScheduleRepository repo, CancellationToken cToken)
+        {
+            var jsonSerializer = new JavaScriptSerializer { MaxJsonLength = 10000000 };
+
+            cToken.ThrowIfCancellationRequested();
+
+            var notes = repo.ScheduleNotes.GetAllScheduleNotes();
+            var mySqlNotes = MySQLScheduleNote.FromNotes(notes);
+            var wud = new WnuUploadData { dbPrefix = "", tableSelector = "scheduleNotes", data = jsonSerializer.Serialize(mySqlNotes) };
+            string json = jsonSerializer.Serialize(wud);
+            UploadTableData(json, @"http://wiki.nayanova.edu/_php/includes/");
+        }
     }
 }

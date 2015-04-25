@@ -98,7 +98,7 @@ namespace Schedule.Repositories.Repositories.Main
 
                 if (curNote != null)
                 {
-                    curNote.Lesson = sNote.Lesson;
+                    curNote.Lesson = context.Lessons.FirstOrDefault(l => l.LessonId == sNote.Lesson.LessonId);
                     curNote.Text = sNote.Text;
                     curNote.LateAmount = sNote.LateAmount;
                 }

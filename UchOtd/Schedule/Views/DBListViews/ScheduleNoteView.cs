@@ -21,7 +21,7 @@ namespace UchOtd.Schedule.Views.DBListViews
             LateAmount = note.LateAmount;
             LessonString = note.Lesson != null
                 ? note.Lesson.Calendar.Date.ToString("dd.MM.yyyy") + " " +
-                  note.Lesson.Ring.Time.ToString("hh:mm") + " " +
+                  note.Lesson.Ring.Time.ToString("HH:mm") + " " +
                   note.Lesson.TeacherForDiscipline.Teacher.FIO + " " +
                   note.Lesson.TeacherForDiscipline.Discipline.Name + " " +
                   note.Lesson.TeacherForDiscipline.Discipline.StudentGroup.Name

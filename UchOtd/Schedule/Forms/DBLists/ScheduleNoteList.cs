@@ -10,12 +10,18 @@ using System.Windows.Forms;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Schedule.Views.DBListViews;
+using UchOtd.Schedule.wnu;
+using System.Threading;
+using UchOtd.Properties;
 
 namespace UchOtd.Schedule.Forms.DBLists
 {
     public partial class ScheduleNoteList : Form
     {
         private readonly ScheduleRepository _repo;
+
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
 
         public ScheduleNoteList(ScheduleRepository repo)
         {
@@ -26,15 +32,16 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void ScheduleNoteList_Load(object sender, EventArgs e)
         {
+            _tokenSource = new CancellationTokenSource();
+
             SetLessonsList();
 
-            RefreshView();
+            var notes = _repo.ScheduleNotes.GetAllScheduleNotes();
+            RefreshView(notes);
         }
 
-        private void RefreshView()
+        private void RefreshView(List<ScheduleNote> notes)
         {
-            var notes = _repo.ScheduleNotes.GetAllScheduleNotes();
-
             var notesView = ScheduleNoteView.NotesToView(notes);
 
             NotesView.DataSource = notesView;
@@ -77,7 +84,8 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             _repo.ScheduleNotes.Add(newNote);
 
-            RefreshView();
+            var notes = _repo.ScheduleNotes.GetAllScheduleNotes();
+            RefreshView(notes);
         }
 
         private void update_Click(object sender, EventArgs e)
@@ -93,9 +101,10 @@ namespace UchOtd.Schedule.Forms.DBLists
                 note.Text = NoteText.Text;
                 note.LateAmount = (int) LateCount.Value;
 
-                _repo.ScheduleNotes.Update(note, note.ScheduleNoteId);
-                
-                RefreshView();
+                _repo.ScheduleNotes.UpdateScheduleNote(note);
+
+                var notes = _repo.ScheduleNotes.GetAllScheduleNotes();
+                RefreshView(notes);
             }
         }
 
@@ -107,7 +116,8 @@ namespace UchOtd.Schedule.Forms.DBLists
                 
                 _repo.ScheduleNotes.RemoveScheduleNote(noteView.ScheduleNoteId);
 
-                RefreshView();
+                var notes = _repo.ScheduleNotes.GetAllScheduleNotes();
+                RefreshView(notes);
             }
         }
 
@@ -128,6 +138,52 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             NoteText.Text = note.Text;
             LateCount.Value = note.LateAmount;
+        }
+
+        private void ShowAll_Click(object sender, EventArgs e)
+        {
+            var notes = _repo.ScheduleNotes.GetAllScheduleNotes();
+            RefreshView(notes);
+        }
+
+        private void FilterNotes_Click(object sender, EventArgs e)
+        {
+            var filter = FilterText.Text;
+            var notes = _repo.ScheduleNotes.GetAllScheduleNotes()
+                .Where(n => n.Text.Contains(filter) ||
+                n.Lesson.TeacherForDiscipline.Teacher.FIO.Contains(filter) ||
+                n.Lesson.TeacherForDiscipline.Discipline.Name.Contains(filter) ||
+                n.Lesson.TeacherForDiscipline.Discipline.StudentGroup.Name.Contains(filter))
+                .ToList();
+            RefreshView(notes);
+        }
+
+        private async void upload_Click(object sender, EventArgs e)
+        {
+            if (upload.Text == "Загрузить на сайт")
+            {
+                _cToken = _tokenSource.Token;
+
+                upload.Text = "";
+                upload.Image = Resources.Loading;
+
+                var repo = _repo;
+                
+                try
+                {
+                    await Task.Run(() => WnuUpload.UploadNotes(repo, _cToken), _cToken);
+                }
+                catch (OperationCanceledException)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            upload.Image = null;
+            upload.Text = "Загрузить на сайт";
         }
     }
 }

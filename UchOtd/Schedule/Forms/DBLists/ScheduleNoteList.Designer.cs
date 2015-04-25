@@ -39,6 +39,10 @@
             this.LessonsList = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.LateCount = new System.Windows.Forms.NumericUpDown();
+            this.FilterText = new System.Windows.Forms.TextBox();
+            this.FilterNotes = new System.Windows.Forms.Button();
+            this.ShowAll = new System.Windows.Forms.Button();
+            this.upload = new System.Windows.Forms.Button();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NotesView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LateCount)).BeginInit();
@@ -147,6 +151,7 @@
             // 
             // LateCount
             // 
+            this.LateCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 63F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LateCount.Location = new System.Drawing.Point(270, 65);
             this.LateCount.Maximum = new decimal(new int[] {
             1000,
@@ -154,14 +159,55 @@
             0,
             0});
             this.LateCount.Name = "LateCount";
-            this.LateCount.Size = new System.Drawing.Size(252, 20);
+            this.LateCount.Size = new System.Drawing.Size(161, 103);
             this.LateCount.TabIndex = 25;
+            // 
+            // FilterText
+            // 
+            this.FilterText.Location = new System.Drawing.Point(447, 69);
+            this.FilterText.Name = "FilterText";
+            this.FilterText.Size = new System.Drawing.Size(373, 20);
+            this.FilterText.TabIndex = 26;
+            // 
+            // FilterNotes
+            // 
+            this.FilterNotes.Location = new System.Drawing.Point(447, 95);
+            this.FilterNotes.Name = "FilterNotes";
+            this.FilterNotes.Size = new System.Drawing.Size(163, 23);
+            this.FilterNotes.TabIndex = 27;
+            this.FilterNotes.Text = "Фильтровать";
+            this.FilterNotes.UseVisualStyleBackColor = true;
+            this.FilterNotes.Click += new System.EventHandler(this.FilterNotes_Click);
+            // 
+            // ShowAll
+            // 
+            this.ShowAll.Location = new System.Drawing.Point(657, 95);
+            this.ShowAll.Name = "ShowAll";
+            this.ShowAll.Size = new System.Drawing.Size(163, 23);
+            this.ShowAll.TabIndex = 28;
+            this.ShowAll.Text = "Показать все";
+            this.ShowAll.UseVisualStyleBackColor = true;
+            this.ShowAll.Click += new System.EventHandler(this.ShowAll_Click);
+            // 
+            // upload
+            // 
+            this.upload.Location = new System.Drawing.Point(452, 128);
+            this.upload.Name = "upload";
+            this.upload.Size = new System.Drawing.Size(158, 40);
+            this.upload.TabIndex = 29;
+            this.upload.Text = "Загрузить на сайт";
+            this.upload.UseVisualStyleBackColor = true;
+            this.upload.Click += new System.EventHandler(this.upload_Click);
             // 
             // ScheduleNoteList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1124, 712);
+            this.Controls.Add(this.upload);
+            this.Controls.Add(this.ShowAll);
+            this.Controls.Add(this.FilterNotes);
+            this.Controls.Add(this.FilterText);
             this.Controls.Add(this.LateCount);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.LessonsList);
@@ -196,5 +242,9 @@
         private System.Windows.Forms.ComboBox LessonsList;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown LateCount;
+        private System.Windows.Forms.TextBox FilterText;
+        private System.Windows.Forms.Button FilterNotes;
+        private System.Windows.Forms.Button ShowAll;
+        private System.Windows.Forms.Button upload;
     }
 }

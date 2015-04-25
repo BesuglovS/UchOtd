@@ -233,10 +233,10 @@ namespace UchOtd
                 "127.0.0.1",
                 "uch-otd-disp"                
             };
-            
 
-            Repo = new ScheduleRepository("data source=tcp:" + serverList[0] + ",1433;Database=" + DefaultDbName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
-            UOrepo = new UchOtdRepository("data source=tcp:" + serverList[0] + ",1433;Database=UchOtd;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+
+            Repo = new ScheduleRepository("data source=tcp:" + serverList[0] + ",1433;Database=" + DefaultDbName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
+            UOrepo = new UchOtdRepository("data source=tcp:" + serverList[0] + ",1433;Database=UchOtd; Integrated Security=SSPI;multipleactiveresultsets=True");
 
             if (School)
             {
