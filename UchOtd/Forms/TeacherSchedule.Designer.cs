@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Forms
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Forms
 {
     partial class TeacherSchedule
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -185,16 +188,16 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.ComboBox teacherList;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.DataGridView scheduleView;
-        private System.Windows.Forms.Button refresh;
-        private System.Windows.Forms.CheckBox weekFiltered;
-        private System.Windows.Forms.ComboBox weekFilter;
-        private System.Windows.Forms.Button ExportInWordPortrait;
-        private System.Windows.Forms.Button ExportInWordLandscape;
-        private System.Windows.Forms.CheckBox showProposed;
-        private System.Windows.Forms.Button ExportAllTeachersInWord;
+        private Panel controlsPanel;
+        private ComboBox teacherList;
+        private Panel viewPanel;
+        private DataGridView scheduleView;
+        private Button refresh;
+        private CheckBox weekFiltered;
+        private ComboBox weekFilter;
+        private Button ExportInWordPortrait;
+        private Button ExportInWordLandscape;
+        private CheckBox showProposed;
+        private Button ExportAllTeachersInWord;
     }
 }

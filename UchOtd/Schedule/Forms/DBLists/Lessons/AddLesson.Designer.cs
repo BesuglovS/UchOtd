@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists.Lessons
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists.Lessons
 {
     partial class AddLesson
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -338,30 +341,30 @@
 
         #endregion
 
-        private System.Windows.Forms.Button Execute;
-        private System.Windows.Forms.Button Cancel;
-        private System.Windows.Forms.CheckBox isActive;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox teacherForDisciplineBox;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox lessonWeeks;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ComboBox publicComment;
-        private System.Windows.Forms.ComboBox hiddenComment;
-        private System.Windows.Forms.TextBox auditoriums;
-        private System.Windows.Forms.Button showAuds;
-        private System.Windows.Forms.ListBox audList;
-        private System.Windows.Forms.Button reset;
-        private System.Windows.Forms.ListBox ringsListBox;
-        private System.Windows.Forms.ListBox DayOfWeekListBox;
-        private System.Windows.Forms.Panel BuildingsPanel;
-        private System.Windows.Forms.Panel MainPanel;
-        private System.Windows.Forms.Button deselectBuilding;
-        private System.Windows.Forms.CheckBox filterRings;
-        private System.Windows.Forms.CheckBox ProposedLesson;
-        private System.Windows.Forms.CheckBox proposedIncluded;
+        private Button Execute;
+        private Button Cancel;
+        private CheckBox isActive;
+        private Label label1;
+        private ComboBox teacherForDisciplineBox;
+        private Label label2;
+        private Label label3;
+        private Label label4;
+        private TextBox lessonWeeks;
+        private Label label5;
+        private Label label6;
+        private ComboBox publicComment;
+        private ComboBox hiddenComment;
+        private TextBox auditoriums;
+        private Button showAuds;
+        private ListBox audList;
+        private Button reset;
+        private ListBox ringsListBox;
+        private ListBox DayOfWeekListBox;
+        private Panel BuildingsPanel;
+        private Panel MainPanel;
+        private Button deselectBuilding;
+        private CheckBox filterRings;
+        private CheckBox ProposedLesson;
+        private CheckBox proposedIncluded;
     }
 }

@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class FacultyList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -369,33 +372,33 @@
 
         #endregion
 
-        private System.Windows.Forms.DataGridView GroupsView;
-        private System.Windows.Forms.Panel GroupListPanel;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox GroupList;
-        private System.Windows.Forms.Button removeStudentFrunGroup;
-        private System.Windows.Forms.DataGridView FacultiesListView;
-        private System.Windows.Forms.Panel FacultyListPanel;
-        private System.Windows.Forms.Button addGroupToFaculty;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.TextBox FacultyName;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel ControlsPanel;
-        private System.Windows.Forms.Panel LeftPanel;
-        private System.Windows.Forms.TextBox TitleOfSemesterScheduleSigner;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox TitleOfSessionScheduleSigner;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox SessionScheduleSigner;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox SemesterScheduleSigner;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox SortingOrder;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox FacultyLetter;
-        private System.Windows.Forms.Label label768;
-        private System.Windows.Forms.Button cascadeDelete;
+        private DataGridView GroupsView;
+        private Panel GroupListPanel;
+        private Label label2;
+        private ComboBox GroupList;
+        private Button removeStudentFrunGroup;
+        private DataGridView FacultiesListView;
+        private Panel FacultyListPanel;
+        private Button addGroupToFaculty;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private TextBox FacultyName;
+        private Label label1;
+        private Panel ControlsPanel;
+        private Panel LeftPanel;
+        private TextBox TitleOfSemesterScheduleSigner;
+        private Label label7;
+        private TextBox TitleOfSessionScheduleSigner;
+        private Label label6;
+        private TextBox SessionScheduleSigner;
+        private Label label5;
+        private TextBox SemesterScheduleSigner;
+        private Label label4;
+        private TextBox SortingOrder;
+        private Label label3;
+        private TextBox FacultyLetter;
+        private Label label768;
+        private Button cascadeDelete;
     }
 }

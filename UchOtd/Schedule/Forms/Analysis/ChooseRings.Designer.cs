@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.Analysis
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.Analysis
 {
     partial class ChooseRings
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -143,14 +146,14 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.ListBox RingsList;
-        private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.Button Cancel;
-        private System.Windows.Forms.Button OK;
-        private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.Button MolRings;
+        private Panel panel1;
+        private Panel panel2;
+        private ListBox RingsList;
+        private Panel panel4;
+        private Button Cancel;
+        private Button OK;
+        private Panel panel3;
+        private Button MolRings;
 
     }
 }

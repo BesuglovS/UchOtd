@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using UchOtd.Properties;
 using UchOtd.Schedule.Views;
 
 namespace UchOtd.Schedule.Forms
@@ -80,7 +80,7 @@ namespace UchOtd.Schedule.Forms
                 _cToken = _tokenSource.Token;
 
                 UpdateView.Text = "";
-                UpdateView.Image = UchOtd.Properties.Resources.Loading;
+                UpdateView.Image = Resources.Loading;
 
                 var tfd = tfdFiltering.Checked;
                 var tfdId = (int) tfdFilter.SelectedValue;

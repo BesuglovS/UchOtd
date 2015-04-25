@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Office.Interop.Word;
 using Schedule.Repositories;
 using UchOtd.Schedule.Views;
-using Task = System.Threading.Tasks.Task;
 
 namespace UchOtd.Schedule.Forms
 {

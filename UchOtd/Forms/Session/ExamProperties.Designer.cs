@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Forms.Session
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Forms.Session
 {
     partial class ExamProperties
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -180,17 +183,17 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox discipline;
-        private System.Windows.Forms.Button SaveWOLog;
-        private System.Windows.Forms.TextBox ExamAudBox;
-        private System.Windows.Forms.TextBox ConsAudBox;
-        private System.Windows.Forms.Label LabelConsAud;
-        private System.Windows.Forms.Button Cancel;
-        private System.Windows.Forms.Button Save;
-        private System.Windows.Forms.DateTimePicker ExamDate;
-        private System.Windows.Forms.DateTimePicker ConsDate;
-        private System.Windows.Forms.Label Exam;
-        private System.Windows.Forms.Label Cons;
-        private System.Windows.Forms.Label label1;
+        private TextBox discipline;
+        private Button SaveWOLog;
+        private TextBox ExamAudBox;
+        private TextBox ConsAudBox;
+        private Label LabelConsAud;
+        private Button Cancel;
+        private Button Save;
+        private DateTimePicker ExamDate;
+        private DateTimePicker ConsDate;
+        private Label Exam;
+        private Label Cons;
+        private Label label1;
     }
 }

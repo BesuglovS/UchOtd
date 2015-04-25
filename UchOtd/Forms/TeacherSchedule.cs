@@ -323,7 +323,7 @@ namespace UchOtd.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                refresh.Image = UchOtd.Properties.Resources.Loading;
+                refresh.Image = Resources.Loading;
                 refresh.Text = "";
 
                 var teacherId = (int) teacherList.SelectedValue;
@@ -369,7 +369,7 @@ namespace UchOtd.Forms
                 _cToken = _tokenSource.Token;
 
                 ExportInWordPortrait.Text = "";
-                ExportInWordPortrait.Image = UchOtd.Properties.Resources.Loading;
+                ExportInWordPortrait.Image = Resources.Loading;
 
                 var isWeekFiltered = weekFiltered.Checked;
                 int weekNum = -1;
@@ -411,7 +411,7 @@ namespace UchOtd.Forms
                 _cToken = _tokenSource.Token;
 
                 ExportInWordLandscape.Text = "";
-                ExportInWordLandscape.Image = UchOtd.Properties.Resources.Loading;
+                ExportInWordLandscape.Image = Resources.Loading;
 
                 var isWeekFiltered = weekFiltered.Checked;
                 int weekNum = -1;
@@ -454,7 +454,7 @@ namespace UchOtd.Forms
                 var repo = _repo;
 
                 ExportAllTeachersInWord.Text = "";
-                ExportAllTeachersInWord.Image = UchOtd.Properties.Resources.Loading;
+                ExportAllTeachersInWord.Image = Resources.Loading;
                 
                 try
                 {

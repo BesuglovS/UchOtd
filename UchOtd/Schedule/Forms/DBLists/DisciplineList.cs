@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using UchOtd.Properties;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
 using UchOtd.Schedule.Views.DBListViews;
 
@@ -71,7 +72,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 _cToken = _tokenSource.Token;
 
                 refresh.Text = "";
-                refresh.Image = UchOtd.Properties.Resources.Loading;
+                refresh.Image = Resources.Loading;
 
                 var filterText = filter.Text;
                 var discNameF = discnameFilter.Checked;

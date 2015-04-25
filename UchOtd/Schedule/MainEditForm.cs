@@ -7,22 +7,23 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Office.Interop.Word;
 using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using Schedule.Repositories.Common;
 using UchOtd.Core;
+using UchOtd.Forms;
+using UchOtd.Properties;
 using UchOtd.Schedule.Core;
+using UchOtd.Schedule.Forms;
+using UchOtd.Schedule.Forms.Analysis;
+using UchOtd.Schedule.Forms.DBLists;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
 using UchOtd.Schedule.Views.DBListViews;
-using UchOtd.Schedule.Forms.DBLists;
-using UchOtd.Schedule.Forms.Analysis;
-using UchOtd.Schedule.Forms;
 using UchOtd.Schedule.wnu;
-using Application = System.Windows.Forms.Application;
-using Task = System.Threading.Tasks.Task;
+using StudentList = UchOtd.Schedule.Forms.DBLists.StudentList;
 using Utilities = UchOtd.Core.Utilities;
 
 namespace UchOtd.Schedule
@@ -164,7 +165,7 @@ namespace UchOtd.Schedule
                 var cancelled = false;
 
                 showGroupLessons.Text = "";
-                showGroupLessons.Image = UchOtd.Properties.Resources.Loading;
+                showGroupLessons.Image = Resources.Loading;
 
                 var groupId = (int) groupList.SelectedValue;
                 var showProposed = showProposedLessons.Checked;
@@ -618,8 +619,8 @@ namespace UchOtd.Schedule
         {
 
             Repo.SetConnectionString("data source=tcp:127.0.0.1,1433; Database=ScheduleDB;User ID = "+ 
-                                     ";User ID = " + Properties.Settings.Default.DBUserName +
-                                     ";Password = " + Properties.Settings.Default.DBPassword);
+                                     ";User ID = " + Settings.Default.DBUserName +
+                                     ";Password = " + Settings.Default.DBPassword);
 
             /*var discNames = Repo
                 .GetFiltredTeacherForDiscipline(tfd => tfd.Discipline.StudentGroup.Name.Contains("-") && tfd.Discipline.AuditoriumHours != 0)
@@ -646,8 +647,8 @@ namespace UchOtd.Schedule
             }
 
             Repo.SetConnectionString("data source=tcp:127.0.0.1,1433; Database=S-13-14-2;User ID = " +
-                                     ";User ID = " + Properties.Settings.Default.DBUserName +
-                                     ";Password = " + Properties.Settings.Default.DBPassword);
+                                     ";User ID = " + Settings.Default.DBUserName +
+                                     ";Password = " + Settings.Default.DBPassword);
 
             var newLessonsList = new List<Lesson>();
 
@@ -980,7 +981,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 LoadToSite.Text = "";
-                LoadToSite.Image = UchOtd.Properties.Resources.Loading;
+                LoadToSite.Image = Resources.Loading;
 
                 var repo = Repo;
                 var uploadDbPrefix = uploadPrefix.Text;
@@ -1083,7 +1084,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 auditoriumKaput.Text = "";
-                auditoriumKaput.Image = UchOtd.Properties.Resources.Loading;
+                auditoriumKaput.Image = Resources.Loading;
                 
                 try
                 {
@@ -1419,7 +1420,7 @@ namespace UchOtd.Schedule
             discListForm.Width = width / 2;
             discListForm.Height = height / 2;
 
-            var teachersSchedule = new UchOtd.Forms.TeacherSchedule(Repo);
+            var teachersSchedule = new TeacherSchedule(Repo);
             teachersSchedule.Show();
             teachersSchedule.Left = width / 2;
             teachersSchedule.Top = height / 2;
@@ -1447,7 +1448,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 CreatePDF.Text = "";
-                CreatePDF.Image = UchOtd.Properties.Resources.Loading;
+                CreatePDF.Image = Resources.Loading;
 
                 var facultyId = (int)FacultyList.SelectedValue;
                 var facultyName = Repo.Faculties.GetFaculty(facultyId).Name;
@@ -1686,7 +1687,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 WordExportButton.Text = "";
-                WordExportButton.Image = UchOtd.Properties.Resources.Loading;
+                WordExportButton.Image = Resources.Loading;
 
                 var repo = Repo;
                 var length80Or90 = cb90.Checked ? 90 : 80;
@@ -1901,7 +1902,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 WordSchool.Text = "";
-                WordSchool.Image = UchOtd.Properties.Resources.Loading;
+                WordSchool.Image = Resources.Loading;
 
                 var facultyId = (int)FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
@@ -1935,7 +1936,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 WordSchool2.Text = "";
-                WordSchool2.Image = UchOtd.Properties.Resources.Loading;
+                WordSchool2.Image = Resources.Loading;
 
                 var facultyId = (int)FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
@@ -1996,7 +1997,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 OnePageGroupScheduleWordExport.Text = "";
-                OnePageGroupScheduleWordExport.Image = UchOtd.Properties.Resources.Loading;
+                OnePageGroupScheduleWordExport.Image = Resources.Loading;
 
                 var groupId = (int)groupList.SelectedValue;
 
@@ -2032,7 +2033,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 WordWholeScheduleOneGroupOnePage.Text = "";
-                WordWholeScheduleOneGroupOnePage.Image = UchOtd.Properties.Resources.Loading;
+                WordWholeScheduleOneGroupOnePage.Image = Resources.Loading;
                 
                 try
                 {
@@ -2070,7 +2071,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 startSchoolWordExport.Text = "";
-                startSchoolWordExport.Image = UchOtd.Properties.Resources.Loading;
+                startSchoolWordExport.Image = Resources.Loading;
 
                 var facultyId = (int)FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
@@ -2159,7 +2160,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 removeAllProposedLessons.Text = "";
-                removeAllProposedLessons.Image = UchOtd.Properties.Resources.Loading;
+                removeAllProposedLessons.Image = Resources.Loading;
                 
                 try
                 {
@@ -2218,6 +2219,12 @@ namespace UchOtd.Schedule
         private void button3_Click(object sender, EventArgs e)
         {
             Repo.TxtBackup("backup.txt");
+        }
+
+        private void заметкиКРасписаниюToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var scheduleNotesForm = new ScheduleNoteList(Repo);
+            scheduleNotesForm.Show();
         }
     }
 }

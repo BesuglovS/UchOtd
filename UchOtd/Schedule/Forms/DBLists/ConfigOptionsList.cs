@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Config;
@@ -17,7 +18,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             _repo = repo;
         }
 
-        private void ConfigOptionsLoad(object sender, System.EventArgs e)
+        private void ConfigOptionsLoad(object sender, EventArgs e)
         {
             RefreshView();
         }
@@ -49,7 +50,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         }
 
-        private void add_Click(object sender, System.EventArgs e)
+        private void add_Click(object sender, EventArgs e)
         {
             if (_repo.ConfigOptions.FindConfigOption(optionKey.Text) != null)
             {
@@ -63,7 +64,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             RefreshView();
         }
 
-        private void update_Click(object sender, System.EventArgs e)
+        private void update_Click(object sender, EventArgs e)
         {
             if (OptionsListView.SelectedCells.Count > 0)
             {
@@ -78,7 +79,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             }
         }
 
-        private void remove_Click(object sender, System.EventArgs e)
+        private void remove_Click(object sender, EventArgs e)
         {
             if (OptionsListView.SelectedCells.Count > 0)
             {
@@ -90,7 +91,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             }
         }
 
-        private void showInternalOptions_CheckedChanged(object sender, System.EventArgs e)
+        private void showInternalOptions_CheckedChanged(object sender, EventArgs e)
         {
             RefreshView();
         }

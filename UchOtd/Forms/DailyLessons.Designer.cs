@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Forms
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Forms
 {
     partial class DailyLessons
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -196,17 +199,17 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.ComboBox facultyFilter;
-        private System.Windows.Forms.CheckBox facultyFiltered;
-        private System.Windows.Forms.DateTimePicker lessonsDate;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button refresh;
-        private System.Windows.Forms.DataGridView view;
-        private System.Windows.Forms.Label loadingLabel;
-        private System.Windows.Forms.ListBox studentGroupList;
-        private System.Windows.Forms.CheckBox studentGroupsFiltered;
-        private System.Windows.Forms.CheckBox showProposed;
+        private Panel controlsPanel;
+        private Panel viewPanel;
+        private ComboBox facultyFilter;
+        private CheckBox facultyFiltered;
+        private DateTimePicker lessonsDate;
+        private Label label1;
+        private Button refresh;
+        private DataGridView view;
+        private Label loadingLabel;
+        private ListBox studentGroupList;
+        private CheckBox studentGroupsFiltered;
+        private CheckBox showProposed;
     }
 }

@@ -1,11 +1,14 @@
-﻿namespace UchOtd
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd
 {
     partial class StartupForm
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -262,30 +265,30 @@
 
         #endregion
 
-        private System.Windows.Forms.ContextMenuStrip trayIconMenu;
-        private System.Windows.Forms.ToolStripMenuItem измененияToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem расписаниеПреподавателяToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem показатьОкноToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem выходToolStripMenuItem;
-        private System.Windows.Forms.NotifyIcon trayIcon;
-        private System.Windows.Forms.ToolStripMenuItem контингентToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem занятостьАудиторийAltAToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem заметкиToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem телефоныToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openDBToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
-        private System.Windows.Forms.ToolStripMenuItem EditScheduleToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem часыПоПреподавателюAltShiftTToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem списокПарПоДисциплинеAltLToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem расписаниеПреподавателяAltTToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem расписаниеНаДеньToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem расписаниеСессииToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
-        private System.Windows.Forms.Timer uploadTimer;
+        private ContextMenuStrip trayIconMenu;
+        private ToolStripMenuItem измененияToolStripMenuItem;
+        private ToolStripMenuItem расписаниеПреподавателяToolStripMenuItem;
+        private ToolStripMenuItem показатьОкноToolStripMenuItem;
+        private ToolStripMenuItem выходToolStripMenuItem;
+        private NotifyIcon trayIcon;
+        private ToolStripMenuItem контингентToolStripMenuItem;
+        private ToolStripMenuItem занятостьАудиторийAltAToolStripMenuItem;
+        private ToolStripMenuItem заметкиToolStripMenuItem;
+        private ToolStripSeparator toolStripMenuItem2;
+        private ToolStripMenuItem телефоныToolStripMenuItem;
+        private ToolStripMenuItem openDBToolStripMenuItem;
+        private ToolStripSeparator toolStripMenuItem3;
+        private ToolStripSeparator toolStripMenuItem1;
+        private ToolStripSeparator toolStripMenuItem4;
+        private ToolStripMenuItem EditScheduleToolStripMenuItem;
+        private ToolStripMenuItem часыПоПреподавателюAltShiftTToolStripMenuItem;
+        private ToolStripMenuItem списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1;
+        private ToolStripMenuItem списокПарПоДисциплинеAltLToolStripMenuItem;
+        private ToolStripMenuItem расписаниеПреподавателяAltTToolStripMenuItem;
+        private ToolStripMenuItem расписаниеНаДеньToolStripMenuItem;
+        private ToolStripMenuItem расписаниеСессииToolStripMenuItem;
+        private ToolStripSeparator toolStripMenuItem5;
+        private Timer uploadTimer;
     }
 }
 

@@ -4,11 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Schedule.DomainClasses.Analyse;
-using Schedule.Repositories;
-using Schedule.Constants.Analysis;
 using Schedule.Constants;
+using Schedule.Constants.Analysis;
 using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
 using UchOtd.Analysis;
 
 namespace UchOtd.Schedule.Forms.Analysis

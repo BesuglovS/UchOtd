@@ -1,16 +1,20 @@
-﻿using Schedule.DomainClasses.Main;
-using Schedule.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using UchOtd.Schedule.wnu;
-using Word = Microsoft.Office.Interop.Word;
 using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Web.Script.Serialization;
+using System.Windows.Forms;
 using Microsoft.Office.Core;
-using UchOtd.Views;
-using UchOtd.Schedule.wnu.MySQLViews;
+using Microsoft.Office.Interop.Word;
 using Schedule.Constants;
+using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
+using UchOtd.Schedule.wnu;
+using UchOtd.Schedule.wnu.MySQLViews;
+using UchOtd.Views;
+using Application = Microsoft.Office.Interop.Word.Application;
+using Shape = Microsoft.Office.Interop.Word.Shape;
 
 namespace UchOtd.Forms.Session
 {
@@ -183,7 +187,7 @@ namespace UchOtd.Forms.Session
 
         private void UploadClick(object sender, EventArgs e)
         {
-            var jsonSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+            var jsonSerializer = new JavaScriptSerializer();
 
             var mySqlExams = MySqlExam.FromExamList(_repo.Exams.GetAllExamRecords());
             var wud = new WnuUploadData { tableSelector = "exams", data = jsonSerializer.Serialize(mySqlExams) };
@@ -215,14 +219,14 @@ namespace UchOtd.Forms.Session
             DetectSessionDates(out beginSessionDate, out endSessionDate);
 
 
-            object oMissing = System.Reflection.Missing.Value;
+            object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             //Start Word and create a new document.
 
-            Word._Application oWord = new Word.Application();
+            _Application oWord = new Application();
             oWord.Visible = true;
-            Word._Document oDoc =
+            _Document oDoc =
                 oWord.Documents.Add(ref oMissing, ref oMissing, ref oMissing, ref oMissing);
 
             oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
@@ -270,7 +274,7 @@ namespace UchOtd.Forms.Session
                     .OrderBy(fe => fe.Key)
                     .ToDictionary(keyItem => keyItem.Key, valueItem => valueItem.Value);
 
-                Word.Paragraph oPara1 =
+                Paragraph oPara1 =
                     oDoc.Content.Paragraphs.Add(ref oMissing);
                 oPara1.Range.Font.Size = 24;
                 oPara1.Format.LineSpacing = oWord.LinesToPoints(1);
@@ -297,12 +301,12 @@ namespace UchOtd.Forms.Session
                 }
                 oPara1.Range.InsertParagraphAfter();
 
-                Word.Shape signBox = oDoc.Shapes
+                Shape signBox = oDoc.Shapes
                     .AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 350, 15, 200, 75, oPara1.Range);
 
                 signBox.Line.Visible = MsoTriState.msoFalse;
                 signBox.TextFrame.ContainingRange.ParagraphFormat.Alignment =
-                    Word.WdParagraphAlignment.wdAlignParagraphRight;
+                    WdParagraphAlignment.wdAlignParagraphRight;
 
                 var prorUchRabNameOption = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Проректор по учебной работе");
                 var prorUchRabName = (prorUchRabNameOption == null) ? "" : prorUchRabNameOption.Value;
@@ -320,8 +324,8 @@ namespace UchOtd.Forms.Session
                     .Select(gif => gif.StudentGroup)
                     .ToList();
 
-                Word.Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
-                Word.Table oTable = oDoc.Tables.Add(wrdRng, 1 + facultyExams.Keys.Count, 1 + groups.Count());
+                Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                Table oTable = oDoc.Tables.Add(wrdRng, 1 + facultyExams.Keys.Count, 1 + groups.Count());
 
                 //oTable.Rows(1).HeadingFormat = True;
                 //oTable.ApplyStyleHeadingRows = True;
@@ -338,20 +342,20 @@ namespace UchOtd.Forms.Session
 
                 oTable.Cell(1, 1).Range.Text = "Дата";
                 oTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
-                        Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        WdParagraphAlignment.wdAlignParagraphCenter;
                 for (var column = 1; column <= groups.Count(); column++)
                 {
                     oTable.Cell(1, column + 1).Range.Text = groups[column - 1].Name;
                     oTable.Cell(1, column + 1).Range.ParagraphFormat.Alignment =
-                        Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        WdParagraphAlignment.wdAlignParagraphCenter;
                 }
 
                 for (var row = 2; row <= 1 + facultyExams.Keys.Count; row++)
                 {
                     oTable.Cell(row, 1).Range.Text = facultyExams.Keys.ElementAt(row - 2).ToString("dd MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"));
-                    oTable.Cell(row, 1).VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                    oTable.Cell(row, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
                     oTable.Cell(row, 1).Range.ParagraphFormat.Alignment =
-                        Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                        WdParagraphAlignment.wdAlignParagraphCenter;
                 }
 
                 for (var row = 2; row <= 1 + facultyExams.Keys.Count; row++)
@@ -366,10 +370,10 @@ namespace UchOtd.Forms.Session
                             {
                                 var eventCount = facultyExams[currentDate][groupIds[column - 1]].Count;
 
-                                oTable.Cell(row, column + 1).VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                                oTable.Cell(row, column + 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
 
                                 var timeTable = oDoc.Tables.Add(oTable.Cell(row, column + 1).Range, 1, 1);
-                                timeTable.AutoFitBehavior(Word.WdAutoFitBehavior.wdAutoFitWindow);
+                                timeTable.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitWindow);
                                 if (eventCount > 1)
                                 {
                                     for (int i = 1; i < eventCount; i++)
@@ -407,7 +411,7 @@ namespace UchOtd.Forms.Session
 
                                     if (i != eventCount - 1)
                                     {
-                                        timeTable.Cell(i + 1, 1).Borders[Word.WdBorderType.wdBorderBottom].Visible = true;
+                                        timeTable.Cell(i + 1, 1).Borders[WdBorderType.wdBorderBottom].Visible = true;
                                     }
                                 }
                             }
@@ -422,9 +426,9 @@ namespace UchOtd.Forms.Session
                     oTable.Columns[i + 2].Width = oWord.CentimetersToPoints(16f / groups.Count);
                 }
 
-                oTable.Rows.Alignment = Word.WdRowAlignment.wdAlignRowCenter;
+                oTable.Rows.Alignment = WdRowAlignment.wdAlignRowCenter;
 
-                Word.Paragraph oPara2 =
+                Paragraph oPara2 =
                     oDoc.Content.Paragraphs.Add(ref oMissing);
                 oPara2.Range.Font.Size = 12;
                 oPara2.Format.LineSpacing = oWord.LinesToPoints(1);
@@ -458,10 +462,10 @@ namespace UchOtd.Forms.Session
 
                 if (faculty.FacultyId != faculties.OrderBy(f => f.SortingOrder).Last().FacultyId)
                 {
-                    oDoc.Words.Last.InsertBreak(Word.WdBreakType.wdPageBreak);
+                    oDoc.Words.Last.InsertBreak(WdBreakType.wdPageBreak);
                 }
 
-                Application.DoEvents();
+                System.Windows.Forms.Application.DoEvents();
             }
 
             //object fileName = Application.StartupPath + @"\Export2.docx";

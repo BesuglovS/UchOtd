@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Constants;
 using Schedule.Constants.Analysis;
-using Schedule.Repositories;
 using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
 using UchOtd.Analysis;
 
 namespace UchOtd.Schedule.Forms.Analysis

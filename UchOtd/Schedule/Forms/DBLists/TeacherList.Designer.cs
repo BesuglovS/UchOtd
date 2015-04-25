@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class TeacherList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -471,39 +474,39 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel LeftPanel;
-        private System.Windows.Forms.Panel TeacherControlsPanel;
-        private System.Windows.Forms.TextBox teacherPhone;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button deletewithlessons;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.TextBox teacherFIO;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel TeacherListPanel;
-        private System.Windows.Forms.DataGridView TeacherListView;
-        private System.Windows.Forms.Panel TFDPanel;
-        private System.Windows.Forms.Panel TFDListPanel;
-        private System.Windows.Forms.Panel TFDControlsPanel;
-        private System.Windows.Forms.Button removeTFD;
-        private System.Windows.Forms.Button addTFD;
-        private System.Windows.Forms.Panel TeacherTFDPanel;
-        private System.Windows.Forms.Panel TFDSelectPanel;
-        private System.Windows.Forms.Panel TeacherTFDListPanel;
-        private System.Windows.Forms.DataGridView TFDListView;
-        private System.Windows.Forms.Panel TeacherTFDTitle;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Panel AllDiscListPanel;
-        private System.Windows.Forms.DataGridView AllDisciplinesList;
-        private System.Windows.Forms.Panel AllDiscTitle;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button removeWithLessons;
-        private System.Windows.Forms.Panel filterPanel;
-        private System.Windows.Forms.Button filterButton;
-        private System.Windows.Forms.TextBox filter;
-        private System.Windows.Forms.Panel freeDiscPanel;
-        private System.Windows.Forms.ComboBox remapToTeacherList;
-        private System.Windows.Forms.Button remapTfd;
+        private Panel LeftPanel;
+        private Panel TeacherControlsPanel;
+        private TextBox teacherPhone;
+        private Label label2;
+        private Button deletewithlessons;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private TextBox teacherFIO;
+        private Label label1;
+        private Panel TeacherListPanel;
+        private DataGridView TeacherListView;
+        private Panel TFDPanel;
+        private Panel TFDListPanel;
+        private Panel TFDControlsPanel;
+        private Button removeTFD;
+        private Button addTFD;
+        private Panel TeacherTFDPanel;
+        private Panel TFDSelectPanel;
+        private Panel TeacherTFDListPanel;
+        private DataGridView TFDListView;
+        private Panel TeacherTFDTitle;
+        private Label label4;
+        private Panel AllDiscListPanel;
+        private DataGridView AllDisciplinesList;
+        private Panel AllDiscTitle;
+        private Label label3;
+        private Button removeWithLessons;
+        private Panel filterPanel;
+        private Button filterButton;
+        private TextBox filter;
+        private Panel freeDiscPanel;
+        private ComboBox remapToTeacherList;
+        private Button remapTfd;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -7,7 +8,6 @@ using Schedule.DataLayer;
 using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Calendar = Schedule.DomainClasses.Main.Calendar;
-using System.Data.Entity;
 
 namespace Schedule.Repositories.Common
 {

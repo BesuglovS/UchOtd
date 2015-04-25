@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.Analysis
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.Analysis
 {
     partial class IncompatiblePairs
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -148,14 +151,14 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.Button AddPair;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox disc2;
-        private System.Windows.Forms.ComboBox disc1;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.DataGridView PairsView;
-        private System.Windows.Forms.Button removePair;
+        private Panel controlsPanel;
+        private Button AddPair;
+        private Label label2;
+        private Label label1;
+        private ComboBox disc2;
+        private ComboBox disc1;
+        private Panel viewPanel;
+        private DataGridView PairsView;
+        private Button removePair;
     }
 }

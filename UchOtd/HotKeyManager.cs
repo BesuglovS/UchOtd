@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace UchOtd
 {
@@ -28,7 +29,7 @@ namespace UchOtd
 
         public static int RegisterHotKey(Keys key, uint modifiers)
         {
-            int id = System.Threading.Interlocked.Increment(ref _id);
+            int id = Interlocked.Increment(ref _id);
             RegisterHotKey(Wnd.Handle, id, modifiers, (uint)key);
             return id;
         }

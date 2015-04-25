@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.Analysis
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.Analysis
 {
     partial class AnalysisSchool
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -130,12 +133,12 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.Button cancel;
-        private System.Windows.Forms.Button start;
-        private System.Windows.Forms.RichTextBox messages;
-        private System.Windows.Forms.ComboBox logLevel;
-        private System.Windows.Forms.Label label1;
+        private Panel controlsPanel;
+        private Panel viewPanel;
+        private Button cancel;
+        private Button start;
+        private RichTextBox messages;
+        private ComboBox logLevel;
+        private Label label1;
     }
 }

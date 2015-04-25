@@ -1,7 +1,7 @@
-﻿using Schedule.DomainClasses.Analyse;
-using Schedule.Repositories;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Schedule.DomainClasses.Analyse;
+using Schedule.Repositories;
 
 namespace UchOtd.Schedule.Views
 {

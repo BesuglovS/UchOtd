@@ -8,14 +8,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.CodeDom.Compiler;
+using System.Configuration;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
 namespace UchOtd.Properties {
     
     
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "12.0.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+    [CompilerGenerated()]
+    [GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "12.0.0.0")]
+    internal sealed partial class Settings : ApplicationSettingsBase {
         
-        private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
+        private static Settings defaultInstance = ((Settings)(Synchronized(new Settings())));
         
         public static Settings Default {
             get {
@@ -23,9 +28,9 @@ namespace UchOtd.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("sa")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("sa")]
         public string DBUserName {
             get {
                 return ((string)(this["DBUserName"]));
@@ -35,9 +40,9 @@ namespace UchOtd.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ghjuhfvvf")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("ghjuhfvvf")]
         public string DBPassword {
             get {
                 return ((string)(this["DBPassword"]));
@@ -47,9 +52,9 @@ namespace UchOtd.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("eduxxi")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("eduxxi")]
         public string wnuUserName {
             get {
                 return ((string)(this["wnuUserName"]));
@@ -59,9 +64,9 @@ namespace UchOtd.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Ueuk,tp58Xfnf")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("Ueuk,tp58Xfnf")]
         public string wnuPassword {
             get {
                 return ((string)(this["wnuPassword"]));

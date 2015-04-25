@@ -3,8 +3,8 @@ using System.Linq;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
-using UchOtd.Properties;
 using UchOtd.Core;
+using UchOtd.Properties;
 
 namespace UchOtd.Forms
 {

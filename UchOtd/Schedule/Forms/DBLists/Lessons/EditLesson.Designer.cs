@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists.Lessons
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists.Lessons
 {
     partial class EditLesson
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -214,20 +217,20 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.Button nextTFD;
-        private System.Windows.Forms.Button prevTFD;
-        private System.Windows.Forms.TextBox tfdIndex;
-        private System.Windows.Forms.Panel lessonsPanel;
-        private System.Windows.Forms.Button saveChanges;
-        private System.Windows.Forms.TextBox tfd;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox auditoriums;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox lessonWeeks;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button removeLessons;
-        private System.Windows.Forms.CheckBox proposedLessons;
-        private System.Windows.Forms.Button acceptLessons;
+        private Panel controlsPanel;
+        private Button nextTFD;
+        private Button prevTFD;
+        private TextBox tfdIndex;
+        private Panel lessonsPanel;
+        private Button saveChanges;
+        private TextBox tfd;
+        private Label label2;
+        private TextBox auditoriums;
+        private Label label1;
+        private TextBox lessonWeeks;
+        private Label label4;
+        private Button removeLessons;
+        private CheckBox proposedLessons;
+        private Button acceptLessons;
     }
 }

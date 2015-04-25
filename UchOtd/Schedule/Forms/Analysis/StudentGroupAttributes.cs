@@ -1,11 +1,11 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Windows.Forms;
 using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using UchOtd.Schedule.Views;
 
 namespace UchOtd.Schedule.Forms.Analysis

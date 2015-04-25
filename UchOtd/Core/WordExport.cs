@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
+using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Word;
+using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using Schedule.Repositories.Common;
 using UchOtd.Forms;
 using UchOtd.NUDS.View;
+using UchOtd.Schedule;
 using UchOtd.Schedule.Views.DBListViews;
 using Shape = Microsoft.Office.Interop.Word.Shape;
-using Schedule.Constants;
-using UchOtd.Schedule;
 
 namespace UchOtd.Core
 {
@@ -82,7 +84,7 @@ namespace UchOtd.Core
             oPara1.Range.InsertParagraphAfter();
 
             Shape cornerStamp = oDoc.Shapes.AddTextbox(
-                Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
+                MsoTextOrientation.msoTextOrientationHorizontal,
                 oWord.CentimetersToPoints(22f),
                 oWord.CentimetersToPoints(0.5f),
                 200, 50,
@@ -102,7 +104,7 @@ namespace UchOtd.Core
             }
             cornerStamp.TextFrame.WordWrap = 1;
             cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
-            cornerStamp.Line.Visible = Microsoft.Office.Core.MsoTriState.msoFalse;
+            cornerStamp.Line.Visible = MsoTriState.msoFalse;
 
             var timeList = new List<string>();
             foreach (var group in schedule)
@@ -134,7 +136,7 @@ namespace UchOtd.Core
                 oTable.Columns[i + 2].Width = oWord.CentimetersToPoints(colWidth);
             }
 
-            oTable.Cell(1, 1).Range.Text = "Время";
+            oTable.Cell(1, 1).Range.Text = "УЧЕБНАЯ КАРТОЧКА" + Environment.NewLine + "студента «Самарской государственной областной академии (Наяновой)»";
             oTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
                         WdParagraphAlignment.wdAlignParagraphCenter;
 
@@ -374,7 +376,7 @@ namespace UchOtd.Core
                 oWord.Quit();
             }
 
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+            Marshal.ReleaseComObject(oWord);
         }
 
         public static void ExportTwoSchedulePages(
@@ -438,7 +440,7 @@ namespace UchOtd.Core
                 oWord.Quit();
             }
 
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+            Marshal.ReleaseComObject(oWord);
         }
 
         private static Table PutDayScheduleInWord(ScheduleRepository repo, int lessonLength, bool weeksMarksVisible,
@@ -757,7 +759,7 @@ namespace UchOtd.Core
                     oPara1.Range.InsertParagraphAfter();
 
                     Shape cornerStamp = oDoc.Shapes.AddTextbox(
-                        Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
+                        MsoTextOrientation.msoTextOrientationHorizontal,
                         oWord.CentimetersToPoints(22f),
                         oWord.CentimetersToPoints(0.5f),
                         200, 50,
@@ -788,7 +790,7 @@ namespace UchOtd.Core
                     }
                     cornerStamp.TextFrame.WordWrap = 1;
                     cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
-                    cornerStamp.Line.Visible = Microsoft.Office.Core.MsoTriState.msoFalse;
+                    cornerStamp.Line.Visible = MsoTriState.msoFalse;
 
                     var timeList = new List<string>();
                     foreach (var group in schedule)
@@ -1041,7 +1043,7 @@ namespace UchOtd.Core
                 oWord.Quit();
             }
 
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+            Marshal.ReleaseComObject(oWord);
         }
 
         public static void ExportCustomSchedule(
@@ -1130,7 +1132,7 @@ namespace UchOtd.Core
                     oPara1.Range.InsertParagraphAfter();
 
                     Shape cornerStamp = oDoc.Shapes.AddTextbox(
-                        Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
+                        MsoTextOrientation.msoTextOrientationHorizontal,
                         oWord.CentimetersToPoints(22f),
                         oWord.CentimetersToPoints(0.5f),
                         200, 50,
@@ -1161,7 +1163,7 @@ namespace UchOtd.Core
                     }
                     cornerStamp.TextFrame.WordWrap = 1;
                     cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
-                    cornerStamp.Line.Visible = Microsoft.Office.Core.MsoTriState.msoFalse;
+                    cornerStamp.Line.Visible = MsoTriState.msoFalse;
 
                     var timeList = new List<string>();
                     foreach (var group in schedule)
@@ -1432,7 +1434,7 @@ namespace UchOtd.Core
                 oWord.Quit();
             }
 
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+            Marshal.ReleaseComObject(oWord);
         }
 
         private static string DetectSemesterString(ScheduleRepository repo)
@@ -1518,7 +1520,7 @@ namespace UchOtd.Core
                 oWord.Quit();
             }
 
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+            Marshal.ReleaseComObject(oWord);
         }
 
         public static void WordSchool(ScheduleRepository repo, string filename, bool save, bool quit, int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, CancellationToken cToken)
@@ -1577,7 +1579,7 @@ namespace UchOtd.Core
             oPara1.Range.InsertParagraphAfter();
 
             Shape cornerStamp = oDoc.Shapes.AddTextbox(
-                Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
+                MsoTextOrientation.msoTextOrientationHorizontal,
                 oWord.CentimetersToPoints(22f),
                 oWord.CentimetersToPoints(0.5f),
                 200, 50,
@@ -1595,7 +1597,7 @@ namespace UchOtd.Core
             }
             cornerStamp.TextFrame.WordWrap = 1;
             cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
-            cornerStamp.Line.Visible = Microsoft.Office.Core.MsoTriState.msoFalse;
+            cornerStamp.Line.Visible = MsoTriState.msoFalse;
 
             cToken.ThrowIfCancellationRequested();
 
@@ -1629,7 +1631,7 @@ namespace UchOtd.Core
                 oWord.Quit();
             }
 
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+            Marshal.ReleaseComObject(oWord);
         }
 
         public static void TeacherSchedule(List<TeacherScheduleTimeView> result, Teacher teacher, bool landscape, CancellationToken cToken)
@@ -1749,7 +1751,7 @@ namespace UchOtd.Core
                 pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
             } while (pageCount > 1);
 
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+            Marshal.ReleaseComObject(oWord);
         }
 
         private static Dictionary<int, bool> GetEmptyColumnIndexes(List<TeacherScheduleTimeView> result)
@@ -1954,7 +1956,7 @@ namespace UchOtd.Core
                 pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
             } while (pageCount > 1);
 
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+            Marshal.ReleaseComObject(oWord);
         }
 
         public static void WordSchoolTwoDays(ScheduleRepository repo, string filename, bool save, bool quit, int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, CancellationToken cToken)
@@ -2006,7 +2008,7 @@ namespace UchOtd.Core
                 oWord.Quit();
             }
 
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+            Marshal.ReleaseComObject(oWord);
         }
 
         private static Table GetAndPutDowSchedule(ScheduleRepository repo, int lessonLength, int dayOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord, Table tableToContinue, CancellationToken cToken)
@@ -2867,7 +2869,7 @@ namespace UchOtd.Core
             oPara1.Range.InsertParagraphAfter();
 
             Shape cornerStamp = oDoc.Shapes.AddTextbox(
-                Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
+                MsoTextOrientation.msoTextOrientationHorizontal,
                 oWord.CentimetersToPoints(22f),
                 oWord.CentimetersToPoints(0.5f),
                 200, 50,
@@ -2885,7 +2887,7 @@ namespace UchOtd.Core
             }
             cornerStamp.TextFrame.WordWrap = 1;
             cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
-            cornerStamp.Line.Visible = Microsoft.Office.Core.MsoTriState.msoFalse;
+            cornerStamp.Line.Visible = MsoTriState.msoFalse;
 
             cToken.ThrowIfCancellationRequested();
 
@@ -2939,7 +2941,7 @@ namespace UchOtd.Core
                 oWord.Quit();
             }
 
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+            Marshal.ReleaseComObject(oWord);
         }
 
         public static void TeachersSchedule(ScheduleRepository repo, TeacherSchedule tsForm, CancellationToken cToken)
@@ -3073,7 +3075,7 @@ namespace UchOtd.Core
 
             oDoc.Undo();
 
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(oWord);
+            Marshal.ReleaseComObject(oWord);
         }
     }
 }

@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Forms.Session
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Forms.Session
 {
     partial class Session
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -258,23 +261,23 @@
 
         #endregion
 
-        private System.Windows.Forms.DataGridView examsView;
-        private System.Windows.Forms.Button Auditoriums;
-        private System.Windows.Forms.Button RemoveSyncWithSchedule;
-        private System.Windows.Forms.Button AddExamsFromSchedule;
-        private System.Windows.Forms.Button TeacherSchedule;
-        private System.Windows.Forms.ComboBox TeacherList;
-        private System.Windows.Forms.Button UpdateView;
-        private System.Windows.Forms.Button WordExport;
-        private System.Windows.Forms.Button upload;
-        private System.Windows.Forms.Button showAll;
-        private System.Windows.Forms.Button BigRedButton;
-        private System.Windows.Forms.ComboBox groupBox;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.CheckBox oneFaculty;
-        private System.Windows.Forms.ComboBox FacultyList;
-        private System.Windows.Forms.ComboBox siteToUpload;
+        private DataGridView examsView;
+        private Button Auditoriums;
+        private Button RemoveSyncWithSchedule;
+        private Button AddExamsFromSchedule;
+        private Button TeacherSchedule;
+        private ComboBox TeacherList;
+        private Button UpdateView;
+        private Button WordExport;
+        private Button upload;
+        private Button showAll;
+        private Button BigRedButton;
+        private ComboBox groupBox;
+        private Label label1;
+        private Panel viewPanel;
+        private Panel controlsPanel;
+        private CheckBox oneFaculty;
+        private ComboBox FacultyList;
+        private ComboBox siteToUpload;
     }
 }

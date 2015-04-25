@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Data.SqlClient;
+using System.IO;
 using Schedule.DataLayer;
 using Schedule.DataLayer.Migrations;
 using Schedule.Repositories.Common;
@@ -8,10 +12,6 @@ using Schedule.Repositories.Repositories.Config;
 using Schedule.Repositories.Repositories.Logs;
 using Schedule.Repositories.Repositories.Main;
 using Schedule.Repositories.Repositories.Session;
-using System.IO;
-using System.Data.Entity.Infrastructure;
-using System.Data.SqlClient;
-using System.Data;
 
 namespace Schedule.Repositories
 {
@@ -193,7 +193,11 @@ namespace Schedule.Repositories
 
         public void RestoreDb(string dbName, string filename)
         {
+            ExecuteQuery("ALTER DATABASE " + dbName + " SET Single_User WITH Rollback Immediate");
+
             ExecuteQuery("use master; RESTORE DATABASE " + dbName + " FROM DISK = '" + filename + "' WITH REPLACE");
+
+            ExecuteQuery("ALTER DATABASE " + dbName + " SET Multi_User");
         }
 
         private void ExecuteQuery(string sqlQuery)

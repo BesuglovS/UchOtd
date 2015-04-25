@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.Analysis
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.Analysis
 {
     partial class GroupPeriods
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -354,32 +357,32 @@
 
         #endregion
 
-        private System.Windows.Forms.ComboBox groupNameList;
-        private System.Windows.Forms.Button reloadGroupList;
-        private System.Windows.Forms.ComboBox Group;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button refresh;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.CheckBox groupnameFilter;
-        private System.Windows.Forms.TextBox filter;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.Button zeroHours;
-        private System.Windows.Forms.Panel filterPanel;
-        private System.Windows.Forms.CheckBox orderByGroupname;
-        private System.Windows.Forms.CheckBox discnameFilter;
-        private System.Windows.Forms.DataGridView PeriodsListView;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.Panel ListPanel;
-        private System.Windows.Forms.TextBox PeriodName;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.DateTimePicker endOfPeriod;
-        private System.Windows.Forms.DateTimePicker startOfPeriod;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox noLessonsPeriod;
+        private ComboBox groupNameList;
+        private Button reloadGroupList;
+        private ComboBox Group;
+        private Label label6;
+        private Label label8;
+        private Label label7;
+        private Button refresh;
+        private Button remove;
+        private Button update;
+        private CheckBox groupnameFilter;
+        private TextBox filter;
+        private Button add;
+        private Button zeroHours;
+        private Panel filterPanel;
+        private CheckBox orderByGroupname;
+        private CheckBox discnameFilter;
+        private DataGridView PeriodsListView;
+        private Panel viewPanel;
+        private Panel ListPanel;
+        private TextBox PeriodName;
+        private Label label1;
+        private Panel controlsPanel;
+        private DateTimePicker endOfPeriod;
+        private DateTimePicker startOfPeriod;
+        private Label label3;
+        private Label label2;
+        private CheckBox noLessonsPeriod;
     }
 }

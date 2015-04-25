@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Schedule.Constants;
 using Schedule.Repositories;
-using UchOtd.Schedule.wnu;
 
 namespace UchOtd.Schedule.Forms
 {
@@ -84,7 +84,7 @@ namespace UchOtd.Schedule.Forms
             }
             for (int j = 0; j < 7; j++)
             {
-                view.Columns[j].HeaderText = global::Schedule.Constants.Constants.DowLocal[j+1];
+                view.Columns[j].HeaderText = Constants.DowLocal[j+1];
             }
 
             for (int i = 0; i < data.Count; i++)

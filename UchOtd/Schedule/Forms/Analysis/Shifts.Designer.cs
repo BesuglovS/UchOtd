@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.Analysis
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.Analysis
 {
     partial class Shifts
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -343,30 +346,30 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel shiftsPanel;
-        private System.Windows.Forms.Panel shiftsViewPanel;
-        private System.Windows.Forms.ListBox shiftsListBox;
-        private System.Windows.Forms.Panel shiftsControlsPanel;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.TextBox shiftName;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel shiftRingsPanel;
-        private System.Windows.Forms.Panel shiftRingsControlsPanel;
-        private System.Windows.Forms.Panel allShiftRingsPanel;
-        private System.Windows.Forms.Panel thisShiftRingsPanel;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Panel thisShiftRingsLabelPanel;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button AddShiftRing;
-        private System.Windows.Forms.Button RemoveShiftRing;
-        private System.Windows.Forms.Panel allShiftRingsViewPanel;
-        private System.Windows.Forms.Panel thisShiftRingsViewPanel;
-        private System.Windows.Forms.ListBox AllRingsListBox;
-        private System.Windows.Forms.ListBox ShiftRingsListBox;
+        private Panel shiftsPanel;
+        private Panel shiftsViewPanel;
+        private ListBox shiftsListBox;
+        private Panel shiftsControlsPanel;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private TextBox shiftName;
+        private Label label1;
+        private Panel shiftRingsPanel;
+        private Panel shiftRingsControlsPanel;
+        private Panel allShiftRingsPanel;
+        private Panel thisShiftRingsPanel;
+        private Panel panel1;
+        private Label label4;
+        private Label label5;
+        private Panel thisShiftRingsLabelPanel;
+        private Label label3;
+        private Label label2;
+        private Button AddShiftRing;
+        private Button RemoveShiftRing;
+        private Panel allShiftRingsViewPanel;
+        private Panel thisShiftRingsViewPanel;
+        private ListBox AllRingsListBox;
+        private ListBox ShiftRingsListBox;
     }
 }

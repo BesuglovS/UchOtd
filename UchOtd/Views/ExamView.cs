@@ -1,8 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Schedule.DomainClasses.Session;
 using Schedule.Repositories;
-using System;
-using System.Collections.Generic;
 
 namespace UchOtd.Views
 {

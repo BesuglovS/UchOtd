@@ -1,5 +1,5 @@
-﻿using Schedule.DomainClasses.Main;
-using System;
+﻿using System;
+using Schedule.DomainClasses.Main;
 
 namespace Schedule.DomainClasses.Logs
 {

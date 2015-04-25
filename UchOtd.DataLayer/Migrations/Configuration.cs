@@ -1,7 +1,7 @@
+using System.Data.Entity.Migrations;
+
 namespace UchOtd.DataLayer.Migrations
 {
-    using System.Data.Entity.Migrations;
-
     public sealed class Configuration : DbMigrationsConfiguration<UchOtdContext>
     {
         public Configuration()

@@ -1,13 +1,14 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Schedule.Constants;
-using Schedule.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Schedule.Constants;
+using Schedule.Repositories;
 using UchOtd.Core;
+using UchOtd.Properties;
 
 namespace UchOtd.Schedule.Forms
 {
@@ -139,7 +140,7 @@ namespace UchOtd.Schedule.Forms
                 _cToken = _tokenSource.Token;
 
                 button.Text = "";
-                button.Image = UchOtd.Properties.Resources.Loading;
+                button.Image = Resources.Loading;
 
                 var lesson8090Length = ((CheckBox)Controls.Find("cb90", false).First()).Checked ? 90 : 80;
                 var futureDatesOnly = ((CheckBox)Controls.Find("cbfuture", false).First()).Checked;

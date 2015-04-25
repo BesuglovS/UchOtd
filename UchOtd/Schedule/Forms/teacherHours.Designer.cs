@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms
 {
     partial class TeacherHours
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -121,11 +124,11 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.ComboBox teachersList;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.DataGridView view;
-        private System.Windows.Forms.Button update;
+        private Panel controlsPanel;
+        private ComboBox teachersList;
+        private Label label1;
+        private Panel viewPanel;
+        private DataGridView view;
+        private Button update;
     }
 }

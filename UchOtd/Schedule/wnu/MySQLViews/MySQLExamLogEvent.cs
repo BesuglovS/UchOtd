@@ -1,6 +1,6 @@
-﻿using Schedule.DomainClasses.Session;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Schedule.DomainClasses.Session;
 
 namespace UchOtd.Schedule.wnu.MySQLViews
 {

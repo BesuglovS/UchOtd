@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 
@@ -29,7 +29,7 @@ namespace UchOtd.Schedule.Views.DBListViews
         {
             DisciplineId = discipline.DisciplineId;
             Name = discipline.Name;
-            Attestation = global::Schedule.Constants.Constants.Attestation.ContainsKey(discipline.Attestation) ? global::Schedule.Constants.Constants.Attestation[discipline.Attestation] : "";
+            Attestation = Constants.Attestation.ContainsKey(discipline.Attestation) ? Constants.Attestation[discipline.Attestation] : "";
             AuditoriumHours = discipline.AuditoriumHours;
             AuditoriumHoursPerWeek = discipline.AuditoriumHoursPerWeek;
             LectureHours = discipline.LectureHours;

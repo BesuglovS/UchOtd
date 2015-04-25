@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms
 {
     partial class Auditoriums
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -255,21 +258,21 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.Button Sat;
-        private System.Windows.Forms.Button Fri;
-        private System.Windows.Forms.Button Thu;
-        private System.Windows.Forms.Button Wed;
-        private System.Windows.Forms.Button Tue;
-        private System.Windows.Forms.Button Mon;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.DataGridView audView;
-        private System.Windows.Forms.NumericUpDown weekNumber;
-        private System.Windows.Forms.CheckBox oneWeek;
-        private System.Windows.Forms.ComboBox buildingList;
-        private System.Windows.Forms.CheckBox oneBuilding;
-        private System.Windows.Forms.CheckBox ExportInWord;
-        private System.Windows.Forms.CheckBox PlusTeacherFIO;
-        private System.Windows.Forms.CheckBox showProposed;
+        private Panel controlsPanel;
+        private Button Sat;
+        private Button Fri;
+        private Button Thu;
+        private Button Wed;
+        private Button Tue;
+        private Button Mon;
+        private Panel viewPanel;
+        private DataGridView audView;
+        private NumericUpDown weekNumber;
+        private CheckBox oneWeek;
+        private ComboBox buildingList;
+        private CheckBox oneBuilding;
+        private CheckBox ExportInWord;
+        private CheckBox PlusTeacherFIO;
+        private CheckBox showProposed;
     }
 }

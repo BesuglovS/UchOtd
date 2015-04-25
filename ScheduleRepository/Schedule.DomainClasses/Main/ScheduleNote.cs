@@ -15,5 +15,6 @@
         public int ScheduleNoteId { get; set; }
         public virtual Lesson Lesson { get; set; }        
         public string Text { get; set; }
+        public int LateAmount { get; set; }
     }
 }

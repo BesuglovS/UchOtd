@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.Analysis
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.Analysis
 {
     partial class Wishes
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -388,33 +391,33 @@
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer mainSplit;
-        private System.Windows.Forms.ComboBox teacherList;
-        private System.Windows.Forms.Button refreshButton;
-        private System.Windows.Forms.Button Yes;
-        private System.Windows.Forms.Button No;
-        private System.Windows.Forms.Button Clear;
-        private System.Windows.Forms.Button MinSelected;
-        private System.Windows.Forms.Button MaxSelected;
-        private System.Windows.Forms.TextBox wishToSetValue;
-        private System.Windows.Forms.Button ValueSelected;
-        private System.Windows.Forms.Button OneValue;
-        private System.Windows.Forms.CheckBox windowsPossible;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox windowsPossibleSize;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox FitAllLessonsDaysCount;
-        private System.Windows.Forms.CheckBox FitAllLessonsInXDays;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox LessonsLimitPerDay;
-        private System.Windows.Forms.CheckBox LessonsLimitedPerDay;
-        private System.Windows.Forms.Button chooseRings;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.DataGridView wishesView;
-        private System.Windows.Forms.Panel ringsPanel;
-        private System.Windows.Forms.ListBox RingsList;
-        private System.Windows.Forms.Button FillAllWishesAsEmpty;
-        private System.Windows.Forms.Button removeAllWishes;
-        private System.Windows.Forms.Label progress;
+        private SplitContainer mainSplit;
+        private ComboBox teacherList;
+        private Button refreshButton;
+        private Button Yes;
+        private Button No;
+        private Button Clear;
+        private Button MinSelected;
+        private Button MaxSelected;
+        private TextBox wishToSetValue;
+        private Button ValueSelected;
+        private Button OneValue;
+        private CheckBox windowsPossible;
+        private Label label1;
+        private TextBox windowsPossibleSize;
+        private Label label3;
+        private TextBox FitAllLessonsDaysCount;
+        private CheckBox FitAllLessonsInXDays;
+        private Label label2;
+        private TextBox LessonsLimitPerDay;
+        private CheckBox LessonsLimitedPerDay;
+        private Button chooseRings;
+        private Panel viewPanel;
+        private DataGridView wishesView;
+        private Panel ringsPanel;
+        private ListBox RingsList;
+        private Button FillAllWishesAsEmpty;
+        private Button removeAllWishes;
+        private Label progress;
     }
 }

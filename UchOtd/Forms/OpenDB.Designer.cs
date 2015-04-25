@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Forms
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Forms
 {
     partial class OpenDb
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -217,20 +220,20 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel ChoosePanel;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox remoteDatabaseName;
-        private System.Windows.Forms.TextBox remoteHost;
-        private System.Windows.Forms.RadioButton remoteDB;
-        private System.Windows.Forms.TextBox DatabaseFilename;
-        private System.Windows.Forms.RadioButton fileDatabase;
-        private System.Windows.Forms.TextBox SQLExpressDatabaseName;
-        private System.Windows.Forms.RadioButton sqlExpressDB;
-        private System.Windows.Forms.Panel actionPanel;
-        private System.Windows.Forms.Button Cancel;
-        private System.Windows.Forms.Button openDatabase;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox PortNumber;
+        private Panel ChoosePanel;
+        private Label label2;
+        private Label label1;
+        private TextBox remoteDatabaseName;
+        private TextBox remoteHost;
+        private RadioButton remoteDB;
+        private TextBox DatabaseFilename;
+        private RadioButton fileDatabase;
+        private TextBox SQLExpressDatabaseName;
+        private RadioButton sqlExpressDB;
+        private Panel actionPanel;
+        private Button Cancel;
+        private Button openDatabase;
+        private Label label3;
+        private TextBox PortNumber;
     }
 }

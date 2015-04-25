@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Forms
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Forms
 {
     partial class StudentList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -140,14 +143,14 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.ComboBox searchBox;
-        private System.Windows.Forms.Panel contentPanel;
-        private System.Windows.Forms.DataGridView viewGrid;
-        private System.Windows.Forms.ContextMenuStrip StudentListContextMenu;
-        private System.Windows.Forms.ToolStripMenuItem добавитьToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem редактироватьToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem удалитьToolStripMenuItem;
+        private Panel controlsPanel;
+        private ComboBox searchBox;
+        private Panel contentPanel;
+        private DataGridView viewGrid;
+        private ContextMenuStrip StudentListContextMenu;
+        private ToolStripMenuItem добавитьToolStripMenuItem;
+        private ToolStripMenuItem редактироватьToolStripMenuItem;
+        private ToolStripMenuItem удалитьToolStripMenuItem;
 
     }
 }

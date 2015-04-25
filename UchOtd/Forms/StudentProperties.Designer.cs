@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Forms
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Forms
 {
     partial class StudentProperties
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -337,30 +340,30 @@
 
         #endregion
 
-        private System.Windows.Forms.CheckBox ExpelledBox;
-        private System.Windows.Forms.CheckBox PaidLearningBox;
-        private System.Windows.Forms.CheckBox FromSchoolBox;
-        private System.Windows.Forms.CheckBox StarostaBox;
-        private System.Windows.Forms.TextBox OrdersBox;
-        private System.Windows.Forms.Label OrdersLabel;
-        private System.Windows.Forms.TextBox PhoneBox;
-        private System.Windows.Forms.Label PhoneLabel;
-        private System.Windows.Forms.TextBox AddressBox;
-        private System.Windows.Forms.Label AddressLabel;
-        private System.Windows.Forms.DateTimePicker BirthDateBox;
-        private System.Windows.Forms.Label BirthDateLabel;
-        internal System.Windows.Forms.TextBox IdNumBox;
-        private System.Windows.Forms.Label IdNumLabel2;
-        private System.Windows.Forms.Label IdNumLabel1;
-        private System.Windows.Forms.TextBox PatronymicBox;
-        private System.Windows.Forms.Label PatronymicLabel;
-        private System.Windows.Forms.TextBox NameBox;
-        private System.Windows.Forms.Label NameLabel;
-        private System.Windows.Forms.TextBox FamilyBox;
-        private System.Windows.Forms.Label FamilyLabel;
-        private System.Windows.Forms.Button Cancel;
-        private System.Windows.Forms.Button Save;
-        private System.Windows.Forms.Label StudentGroupLabel;
-        internal System.Windows.Forms.TextBox StudentGroupBox;
+        private CheckBox ExpelledBox;
+        private CheckBox PaidLearningBox;
+        private CheckBox FromSchoolBox;
+        private CheckBox StarostaBox;
+        private TextBox OrdersBox;
+        private Label OrdersLabel;
+        private TextBox PhoneBox;
+        private Label PhoneLabel;
+        private TextBox AddressBox;
+        private Label AddressLabel;
+        private DateTimePicker BirthDateBox;
+        private Label BirthDateLabel;
+        internal TextBox IdNumBox;
+        private Label IdNumLabel2;
+        private Label IdNumLabel1;
+        private TextBox PatronymicBox;
+        private Label PatronymicLabel;
+        private TextBox NameBox;
+        private Label NameLabel;
+        private TextBox FamilyBox;
+        private Label FamilyLabel;
+        private Button Cancel;
+        private Button Save;
+        private Label StudentGroupLabel;
+        internal TextBox StudentGroupBox;
     }
 }

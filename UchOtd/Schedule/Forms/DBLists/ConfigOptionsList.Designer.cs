@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class ConfigOptionsList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -167,15 +170,15 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel ListPanel;
-        private System.Windows.Forms.DataGridView OptionsListView;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.TextBox optionKey;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox optionValue;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox showInternalOptions;
+        private Panel ListPanel;
+        private DataGridView OptionsListView;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private TextBox optionKey;
+        private Label label1;
+        private TextBox optionValue;
+        private Label label2;
+        private CheckBox showInternalOptions;
     }
 }

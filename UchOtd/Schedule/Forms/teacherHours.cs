@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Repositories;
+using UchOtd.Properties;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
 using UchOtd.Schedule.Views;
 
@@ -138,7 +139,7 @@ namespace UchOtd.Schedule.Forms
                 _cToken = _tokenSource.Token;
 
                 update.Text = "";
-                update.Image = UchOtd.Properties.Resources.Loading;
+                update.Image = Resources.Loading;
 
                 var teacherId = (int)teachersList.SelectedValue;
 

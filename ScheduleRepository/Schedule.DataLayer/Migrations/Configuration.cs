@@ -1,7 +1,7 @@
+using System.Data.Entity.Migrations;
+
 namespace Schedule.DataLayer.Migrations
 {
-    using System.Data.Entity.Migrations;
-
     public sealed class Configuration : DbMigrationsConfiguration<ScheduleContext>
     {
         public Configuration()

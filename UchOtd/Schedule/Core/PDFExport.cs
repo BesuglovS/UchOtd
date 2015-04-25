@@ -1,4 +1,9 @@
-﻿using MigraDoc.DocumentObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
@@ -6,10 +11,6 @@ using PdfSharp.Pdf;
 using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Schedule.Repositories.Common;
 
 namespace UchOtd.Schedule.Core
@@ -79,7 +80,7 @@ namespace UchOtd.Schedule.Core
             p.Start();
 
             p.WaitForInputIdle();
-            System.Threading.Thread.Sleep(3000);
+            Thread.Sleep(3000);
             if (false == p.CloseMainWindow())
                 p.Kill();
         }

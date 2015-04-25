@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms
 {
     partial class AllChanges
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -183,17 +186,17 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.DataGridView view;
-        private System.Windows.Forms.CheckBox teacherFiltering;
-        private System.Windows.Forms.ComboBox teacherFilter;
-        private System.Windows.Forms.CheckBox tfdFiltering;
-        private System.Windows.Forms.ComboBox tfdFilter;
-        private System.Windows.Forms.Button UpdateView;
-        private System.Windows.Forms.DateTimePicker lessonDateFilter;
-        private System.Windows.Forms.CheckBox lessonDateFiltering;
-        private System.Windows.Forms.DateTimePicker eventDateFilter;
-        private System.Windows.Forms.CheckBox eventDateFiltering;
+        private Panel controlsPanel;
+        private Panel viewPanel;
+        private DataGridView view;
+        private CheckBox teacherFiltering;
+        private ComboBox teacherFilter;
+        private CheckBox tfdFiltering;
+        private ComboBox tfdFilter;
+        private Button UpdateView;
+        private DateTimePicker lessonDateFilter;
+        private CheckBox lessonDateFiltering;
+        private DateTimePicker eventDateFilter;
+        private CheckBox eventDateFiltering;
     }
 }

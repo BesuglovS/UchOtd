@@ -1,11 +1,14 @@
-﻿namespace UchOtd.NUDS
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.NUDS
 {
     partial class ScheduleForm
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -213,18 +216,18 @@
 
         #endregion
 
-        private System.Windows.Forms.Button teacherSchedule;
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.Button changes;
-        private System.Windows.Forms.Button tomorrow;
-        private System.Windows.Forms.Button today;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DateTimePicker datePicker;
-        private System.Windows.Forms.ComboBox groupList;
-        private System.Windows.Forms.DataGridView scheduleView;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.Label loadingLabel;
-        private System.Windows.Forms.CheckBox showProposed;
+        private Button teacherSchedule;
+        private Panel controlsPanel;
+        private Button changes;
+        private Button tomorrow;
+        private Button today;
+        private Label label2;
+        private Label label1;
+        private DateTimePicker datePicker;
+        private ComboBox groupList;
+        private DataGridView scheduleView;
+        private Panel viewPanel;
+        private Label loadingLabel;
+        private CheckBox showProposed;
     }
 }

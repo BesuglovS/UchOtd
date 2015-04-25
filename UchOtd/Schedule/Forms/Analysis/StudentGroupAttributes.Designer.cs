@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.Analysis
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.Analysis
 {
     partial class StudentGroupAttributes
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -236,21 +239,21 @@
 
         #endregion
 
-        private System.Windows.Forms.Button reloadGroupList;
-        private System.Windows.Forms.ComboBox group;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.DataGridView itemsListView;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.Panel ListPanel;
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.ComboBox auditorium;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox building;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox shift;
+        private Button reloadGroupList;
+        private ComboBox group;
+        private Label label6;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private DataGridView itemsListView;
+        private Panel viewPanel;
+        private Panel ListPanel;
+        private Panel controlsPanel;
+        private ComboBox auditorium;
+        private Label label2;
+        private ComboBox building;
+        private Label label1;
+        private Label label3;
+        private ComboBox shift;
     }
 }

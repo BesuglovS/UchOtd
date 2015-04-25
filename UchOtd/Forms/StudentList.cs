@@ -1,7 +1,7 @@
-﻿using Schedule.Repositories;
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.Repositories;
 using UchOtd.Core;
 using UchOtd.Properties;
 using UchOtd.Views;

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Schedule.DataLayer;
 using Schedule.DomainClasses.Main;
 
@@ -102,6 +100,7 @@ namespace Schedule.Repositories.Repositories.Main
                 {
                     curNote.Lesson = sNote.Lesson;
                     curNote.Text = sNote.Text;
+                    curNote.LateAmount = sNote.LateAmount;
                 }
 
                 context.SaveChanges();

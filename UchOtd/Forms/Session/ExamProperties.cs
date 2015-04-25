@@ -1,10 +1,8 @@
-﻿using Schedule.DomainClasses.Main;
+﻿using System;
+using System.Windows.Forms;
 using Schedule.DomainClasses.Session;
 using Schedule.Repositories;
-using System;
-using System.Windows.Forms;
 using UchOtd.NUDS.Core;
-
 
 namespace UchOtd.Forms.Session
 {

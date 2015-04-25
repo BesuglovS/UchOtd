@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class RingList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -195,17 +198,17 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel ListPanel;
-        private System.Windows.Forms.DataGridView RingListView;
-        private System.Windows.Forms.Button forceDeleteWithReplace;
-        private System.Windows.Forms.Button deletewithlessons;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DateTimePicker RingTime;
-        private System.Windows.Forms.DateTimePicker newRing;
-        private System.Windows.Forms.Button EightyToNinety;
-        private System.Windows.Forms.Button NinetyToEighty;
+        private Panel ListPanel;
+        private DataGridView RingListView;
+        private Button forceDeleteWithReplace;
+        private Button deletewithlessons;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private Label label1;
+        private DateTimePicker RingTime;
+        private DateTimePicker newRing;
+        private Button EightyToNinety;
+        private Button NinetyToEighty;
     }
 }

@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class BuildingList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -146,14 +149,14 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel GroupListPanel;
-        private System.Windows.Forms.Panel LeftPanel;
-        private System.Windows.Forms.DataGridView BuildingsListView;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.TextBox BuildingName;
-        private System.Windows.Forms.Label label1;
+        private Panel GroupListPanel;
+        private Panel LeftPanel;
+        private DataGridView BuildingsListView;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private TextBox BuildingName;
+        private Label label1;
 
     }
 }

@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class DisciplineList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -530,47 +533,47 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.ComboBox Attestation;
-        private System.Windows.Forms.ComboBox Group;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox PracticalHours;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox LectureHours;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox AuditoriumHours;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.TextBox DisciplineName;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel ListPanel;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.DataGridView DiscipineListView;
-        private System.Windows.Forms.Panel filterPanel;
-        private System.Windows.Forms.TextBox filter;
-        private System.Windows.Forms.Button Paste;
-        private System.Windows.Forms.CheckBox discnameFilter;
-        private System.Windows.Forms.Button refresh;
-        private System.Windows.Forms.ComboBox groupNameList;
-        private System.Windows.Forms.CheckBox groupnameFilter;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button CompletelyDelete;
-        private System.Windows.Forms.CheckBox HoursFitFiltered;
-        private System.Windows.Forms.CheckBox DifferenceByOne;
-        private System.Windows.Forms.Button reloadGroupList;
-        private System.Windows.Forms.CheckBox mixedGroups;
-        private System.Windows.Forms.CheckBox orderByGroupname;
-        private System.Windows.Forms.Button zeroHours;
-        private System.Windows.Forms.CheckBox checkForDoubleDiscsOnAdding;
-        private System.Windows.Forms.TextBox AuditoriumHoursPerWeek;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.CheckBox noCulture;
-        private System.Windows.Forms.CheckBox WithExamsOnly;
-        private System.Windows.Forms.CheckBox noArt;
-        private System.Windows.Forms.CheckBox noPost;
+        private Panel controlsPanel;
+        private ComboBox Attestation;
+        private ComboBox Group;
+        private Label label6;
+        private TextBox PracticalHours;
+        private Label label5;
+        private TextBox LectureHours;
+        private Label label4;
+        private TextBox AuditoriumHours;
+        private Label label3;
+        private Label label2;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private TextBox DisciplineName;
+        private Label label1;
+        private Panel ListPanel;
+        private Panel viewPanel;
+        private DataGridView DiscipineListView;
+        private Panel filterPanel;
+        private TextBox filter;
+        private Button Paste;
+        private CheckBox discnameFilter;
+        private Button refresh;
+        private ComboBox groupNameList;
+        private CheckBox groupnameFilter;
+        private Label label8;
+        private Label label7;
+        private Button CompletelyDelete;
+        private CheckBox HoursFitFiltered;
+        private CheckBox DifferenceByOne;
+        private Button reloadGroupList;
+        private CheckBox mixedGroups;
+        private CheckBox orderByGroupname;
+        private Button zeroHours;
+        private CheckBox checkForDoubleDiscsOnAdding;
+        private TextBox AuditoriumHoursPerWeek;
+        private Label label9;
+        private CheckBox noCulture;
+        private CheckBox WithExamsOnly;
+        private CheckBox noArt;
+        private CheckBox noPost;
     }
 }

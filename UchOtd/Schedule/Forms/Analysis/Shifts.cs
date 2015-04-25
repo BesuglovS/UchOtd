@@ -1,10 +1,10 @@
-﻿using Schedule.DomainClasses.Analyse;
-using Schedule.DomainClasses.Main;
-using Schedule.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Analyse;
+using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
 using UchOtd.Schedule.Views.DBListViews;
 
 namespace UchOtd.Schedule.Forms.Analysis

@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Forms.Notes
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Forms.Notes
 {
     partial class Notes
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -251,23 +254,23 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel contrulsPanel;
-        private System.Windows.Forms.DateTimePicker noteMoment;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox noteText;
-        private System.Windows.Forms.Panel searchPanel;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox TargetComputer;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.DataGridView view;
-        private System.Windows.Forms.CheckBox currentDateTime;
-        private System.Windows.Forms.Button showAll;
-        private System.Windows.Forms.TextBox filter;
-        private System.Windows.Forms.Label label4;
+        private Panel contrulsPanel;
+        private DateTimePicker noteMoment;
+        private Label label2;
+        private Label label1;
+        private TextBox noteText;
+        private Panel searchPanel;
+        private Panel viewPanel;
+        private Label label3;
+        private TextBox TargetComputer;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private DataGridView view;
+        private CheckBox currentDateTime;
+        private Button showAll;
+        private TextBox filter;
+        private Label label4;
 
 
     }

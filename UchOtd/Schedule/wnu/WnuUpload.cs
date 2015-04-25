@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Web.Script.Serialization;
 using Schedule.Repositories;
+using UchOtd.Properties;
 using UchOtd.Schedule.wnu.MySQLViews;
 
 namespace UchOtd.Schedule.wnu
@@ -24,7 +25,7 @@ namespace UchOtd.Schedule.wnu
             request.Method = WebRequestMethods.Ftp.UploadFile;
 
             // This example assumes the FTP site uses anonymous logon.
-            request.Credentials = new NetworkCredential(Properties.Settings.Default.wnuUserName, Properties.Settings.Default.wnuPassword);
+            request.Credentials = new NetworkCredential(Settings.Default.wnuUserName, Settings.Default.wnuPassword);
 
             byte[] b = File.ReadAllBytes(sourcefile);
 

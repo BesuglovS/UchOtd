@@ -1,9 +1,9 @@
-﻿using Schedule.DomainClasses.Main;
-using Schedule.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
 
 namespace UchOtd.Schedule.Forms.DBLists
 {

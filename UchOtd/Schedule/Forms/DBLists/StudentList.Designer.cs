@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class StudentList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -421,38 +424,38 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel ControlsPanel;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox OrderList;
-        private System.Windows.Forms.CheckBox PayForThis;
-        private System.Windows.Forms.CheckBox NFactor;
-        private System.Windows.Forms.CheckBox Expelled;
-        private System.Windows.Forms.CheckBox Starosta;
-        private System.Windows.Forms.TextBox Phone;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox Address;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.DateTimePicker BirthDate;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox ZachNumber;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox OBox;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox IBox;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button deletewithlessons;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.TextBox FBox;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel ListPanel;
-        private System.Windows.Forms.DataGridView StudentListView;
-        private System.Windows.Forms.ComboBox studentCombo;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.ComboBox studentGroups;
-        private System.Windows.Forms.CheckBox checkZachNumberDistinction;
-        private System.Windows.Forms.Button showAll;
-        private System.Windows.Forms.Button Filter;
+        private Panel ControlsPanel;
+        private Label label8;
+        private TextBox OrderList;
+        private CheckBox PayForThis;
+        private CheckBox NFactor;
+        private CheckBox Expelled;
+        private CheckBox Starosta;
+        private TextBox Phone;
+        private Label label7;
+        private TextBox Address;
+        private Label label6;
+        private DateTimePicker BirthDate;
+        private Label label5;
+        private TextBox ZachNumber;
+        private Label label4;
+        private TextBox OBox;
+        private Label label3;
+        private TextBox IBox;
+        private Label label2;
+        private Button deletewithlessons;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private TextBox FBox;
+        private Label label1;
+        private Panel ListPanel;
+        private DataGridView StudentListView;
+        private ComboBox studentCombo;
+        private Label label9;
+        private ComboBox studentGroups;
+        private CheckBox checkZachNumberDistinction;
+        private Button showAll;
+        private Button Filter;
     }
 }

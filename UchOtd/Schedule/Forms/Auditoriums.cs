@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Repositories;
 using UchOtd.Core;
+using UchOtd.Properties;
 
 namespace UchOtd.Schedule.Forms
 {
@@ -45,7 +46,7 @@ namespace UchOtd.Schedule.Forms
                 _cToken = _tokenSource.Token;
 
                 Mon.Text = "";
-                Mon.Image = UchOtd.Properties.Resources.Loading;
+                Mon.Image = Resources.Loading;
 
                 try
                 {
@@ -103,7 +104,7 @@ namespace UchOtd.Schedule.Forms
                 _cToken = _tokenSource.Token;
 
                 Tue.Text = "";
-                Tue.Image = UchOtd.Properties.Resources.Loading;
+                Tue.Image = Resources.Loading;
 
                 try
                 {
@@ -161,7 +162,7 @@ namespace UchOtd.Schedule.Forms
                 _cToken = _tokenSource.Token;
 
                 Wed.Text = "";
-                Wed.Image = UchOtd.Properties.Resources.Loading;
+                Wed.Image = Resources.Loading;
 
                 try
                 {
@@ -219,7 +220,7 @@ namespace UchOtd.Schedule.Forms
                 _cToken = _tokenSource.Token;
 
                 Thu.Text = "";
-                Thu.Image = UchOtd.Properties.Resources.Loading;
+                Thu.Image = Resources.Loading;
 
                 try
                 {
@@ -277,7 +278,7 @@ namespace UchOtd.Schedule.Forms
                 _cToken = _tokenSource.Token;
 
                 Fri.Text = "";
-                Fri.Image = UchOtd.Properties.Resources.Loading;
+                Fri.Image = Resources.Loading;
 
                 try
                 {
@@ -335,7 +336,7 @@ namespace UchOtd.Schedule.Forms
                 _cToken = _tokenSource.Token;
 
                 Sat.Text = "";
-                Sat.Image = UchOtd.Properties.Resources.Loading;
+                Sat.Image = Resources.Loading;
 
                 try
                 {

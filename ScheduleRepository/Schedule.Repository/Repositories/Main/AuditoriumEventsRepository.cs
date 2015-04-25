@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using Schedule.DataLayer;
 using Schedule.DomainClasses.Main;
-using System.Data.Entity;
 
 namespace Schedule.Repositories.Repositories.Main
 {

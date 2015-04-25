@@ -9,6 +9,7 @@ using Schedule.Repositories;
 using Schedule.Repositories.Common;
 using UchOtd.Schedule.Core;
 using UchOtd.Schedule.Views;
+using Calendar = Schedule.DomainClasses.Main.Calendar;
 
 namespace UchOtd.Schedule.Forms.DBLists.Lessons
 {
@@ -203,7 +204,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
                     // lesson.Calendar
                     var date = _repo.CommonFunctions.GetDateFromDowAndWeek(_dow, weekNumber);
-                    var calendar = _repo.Calendars.FindCalendar(date) ?? new global::Schedule.DomainClasses.Main.Calendar(date);
+                    var calendar = _repo.Calendars.FindCalendar(date) ?? new Calendar(date);
                     newLesson.Calendar = calendar;
 
                     _repo.Lessons.AddLessonWoLog(newLesson);
@@ -251,7 +252,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
                 // lesson.Calendar
                 var date = _repo.CommonFunctions.GetDateFromDowAndWeek(_dow, week);
-                var calendar = _repo.Calendars.FindCalendar(date) ?? new global::Schedule.DomainClasses.Main.Calendar(date);
+                var calendar = _repo.Calendars.FindCalendar(date) ?? new Calendar(date);
                 lesson.Calendar = calendar;
 
                 _repo.Lessons.AddLesson(lesson);

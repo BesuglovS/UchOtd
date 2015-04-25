@@ -9,6 +9,7 @@ using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using Schedule.Repositories.Common;
+using UchOtd.Properties;
 using UchOtd.Schedule.Views;
 using UchOtd.Schedule.Views.DBListViews;
 
@@ -60,7 +61,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 _cToken = _tokenSource.Token;
 
                 refreshButton.Text = "";
-                refreshButton.Image = UchOtd.Properties.Resources.Loading;
+                refreshButton.Image = Resources.Loading;
                 
                 try
                 {
@@ -172,7 +173,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 _cToken = _tokenSource.Token;
 
                 Yes.Text = "";
-                Yes.Image = UchOtd.Properties.Resources.Loading;
+                Yes.Image = Resources.Loading;
                 
                 var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
 
@@ -206,7 +207,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 _cToken = _tokenSource.Token;
 
                 No.Text = "";
-                No.Image = UchOtd.Properties.Resources.Loading;
+                No.Image = Resources.Loading;
 
                 var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
 
@@ -263,7 +264,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 _cToken = _tokenSource.Token;
 
                 Clear.Text = "";
-                Clear.Image = UchOtd.Properties.Resources.Loading;
+                Clear.Image = Resources.Loading;
 
                 try
                 {
@@ -402,7 +403,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 _cToken = _tokenSource.Token;
 
                 MaxSelected.Text = "";
-                MaxSelected.Image = UchOtd.Properties.Resources.Loading;
+                MaxSelected.Image = Resources.Loading;
 
                 var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
                 var selectedCells = wishesView.SelectedCells;
@@ -465,7 +466,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 _cToken = _tokenSource.Token;
 
                 MinSelected.Text = "";
-                MinSelected.Image = UchOtd.Properties.Resources.Loading;
+                MinSelected.Image = Resources.Loading;
 
                 var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
                 var selectedCells = wishesView.SelectedCells;
@@ -499,7 +500,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 _cToken = _tokenSource.Token;
 
                 ValueSelected.Text = "";
-                ValueSelected.Image = UchOtd.Properties.Resources.Loading;
+                ValueSelected.Image = Resources.Loading;
 
                 var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
                 var selectedCells = wishesView.SelectedCells;
@@ -540,7 +541,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 _cToken = _tokenSource.Token;
 
                 OneValue.Text = "";
-                OneValue.Image = UchOtd.Properties.Resources.Loading;
+                OneValue.Image = Resources.Loading;
                 
                 try
                 {
@@ -772,7 +773,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 _cToken = _tokenSource.Token;
 
                 removeAllWishes.Text = "";
-                removeAllWishes.Image = UchOtd.Properties.Resources.Loading;
+                removeAllWishes.Image = Resources.Loading;
                                 
                 try
                 {

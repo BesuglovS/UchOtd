@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Schedule.Views.DBListViews;
@@ -47,9 +48,9 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             int index = 0;
 
-            while (global::Schedule.Constants.Constants.CalendarStateDescription.ContainsKey(index))
+            while (Constants.CalendarStateDescription.ContainsKey(index))
             {
-                calendarState.Items.Add(global::Schedule.Constants.Constants.CalendarStateDescription[index]);
+                calendarState.Items.Add(Constants.CalendarStateDescription[index]);
 
                 index++;
             }

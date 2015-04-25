@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class StudentGroupList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -271,23 +274,23 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel LeftPanel;
-        private System.Windows.Forms.Panel GroupListPanel;
-        private System.Windows.Forms.Panel ControlsPanel;
-        private System.Windows.Forms.Button deletewithlessons;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.TextBox StudentGroupName;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DataGridView StudentGroupListView;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox StudentList;
-        private System.Windows.Forms.Button removeStudentFrunGroup;
-        private System.Windows.Forms.Button addStudentToGroup;
-        private System.Windows.Forms.Panel StudentListPanel;
-        private System.Windows.Forms.DataGridView StudentsInGroupListView;
-        private System.Windows.Forms.Button addFromGroup;
-        private System.Windows.Forms.ComboBox groupsList;
+        private Panel LeftPanel;
+        private Panel GroupListPanel;
+        private Panel ControlsPanel;
+        private Button deletewithlessons;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private TextBox StudentGroupName;
+        private Label label1;
+        private DataGridView StudentGroupListView;
+        private Label label2;
+        private ComboBox StudentList;
+        private Button removeStudentFrunGroup;
+        private Button addStudentToGroup;
+        private Panel StudentListPanel;
+        private DataGridView StudentsInGroupListView;
+        private Button addFromGroup;
+        private ComboBox groupsList;
     }
 }

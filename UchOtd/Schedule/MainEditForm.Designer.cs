@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule
 {
     partial class MainEditForm
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -30,6 +33,7 @@
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.siteToUpload = new System.Windows.Forms.ComboBox();
             this.button3 = new System.Windows.Forms.Button();
             this.OnlyFutureDatesExportInWord = new System.Windows.Forms.CheckBox();
             this.removeAllProposedLessons = new System.Windows.Forms.Button();
@@ -97,7 +101,8 @@
             this.сменыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.siteToUpload = new System.Windows.Forms.ComboBox();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.заметкиКРасписаниюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -154,6 +159,14 @@
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(967, 169);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // siteToUpload
+            // 
+            this.siteToUpload.FormattingEnabled = true;
+            this.siteToUpload.Location = new System.Drawing.Point(306, 51);
+            this.siteToUpload.Name = "siteToUpload";
+            this.siteToUpload.Size = new System.Drawing.Size(107, 21);
+            this.siteToUpload.TabIndex = 69;
             // 
             // button3
             // 
@@ -574,7 +587,9 @@
             this.дисциплиныToolStripMenuItem,
             this.опцииToolStripMenuItem,
             this.факультетыгруппыToolStripMenuItem,
-            this.занятостьАудиторийToolStripMenuItem});
+            this.занятостьАудиторийToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.заметкиКРасписаниюToolStripMenuItem});
             this.справочникиToolStripMenuItem.Name = "справочникиToolStripMenuItem";
             this.справочникиToolStripMenuItem.Size = new System.Drawing.Size(94, 20);
             this.справочникиToolStripMenuItem.Text = "Справочники";
@@ -582,77 +597,77 @@
             // аудиторииToolStripMenuItem
             // 
             this.аудиторииToolStripMenuItem.Name = "аудиторииToolStripMenuItem";
-            this.аудиторииToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.аудиторииToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.аудиторииToolStripMenuItem.Text = "Аудитории";
             this.аудиторииToolStripMenuItem.Click += new System.EventHandler(this.АудиторииToolStripMenuItemClick);
             // 
             // корпусаToolStripMenuItem
             // 
             this.корпусаToolStripMenuItem.Name = "корпусаToolStripMenuItem";
-            this.корпусаToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.корпусаToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.корпусаToolStripMenuItem.Text = "Корпуса";
             this.корпусаToolStripMenuItem.Click += new System.EventHandler(this.корпусаToolStripMenuItem_Click);
             // 
             // дниСеместраToolStripMenuItem
             // 
             this.дниСеместраToolStripMenuItem.Name = "дниСеместраToolStripMenuItem";
-            this.дниСеместраToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.дниСеместраToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.дниСеместраToolStripMenuItem.Text = "Дни семестра";
             this.дниСеместраToolStripMenuItem.Click += new System.EventHandler(this.ДниСеместраToolStripMenuItemClick);
             // 
             // звонкиToolStripMenuItem
             // 
             this.звонкиToolStripMenuItem.Name = "звонкиToolStripMenuItem";
-            this.звонкиToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.звонкиToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.звонкиToolStripMenuItem.Text = "Звонки";
             this.звонкиToolStripMenuItem.Click += new System.EventHandler(this.ЗвонкиToolStripMenuItemClick);
             // 
             // студентыToolStripMenuItem
             // 
             this.студентыToolStripMenuItem.Name = "студентыToolStripMenuItem";
-            this.студентыToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.студентыToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.студентыToolStripMenuItem.Text = "Студенты";
             this.студентыToolStripMenuItem.Click += new System.EventHandler(this.СтудентыToolStripMenuItemClick);
             // 
             // группыToolStripMenuItem
             // 
             this.группыToolStripMenuItem.Name = "группыToolStripMenuItem";
-            this.группыToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.группыToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.группыToolStripMenuItem.Text = "Группы";
             this.группыToolStripMenuItem.Click += new System.EventHandler(this.ГруппыToolStripMenuItemClick);
             // 
             // преподавателиToolStripMenuItem
             // 
             this.преподавателиToolStripMenuItem.Name = "преподавателиToolStripMenuItem";
-            this.преподавателиToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.преподавателиToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.преподавателиToolStripMenuItem.Text = "Преподаватели";
             this.преподавателиToolStripMenuItem.Click += new System.EventHandler(this.ПреподавателиToolStripMenuItemClick);
             // 
             // дисциплиныToolStripMenuItem
             // 
             this.дисциплиныToolStripMenuItem.Name = "дисциплиныToolStripMenuItem";
-            this.дисциплиныToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.дисциплиныToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.дисциплиныToolStripMenuItem.Text = "Дисциплины";
             this.дисциплиныToolStripMenuItem.Click += new System.EventHandler(this.ДисциплиныToolStripMenuItemClick);
             // 
             // опцииToolStripMenuItem
             // 
             this.опцииToolStripMenuItem.Name = "опцииToolStripMenuItem";
-            this.опцииToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.опцииToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.опцииToolStripMenuItem.Text = "Опции";
             this.опцииToolStripMenuItem.Click += new System.EventHandler(this.ОпцииToolStripMenuItemClick);
             // 
             // факультетыгруппыToolStripMenuItem
             // 
             this.факультетыгруппыToolStripMenuItem.Name = "факультетыгруппыToolStripMenuItem";
-            this.факультетыгруппыToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.факультетыгруппыToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.факультетыгруппыToolStripMenuItem.Text = "Факультеты+группы";
             this.факультетыгруппыToolStripMenuItem.Click += new System.EventHandler(this.ФакультетыгруппыToolStripMenuItemClick);
             // 
             // занятостьАудиторийToolStripMenuItem
             // 
             this.занятостьАудиторийToolStripMenuItem.Name = "занятостьАудиторийToolStripMenuItem";
-            this.занятостьАудиторийToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.занятостьАудиторийToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.занятостьАудиторийToolStripMenuItem.Text = "Занятость аудиторий";
             this.занятостьАудиторийToolStripMenuItem.Click += new System.EventHandler(this.занятостьАудиторийToolStripMenuItem_Click);
             // 
@@ -767,13 +782,17 @@
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // siteToUpload
+            // toolStripMenuItem1
             // 
-            this.siteToUpload.FormattingEnabled = true;
-            this.siteToUpload.Location = new System.Drawing.Point(306, 51);
-            this.siteToUpload.Name = "siteToUpload";
-            this.siteToUpload.Size = new System.Drawing.Size(107, 21);
-            this.siteToUpload.TabIndex = 69;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(198, 6);
+            // 
+            // заметкиКРасписаниюToolStripMenuItem
+            // 
+            this.заметкиКРасписаниюToolStripMenuItem.Name = "заметкиКРасписаниюToolStripMenuItem";
+            this.заметкиКРасписаниюToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.заметкиКРасписаниюToolStripMenuItem.Text = "Заметки к расписанию";
+            this.заметкиКРасписаниюToolStripMenuItem.Click += new System.EventHandler(this.заметкиКРасписаниюToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -801,75 +820,77 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.Button showGroupLessons;
-        private System.Windows.Forms.ComboBox groupList;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem справочникиToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem аудиторииToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem дниСеместраToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem звонкиToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem студентыToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem группыToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem преподавателиToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem дисциплиныToolStripMenuItem;
-        private System.Windows.Forms.DataGridView ScheduleView;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button LoadToSite;
-        private System.Windows.Forms.ToolStripMenuItem опцииToolStripMenuItem;
-        private System.Windows.Forms.Button auditoriumKaput;
-        private System.Windows.Forms.ToolStripMenuItem факультетыгруппыToolStripMenuItem;
-        private System.Windows.Forms.ComboBox FacultyList;
-        private System.Windows.Forms.ComboBox DOWList;
-        private System.Windows.Forms.Button ActiveLessonsCount;
-        private System.Windows.Forms.Button ManyGroups;
-        private System.Windows.Forms.ToolStripMenuItem занятостьАудиторийToolStripMenuItem;
-        private System.Windows.Forms.Button oneAuditorium;
-        private System.Windows.Forms.Button auditoriums;
-        private System.Windows.Forms.Button allChanges;
-        private System.Windows.Forms.Button CreatePDF;
-        private System.Windows.Forms.CheckBox weekFiltered;
-        private System.Windows.Forms.ComboBox WeekFilter;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ComboBox WordFacultyFilter;
-        private System.Windows.Forms.CheckBox WordOneFaculty;
-        private System.Windows.Forms.Button WordExportButton;
-        private System.Windows.Forms.Button WordCustom;
-        private System.Windows.Forms.ComboBox WordExportWeekFilter;
-        private System.Windows.Forms.CheckBox wordExportWeekFiltered;
-        private System.Windows.Forms.Button BIGREDBUTTON;
-        private System.Windows.Forms.Button WordSchool;
-        private System.Windows.Forms.Button WordSchool2;
-        private System.Windows.Forms.Button happyBirthday;
-        private System.Windows.Forms.TextBox uploadPrefix;
-        private System.Windows.Forms.Button WordWholeScheduleOneGroupOnePage;
-        private System.Windows.Forms.Button OnePageGroupScheduleWordExport;
-        private System.Windows.Forms.CheckBox cb90;
-        private System.Windows.Forms.TextBox ToDBName;
-        private System.Windows.Forms.Button DownloadRestore;
-        private System.Windows.Forms.TextBox FromDBName;
-        private System.Windows.Forms.Button BackupUpload;
-        private System.Windows.Forms.Button startSchoolWordExport;
-        private System.Windows.Forms.ToolStripMenuItem корпусаToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem анализToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem пожеланияToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem аудиторииДисциплинToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem нельзяСтавитьПоследнимУрокомToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem порядокПостановкиДисциплинВРасписаниеToolStripMenuItem;
-        private System.Windows.Forms.CheckBox showProposedLessons;
-        private System.Windows.Forms.Button analyseSchool;
-        private System.Windows.Forms.Button analyse;
-        private System.Windows.Forms.Button removeAllProposedLessons;
-        private System.Windows.Forms.ToolStripMenuItem периодыГруппToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem сменыToolStripMenuItem;
-        private System.Windows.Forms.CheckBox OnlyFutureDatesExportInWord;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.ComboBox siteToUpload;
+        private Panel controlsPanel;
+        private Button showGroupLessons;
+        private ComboBox groupList;
+        private Panel viewPanel;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem справочникиToolStripMenuItem;
+        private ToolStripMenuItem аудиторииToolStripMenuItem;
+        private ToolStripMenuItem дниСеместраToolStripMenuItem;
+        private ToolStripMenuItem звонкиToolStripMenuItem;
+        private ToolStripMenuItem студентыToolStripMenuItem;
+        private ToolStripMenuItem группыToolStripMenuItem;
+        private ToolStripMenuItem преподавателиToolStripMenuItem;
+        private ToolStripMenuItem дисциплиныToolStripMenuItem;
+        private DataGridView ScheduleView;
+        private Button button1;
+        private Button LoadToSite;
+        private ToolStripMenuItem опцииToolStripMenuItem;
+        private Button auditoriumKaput;
+        private ToolStripMenuItem факультетыгруппыToolStripMenuItem;
+        private ComboBox FacultyList;
+        private ComboBox DOWList;
+        private Button ActiveLessonsCount;
+        private Button ManyGroups;
+        private ToolStripMenuItem занятостьАудиторийToolStripMenuItem;
+        private Button oneAuditorium;
+        private Button auditoriums;
+        private Button allChanges;
+        private Button CreatePDF;
+        private CheckBox weekFiltered;
+        private ComboBox WeekFilter;
+        private Button button2;
+        private ComboBox WordFacultyFilter;
+        private CheckBox WordOneFaculty;
+        private Button WordExportButton;
+        private Button WordCustom;
+        private ComboBox WordExportWeekFilter;
+        private CheckBox wordExportWeekFiltered;
+        private Button BIGREDBUTTON;
+        private Button WordSchool;
+        private Button WordSchool2;
+        private Button happyBirthday;
+        private TextBox uploadPrefix;
+        private Button WordWholeScheduleOneGroupOnePage;
+        private Button OnePageGroupScheduleWordExport;
+        private CheckBox cb90;
+        private TextBox ToDBName;
+        private Button DownloadRestore;
+        private TextBox FromDBName;
+        private Button BackupUpload;
+        private Button startSchoolWordExport;
+        private ToolStripMenuItem корпусаToolStripMenuItem;
+        private ToolStripMenuItem анализToolStripMenuItem;
+        private ToolStripMenuItem пожеланияToolStripMenuItem;
+        private ToolStripMenuItem аудиторииДисциплинToolStripMenuItem;
+        private ToolStripMenuItem нельзяСтавитьПоследнимУрокомToolStripMenuItem;
+        private ToolStripMenuItem парыДисциплинНельзяСтавитьВОдинДеньToolStripMenuItem;
+        private ToolStripMenuItem дисциплиныЛучшеСтавитьПо2УрокаToolStripMenuItem;
+        private ToolStripMenuItem порядокПостановкиДисциплинВРасписаниеToolStripMenuItem;
+        private CheckBox showProposedLessons;
+        private Button analyseSchool;
+        private Button analyse;
+        private Button removeAllProposedLessons;
+        private ToolStripMenuItem периодыГруппToolStripMenuItem;
+        private ToolStripMenuItem корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem;
+        private ToolStripMenuItem дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem;
+        private ToolStripMenuItem сменыToolStripMenuItem;
+        private CheckBox OnlyFutureDatesExportInWord;
+        private Button button3;
+        private ComboBox siteToUpload;
+        private ToolStripSeparator toolStripMenuItem1;
+        private ToolStripMenuItem заметкиКРасписаниюToolStripMenuItem;
     }
 }
 

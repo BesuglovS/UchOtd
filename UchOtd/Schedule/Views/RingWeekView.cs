@@ -1,10 +1,10 @@
-﻿using Schedule.Constants;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using Schedule.Constants;
 using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 
 namespace UchOtd.Schedule.Views
 {

@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using Schedule.Repositories.Common;
+using UchOtd.Properties;
 using UchOtd.Schedule.Views;
 using UchOtd.Schedule.Views.DBListViews;
 
@@ -92,7 +94,7 @@ namespace UchOtd.Schedule.Forms
                 _cToken = _tokenSource.Token;
 
                 update.Text = "";
-                update.Image = UchOtd.Properties.Resources.Loading;
+                update.Image = Resources.Loading;
 
                 var repo = _repo;
                 var isShowProposed = showProposed.Checked;
@@ -260,7 +262,7 @@ namespace UchOtd.Schedule.Forms
 
                 foreach (var gv in groupView)
                 {
-                    var dowString = global::Schedule.Constants.Constants.DowLocal[int.Parse(gv.Datetime.Substring(0,1))] + gv.Datetime.Substring(1);
+                    var dowString = Constants.DowLocal[int.Parse(gv.Datetime.Substring(0,1))] + gv.Datetime.Substring(1);
 
                     var item = result.FirstOrDefault(ri => ri.DowTime == dowString);
                     if (item == null)
@@ -291,7 +293,7 @@ namespace UchOtd.Schedule.Forms
                 }
 
                 result = result
-                    .OrderBy(g => global::Schedule.Constants.Constants.DowLocalReverse[g.DowTime.Split(' ')[0]] * 2000 + int.Parse(g.DowTime.Split(' ')[1].Split(':')[0]) * 60 + int.Parse(g.DowTime.Split(' ')[1].Split(':')[1]))
+                    .OrderBy(g => Constants.DowLocalReverse[g.DowTime.Split(' ')[0]] * 2000 + int.Parse(g.DowTime.Split(' ')[1].Split(':')[0]) * 60 + int.Parse(g.DowTime.Split(' ')[1].Split(':')[1]))
                     .ToList();
                 i++;
             }

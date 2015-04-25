@@ -1,6 +1,6 @@
-﻿using Schedule.DomainClasses.Main;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Schedule.DomainClasses.Main;
 
 namespace UchOtd.Views
 {

@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class AuditoriumList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -48,9 +51,9 @@
             // 
             this.ListPanel.Controls.Add(this.AuditoriumListView);
             this.ListPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.ListPanel.Location = new System.Drawing.Point(227, 0);
+            this.ListPanel.Location = new System.Drawing.Point(289, 0);
             this.ListPanel.Name = "ListPanel";
-            this.ListPanel.Size = new System.Drawing.Size(444, 404);
+            this.ListPanel.Size = new System.Drawing.Size(444, 620);
             this.ListPanel.TabIndex = 0;
             // 
             // AuditoriumListView
@@ -66,7 +69,7 @@
             this.AuditoriumListView.Name = "AuditoriumListView";
             this.AuditoriumListView.ReadOnly = true;
             this.AuditoriumListView.RowHeadersVisible = false;
-            this.AuditoriumListView.Size = new System.Drawing.Size(444, 404);
+            this.AuditoriumListView.Size = new System.Drawing.Size(444, 620);
             this.AuditoriumListView.TabIndex = 0;
             this.AuditoriumListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.AuditoriumListView_CellClick);
             // 
@@ -165,7 +168,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(671, 404);
+            this.ClientSize = new System.Drawing.Size(733, 620);
             this.Controls.Add(this.BuildingsList);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.newAuditorium);
@@ -192,17 +195,17 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel ListPanel;
-        private System.Windows.Forms.DataGridView AuditoriumListView;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox AudName;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button deletewithlessons;
-        private System.Windows.Forms.Button forceDeleteWithReplace;
-        private System.Windows.Forms.TextBox newAuditorium;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox BuildingsList;
+        private Panel ListPanel;
+        private DataGridView AuditoriumListView;
+        private Label label1;
+        private TextBox AudName;
+        private Button add;
+        private Button update;
+        private Button remove;
+        private Button deletewithlessons;
+        private Button forceDeleteWithReplace;
+        private TextBox newAuditorium;
+        private Label label2;
+        private ComboBox BuildingsList;
     }
 }

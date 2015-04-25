@@ -1,11 +1,14 @@
-﻿namespace UchOtd.NUDS.Forms
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.NUDS.Forms
 {
     partial class Changes
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -175,15 +178,15 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.DateTimePicker datePicker;
-        private System.Windows.Forms.Button allChanges;
-        private System.Windows.Forms.Button todaysChanges;
-        private System.Windows.Forms.Button tomorrowsChanges;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox groupList;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.DataGridView changesView;
-        private System.Windows.Forms.Label loadingLabel;
+        private Panel controlsPanel;
+        private DateTimePicker datePicker;
+        private Button allChanges;
+        private Button todaysChanges;
+        private Button tomorrowsChanges;
+        private Label label1;
+        private ComboBox groupList;
+        private Panel viewPanel;
+        private DataGridView changesView;
+        private Label loadingLabel;
     }
 }

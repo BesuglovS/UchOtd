@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class CalendarList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -224,20 +227,20 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel ListPanel;
-        private System.Windows.Forms.DataGridView CalendarListView;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DateTimePicker calendarDate;
-        private System.Windows.Forms.Button deletewithlessons;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.DateTimePicker startDate;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.DateTimePicker finishDate;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox calendarState;
+        private Panel ListPanel;
+        private DataGridView CalendarListView;
+        private Label label1;
+        private DateTimePicker calendarDate;
+        private Button deletewithlessons;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private DateTimePicker startDate;
+        private Label label3;
+        private Label label4;
+        private DateTimePicker finishDate;
+        private Button button1;
+        private Label label2;
+        private ComboBox calendarState;
     }
 }

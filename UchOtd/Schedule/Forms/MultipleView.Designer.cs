@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms
 {
     partial class MultipleView
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -221,20 +224,20 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox group5;
-        private System.Windows.Forms.ComboBox group4;
-        private System.Windows.Forms.ComboBox group3;
-        private System.Windows.Forms.ComboBox group2;
-        private System.Windows.Forms.ComboBox group1;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.DataGridView view;
-        private System.Windows.Forms.CheckBox showProposed;
+        private Panel controlsPanel;
+        private Button update;
+        private Label label5;
+        private Label label4;
+        private Label label3;
+        private Label label2;
+        private Label label1;
+        private ComboBox group5;
+        private ComboBox group4;
+        private ComboBox group3;
+        private ComboBox group2;
+        private ComboBox group1;
+        private Panel viewPanel;
+        private DataGridView view;
+        private CheckBox showProposed;
     }
 }

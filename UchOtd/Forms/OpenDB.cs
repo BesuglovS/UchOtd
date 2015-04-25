@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using UchOtd.Properties;
 
 namespace UchOtd.Forms
 {
@@ -24,8 +25,8 @@ namespace UchOtd.Forms
             if (sqlExpressDB.Checked)
             {
                 var connectionString = "data source=tcp:127.0.0.1,1433; Database=" + SQLExpressDatabaseName.Text + 
-                    ";User ID = " + Properties.Settings.Default.DBUserName +
-                    ";Password = " + Properties.Settings.Default.DBPassword;
+                    ";User ID = " + Settings.Default.DBUserName +
+                    ";Password = " + Settings.Default.DBPassword;
 
                 _startupForm.Repo.SetConnectionString(connectionString);
 
@@ -36,8 +37,8 @@ namespace UchOtd.Forms
             {
                 var connectionString = "data source=tcp:" + remoteHost.Text +  "," + PortNumber.Text + 
                     ";Database=" + remoteDatabaseName.Text +
-                    ";User ID = " + Properties.Settings.Default.DBUserName +
-                    ";Password = " + Properties.Settings.Default.DBPassword;
+                    ";User ID = " + Settings.Default.DBUserName +
+                    ";Password = " + Settings.Default.DBPassword;
 
                 _startupForm.Repo.SetConnectionString(connectionString);
 

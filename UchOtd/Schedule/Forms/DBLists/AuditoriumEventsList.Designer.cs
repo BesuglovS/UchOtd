@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.DBLists
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.DBLists
 {
     partial class AuditoriumEventsList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -315,29 +318,29 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel ControlsPanel;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox eventName;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel rightPanel;
-        private System.Windows.Forms.Panel viewPanel;
-        private System.Windows.Forms.DataGridView eventsView;
-        private System.Windows.Forms.Panel filterPanel;
-        private System.Windows.Forms.ComboBox eventTime;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox eventAuditorium;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button remove;
-        private System.Windows.Forms.Button update;
-        private System.Windows.Forms.Button add;
-        private System.Windows.Forms.Button filter;
-        private System.Windows.Forms.DateTimePicker eventDate;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.DateTimePicker finishDate;
-        private System.Windows.Forms.DateTimePicker startDate;
-        private System.Windows.Forms.CheckBox useDataSet;
-        private System.Windows.Forms.DateTimePicker eventsDate;
-        private System.Windows.Forms.Button showAll;
-        private System.Windows.Forms.CheckBox filterBox;
+        private Panel ControlsPanel;
+        private Label label2;
+        private TextBox eventName;
+        private Label label1;
+        private Panel rightPanel;
+        private Panel viewPanel;
+        private DataGridView eventsView;
+        private Panel filterPanel;
+        private ComboBox eventTime;
+        private Label label3;
+        private ComboBox eventAuditorium;
+        private Label label4;
+        private Button remove;
+        private Button update;
+        private Button add;
+        private Button filter;
+        private DateTimePicker eventDate;
+        private Label label5;
+        private DateTimePicker finishDate;
+        private DateTimePicker startDate;
+        private CheckBox useDataSet;
+        private DateTimePicker eventsDate;
+        private Button showAll;
+        private CheckBox filterBox;
     }
 }

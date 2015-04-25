@@ -1,11 +1,14 @@
-﻿namespace UchOtd.Schedule.Forms.Analysis
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace UchOtd.Schedule.Forms.Analysis
 {
     partial class DisciplinesAuditoriums
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -142,13 +145,13 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel controlsPanel;
-        private System.Windows.Forms.Button None;
-        private System.Windows.Forms.Button All;
-        private System.Windows.Forms.Panel splitPanel;
-        private System.Windows.Forms.SplitContainer MainSplit;
-        private System.Windows.Forms.ListBox discList;
-        private System.Windows.Forms.ListBox audList;
+        private Panel controlsPanel;
+        private Button None;
+        private Button All;
+        private Panel splitPanel;
+        private SplitContainer MainSplit;
+        private ListBox discList;
+        private ListBox audList;
 
 
     }

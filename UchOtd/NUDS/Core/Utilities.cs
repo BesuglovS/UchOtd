@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using IWshRuntimeLibrary;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
@@ -12,12 +14,12 @@ namespace UchOtd.NUDS.Core
     {
         public static void CreateShortcut(string shortcutName, string shortcutPath, string targetFileLocation, string shortcutDescription)
         {
-            string shortcutLocation = System.IO.Path.Combine(shortcutPath, shortcutName + ".lnk");
+            string shortcutLocation = Path.Combine(shortcutPath, shortcutName + ".lnk");
             var shell = new WshShell();
             var shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
 
             shortcut.Description = shortcutDescription;                                                             // The description of the shortcut
-            shortcut.IconLocation = System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase + ", 0";   // The icon of the shortcut            
+            shortcut.IconLocation = Assembly.GetExecutingAssembly().GetName().CodeBase + ", 0";   // The icon of the shortcut            
             shortcut.TargetPath = targetFileLocation + " -Startup";                                                // The path of the file that will launch when the shortcut is run
             shortcut.Save();                                                                                        // Save the shortcut
         }
