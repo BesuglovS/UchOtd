@@ -50,6 +50,8 @@ namespace UchOtd.Schedule.Forms.DBLists
             NotesView.Columns["Text"].Width = 240;
             NotesView.Columns["LessonString"].Width = 600;
             NotesView.Columns["LateAmount"].Width = 80;
+
+            totalLate.Text = notes.Count + " / " + notes.Aggregate(0, (sum, note) => sum + note.LateAmount);
         }
 
         private void SetLessonsList()

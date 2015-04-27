@@ -43,6 +43,8 @@
             this.FilterNotes = new System.Windows.Forms.Button();
             this.ShowAll = new System.Windows.Forms.Button();
             this.upload = new System.Windows.Forms.Button();
+            this.totalLateLabel = new System.Windows.Forms.Label();
+            this.totalLate = new System.Windows.Forms.Label();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NotesView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LateCount)).BeginInit();
@@ -85,7 +87,7 @@
             // 
             // remove
             // 
-            this.remove.Location = new System.Drawing.Point(1037, 130);
+            this.remove.Location = new System.Drawing.Point(1035, 116);
             this.remove.Name = "remove";
             this.remove.Size = new System.Drawing.Size(75, 23);
             this.remove.TabIndex = 16;
@@ -95,7 +97,7 @@
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(1037, 101);
+            this.update.Location = new System.Drawing.Point(1035, 87);
             this.update.Name = "update";
             this.update.Size = new System.Drawing.Size(75, 23);
             this.update.TabIndex = 15;
@@ -105,7 +107,7 @@
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(1037, 72);
+            this.add.Location = new System.Drawing.Point(1035, 58);
             this.add.Name = "add";
             this.add.Size = new System.Drawing.Size(75, 23);
             this.add.TabIndex = 14;
@@ -164,14 +166,14 @@
             // 
             // FilterText
             // 
-            this.FilterText.Location = new System.Drawing.Point(447, 69);
+            this.FilterText.Location = new System.Drawing.Point(656, 58);
             this.FilterText.Name = "FilterText";
             this.FilterText.Size = new System.Drawing.Size(373, 20);
             this.FilterText.TabIndex = 26;
             // 
             // FilterNotes
             // 
-            this.FilterNotes.Location = new System.Drawing.Point(447, 95);
+            this.FilterNotes.Location = new System.Drawing.Point(656, 84);
             this.FilterNotes.Name = "FilterNotes";
             this.FilterNotes.Size = new System.Drawing.Size(163, 23);
             this.FilterNotes.TabIndex = 27;
@@ -181,7 +183,7 @@
             // 
             // ShowAll
             // 
-            this.ShowAll.Location = new System.Drawing.Point(657, 95);
+            this.ShowAll.Location = new System.Drawing.Point(866, 84);
             this.ShowAll.Name = "ShowAll";
             this.ShowAll.Size = new System.Drawing.Size(163, 23);
             this.ShowAll.TabIndex = 28;
@@ -191,19 +193,40 @@
             // 
             // upload
             // 
-            this.upload.Location = new System.Drawing.Point(452, 128);
+            this.upload.Location = new System.Drawing.Point(656, 116);
             this.upload.Name = "upload";
-            this.upload.Size = new System.Drawing.Size(158, 40);
+            this.upload.Size = new System.Drawing.Size(163, 40);
             this.upload.TabIndex = 29;
             this.upload.Text = "Загрузить на сайт";
             this.upload.UseVisualStyleBackColor = true;
             this.upload.Click += new System.EventHandler(this.upload_Click);
+            // 
+            // totalLateLabel
+            // 
+            this.totalLateLabel.AutoSize = true;
+            this.totalLateLabel.Location = new System.Drawing.Point(490, 63);
+            this.totalLateLabel.Name = "totalLateLabel";
+            this.totalLateLabel.Size = new System.Drawing.Size(94, 13);
+            this.totalLateLabel.TabIndex = 30;
+            this.totalLateLabel.Text = "Итого опазданий";
+            // 
+            // totalLate
+            // 
+            this.totalLate.AutoSize = true;
+            this.totalLate.Font = new System.Drawing.Font("Microsoft Sans Serif", 32F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.totalLate.Location = new System.Drawing.Point(454, 100);
+            this.totalLate.Name = "totalLate";
+            this.totalLate.Size = new System.Drawing.Size(0, 51);
+            this.totalLate.TabIndex = 31;
+            this.totalLate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ScheduleNoteList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1124, 712);
+            this.Controls.Add(this.totalLate);
+            this.Controls.Add(this.totalLateLabel);
             this.Controls.Add(this.upload);
             this.Controls.Add(this.ShowAll);
             this.Controls.Add(this.FilterNotes);
@@ -246,5 +269,7 @@
         private System.Windows.Forms.Button FilterNotes;
         private System.Windows.Forms.Button ShowAll;
         private System.Windows.Forms.Button upload;
+        private System.Windows.Forms.Label totalLateLabel;
+        private System.Windows.Forms.Label totalLate;
     }
 }
