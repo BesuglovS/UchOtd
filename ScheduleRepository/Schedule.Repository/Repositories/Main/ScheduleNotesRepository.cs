@@ -80,10 +80,7 @@ namespace Schedule.Repositories.Repositories.Main
             {
                 sNote.ScheduleNoteId = 0;
 
-                sNote.Lesson.TeacherForDiscipline = context.TeacherForDiscipline.FirstOrDefault(tfd => tfd.TeacherForDisciplineId == sNote.Lesson.TeacherForDiscipline.TeacherForDisciplineId);
-                sNote.Lesson.Calendar = context.Calendars.FirstOrDefault(c => c.CalendarId == sNote.Lesson.Calendar.CalendarId);
-                sNote.Lesson.Ring = context.Rings.FirstOrDefault(r => r.RingId == sNote.Lesson.Ring.RingId);
-                sNote.Lesson.Auditorium = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == sNote.Lesson.Auditorium.AuditoriumId);
+                sNote.Lesson = context.Lessons.FirstOrDefault(l => l.LessonId == sNote.Lesson.LessonId);
 
                 context.ScheduleNotes.Add(sNote);
                 context.SaveChanges();
@@ -98,6 +95,7 @@ namespace Schedule.Repositories.Repositories.Main
 
                 if (curNote != null)
                 {
+                    curNote.IsLesson = sNote.IsLesson;
                     curNote.Lesson = context.Lessons.FirstOrDefault(l => l.LessonId == sNote.Lesson.LessonId);
                     curNote.Text = sNote.Text;
                     curNote.LateAmount = sNote.LateAmount;

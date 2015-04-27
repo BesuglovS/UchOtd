@@ -34,6 +34,11 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             _tokenSource = new CancellationTokenSource();
 
+            var teachers = _repo.Teachers.GetAllTeachers();
+            TeacherFilter.DisplayMember = "FIO";
+            TeacherFilter.ValueMember = "TeacherId";
+            TeacherFilter.DataSource = teachers;
+
             SetLessonsList();
 
             var notes = _repo.ScheduleNotes.GetAllScheduleNotes();
@@ -42,6 +47,27 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void RefreshView(List<ScheduleNote> notes)
         {
+            if (isNotesDateFiltered.Checked)
+            {
+                notes = notes
+                    .Where(n => n.Lesson != null && 
+                        n.Lesson.Calendar.Date.Year == notesDateFilter.Value.Year &&
+                        n.Lesson.Calendar.Date.Month == notesDateFilter.Value.Month && 
+                        n.Lesson.Calendar.Date.Day == notesDateFilter.Value.Day)
+                    .OrderBy(n => (n.Lesson != null) ? n.Lesson.Calendar.Date.Date : new DateTime(2100, 1, 1))
+                    .ThenBy(n => (n.Lesson != null) ? n.Lesson.Ring.Time.TimeOfDay : new TimeSpan(0))
+                    .ThenBy(n => (n.Lesson != null) ? (n.Lesson.TeacherForDiscipline.Teacher.FIO) : String.Empty)
+                    .ToList();
+            }
+            else
+            {
+                notes = notes
+                    .OrderBy(n => (n.Lesson != null) ? n.Lesson.Calendar.Date.Date : new DateTime(2100, 1, 1))
+                    .ThenBy(n => (n.Lesson != null) ? n.Lesson.Ring.Time.TimeOfDay : new TimeSpan(0))
+                    .ThenBy(n => (n.Lesson != null) ? (n.Lesson.TeacherForDiscipline.Teacher.FIO) : String.Empty)
+                    .ToList();
+            }
+
             var notesView = ScheduleNoteView.NotesToView(notes);
 
             NotesView.DataSource = notesView;
@@ -51,17 +77,63 @@ namespace UchOtd.Schedule.Forms.DBLists
             NotesView.Columns["LessonString"].Width = 600;
             NotesView.Columns["LateAmount"].Width = 80;
 
-            totalLate.Text = notes.Count + " / " + notes.Aggregate(0, (sum, note) => sum + note.LateAmount);
+            totalLate.Text = notes.Count + " / Σ = " + 
+                notes.Where(n => n.Lesson != null && n.Lesson.State == 1)
+                     .Aggregate(0, (sum, note) => sum + note.LateAmount);
         }
 
         private void SetLessonsList()
         {
-            var lessons = _repo.Lessons.GetAllLessons()
-                .OrderBy(l => l.Calendar.Date)
-                .ThenBy(l => l.Ring.Time.TimeOfDay)
-                .ThenBy(l => l.TeacherForDiscipline.Teacher.FIO)
-                .ThenBy(l => l.State)
-                .ToList();
+            List<Lesson> lessons = null;
+
+            if (!(isDateFilter.Checked) && !(IsTeacherFilter.Checked))
+            {
+                lessons = _repo.Lessons.GetAllLessons()
+                    .OrderBy(l => l.Calendar.Date)
+                    .ThenBy(l => l.Ring.Time.TimeOfDay)
+                    .ThenBy(l => l.TeacherForDiscipline.Teacher.FIO)
+                    .ThenBy(l => l.State)
+                    .ToList();
+            }
+
+            if ((isDateFilter.Checked) && (IsTeacherFilter.Checked))
+            {
+                lessons = _repo.Lessons.GetFiltredLessons(l =>
+                        l.Calendar.Date.Year == DateFilter.Value.Year &&
+                        l.Calendar.Date.Month == DateFilter.Value.Month &&
+                        l.Calendar.Date.Day == DateFilter.Value.Day &&
+                        l.TeacherForDiscipline.Teacher.TeacherId == (int) TeacherFilter.SelectedValue)
+                        .OrderBy(l => l.Calendar.Date)
+                        .ThenBy(l => l.Ring.Time.TimeOfDay)
+                        .ThenBy(l => l.TeacherForDiscipline.Teacher.FIO)
+                        .ThenBy(l => l.State)
+                        .ToList();
+            }
+            
+            if ((isDateFilter.Checked) && !(IsTeacherFilter.Checked))
+            {
+                lessons = _repo.Lessons.GetAllLessons()
+                    .Where(l => 
+                        l.Calendar.Date.Year == DateFilter.Value.Year &&
+                        l.Calendar.Date.Month == DateFilter.Value.Month &&
+                        l.Calendar.Date.Day == DateFilter.Value.Day)
+                    .OrderBy(l => l.Calendar.Date)
+                    .ThenBy(l => l.Ring.Time.TimeOfDay)
+                    .ThenBy(l => l.TeacherForDiscipline.Teacher.FIO)
+                    .ThenBy(l => l.State)
+                    .ToList();
+            }
+
+            if (!(isDateFilter.Checked) && (IsTeacherFilter.Checked))
+            {
+                lessons = _repo.Lessons.GetAllLessons()
+                    .Where(l => l.TeacherForDiscipline.Teacher.TeacherId == (int)TeacherFilter.SelectedValue)
+                    .OrderBy(l => l.Calendar.Date)
+                    .ThenBy(l => l.Ring.Time.TimeOfDay)
+                    .ThenBy(l => l.TeacherForDiscipline.Teacher.FIO)
+                    .ThenBy(l => l.State)
+                    .ToList();
+            }
 
             LessonsList.DataSource = lessons;
         }
@@ -82,9 +154,9 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             var lesson = (Lesson) LessonsList.SelectedValue;
 
-            var newNote = new ScheduleNote { Lesson = lesson, Text = NoteText.Text, LateAmount = (int)LateCount.Value };
+            var newNote = new ScheduleNote { IsLesson = IsLesson.Checked, Lesson = lesson, Text = NoteText.Text, LateAmount = (int)LateCount.Value };
 
-            _repo.ScheduleNotes.Add(newNote);
+            _repo.ScheduleNotes.AddScheduleNote(newNote);
 
             var notes = _repo.ScheduleNotes.GetAllScheduleNotes();
             RefreshView(notes);
@@ -99,6 +171,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var note = _repo.ScheduleNotes.GetScheduleNote(noteView.ScheduleNoteId);
 
                 note.Lesson = (Lesson)LessonsList.SelectedValue;
+                note.IsLesson = IsLesson.Checked;
 
                 note.Text = NoteText.Text;
                 note.LateAmount = (int) LateCount.Value;
@@ -129,6 +202,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             var note = _repo.ScheduleNotes.GetScheduleNote(noteView.ScheduleNoteId);
 
+            IsLesson.Checked = note.IsLesson;
             if (note.Lesson != null)
             {
                 var lesson = ((List<Lesson>) LessonsList.DataSource).FirstOrDefault(l => l.LessonId == note.Lesson.LessonId);
@@ -186,6 +260,29 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             upload.Image = null;
             upload.Text = "Загрузить на сайт";
+        }
+
+        private void filterLessons_Click(object sender, EventArgs e)
+        {
+            SetLessonsList();
+        }
+
+        private void LateText_Click(object sender, EventArgs e)
+        {
+            NoteText.Text = Resources.ScheduleNoteList_LateText;
+        }
+
+        private void LongGoneText_Click(object sender, EventArgs e)
+        {
+            NoteText.Text = Resources.ScheduleNoteList_LongGoneText;
+        }
+
+        private void DateFilter_ValueChanged(object sender, EventArgs e)
+        {
+            if (dateSync.Checked)
+            {
+                notesDateFilter.Value = DateFilter.Value;
+            }
         }
     }
 }
