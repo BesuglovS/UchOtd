@@ -10,7 +10,7 @@ namespace Schedule.DataLayer
     public class ScheduleContext : DbContext
     {
         public ScheduleContext()
-            :base("data source=tcp:127.0.0.1,1433;Database=Schedule14152;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
+            :base("data source=tcp:127.0.0.1,1433;Database=Schedule15161;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
         {
         }
 
@@ -24,6 +24,7 @@ namespace Schedule.DataLayer
         public DbSet<Building> Buildings { get; set; }
         public DbSet<Calendar> Calendars { get; set; }
         public DbSet<Discipline> Disciplines { get; set; }
+        public DbSet<DisciplineName> DisciplineNames { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Ring> Rings { get; set; }
         public DbSet<Student> Students { get; set; }

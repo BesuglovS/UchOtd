@@ -21,6 +21,7 @@ namespace Schedule.Repositories
         public BuildingsRepository Buildings;
         public CalendarsRepository Calendars;
         public DisciplinesRepository Disciplines;
+        public DisciplineNameRepository DisciplineNames;
         public LessonsRepository Lessons;
         public RingsRepository Rings;
         public StudentsRepository Students;
@@ -62,6 +63,7 @@ namespace Schedule.Repositories
             Buildings.ConnectionString = value;
             Calendars.ConnectionString = value;
             Disciplines.ConnectionString = value;
+            DisciplineNames.ConnectionString = value;
             Lessons.ConnectionString = value;
             Rings.ConnectionString = value;
             Students.ConnectionString = value;
@@ -104,6 +106,7 @@ namespace Schedule.Repositories
             Buildings = new BuildingsRepository();
             Calendars = new CalendarsRepository();
             Disciplines = new DisciplinesRepository();
+            DisciplineNames = new DisciplineNameRepository();
             Lessons = new LessonsRepository(this);
             Rings = new RingsRepository();
             Students = new StudentsRepository();

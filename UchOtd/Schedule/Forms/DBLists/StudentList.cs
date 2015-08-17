@@ -257,14 +257,15 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void FBox_TextChanged(object sender, EventArgs e)
         {
             var fio = FBox.Text;
-            if (fio.Split(' ').Count() != 3)
+            var split = fio.Split(' ', '\t');
+            if (split.Count() != 3)
             {
                 return;
             }
             
-            var f = fio.Split(' ')[0];
-            var i = fio.Split(' ')[1];
-            var o = fio.Split(' ')[2];
+            var f = split[0];
+            var i = split[1];
+            var o = split[2];
             FBox.Text = f[0] + f.Substring(1).ToLower();
             IBox.Text = i;
             OBox.Text = o;

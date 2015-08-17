@@ -1749,74 +1749,19 @@ namespace UchOtd.Schedule
         private void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
             var lle = Repo.LessonLogEvents.GetAllLessonLogEvents().ToList();
+
+            var sw = new StreamWriter("AudPercentage.txt");
+
+            sw.WriteLine("buildingId = 2");
+            WriteBuildingAuditoriumsBusyPercentage(sw, 2);
+            sw.WriteLine();
+
+            sw.WriteLine("buildingId = 3");
+            WriteBuildingAuditoriumsBusyPercentage(sw, 3);
+            sw.Close();
             var eprst = 999;
-            /*
-            var dates = new List<DateTime>();
-            dates.Add(new DateTime(2014, 12, 17));
-            dates.Add(new DateTime(2014, 12, 18));
-            dates.Add(new DateTime(2014, 12, 19));
 
-            var lessonList = Repo.Lessons.GetFiltredLessons(l => dates.Contains(l.Calendar.Date.Date) && l.IsActive);
 
-            var tList = lessonList
-                .GroupBy(l => l.TeacherForDiscipline.Teacher.FIO)
-                .ToList();
-
-            foreach (var t in tList.OrderBy(te => te.Key))
-            {
-                LogInFile("t.txt", t.Key);
-
-                foreach (var lesson in t.OrderBy(les => les.Calendar.Date.Date + les.Ring.Time.TimeOfDay))
-                {
-                    LogInFile("t.txt", lesson.Calendar.Date.ToString("dd.MM.yyyy") + " " + lesson.Ring.Time.ToString("H:mm") + " " + 
-                        lesson.TeacherForDiscipline.Discipline.Name + " " + lesson.TeacherForDiscipline.Discipline.StudentGroup.Name);
-                }
-
-                LogInFile("t.txt", "");
-            }
-
-            var eprst = 999;
-             */
-
-            /*
-            BIGREDBUTTON.Text = "Waiting";
-            var result = await Repo.Lessons.FindAllAsync(l => l.State == 0);
-            BIGREDBUTTON.Text = "BIG RED BUTTON";
-             */
-            /*
-            var allAuds = Repo.Auditoriums.GetAll();
-            var allAuds2 = await Repo.Auditoriums.GetAllAsync();
-
-            var aud = Repo.Auditoriums.Get(33);
-            var aud2 = await Repo.Auditoriums.GetAsync(33);
-
-            var f = Repo.Auditoriums.Find(a => a.Name == "Ауд. 305" && a.Building.Name.Contains("ул."));
-            var f2 = await Repo.Auditoriums.FindAsync(a => a.Name == "Ауд. 305");
-
-            var fa = Repo.Auditoriums.FindAll(a => a.Building.Name.Contains("ул."));
-            var fa2 = await Repo.Auditoriums.FindAllAsync(a => a.Building.Name.Contains("ул."));
-
-            var building = Repo.GetFirstFiltredBuilding(b => b.Name.Contains("Молодо"));
-            var newAud = new Auditorium { Building = building, Name = "123" };
-            var res1 = Repo.Auditoriums.Add(newAud);
-
-            var building2 = Repo.GetFirstFiltredBuilding(b => b.Name.Contains("Молодо"));
-            var newAud2 = new Auditorium { Building = building2, Name = "890" };
-            var res2 = await Repo.Auditoriums.AddAsync(newAud2);
-
-            res1.Name = "123+";
-            var u1 = Repo.Auditoriums.Update(res1, res1.AuditoriumId);
-
-            res2.Name = "890+";
-            var u2 = Repo.Auditoriums.Update(res2, res2.AuditoriumId);
-
-            Repo.Auditoriums.Delete(res1);
-            await Repo.Auditoriums.DeleteAsync(res2);
-
-            var c1 = Repo.Auditoriums.Count();
-            var c2 = await Repo.Auditoriums.CountAsync();
-            */
-            //var eprst = 999;
 
 
             //dayDelta_Click(sender, e);
@@ -1844,6 +1789,47 @@ namespace UchOtd.Schedule
             }*/
 
             //Task.Run(new Action(() => DetectWindows("windows.txt")));            
+        }
+
+        private void WriteBuildingAuditoriumsBusyPercentage(StreamWriter sw, int buidingId)
+        {
+            var lessonsBuilding2 = Repo.Lessons.GetFiltredLessons(l => l.Auditorium.Building.BuildingId == buidingId && l.State == 1);
+            var times = lessonsBuilding2.Select(l => l.Ring.Time).OrderBy(t => t.TimeOfDay).Distinct().ToList();
+            var group = lessonsBuilding2
+                .GroupBy(l => (int) l.Calendar.Date.DayOfWeek)
+                .ToDictionary(
+                    l => l.Key,
+                    l2 => l2.GroupBy(l3 => l3.Ring.Time)
+                        .ToDictionary(l4 => l4.Key,
+                            l5 => l5))
+                .OrderBy(tl => tl.Key)
+                .OrderBy(ll => ll.Key)
+                .ToList();
+            sw.Write("Время\t");
+
+            foreach (var time in times)
+            {
+                sw.Write(time.ToString("HH:mm") + "\t");
+            }
+            sw.WriteLine();
+
+            foreach (var dow in @group)
+            {
+                sw.Write(dow.Key + "\t");
+
+                foreach (var time in times)
+                {
+                    if (dow.Value.ContainsKey(time))
+                    {
+                        sw.Write(dow.Value[time].Count() + "\t");
+                    }
+                    else
+                    {
+                        sw.Write("0\t");
+                    }
+                }
+                sw.WriteLine();
+            }
         }
 
         private void DetectWindows(string filename)
@@ -2225,6 +2211,12 @@ namespace UchOtd.Schedule
         {
             var scheduleNotesForm = new ScheduleNoteList(Repo);
             scheduleNotesForm.Show();
+        }
+
+        private void названияДисциплинToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var disciplineNameForm = new DisciplineNameList(Repo);
+            disciplineNameForm.Show();
         }
     }
 }

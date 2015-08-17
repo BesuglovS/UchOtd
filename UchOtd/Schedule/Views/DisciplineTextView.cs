@@ -29,7 +29,11 @@ namespace UchOtd.Schedule.Views
 
         public static List<DisciplineTextView> DisciplinesToView(List<Discipline> list)
         {
-            return list.Select(disc => new DisciplineTextView(disc)).ToList();
+            return list
+                .Select(disc => new DisciplineTextView(disc))
+                .OrderBy(d => d.DisciplineSummary.Split('@')[0])
+                .ThenBy(d => d.DisciplineSummary.Split('@')[1])
+                .ToList();
         }
     }
 }

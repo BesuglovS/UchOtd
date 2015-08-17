@@ -64,6 +64,7 @@
     <Compile Include="Main\Building.cs" />
     <Compile Include="Main\Calendar.cs" />
     <Compile Include="Main\Discipline.cs" />
+    <Compile Include="Main\DisciplineName.cs" />
     <Compile Include="Main\Faculty.cs" />
     <Compile Include="Main\GroupsInFaculty.cs" />
     <Compile Include="Main\Lesson.cs" />

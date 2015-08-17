@@ -35,7 +35,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             StudentList.DataSource = studentView;
             StudentList.ValueMember = "StudentId";
-            StudentList.DisplayMember = "Fio";
+            StudentList.DisplayMember = "Summary";
         }
 
         private void StudentGroupListLoad(object sender, EventArgs e)

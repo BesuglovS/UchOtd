@@ -136,7 +136,7 @@ namespace UchOtd.Core
                 oTable.Columns[i + 2].Width = oWord.CentimetersToPoints(colWidth);
             }
 
-            oTable.Cell(1, 1).Range.Text = "УЧЕБНАЯ КАРТОЧКА" + Environment.NewLine + "студента «Самарской государственной областной академии (Наяновой)»";
+            oTable.Cell(1, 1).Range.Text = "Время";
             oTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
                         WdParagraphAlignment.wdAlignParagraphCenter;
 
@@ -239,9 +239,23 @@ namespace UchOtd.Core
                         foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min()))
                         {
                             var cellText = "";
-                            // Discipline name
-                            cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
 
+                            // Discipline name
+                            var primaryDisciplineName = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
+                            var names =
+                                repo.DisciplineNames.GetDisciplineNamesDictionary(
+                                    tfdData.Value.Item2[0].TeacherForDiscipline.Discipline);
+
+                            if (names.ContainsKey(group.Key))
+                            {
+                                cellText += names[group.Key];
+                            }
+                            else
+                            {
+                                cellText += primaryDisciplineName;
+                            }
+                            
+                            
                             // N + Group modifiers
                             var groupId = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
                             if (plainGroupsListIds.ContainsKey(group.Key))

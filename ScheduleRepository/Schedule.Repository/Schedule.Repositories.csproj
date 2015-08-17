@@ -66,6 +66,7 @@
     <Compile Include="Repositories\Main\AuditoriumsRepository.cs" />
     <Compile Include="Repositories\Main\BuildingsRepository.cs" />
     <Compile Include="Repositories\Main\CalendarsRepository.cs" />
+    <Compile Include="Repositories\Main\DisciplineNameRepository.cs" />
     <Compile Include="Repositories\Main\DisciplinesRepository.cs" />
     <Compile Include="Repositories\Main\FacultiesRepository.cs" />
     <Compile Include="Repositories\Main\GroupsInFacultiesRepository.cs" />

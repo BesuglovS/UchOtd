@@ -20,7 +20,7 @@ namespace UchOtd.Repositories
 
             ConnectionString = connectionString;
         }
-
+        
         public void SaveChanges()
         {
             using (var context = new UchOtdContext(ConnectionString))
@@ -112,7 +112,7 @@ namespace UchOtd.Repositories
                 return context.Notes.ToList().Where(condition).ToList();
             }
         }
-
+        
         public Note GetFirstFiltredNote(Func<Note, bool> condition)
         {
             using (var context = new UchOtdContext(ConnectionString))

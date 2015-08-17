@@ -133,6 +133,10 @@ namespace UchOtd.Forms.Session
                     view.Columns["GroupName"].Width = 100;
                     view.Columns["GroupName"].HeaderText = "Группа";
 
+                    // TeacherFIO
+                    view.Columns["TeacherFIO"].Width = 250;
+                    view.Columns["TeacherFIO"].HeaderText = "Ф.И.О. преподавателя";
+
                     // DisciplineName
                     view.Columns["DisciplineName"].Width = 400;
                     view.Columns["DisciplineName"].HeaderText = "Дисциплина";

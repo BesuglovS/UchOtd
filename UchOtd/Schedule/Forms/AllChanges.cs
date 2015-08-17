@@ -83,7 +83,7 @@ namespace UchOtd.Schedule.Forms
                 UpdateView.Image = Resources.Loading;
 
                 var tfd = tfdFiltering.Checked;
-                var tfdId = (int) tfdFilter.SelectedValue;
+                var tfdId = (int) (tfdFilter.SelectedValue??-1);
 
                 var teacher = teacherFiltering.Checked;
                 var teacherId = (int) teacherFilter.SelectedValue;

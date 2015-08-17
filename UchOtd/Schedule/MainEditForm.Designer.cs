@@ -88,6 +88,8 @@ namespace UchOtd.Schedule
             this.опцииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.факультетыгруппыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.заметкиКРасписаниюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.анализToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.пожеланияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.аудиторииДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,8 +103,7 @@ namespace UchOtd.Schedule
             this.сменыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.заметкиКРасписаниюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.названияДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -247,7 +248,7 @@ namespace UchOtd.Schedule
             this.ToDBName.Name = "ToDBName";
             this.ToDBName.Size = new System.Drawing.Size(88, 20);
             this.ToDBName.TabIndex = 61;
-            this.ToDBName.Text = "Schedule14152";
+            this.ToDBName.Text = "Schedule15161";
             // 
             // DownloadRestore
             // 
@@ -265,7 +266,7 @@ namespace UchOtd.Schedule
             this.FromDBName.Name = "FromDBName";
             this.FromDBName.Size = new System.Drawing.Size(100, 20);
             this.FromDBName.TabIndex = 59;
-            this.FromDBName.Text = "Schedule14152";
+            this.FromDBName.Text = "Schedule15161";
             // 
             // BackupUpload
             // 
@@ -585,6 +586,7 @@ namespace UchOtd.Schedule
             this.группыToolStripMenuItem,
             this.преподавателиToolStripMenuItem,
             this.дисциплиныToolStripMenuItem,
+            this.названияДисциплинToolStripMenuItem,
             this.опцииToolStripMenuItem,
             this.факультетыгруппыToolStripMenuItem,
             this.занятостьАудиторийToolStripMenuItem,
@@ -670,6 +672,18 @@ namespace UchOtd.Schedule
             this.занятостьАудиторийToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.занятостьАудиторийToolStripMenuItem.Text = "Занятость аудиторий";
             this.занятостьАудиторийToolStripMenuItem.Click += new System.EventHandler(this.занятостьАудиторийToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(198, 6);
+            // 
+            // заметкиКРасписаниюToolStripMenuItem
+            // 
+            this.заметкиКРасписаниюToolStripMenuItem.Name = "заметкиКРасписаниюToolStripMenuItem";
+            this.заметкиКРасписаниюToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.заметкиКРасписаниюToolStripMenuItem.Text = "Заметки к расписанию";
+            this.заметкиКРасписаниюToolStripMenuItem.Click += new System.EventHandler(this.заметкиКРасписаниюToolStripMenuItem_Click);
             // 
             // анализToolStripMenuItem
             // 
@@ -782,17 +796,12 @@ namespace UchOtd.Schedule
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // toolStripMenuItem1
+            // названияДисциплинToolStripMenuItem
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(198, 6);
-            // 
-            // заметкиКРасписаниюToolStripMenuItem
-            // 
-            this.заметкиКРасписаниюToolStripMenuItem.Name = "заметкиКРасписаниюToolStripMenuItem";
-            this.заметкиКРасписаниюToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            this.заметкиКРасписаниюToolStripMenuItem.Text = "Заметки к расписанию";
-            this.заметкиКРасписаниюToolStripMenuItem.Click += new System.EventHandler(this.заметкиКРасписаниюToolStripMenuItem_Click);
+            this.названияДисциплинToolStripMenuItem.Name = "названияДисциплинToolStripMenuItem";
+            this.названияДисциплинToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.названияДисциплинToolStripMenuItem.Text = "Названия дисциплин";
+            this.названияДисциплинToolStripMenuItem.Click += new System.EventHandler(this.названияДисциплинToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -891,6 +900,7 @@ namespace UchOtd.Schedule
         private ComboBox siteToUpload;
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripMenuItem заметкиКРасписаниюToolStripMenuItem;
+        private ToolStripMenuItem названияДисциплинToolStripMenuItem;
     }
 }
 

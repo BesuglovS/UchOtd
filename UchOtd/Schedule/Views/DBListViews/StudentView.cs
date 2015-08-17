@@ -18,6 +18,8 @@ namespace UchOtd.Schedule.Views.DBListViews
         public bool PaidEdu { get; set; }
         public bool Expelled { get; set; }
 
+        public string Summary { get; set; }
+
         public StudentView()
         {
         }
@@ -35,6 +37,8 @@ namespace UchOtd.Schedule.Views.DBListViews
             NFactor = st.NFactor;
             PaidEdu = st.PaidEdu;
             Starosta = st.Starosta;
+
+            Summary = Fio + " " + " (" + (Expelled ? "+" : "-") + ZachNumber + ")";
         }
 
         public static List<StudentView> StudentsToView(List<Student> list)
