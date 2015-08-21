@@ -105,13 +105,14 @@ namespace UchOtd.Schedule.Forms.DBLists
                             var studentIds = _repo
                                 .StudentsInGroups
                                 .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
-                                .ToList()
-                                .Select(stig => stig.Student.StudentId);
+                                .Select(stig => stig.Student.StudentId)
+                                .ToList();
                             var groupsListIds = _repo
                                 .StudentsInGroups
                                 .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
-                                .ToList()
-                                .Select(stig => stig.StudentGroup.StudentGroupId);
+                                .Select(stig => stig.StudentGroup.StudentGroupId)
+                                .Distinct()
+                                .ToList();
 
                             discList = discList
                                 .Where(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId))

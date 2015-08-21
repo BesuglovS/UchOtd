@@ -27,6 +27,8 @@ namespace UchOtd
     {
         public const bool School = false;
         private const string DefaultDbName = "Schedule15161";
+
+        public static string CurrentServerName = "";
         //public static string DefaultDbName = "School";
 
         public ScheduleRepository Repo;
@@ -190,7 +192,7 @@ namespace UchOtd
 
         private void BackupDb(string dbName, string filename)
         {
-            var sqlConnection1 = new SqlConnection("data source=tcp:127.0.0.1,1433;Database=" + dbName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+            var sqlConnection1 = new SqlConnection("data source=tcp:" + CurrentServerName + ",1433;Database=" + dbName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
             var cmd = new SqlCommand
             {
                 CommandText =
@@ -230,13 +232,14 @@ namespace UchOtd
         {
             var serverList = new List<string>
             { 
-                "127.0.0.1",
-                "uch-otd-disp"                
+                "uch-otd-disp",
+                "127.0.0.1"
             };
 
+            CurrentServerName = serverList[0];
 
-            Repo = new ScheduleRepository("data source=tcp:" + serverList[0] + ",1433;Database=" + DefaultDbName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
-            UOrepo = new UchOtdRepository("data source=tcp:" + serverList[0] + ",1433;Database=UchOtd; Integrated Security=SSPI;multipleactiveresultsets=True");
+            Repo = new ScheduleRepository("data source=tcp:" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
+            UOrepo = new UchOtdRepository("data source=tcp:" + CurrentServerName + ",1433;Database=UchOtd; Integrated Security=SSPI;multipleactiveresultsets=True");
 
             if (School)
             {

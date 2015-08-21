@@ -24,7 +24,7 @@ namespace UchOtd.Forms
         {
             if (sqlExpressDB.Checked)
             {
-                var connectionString = "data source=tcp:127.0.0.1,1433; Database=" + SQLExpressDatabaseName.Text + 
+                var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" + SQLExpressDatabaseName.Text + 
                     ";User ID = " + Settings.Default.DBUserName +
                     ";Password = " + Settings.Default.DBPassword;
 

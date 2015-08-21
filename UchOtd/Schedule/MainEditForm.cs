@@ -612,74 +612,7 @@ namespace UchOtd.Schedule
             sw.WriteLine(line);
             sw.Close();
         }
-
-
-
-        private void CopyInoGroupLessonsFromRealSchedule()
-        {
-
-            Repo.SetConnectionString("data source=tcp:127.0.0.1,1433; Database=ScheduleDB;User ID = "+ 
-                                     ";User ID = " + Settings.Default.DBUserName +
-                                     ";Password = " + Settings.Default.DBPassword);
-
-            /*var discNames = Repo
-                .GetFiltredTeacherForDiscipline(tfd => tfd.Discipline.StudentGroup.Name.Contains("-") && tfd.Discipline.AuditoriumHours != 0)
-                .Select(tfd => tfd.Discipline.Name)
-                .OrderBy(a => a)
-                .ToList();*/
-
-            var result = new Dictionary<string, List<Lesson>>();
-
-            foreach (var tfd in Repo.TeacherForDisciplines.GetAllTeacherForDiscipline())
-            {
-                if (tfd.Discipline.StudentGroup.Name.Contains("-") && tfd.Discipline.AuditoriumHours != 0)
-                {
-                    var tfdLessons = Repo.Lessons.GetFiltredLessons(l =>
-                        (l.State == 1) &&
-                        l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId);
-
-                    if (!result.ContainsKey(tfd.Discipline.StudentGroup.Name))
-                    {
-                        result.Add(tfd.Discipline.StudentGroup.Name, tfdLessons);
-                    }
-                }
-
-            }
-
-            Repo.SetConnectionString("data source=tcp:127.0.0.1,1433; Database=S-13-14-2;User ID = " +
-                                     ";User ID = " + Settings.Default.DBUserName +
-                                     ";Password = " + Settings.Default.DBPassword);
-
-            var newLessonsList = new List<Lesson>();
-
-            foreach (var kvp in result)
-            {
-                var tefd = Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.StudentGroup.Name == kvp.Key);
-                if (tefd != null)
-                {
-                    foreach (var lesson in kvp.Value)
-                    {
-                        var calendar = Repo.Calendars.GetFirstFiltredCalendar(c => c.Date.Date == lesson.Calendar.Date.Date);
-                        var ring = Repo.Rings.GetFirstFiltredRing(r => r.Time.TimeOfDay == lesson.Ring.Time.TimeOfDay);
-                        var auditorium = Repo.Auditoriums.Find(a => a.Name == lesson.Auditorium.Name);
-
-                        if ((calendar == null) || (ring == null) || (auditorium == null))
-                        {
-                            throw new Exception();
-                        }
-
-                        var newLesson = new Lesson { Auditorium = auditorium, Ring = ring, Calendar = calendar, State = 1, TeacherForDiscipline = tefd };
-
-                        newLessonsList.Add(newLesson);
-                    }
-                }
-            }
-
-            foreach (var l in newLessonsList)
-            {
-                Repo.Lessons.AddLesson(l);
-            }
-        }
+        
 
         private void ImportStudentData(string filename)
         {
