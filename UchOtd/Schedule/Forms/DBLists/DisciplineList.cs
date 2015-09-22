@@ -85,6 +85,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var orderbyGroupNameF = orderByGroupname.Checked;
                 var noArtF = noArt.Checked;
                 var noPostF = noPost.Checked;
+                var withLessonsToday = WithLessonsToday.Checked;
 
                 try
                 {
@@ -151,7 +152,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                         if (noCultureF)
                         {
-                            discList = discList.Where(d => !d.Name.ToLower().Contains("физическая культура")).ToList();
+                            discList = discList.Where(d => !d.Name.ToLower().Contains("физическая культура") && !d.Name.ToLower().Contains("физической культуре")).ToList();
                         }
 
                         if (withExamsOnlyF)
@@ -172,6 +173,45 @@ namespace UchOtd.Schedule.Forms.DBLists
                                         !(d.StudentGroup.Name.StartsWith("1 ") || 
                                           d.StudentGroup.Name.StartsWith("2 ") ||
                                           d.StudentGroup.Name.StartsWith("3 "))).ToList();
+                        }
+
+                        if (withLessonsToday)
+                        {
+                            /*
+                            discList = discList
+                                .Where(
+                                    d =>
+                                        (_repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == d.DisciplineId) != null) &&
+                                        (_repo.Lessons.GetFirstFiltredLesson(l => 
+                                            (l.Calendar.Date.Date == DateTime.Today.Date) &&
+                                            (l.TeacherForDiscipline.TeacherForDisciplineId == 
+                                            _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => 
+                                                tfd.Discipline.DisciplineId == d.DisciplineId).TeacherForDisciplineId)) != null))
+                                .ToList();
+                            */
+                            var tempList = new List<Discipline>();
+                            foreach (Discipline disc in discList)
+                            {
+                                var tfd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
+                                    tefd => tefd.Discipline.DisciplineId == disc.DisciplineId);
+                                Teacher teacher = null;
+
+                                if (tfd != null)
+                                {
+                                    teacher = tfd.Teacher;
+
+                                    var teacherDiscsIds =
+                                        _repo.TeacherForDisciplines.GetFiltredTeacherForDiscipline(
+                                            tefd => tefd.Teacher.TeacherId == teacher.TeacherId)
+                                            .Select(tefd => tefd.Discipline.DisciplineId)
+                                            .ToList();
+                                    if (teacherDiscsIds.Contains(disc.DisciplineId))
+                                    {
+                                        tempList.Add(disc);
+                                    }
+                                }
+                            }
+                            discList = tempList;
                         }
 
                         discList = orderbyGroupNameF ?
@@ -195,52 +235,52 @@ namespace UchOtd.Schedule.Forms.DBLists
             refresh.Image = null;
             refresh.Text = "Обновить";
             
-            DiscipineListView.DataSource = discView;
+            LessonsToday.DataSource = discView;
 
             FormatView();
 
-            DiscipineListView.ClearSelection();
+            LessonsToday.ClearSelection();
         }
 
         private void FormatView()
         {
-            DiscipineListView.Columns["DisciplineId"].Visible = false;
-            DiscipineListView.Columns["DisciplineId"].Width = 40;
+            LessonsToday.Columns["DisciplineId"].Visible = false;
+            LessonsToday.Columns["DisciplineId"].Width = 40;
 
-            DiscipineListView.Columns["Name"].Width = 270;
-            DiscipineListView.Columns["Name"].HeaderText = "Наименование дисциплины";
+            LessonsToday.Columns["Name"].Width = 270;
+            LessonsToday.Columns["Name"].HeaderText = "Наименование дисциплины";
 
-            DiscipineListView.Columns["TeacherFio"].Width = 80;
-            DiscipineListView.Columns["TeacherFio"].HeaderText = "ФИО преподавателя";
+            LessonsToday.Columns["TeacherFio"].Width = 80;
+            LessonsToday.Columns["TeacherFio"].HeaderText = "ФИО преподавателя";
 
-            DiscipineListView.Columns["ScheduleHours"].Width = 30;
-            DiscipineListView.Columns["ScheduleHours"].HeaderText = "Часов в расписании";
+            LessonsToday.Columns["ScheduleHours"].Width = 30;
+            LessonsToday.Columns["ScheduleHours"].HeaderText = "Часов в расписании";
 
-            DiscipineListView.Columns["Attestation"].Width = 80;
-            DiscipineListView.Columns["Attestation"].HeaderText = "Форма отчётности";
+            LessonsToday.Columns["Attestation"].Width = 80;
+            LessonsToday.Columns["Attestation"].HeaderText = "Форма отчётности";
 
-            DiscipineListView.Columns["AuditoriumHours"].Width = 80;
-            DiscipineListView.Columns["AuditoriumHours"].HeaderText = "Аудиторные часы";
+            LessonsToday.Columns["AuditoriumHours"].Width = 80;
+            LessonsToday.Columns["AuditoriumHours"].HeaderText = "Аудиторные часы";
 
-            DiscipineListView.Columns["ProposedHours"].Width = 80;
-            DiscipineListView.Columns["ProposedHours"].HeaderText = "Неутверждённые часы";
+            LessonsToday.Columns["ProposedHours"].Width = 80;
+            LessonsToday.Columns["ProposedHours"].HeaderText = "Неутверждённые часы";
 
-            DiscipineListView.Columns["AuditoriumHoursPerWeek"].Width = 80;
-            DiscipineListView.Columns["AuditoriumHoursPerWeek"].HeaderText = "Аудиторные часы (в неделю / ШКОЛА)";
+            LessonsToday.Columns["AuditoriumHoursPerWeek"].Width = 80;
+            LessonsToday.Columns["AuditoriumHoursPerWeek"].HeaderText = "Аудиторные часы (в неделю / ШКОЛА)";
 
-            DiscipineListView.Columns["LectureHours"].Width = 80;
-            DiscipineListView.Columns["LectureHours"].HeaderText = "Лекции";
+            LessonsToday.Columns["LectureHours"].Width = 80;
+            LessonsToday.Columns["LectureHours"].HeaderText = "Лекции";
 
-            DiscipineListView.Columns["PracticalHours"].Width = 80;
-            DiscipineListView.Columns["PracticalHours"].HeaderText = "Практические / Семинары";
+            LessonsToday.Columns["PracticalHours"].Width = 80;
+            LessonsToday.Columns["PracticalHours"].HeaderText = "Практические / Семинары";
 
-            DiscipineListView.Columns["StudentGroupName"].Width = 120;
-            DiscipineListView.Columns["StudentGroupName"].HeaderText = "Группа";
+            LessonsToday.Columns["StudentGroupName"].Width = 120;
+            LessonsToday.Columns["StudentGroupName"].HeaderText = "Группа";
         }
 
         private void DiscipineListViewCellClick(object sender, DataGridViewCellEventArgs e)
         {
-            var discView = ((List<DisciplineView>)DiscipineListView.DataSource)[e.RowIndex];
+            var discView = ((List<DisciplineView>)LessonsToday.DataSource)[e.RowIndex];
             var discipline = _repo.Disciplines.GetDiscipline(discView.DisciplineId);
 
             DisciplineName.Text = discipline.Name;
@@ -309,9 +349,9 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void UpdateClick(object sender, EventArgs e)
         {
-            if (DiscipineListView.SelectedCells.Count > 0)
+            if (LessonsToday.SelectedCells.Count > 0)
             {
-                var discView = ((List<DisciplineView>)DiscipineListView.DataSource)[DiscipineListView.SelectedCells[0].RowIndex];
+                var discView = ((List<DisciplineView>)LessonsToday.DataSource)[LessonsToday.SelectedCells[0].RowIndex];
                 var discipline = _repo.Disciplines.GetDiscipline(discView.DisciplineId);
 
                 discipline.Name = DisciplineName.Text;
@@ -331,12 +371,12 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void RemoveClick(object sender, EventArgs e)
         {
-            if (DiscipineListView.SelectedRows.Count > 1)
+            if (LessonsToday.SelectedRows.Count > 1)
             {
                 var discIds = new List<int>();
-                for (int i = 0; i < DiscipineListView.SelectedRows.Count; i++)
+                for (int i = 0; i < LessonsToday.SelectedRows.Count; i++)
                 {
-                    discIds.Add(((List<DisciplineView>)DiscipineListView.DataSource)[DiscipineListView.SelectedRows[i].Index].DisciplineId);
+                    discIds.Add(((List<DisciplineView>)LessonsToday.DataSource)[LessonsToday.SelectedRows[i].Index].DisciplineId);
                 }
 
                 foreach (var id in discIds)
@@ -348,9 +388,9 @@ namespace UchOtd.Schedule.Forms.DBLists
                 return;
             }
 
-            if (DiscipineListView.SelectedCells.Count > 0)
+            if (LessonsToday.SelectedCells.Count > 0)
             {
-                var discView = ((List<DisciplineView>)DiscipineListView.DataSource)[DiscipineListView.SelectedCells[0].RowIndex];
+                var discView = ((List<DisciplineView>)LessonsToday.DataSource)[LessonsToday.SelectedCells[0].RowIndex];
 
                 if (_repo.TeacherForDisciplines.GetFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discView.DisciplineId).Count > 0)
                 {
@@ -397,7 +437,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void DiscipineListView_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            var discId = ((List<DisciplineView>)DiscipineListView.DataSource)[e.RowIndex].DisciplineId;
+            var discId = ((List<DisciplineView>)LessonsToday.DataSource)[e.RowIndex].DisciplineId;
             var tefd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
             if (tefd != null)
             {
@@ -415,7 +455,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             if (e.ColumnIndex == 4)
             {
-                var discView = ((List<DisciplineView>)DiscipineListView.DataSource)[e.RowIndex];
+                var discView = ((List<DisciplineView>)LessonsToday.DataSource)[e.RowIndex];
 
                 e.CellStyle.BackColor = PickPercentColor(discView.AuditoriumHours, discView.ScheduleHours);
             }
@@ -453,9 +493,9 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void CompletelyDelete_Click(object sender, EventArgs e)
         {
-            if (DiscipineListView.SelectedCells.Count > 0)
+            if (LessonsToday.SelectedCells.Count > 0)
             {
-                var discView = ((List<DisciplineView>)DiscipineListView.DataSource)[DiscipineListView.SelectedCells[0].RowIndex];
+                var discView = ((List<DisciplineView>)LessonsToday.DataSource)[LessonsToday.SelectedCells[0].RowIndex];
                 
                 var tfd = _repo.TeacherForDisciplines
                     .GetFirstFiltredTeacherForDiscipline(tefd => 
@@ -523,7 +563,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             foreach (var disc in _repo.Disciplines.GetAllDisciplines())
             {
                 if ((disc.AuditoriumHours == 0) || 
-                    ((noCulture.Checked) && (disc.Name.ToLower().Contains("физическая культура"))) ||  // без физической культуры по чекбоксу
+                    ((noCulture.Checked) && (disc.Name.ToLower().Contains("физическая культура") || disc.Name.ToLower().Contains("физической культуре"))) ||  // без физической культуры по чекбоксу
                     ((noArt.Checked) && (disc.StudentGroup.Name.Contains(" И")))) // без факультета искусств по чекбоксу
                 {
                     continue;
@@ -561,11 +601,11 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             var discView = DisciplineView.DisciplinesToView(_repo, discList);
 
-            DiscipineListView.DataSource = discView.OrderBy(dv => dv.TeacherFio).ToList();
+            LessonsToday.DataSource = discView.OrderBy(dv => dv.TeacherFio).ToList();
 
             FormatView();
 
-            DiscipineListView.ClearSelection();
+            LessonsToday.ClearSelection();
         }
     }
 }

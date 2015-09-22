@@ -16,7 +16,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.DisciplineNames
-                    .Include(dn => dn.Discipline)
+                    .Include(dn => dn.Discipline.StudentGroup)
                     .Include(dn => dn.StudentGroup)
                     .ToList();
             }
@@ -27,7 +27,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.DisciplineNames
-                    .Include(dn => dn.Discipline)
+                    .Include(dn => dn.Discipline.StudentGroup)
                     .Include(dn => dn.StudentGroup)
                     .ToList().Where(condition).ToList();
             }
@@ -38,7 +38,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.DisciplineNames
-                    .Include(dn => dn.Discipline)
+                    .Include(dn => dn.Discipline.StudentGroup)
                     .Include(dn => dn.StudentGroup)
                     .ToList()
                     .Where(dn => dn.Discipline.DisciplineId == discipline.DisciplineId)
@@ -52,7 +52,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.DisciplineNames
-                    .Include(dn => dn.Discipline)
+                    .Include(dn => dn.Discipline.StudentGroup)
                     .Include(dn => dn.StudentGroup)
                     .ToList()
                     .Where(dn => dn.Discipline.DisciplineId == discipline.DisciplineId)
@@ -65,7 +65,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.DisciplineNames
-                    .Include(dn => dn.Discipline)
+                    .Include(dn => dn.Discipline.StudentGroup)
                     .Include(dn => dn.StudentGroup)
                     .ToList().FirstOrDefault(condition);
             }
@@ -76,7 +76,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.DisciplineNames
-                    .Include(dn => dn.Discipline)
+                    .Include(dn => dn.Discipline.StudentGroup)
                     .Include(dn => dn.StudentGroup)
                     .FirstOrDefault(dn => dn.DisciplineNameId == disciplineNameId);
             }

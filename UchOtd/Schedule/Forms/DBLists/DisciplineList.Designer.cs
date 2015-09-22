@@ -55,8 +55,9 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.label1 = new System.Windows.Forms.Label();
             this.ListPanel = new System.Windows.Forms.Panel();
             this.viewPanel = new System.Windows.Forms.Panel();
-            this.DiscipineListView = new System.Windows.Forms.DataGridView();
+            this.LessonsToday = new System.Windows.Forms.DataGridView();
             this.filterPanel = new System.Windows.Forms.Panel();
+            this.noPost = new System.Windows.Forms.CheckBox();
             this.noArt = new System.Windows.Forms.CheckBox();
             this.WithExamsOnly = new System.Windows.Forms.CheckBox();
             this.noCulture = new System.Windows.Forms.CheckBox();
@@ -72,11 +73,11 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.groupnameFilter = new System.Windows.Forms.CheckBox();
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.filter = new System.Windows.Forms.TextBox();
-            this.noPost = new System.Windows.Forms.CheckBox();
+            this.WithLessonsToday = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.DiscipineListView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LessonsToday)).BeginInit();
             this.filterPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -307,36 +308,37 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ListPanel.Location = new System.Drawing.Point(233, 0);
             this.ListPanel.Name = "ListPanel";
-            this.ListPanel.Size = new System.Drawing.Size(1196, 630);
+            this.ListPanel.Size = new System.Drawing.Size(1292, 630);
             this.ListPanel.TabIndex = 28;
             // 
             // viewPanel
             // 
-            this.viewPanel.Controls.Add(this.DiscipineListView);
+            this.viewPanel.Controls.Add(this.LessonsToday);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 67);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(1196, 563);
+            this.viewPanel.Size = new System.Drawing.Size(1292, 563);
             this.viewPanel.TabIndex = 2;
             // 
-            // DiscipineListView
+            // LessonsToday
             // 
-            this.DiscipineListView.AllowUserToAddRows = false;
-            this.DiscipineListView.AllowUserToDeleteRows = false;
-            this.DiscipineListView.AllowUserToResizeRows = false;
-            this.DiscipineListView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.DiscipineListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DiscipineListView.Location = new System.Drawing.Point(0, 0);
-            this.DiscipineListView.Name = "DiscipineListView";
-            this.DiscipineListView.ReadOnly = true;
-            this.DiscipineListView.Size = new System.Drawing.Size(1196, 563);
-            this.DiscipineListView.TabIndex = 0;
-            this.DiscipineListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DiscipineListViewCellClick);
-            this.DiscipineListView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DiscipineListView_CellFormatting);
-            this.DiscipineListView.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DiscipineListView_CellMouseDoubleClick);
+            this.LessonsToday.AllowUserToAddRows = false;
+            this.LessonsToday.AllowUserToDeleteRows = false;
+            this.LessonsToday.AllowUserToResizeRows = false;
+            this.LessonsToday.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.LessonsToday.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LessonsToday.Location = new System.Drawing.Point(0, 0);
+            this.LessonsToday.Name = "LessonsToday";
+            this.LessonsToday.ReadOnly = true;
+            this.LessonsToday.Size = new System.Drawing.Size(1292, 563);
+            this.LessonsToday.TabIndex = 0;
+            this.LessonsToday.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DiscipineListViewCellClick);
+            this.LessonsToday.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DiscipineListView_CellFormatting);
+            this.LessonsToday.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DiscipineListView_CellMouseDoubleClick);
             // 
             // filterPanel
             // 
+            this.filterPanel.Controls.Add(this.WithLessonsToday);
             this.filterPanel.Controls.Add(this.noPost);
             this.filterPanel.Controls.Add(this.noArt);
             this.filterPanel.Controls.Add(this.WithExamsOnly);
@@ -356,8 +358,18 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filterPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.filterPanel.Location = new System.Drawing.Point(0, 0);
             this.filterPanel.Name = "filterPanel";
-            this.filterPanel.Size = new System.Drawing.Size(1196, 67);
+            this.filterPanel.Size = new System.Drawing.Size(1292, 67);
             this.filterPanel.TabIndex = 1;
+            // 
+            // noPost
+            // 
+            this.noPost.AutoSize = true;
+            this.noPost.Location = new System.Drawing.Point(950, 48);
+            this.noPost.Name = "noPost";
+            this.noPost.Size = new System.Drawing.Size(113, 17);
+            this.noPost.TabIndex = 17;
+            this.noPost.Text = "без аспирантуры";
+            this.noPost.UseVisualStyleBackColor = true;
             // 
             // noArt
             // 
@@ -500,21 +512,21 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
             // 
-            // noPost
+            // WithLessonsToday
             // 
-            this.noPost.AutoSize = true;
-            this.noPost.Location = new System.Drawing.Point(950, 48);
-            this.noPost.Name = "noPost";
-            this.noPost.Size = new System.Drawing.Size(113, 17);
-            this.noPost.TabIndex = 17;
-            this.noPost.Text = "без аспирантуры";
-            this.noPost.UseVisualStyleBackColor = true;
+            this.WithLessonsToday.AutoSize = true;
+            this.WithLessonsToday.Location = new System.Drawing.Point(1105, 9);
+            this.WithLessonsToday.Name = "WithLessonsToday";
+            this.WithLessonsToday.Size = new System.Drawing.Size(134, 17);
+            this.WithLessonsToday.TabIndex = 18;
+            this.WithLessonsToday.Text = "с занятиями сегодня";
+            this.WithLessonsToday.UseVisualStyleBackColor = true;
             // 
             // DisciplineList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1429, 630);
+            this.ClientSize = new System.Drawing.Size(1525, 630);
             this.Controls.Add(this.ListPanel);
             this.Controls.Add(this.controlsPanel);
             this.Name = "DisciplineList";
@@ -524,7 +536,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.controlsPanel.PerformLayout();
             this.ListPanel.ResumeLayout(false);
             this.viewPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.DiscipineListView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LessonsToday)).EndInit();
             this.filterPanel.ResumeLayout(false);
             this.filterPanel.PerformLayout();
             this.ResumeLayout(false);
@@ -551,7 +563,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private Label label1;
         private Panel ListPanel;
         private Panel viewPanel;
-        private DataGridView DiscipineListView;
+        private DataGridView LessonsToday;
         private Panel filterPanel;
         private TextBox filter;
         private Button Paste;
@@ -575,5 +587,6 @@ namespace UchOtd.Schedule.Forms.DBLists
         private CheckBox WithExamsOnly;
         private CheckBox noArt;
         private CheckBox noPost;
+        private CheckBox WithLessonsToday;
     }
 }

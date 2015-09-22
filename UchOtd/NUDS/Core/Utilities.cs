@@ -69,7 +69,9 @@ namespace UchOtd.NUDS.Core
 
         public static int WeekFromDate(DateTime date, DateTime semesterStarts)
         {
-            return ((date - semesterStarts).Days / 7) + 1;
+            var dow = ((semesterStarts.DayOfWeek == 0) ? 7 : ((int) semesterStarts.DayOfWeek));
+            var firstWeekStarts = semesterStarts.AddDays(-1 * (dow - 1));
+            return ((date - firstWeekStarts).Days / 7) + 1;
         }
 
         public static string GatherWeeksToString(List<int> weekArray)

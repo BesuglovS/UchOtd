@@ -122,11 +122,27 @@ namespace UchOtd.Schedule.Forms.DBLists
             _repo.Teachers.AddTeacher(newTeacher);
 
             RefreshView((int)RefreshType.TeachersOnly);
+
+            var teacherList = (List<Teacher>)TeacherListView.DataSource;
+            var addedTeacher = teacherList.FirstOrDefault(t => t.FIO == newTeacher.FIO);
+
+            var newIndex = -1;
+            for (int i = 0; i < teacherList.Count; i++)
+            {
+                if (teacherList[i].FIO == newTeacher.FIO)
+                {
+                    newIndex = i;
+                }
+            }
+
+            if (newIndex != -1)
+            {
+                TeacherListView.ClearSelection();
+                TeacherListView.Rows[newIndex].Selected = true;
+                TeacherListView.FirstDisplayedScrollingRowIndex = newIndex;
+            }
+
             
-            
-            TeacherListView.ClearSelection();
-            TeacherListView.Rows[TeacherListView.Rows.Count - 1].Selected = true;
-            TeacherListView.FirstDisplayedScrollingRowIndex = TeacherListView.RowCount - 1;
             
             filter.Focus();
         }

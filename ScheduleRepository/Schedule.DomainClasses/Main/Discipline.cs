@@ -9,6 +9,12 @@
         public int AuditoriumHoursPerWeek { get; set; }
         public int LectureHours { get; set; }
         public int PracticalHours { get; set; }
+        public bool CourseProject { get; set; }
+        public bool CourseTask { get; set; }
+        public bool ControlTask { get; set; }
+        public bool Referat { get; set; }
+        public bool Essay { get; set; }
+
         public virtual StudentGroup StudentGroup { get; set; }
 
         public Discipline()

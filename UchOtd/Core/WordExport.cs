@@ -1179,6 +1179,21 @@ namespace UchOtd.Core
                     cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
                     cornerStamp.Line.Visible = MsoTriState.msoFalse;
 
+                    //qrCode 
+                    /*
+                    Shape qrStamp = oDoc.Shapes.AddTextbox(
+                        MsoTextOrientation.msoTextOrientationHorizontal,
+                        oWord.CentimetersToPoints(2f),
+                        oWord.CentimetersToPoints(0.5f),
+                        200, 50,
+                        textBoxRange);
+                    qrStamp.Line.Visible = MsoTriState.msoFalse;
+
+                    object f = false;
+                    object tr = true;
+                    qrStamp.TextFrame.TextRange.InlineShapes.AddPicture(@"d:\qrcode.png", ref f, ref tr, qrStamp.TextFrame.TextRange);
+                    */
+
                     var timeList = new List<string>();
                     foreach (var group in schedule)
                     {

@@ -1077,10 +1077,10 @@ namespace UchOtd.Schedule
             var activeLessonsCount = Repo.Lessons.GetAllActiveLessons().Where(l => !l.TeacherForDiscipline.Discipline.Name.Contains("я куль")).Count();
             var diff = allDiscLessonCount - activeLessonsCount;
             String message = activeLessonsCount + " (" +
-                             String.Format("{0:0.00}%", (double) activeLessonsCount*100/allDiscLessonCount) + ") / " +
+                             $"{(double) activeLessonsCount*100/allDiscLessonCount:0.00}%" + ") / " +
                              allDiscLessonCount
                              + " =>  " + diff + " (" +
-                             String.Format("{0:0.00}%", (double) diff*100/allDiscLessonCount) + ")";
+                             $"{(double) diff*100/allDiscLessonCount:0.00}%" + ")";
 
             cToken.ThrowIfCancellationRequested();
 
@@ -1101,8 +1101,8 @@ namespace UchOtd.Schedule
             cToken.ThrowIfCancellationRequested();
 
             message += Environment.NewLine + touchedDiscs + " (" +
-                       String.Format("{0:0.00}%", (double) touchedDiscs*100/discCount) + ") / " + discCount
-                       + " =>  " + diff2 + " (" + String.Format("{0:0.00}%", (double) diff2*100/discCount) + ")";
+                       $"{(double) touchedDiscs*100/discCount:0.00}%" + ") / " + discCount
+                       + " =>  " + diff2 + " (" + $"{(double) diff2*100/discCount:0.00}%" + ")";
 
             MessageBox.Show(message, "В парах / В дисциплинах");
         }
@@ -1681,6 +1681,7 @@ namespace UchOtd.Schedule
 
         private void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
+            /*
             var lle = Repo.LessonLogEvents.GetAllLessonLogEvents().ToList();
 
             var sw = new StreamWriter("AudPercentage.txt");
@@ -1693,7 +1694,10 @@ namespace UchOtd.Schedule
             WriteBuildingAuditoriumsBusyPercentage(sw, 3);
             sw.Close();
             var eprst = 999;
+            */
 
+            var hours = Repo.Disciplines.GetAllDisciplines().Select(d => d.AuditoriumHours).Sum();
+            MessageBox.Show(hours.ToString(), "Всего часов", MessageBoxButtons.OK);
 
 
 
