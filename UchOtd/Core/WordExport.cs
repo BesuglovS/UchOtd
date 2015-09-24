@@ -2195,7 +2195,21 @@ namespace UchOtd.Core
                         {
                             var cellText = "";
                             // Discipline name
-                            cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
+                            var discName = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
+
+                            var shorteningDictionary = new Dictionary<string, string>
+                            {
+                                {"Английский язык", "Англ. яз."},
+                                {"Немецкий язык", "Нем. яз."},
+                                {"Французский язык", "Франц. яз."}
+                            };
+
+                            if (shorteningDictionary.ContainsKey(discName))
+                            {
+                                discName = shorteningDictionary[discName];
+                            }
+
+                            cellText += discName;
 
                             var tfdGroupId = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
                             if ((tfdGroupId != @group.Key))
@@ -2206,7 +2220,9 @@ namespace UchOtd.Core
 
                             cellText += Environment.NewLine;
                             // Teacher FIO
-                            cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
+                            var ommitInitials = @group.Value[time].Count != 1;
+                            string teacherFio = ShortenFio(tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO, ommitInitials);
+                            cellText += teacherFio + Environment.NewLine;
 
                             // Total weeks
                             if (weeksMarksVisible)
@@ -2396,10 +2412,6 @@ namespace UchOtd.Core
                             .OrderBy(tfd => tfd.Value.Item2.Select(l =>
                                 repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min())
                             .ToList();
-
-
-                        
-
                         var tfdIndex = 0;
                         
                         if (groupDowTimeLessons.Count() == 2)
@@ -2454,7 +2466,7 @@ namespace UchOtd.Core
                         if ((groupDowTimeLessons.Count() == 1) &&
                             (subGroupTwo != null) &&
                             (groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId))
-                        {
+                       {
                             addSubGroupColumn = 1;
 
                             var emptytfd = new KeyValuePair<int, Tuple<string, List<Lesson>>>(-1, null);
