@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Word;
 using Schedule.Constants;
@@ -15,7 +16,9 @@ using UchOtd.Forms;
 using UchOtd.NUDS.View;
 using UchOtd.Schedule;
 using UchOtd.Schedule.Views.DBListViews;
+using Application = Microsoft.Office.Interop.Word.Application;
 using Shape = Microsoft.Office.Interop.Word.Shape;
+using System = Microsoft.Office.Interop.Word.System;
 
 namespace UchOtd.Core
 {
@@ -1599,6 +1602,7 @@ namespace UchOtd.Core
                 WdLineSpacing.wdLineSpaceSingle;
             oPara1.Range.InsertParagraphAfter();
 
+            /*
             oPara1 = oDoc.Content.Paragraphs.Add();
             oPara1.Range.Font.Size = 14;
             oPara1.Range.Text = Constants.DowLocal[dayOfWeek];
@@ -1606,6 +1610,7 @@ namespace UchOtd.Core
             oPara1.Range.ParagraphFormat.LineSpacingRule =
                 WdLineSpacing.wdLineSpaceSingle;
             oPara1.Range.InsertParagraphAfter();
+            */
 
             Shape cornerStamp = oDoc.Shapes.AddTextbox(
                 MsoTextOrientation.msoTextOrientationHorizontal,
@@ -1631,6 +1636,13 @@ namespace UchOtd.Core
             cToken.ThrowIfCancellationRequested();
 
             Table oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null, cToken);
+
+            Table oTable2 = null;
+
+            if ((dayOfWeek != 6) && (dayOfWeek != 7))
+            {
+                oTable2 = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, oTable, cToken);
+            }
 
             cToken.ThrowIfCancellationRequested();
 
@@ -2089,10 +2101,16 @@ namespace UchOtd.Core
                 for (int i = 0; i < 1 + timeList.Count; i++)
                 {
                     oTable.Rows.Add();
+
+                    for (int j = 1; j <= 1 + schedule.Count; j++)
+                    {
+                        oTable.Cell(tableRowOffset + i + 1, j).Borders[WdBorderType.wdBorderDiagonalUp].Visible = false;
+                    }
                 }
             }
 
             oTable.Cell(tableRowOffset + 1, 1).Range.Text = Constants.DowLocal[dayOfWeek];
+            oTable.Cell(tableRowOffset + 1, 1).Range.Bold = 1;
             oTable.Cell(tableRowOffset + 1, 1).Range.ParagraphFormat.Alignment =
                 WdParagraphAlignment.wdAlignParagraphCenter;
 
@@ -2104,6 +2122,7 @@ namespace UchOtd.Core
                 var groupObject = repo.StudentGroups.GetStudentGroup(@group.Key);
                 var groupName = groupObject.Name;
                 oTable.Cell(tableRowOffset + 1, groupColumn).Range.Text = groupName;
+                oTable.Cell(tableRowOffset + 1, groupColumn).Range.Bold = 1;
                 oTable.Cell(tableRowOffset + 1, groupColumn).Range.ParagraphFormat.Alignment =
                     WdParagraphAlignment.wdAlignParagraphCenter;
                 groupColumn++;
@@ -2132,6 +2151,7 @@ namespace UchOtd.Core
                 timeRowIndexList.Add(timeRowIndex);
                 oTable.Cell(tableRowOffset + timeRowIndex, 1).Range.Text = time + " - " +
                                                           hour.ToString("D2") + ":" + minute.ToString("D2");
+                oTable.Cell(tableRowOffset + timeRowIndex, 1).Range.Bold = 1;
                 oTable.Cell(tableRowOffset + timeRowIndex, 1).Range.ParagraphFormat.Alignment =
                     WdParagraphAlignment.wdAlignParagraphCenter;
                 oTable.Cell(tableRowOffset + timeRowIndex, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
@@ -2144,24 +2164,96 @@ namespace UchOtd.Core
                         oTable.Cell(tableRowOffset + timeRowIndex, columnGroupIndex).VerticalAlignment =
                             WdCellVerticalAlignment.wdCellAlignVerticalCenter;
 
-                        var timeTable = oDoc.Tables.Add(oTable.Cell(tableRowOffset + timeRowIndex, columnGroupIndex).Range, 1, 1);
-                        for (int i = 0; i < @group.Value[time].Count - 1; i++)
-                        {
-                            timeTable.Rows.Add();
-                        }
-
                         var groupDowTimeLessons = @group.Value[time]
                             .OrderBy(tfd => tfd.Value.Item2.Select(l =>
                                 repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min())
                             .ToList();
 
-                        if (!((@group.Value[time].Count == 2) && ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт.")))))
+                        var cellOrientation = Orientation.Vertical;
+
+                        var groupObject = repo.StudentGroups.GetStudentGroup(@group.Key);
+                        var subGroupOne = repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupObject.Name + "1");
+                        var subGroupTwo = repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupObject.Name + "2");
+
+                        if (groupDowTimeLessons.Count() == 2)
                         {
-                            for (int i = 0; i < @group.Value[time].Count - 1; i++)
+                            if (((subGroupOne != null) && (subGroupTwo != null)) &&
+                                ((groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup
+                                    .StudentGroupId == subGroupOne.StudentGroupId) &&
+                                 (groupDowTimeLessons[1].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup
+                                     .StudentGroupId == subGroupTwo.StudentGroupId)))
                             {
-                                timeTable.Cell(i + 1, 1).Borders[WdBorderType.wdBorderBottom].Visible = true;
+                                cellOrientation = Orientation.Horizontal;
+                            }
+
+                            if (((subGroupOne != null) && (subGroupTwo != null)) &&
+                                ((groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId) &&
+                                 (groupDowTimeLessons[1].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId)))
+                            {
+                                var tmp = groupDowTimeLessons[0];
+                                groupDowTimeLessons[0] = groupDowTimeLessons[1];
+                                groupDowTimeLessons[1] = tmp;
+                                
+                                cellOrientation = Orientation.Horizontal;
                             }
                         }
+
+                        var additionalColumn = 0;
+
+                        if ((groupDowTimeLessons.Count() == 1) &&
+                            (subGroupOne != null) &&
+                            (groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId))
+                        {
+                            cellOrientation = Orientation.Horizontal;
+                            additionalColumn = 1;
+
+                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Lesson>>>(-1, null);
+                            groupDowTimeLessons.Add(emptytfd);
+                        }
+
+                        if ((groupDowTimeLessons.Count() == 1) &&
+                            (subGroupTwo != null) &&
+                            (groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId))
+                        {
+                            cellOrientation = Orientation.Horizontal;
+                            additionalColumn = 1;
+
+                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Lesson>>>(-1, null);
+                            groupDowTimeLessons.Add(emptytfd);
+
+                            var tmp = groupDowTimeLessons[0];
+                            groupDowTimeLessons[0] = groupDowTimeLessons[1];
+                            groupDowTimeLessons[1] = tmp;
+                        }
+
+                        Table timeTable = null;
+                        if (cellOrientation == Orientation.Vertical)
+                        {
+                            timeTable = oDoc.Tables.Add(oTable.Cell(tableRowOffset + timeRowIndex, columnGroupIndex).Range, 1, 1);
+                            for (int i = 0; i < @group.Value[time].Count - 1; i++)
+                            {
+                                timeTable.Rows.Add();
+                            }
+                        }
+                        else
+                        {
+                            timeTable = oDoc.Tables.Add(oTable.Cell(tableRowOffset + timeRowIndex, columnGroupIndex).Range, 1, @group.Value[time].Count + additionalColumn);
+                        }
+
+                        if (!((@group.Value[time].Count == 2) &&
+                            ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) &&
+                            (groupDowTimeLessons[1].Value.Item1.Contains("чёт.")))))
+                        {
+                            for (int i = 0; i < @group.Value[time].Count + additionalColumn - 1; i++)
+                            {
+                                timeTable.Cell(i + 1, 1).Borders[
+                                    (cellOrientation == Orientation.Vertical)?
+                                        WdBorderType.wdBorderBottom :
+                                        WdBorderType.wdBorderRight
+                                    ].Visible = true;
+                            }
+                        }
+
                         timeTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
                         timeTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
                         timeTable.Range.Font.Size = 10;
@@ -2169,12 +2261,12 @@ namespace UchOtd.Core
 
                         var tfdIndex = 0;
 
-
-
-                        if (groupDowTimeLessons.Count() == 2)
+                        
+                        if (groupDowTimeLessons.Count == 2)
                         {
-                            if (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.") &&
-                                groupDowTimeLessons[1].Value.Item1.Contains("(нечёт."))
+                            if (((groupDowTimeLessons[0].Value != null) && (groupDowTimeLessons[1].Value != null)) && 
+                                (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.") &&
+                                groupDowTimeLessons[1].Value.Item1.Contains("(нечёт.")))
                             {
                                 var tmp = groupDowTimeLessons[0];
                                 groupDowTimeLessons[0] = groupDowTimeLessons[1];
@@ -2184,8 +2276,12 @@ namespace UchOtd.Core
 
                         if (
                             ((@group.Value[time].Count == 2) &&
-                            ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт."))))
-                            || ((@group.Value[time].Count == 1) && (groupDowTimeLessons[0].Value.Item1.Contains("чёт."))))
+                            ((groupDowTimeLessons[0].Value != null) && (groupDowTimeLessons[1].Value != null)) &&
+                            ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && 
+                            (groupDowTimeLessons[1].Value.Item1.Contains("чёт."))))
+                            || ((@group.Value[time].Count == 1) &&
+                            (groupDowTimeLessons[0].Value != null) &&
+                            (groupDowTimeLessons[0].Value.Item1.Contains("чёт."))))
                         {
                             var rng = oTable.Cell(tableRowOffset + timeRowIndex, columnGroupIndex).Range;
                             rng.Borders[WdBorderType.wdBorderDiagonalUp].LineStyle = WdLineStyle.wdLineStyleSingle;
@@ -2194,6 +2290,14 @@ namespace UchOtd.Core
                         foreach (var tfdData in groupDowTimeLessons)
                         {
                             var cellText = "";
+
+                            if (tfdData.Value == null)
+                            {
+                                tfdIndex++;
+
+                                continue;
+                            }
+
                             // Discipline name
                             var discName = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
 
@@ -2211,17 +2315,19 @@ namespace UchOtd.Core
 
                             cellText += discName;
 
+                            /* No title Group 
                             var tfdGroupId = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
                             if ((tfdGroupId != @group.Key))
                             {
                                 cellText += " (" + tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.Name +
                                             ")";
                             }
+                            */
 
                             cellText += Environment.NewLine;
                             // Teacher FIO
-                            var ommitInitials = @group.Value[time].Count != 1;
-                            string teacherFio = ShortenFio(tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO, ommitInitials);
+                            //var ommitInitials = @group.Value[time].Count != 1;
+                            string teacherFio = ShortenFio(tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO, cellOrientation == Orientation.Horizontal);
                             cellText += teacherFio + Environment.NewLine;
 
                             // Total weeks
@@ -2277,13 +2383,27 @@ namespace UchOtd.Core
                                 cellText = cellText + Environment.NewLine;
                             }
 
-                            timeTable.Cell(tfdIndex + 1, 1).Range.Text = cellText;
-                            timeTable.Cell(tfdIndex + 1, 1).VerticalAlignment =
+                            var rowIndex = 1;
+                            var columnIndex = 1;
+
+                            if (cellOrientation == Orientation.Vertical)
+                            {
+                                rowIndex = tfdIndex + 1;
+                                columnIndex = 1;
+                            }
+                            else
+                            {
+                                rowIndex = 1;
+                                columnIndex = tfdIndex + 1;
+                            }
+
+                            timeTable.Cell(rowIndex, columnIndex).Range.Text = cellText;
+                            timeTable.Cell(rowIndex, columnIndex).VerticalAlignment =
                                 WdCellVerticalAlignment.wdCellAlignVerticalCenter;
                             if ((@group.Value[time].Count == 2) &&
                                 ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт."))))
                             {
-                                timeTable.Cell(tfdIndex + 1, 1).Range.ParagraphFormat.Alignment =
+                                timeTable.Cell(rowIndex, columnIndex).Range.ParagraphFormat.Alignment =
                                     (tfdIndex == 0)
                                         ? WdParagraphAlignment.wdAlignParagraphLeft
                                         : WdParagraphAlignment.wdAlignParagraphRight;
@@ -2292,7 +2412,7 @@ namespace UchOtd.Core
                             if ((groupDowTimeLessons.Count == 1) &&
                                 (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.")))
                             {
-                                timeTable.Cell(tfdIndex + 1, 1).Range.ParagraphFormat.Alignment =
+                                timeTable.Cell(rowIndex, columnIndex).Range.ParagraphFormat.Alignment =
                                     WdParagraphAlignment.wdAlignParagraphRight;
                             }
 

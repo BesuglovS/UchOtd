@@ -25,7 +25,7 @@ namespace UchOtd
 {
     public partial class StartupForm : Form
     {
-        public const bool School = true;
+        public const bool School = false;
         private const string DefaultDbName = "Schedule15161";
 
         public static string CurrentServerName = "";
@@ -232,7 +232,7 @@ namespace UchOtd
         {
             var serverList = new List<string>
             { 
-                "uch-otd-disp",
+                //"uch-otd-disp",
                 "127.0.0.1"
             };
 
