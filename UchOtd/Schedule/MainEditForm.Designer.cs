@@ -85,6 +85,7 @@ namespace UchOtd.Schedule
             this.группыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.преподавателиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.дисциплиныToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.названияДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.опцииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.факультетыгруппыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,9 +102,10 @@ namespace UchOtd.Schedule
             this.корпусИПреимущественнаяАудиторияГруппыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.дисциплиныСГарантированнойНаружнейАудиториейToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.сменыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.экспортВWordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.датыПоФизическойКультуреToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.названияДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -158,7 +160,7 @@ namespace UchOtd.Schedule
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(967, 169);
+            this.controlsPanel.Size = new System.Drawing.Size(971, 169);
             this.controlsPanel.TabIndex = 0;
             // 
             // siteToUpload
@@ -568,10 +570,11 @@ namespace UchOtd.Schedule
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.справочникиToolStripMenuItem,
-            this.анализToolStripMenuItem});
+            this.анализToolStripMenuItem,
+            this.экспортВWordToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(967, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(971, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -651,6 +654,13 @@ namespace UchOtd.Schedule
             this.дисциплиныToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.дисциплиныToolStripMenuItem.Text = "Дисциплины";
             this.дисциплиныToolStripMenuItem.Click += new System.EventHandler(this.ДисциплиныToolStripMenuItemClick);
+            // 
+            // названияДисциплинToolStripMenuItem
+            // 
+            this.названияДисциплинToolStripMenuItem.Name = "названияДисциплинToolStripMenuItem";
+            this.названияДисциплинToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.названияДисциплинToolStripMenuItem.Text = "Названия дисциплин";
+            this.названияДисциплинToolStripMenuItem.Click += new System.EventHandler(this.названияДисциплинToolStripMenuItem_Click);
             // 
             // опцииToolStripMenuItem
             // 
@@ -772,13 +782,28 @@ namespace UchOtd.Schedule
             this.сменыToolStripMenuItem.Text = "Смены";
             this.сменыToolStripMenuItem.Click += new System.EventHandler(this.сменыToolStripMenuItem_Click);
             // 
+            // экспортВWordToolStripMenuItem
+            // 
+            this.экспортВWordToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.датыПоФизическойКультуреToolStripMenuItem});
+            this.экспортВWordToolStripMenuItem.Name = "экспортВWordToolStripMenuItem";
+            this.экспортВWordToolStripMenuItem.Size = new System.Drawing.Size(108, 20);
+            this.экспортВWordToolStripMenuItem.Text = "Экспорт в Word ";
+            // 
+            // датыПоФизическойКультуреToolStripMenuItem
+            // 
+            this.датыПоФизическойКультуреToolStripMenuItem.Name = "датыПоФизическойКультуреToolStripMenuItem";
+            this.датыПоФизическойКультуреToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.датыПоФизическойКультуреToolStripMenuItem.Text = "Даты по физической культуре";
+            this.датыПоФизическойКультуреToolStripMenuItem.Click += new System.EventHandler(this.датыПоФизическойКультуреToolStripMenuItem_Click);
+            // 
             // viewPanel
             // 
             this.viewPanel.Controls.Add(this.ScheduleView);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 169);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(967, 420);
+            this.viewPanel.Size = new System.Drawing.Size(971, 420);
             this.viewPanel.TabIndex = 1;
             // 
             // ScheduleView
@@ -792,22 +817,15 @@ namespace UchOtd.Schedule
             this.ScheduleView.Name = "ScheduleView";
             this.ScheduleView.ReadOnly = true;
             this.ScheduleView.RowHeadersVisible = false;
-            this.ScheduleView.Size = new System.Drawing.Size(967, 420);
+            this.ScheduleView.Size = new System.Drawing.Size(971, 420);
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
-            // 
-            // названияДисциплинToolStripMenuItem
-            // 
-            this.названияДисциплинToolStripMenuItem.Name = "названияДисциплинToolStripMenuItem";
-            this.названияДисциплинToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            this.названияДисциплинToolStripMenuItem.Text = "Названия дисциплин";
-            this.названияДисциплинToolStripMenuItem.Click += new System.EventHandler(this.названияДисциплинToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(967, 589);
+            this.ClientSize = new System.Drawing.Size(971, 589);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.MainMenuStrip = this.menuStrip1;
@@ -901,6 +919,8 @@ namespace UchOtd.Schedule
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripMenuItem заметкиКРасписаниюToolStripMenuItem;
         private ToolStripMenuItem названияДисциплинToolStripMenuItem;
+        private ToolStripMenuItem экспортВWordToolStripMenuItem;
+        private ToolStripMenuItem датыПоФизическойКультуреToolStripMenuItem;
     }
 }
 

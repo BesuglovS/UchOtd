@@ -3105,7 +3105,7 @@ namespace UchOtd.Core
             Marshal.ReleaseComObject(oWord);
         }
 
-        public static void TeachersSchedule(ScheduleRepository repo, TeacherSchedule tsForm, CancellationToken cToken)
+        public static void TeachersSchedule(ScheduleRepository repo, TeacherSchedule tsForm, bool OnlyFutureDates, CancellationToken cToken)
         {
             var teachers = repo.Teachers.GetAllTeachers().OrderBy(t => t.FIO).ToList();
 
@@ -3124,7 +3124,7 @@ namespace UchOtd.Core
 
             foreach (var teacher in teachers)
             {
-                var result = tsForm.GetTeacherScheduleToView(teacher.TeacherId, false, -1, false, cToken);
+                var result = tsForm.GetTeacherScheduleToView(teacher.TeacherId, false, -1, false, OnlyFutureDates, cToken);
 
                 var isColumnEmpty = GetEmptyColumnIndexes(result);
                 var columnTitles = new List<string>();
@@ -3237,6 +3237,114 @@ namespace UchOtd.Core
             oDoc.Undo();
 
             Marshal.ReleaseComObject(oWord);
+        }
+
+        public static void ExportCultureDates(ScheduleRepository repo)
+        {
+            var discs = repo.Disciplines.GetFiltredDisciplines(d => d.Name.Contains("изическ")).ToList();
+
+            object oMissing = Missing.Value;
+            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+            
+            //Start Word and create a new document.
+            _Application oWord = new Application { Visible = true };
+            _Document oDoc = oWord.Documents.Add();
+
+            oDoc.PageSetup.Orientation = WdOrientation.wdOrientPortrait;
+            oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
+
+            TeacherForDiscipline tfd = null;
+
+            for (int i = 0; i < discs.Count; i++)
+            {
+                var teacherFIO = "";
+
+                tfd =
+                    repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
+                        tefd => tefd.Discipline.DisciplineId == discs[i].DisciplineId);
+                if (tfd != null)
+                {
+                    teacherFIO = tfd.Teacher.FIO;
+                }
+
+                Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
+                oPara1.Range.Text = teacherFIO + " " + 
+                    discs[i].Name + " " +
+                    discs[i].PracticalHours.ToString() + " " + 
+                    ((Constants.Attestation.ContainsKey(discs[i].Attestation)) ? Constants.Attestation[discs[i].Attestation] : "") + " " + 
+                    discs[i].StudentGroup.Name;
+                oPara1.Range.Font.Bold = 0;
+                oPara1.Range.Font.Size = 10;
+                oPara1.Range.ParagraphFormat.LineSpacingRule =
+                    WdLineSpacing.wdLineSpaceSingle;
+                oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                oPara1.SpaceAfter = 0;
+                oPara1.Range.InsertParagraphAfter();
+
+                if (tfd == null)
+                {
+                    continue;
+                }
+
+                var tfd1 = tfd;
+                var discLessons =
+                    repo.Lessons.GetFiltredLessons(
+                        l =>
+                            l.TeacherForDiscipline.TeacherForDisciplineId == tfd1.TeacherForDisciplineId &&
+                            (l.State == 1 || l.State == 2))
+                        .ToList();
+
+                discLessons = discLessons.OrderBy(l => l.Calendar.Date).ToList();
+
+
+                Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+
+                Table oTable = oDoc.Tables.Add(wrdRng, discLessons.Count, 2);
+                oTable.Borders.Enable = 1;
+                oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+                oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                oTable.Range.Font.Size = 14;
+                oTable.Range.Font.Bold = 0;
+
+                oTable.Columns[1].Width = oWord.CentimetersToPoints(1.2f);
+                oTable.Columns[2].Width = oWord.CentimetersToPoints(3.25f);
+
+                for (int j = 0; j < discLessons.Count; j++)
+                {
+                    oTable.Cell(j + 1, 1).Range.Text = (j + 1).ToString();
+                    oTable.Cell(j + 1, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    oTable.Cell(j + 1, 2).Range.Text = discLessons[j].Calendar.Date.ToString("dd.MM.yyyy");
+                    oTable.Cell(j + 1, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                }
+
+                var pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
+                var fontSize = 14.5F;
+                do
+                {
+                    fontSize -= 0.5F;
+                    oTable.Range.Font.Size = fontSize;
+
+                    if (fontSize <= 3)
+                    {
+                        break;
+                    }
+
+                    pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
+                } while (pageCount > (i + 1));
+
+                var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                endOfDoc.Font.Size = 1;
+                endOfDoc.InsertBreak(WdBreakType.wdSectionBreakNextPage);
+            }
+
+            oDoc.Undo();
+
+            Marshal.ReleaseComObject(oWord);
+
         }
     }
 }

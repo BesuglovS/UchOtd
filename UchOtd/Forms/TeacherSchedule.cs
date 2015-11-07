@@ -56,7 +56,7 @@ namespace UchOtd.Forms
 
         }
         
-        public List<TeacherScheduleTimeView> GetTeacherScheduleToView(int teacherId, bool isWeekFiltered, int weekNumber, bool showingProposed, CancellationToken cToken)
+        public List<TeacherScheduleTimeView> GetTeacherScheduleToView(int teacherId, bool isWeekFiltered, int weekNumber, bool showingProposed, bool OnlyFutureDates, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
             
@@ -72,8 +72,7 @@ namespace UchOtd.Forms
                         l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
                         ((l.State == 1) || ((l.State == 2) && showingProposed)) && 
                         _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date.Date) == weekNumber)
-                    .ToList();
-            }
+                    .ToList();            }
             else
             {
                 lessonList = _repo
@@ -82,6 +81,12 @@ namespace UchOtd.Forms
                         l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
                         ((l.State == 1) || ((l.State == 2) && showingProposed)))
                     .ToList();
+            }
+
+            if (OnlyFutureDates)
+            {
+                var DayStart = DateTime.Now.Date;
+                lessonList = lessonList.Where(l => l.Calendar.Date >= DayStart).ToList();
             }
 
             var teacherBuildingsCount = lessonList.Select(l => l.Auditorium.Building.BuildingId).Distinct().Count();
@@ -338,7 +343,7 @@ namespace UchOtd.Forms
                 try
                 {
                     result = await Task.Run(() =>
-                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, _cToken),
+                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
                         _cToken);
                 }
                 catch (OperationCanceledException)
@@ -384,7 +389,7 @@ namespace UchOtd.Forms
                     var teacherId = (int)teacherList.SelectedValue;
 
                     var result = await Task.Run(() => 
-                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, _cToken),
+                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
                         _cToken);
 
                     var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
@@ -426,7 +431,7 @@ namespace UchOtd.Forms
                     var teacherId = (int)teacherList.SelectedValue;
 
                     var result = await Task.Run(() => 
-                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, _cToken),
+                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
                         _cToken);
 
                     var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
@@ -458,7 +463,7 @@ namespace UchOtd.Forms
                 
                 try
                 {
-                    await Task.Run(() => WordExport.TeachersSchedule(repo, this, _cToken), _cToken);
+                    await Task.Run(() => WordExport.TeachersSchedule(repo, this, OnlyFutureDatesExportInWord.Checked, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
                 {

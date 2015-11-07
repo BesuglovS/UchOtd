@@ -842,7 +842,9 @@ namespace UchOtd.Schedule
                 foreach (var j in activeLessons)
                 {
                     if ((i.Calendar.CalendarId == j.Calendar.CalendarId) && (i.Ring.RingId == j.Ring.RingId) && (i.Auditorium.AuditoriumId == j.Auditorium.AuditoriumId) &&
-                        (i.LessonId != j.LessonId))
+                        (i.LessonId != j.LessonId) && 
+                        ((i.Auditorium.Name != "Ауд. 120") && (j.Auditorium.Name != "Ауд. 120")) &&
+                        ((i.Auditorium.Name != "Ауд. САТД") && (j.Auditorium.Name != "Ауд. САТД")))
                     {
                         sw.WriteLine(
                             i.Calendar.Date.Date + "\t" + i.Ring.Time.TimeOfDay + "\t" +
@@ -1073,8 +1075,9 @@ namespace UchOtd.Schedule
         {
             cToken.ThrowIfCancellationRequested();
 
-            var allDiscLessonCount = Repo.Disciplines.GetAllDisciplines().Where(d => !d.Name.Contains("я куль")).Select(d => d.AuditoriumHours).Sum() / 2;
-            var activeLessonsCount = Repo.Lessons.GetAllActiveLessons().Where(l => !l.TeacherForDiscipline.Discipline.Name.Contains("я куль")).Count();
+            var allDiscLessonCount = (int) Math.Ceiling((double)Repo.Disciplines.GetAllDisciplines().Where(d => !d.Name.Contains("я куль")).Select(d => d.AuditoriumHours).Sum() / 2);
+            var activeLessonsCount = Repo.Lessons.GetAllActiveLessons().Count(l => !l.TeacherForDiscipline.Discipline.Name.Contains("я куль"));
+
             var diff = allDiscLessonCount - activeLessonsCount;
             String message = activeLessonsCount + " (" +
                              $"{(double) activeLessonsCount*100/allDiscLessonCount:0.00}%" + ") / " +
@@ -2154,6 +2157,17 @@ namespace UchOtd.Schedule
         {
             var disciplineNameForm = new DisciplineNameList(Repo);
             disciplineNameForm.Show();
+        }
+
+        private async void датыПоФизическойКультуреToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                await Task.Run(() => WordExport.ExportCultureDates(Repo), _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
     }
 }

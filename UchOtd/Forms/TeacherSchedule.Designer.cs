@@ -43,6 +43,7 @@ namespace UchOtd.Forms
             this.teacherList = new System.Windows.Forms.ComboBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.scheduleView = new System.Windows.Forms.DataGridView();
+            this.OnlyFutureDatesExportInWord = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scheduleView)).BeginInit();
@@ -50,6 +51,7 @@ namespace UchOtd.Forms
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.OnlyFutureDatesExportInWord);
             this.controlsPanel.Controls.Add(this.ExportAllTeachersInWord);
             this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.ExportInWordLandscape);
@@ -61,14 +63,14 @@ namespace UchOtd.Forms
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(1085, 56);
+            this.controlsPanel.Size = new System.Drawing.Size(1085, 77);
             this.controlsPanel.TabIndex = 2;
             // 
             // ExportAllTeachersInWord
             // 
             this.ExportAllTeachersInWord.Location = new System.Drawing.Point(973, 10);
             this.ExportAllTeachersInWord.Name = "ExportAllTeachersInWord";
-            this.ExportAllTeachersInWord.Size = new System.Drawing.Size(101, 35);
+            this.ExportAllTeachersInWord.Size = new System.Drawing.Size(101, 61);
             this.ExportAllTeachersInWord.TabIndex = 40;
             this.ExportAllTeachersInWord.Text = "Word (все преподаватели)";
             this.ExportAllTeachersInWord.UseVisualStyleBackColor = true;
@@ -88,7 +90,7 @@ namespace UchOtd.Forms
             // 
             this.ExportInWordLandscape.Location = new System.Drawing.Point(779, 10);
             this.ExportInWordLandscape.Name = "ExportInWordLandscape";
-            this.ExportInWordLandscape.Size = new System.Drawing.Size(90, 35);
+            this.ExportInWordLandscape.Size = new System.Drawing.Size(90, 61);
             this.ExportInWordLandscape.TabIndex = 38;
             this.ExportInWordLandscape.Text = "Word (ландшафтная)";
             this.ExportInWordLandscape.UseVisualStyleBackColor = true;
@@ -98,7 +100,7 @@ namespace UchOtd.Forms
             // 
             this.ExportInWordPortrait.Location = new System.Drawing.Point(876, 10);
             this.ExportInWordPortrait.Name = "ExportInWordPortrait";
-            this.ExportInWordPortrait.Size = new System.Drawing.Size(87, 35);
+            this.ExportInWordPortrait.Size = new System.Drawing.Size(87, 61);
             this.ExportInWordPortrait.TabIndex = 37;
             this.ExportInWordPortrait.Text = "Word (портретная)";
             this.ExportInWordPortrait.UseVisualStyleBackColor = true;
@@ -116,7 +118,7 @@ namespace UchOtd.Forms
             // 
             this.refresh.Location = new System.Drawing.Point(688, 7);
             this.refresh.Name = "refresh";
-            this.refresh.Size = new System.Drawing.Size(85, 43);
+            this.refresh.Size = new System.Drawing.Size(85, 64);
             this.refresh.TabIndex = 2;
             this.refresh.Text = "Обновить";
             this.refresh.UseVisualStyleBackColor = true;
@@ -146,9 +148,9 @@ namespace UchOtd.Forms
             // 
             this.viewPanel.Controls.Add(this.scheduleView);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 56);
+            this.viewPanel.Location = new System.Drawing.Point(0, 77);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(1085, 624);
+            this.viewPanel.Size = new System.Drawing.Size(1085, 603);
             this.viewPanel.TabIndex = 4;
             // 
             // scheduleView
@@ -161,10 +163,20 @@ namespace UchOtd.Forms
             this.scheduleView.Location = new System.Drawing.Point(0, 0);
             this.scheduleView.Name = "scheduleView";
             this.scheduleView.ReadOnly = true;
-            this.scheduleView.Size = new System.Drawing.Size(1085, 624);
+            this.scheduleView.Size = new System.Drawing.Size(1085, 603);
             this.scheduleView.TabIndex = 0;
             this.scheduleView.TabStop = false;
             this.scheduleView.SelectionChanged += new System.EventHandler(this.ScheduleViewSelectionChanged);
+            // 
+            // OnlyFutureDatesExportInWord
+            // 
+            this.OnlyFutureDatesExportInWord.AutoSize = true;
+            this.OnlyFutureDatesExportInWord.Location = new System.Drawing.Point(460, 53);
+            this.OnlyFutureDatesExportInWord.Name = "OnlyFutureDatesExportInWord";
+            this.OnlyFutureDatesExportInWord.Size = new System.Drawing.Size(155, 17);
+            this.OnlyFutureDatesExportInWord.TabIndex = 68;
+            this.OnlyFutureDatesExportInWord.Text = "только последующие дни";
+            this.OnlyFutureDatesExportInWord.UseVisualStyleBackColor = true;
             // 
             // TeacherSchedule
             // 
@@ -199,5 +211,6 @@ namespace UchOtd.Forms
         private Button ExportInWordLandscape;
         private CheckBox showProposed;
         private Button ExportAllTeachersInWord;
+        private CheckBox OnlyFutureDatesExportInWord;
     }
 }

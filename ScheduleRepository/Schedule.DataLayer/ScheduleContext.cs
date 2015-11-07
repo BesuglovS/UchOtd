@@ -12,11 +12,13 @@ namespace Schedule.DataLayer
         public ScheduleContext()
             :base("data source=tcp:" + "127.0.0.1" + ",1433;Database=Schedule15161;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
         {
+            Database.CommandTimeout = 180;
         }
 
         public ScheduleContext(string connectionString)
             : base(connectionString)
         {
+            Database.CommandTimeout = 180;
         }
 
         // Main
