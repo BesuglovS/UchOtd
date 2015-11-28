@@ -107,7 +107,18 @@ namespace UchOtd.Schedule.Forms
             }
             Controls.Add(weekFilter);
 
-            Height = (faculties.Count + 1)*25 + 100;
+            var dailyChangesButton = new Button
+            {
+                Parent = this,
+                Name = "dailyChanges",
+                Text = "Изменения за день",
+                Bounds = new Rectangle(30, 10 + (faculties.Count + 1) * 25 + 40, 125, 25)
+            };
+            Controls.Add(dailyChangesButton);
+
+            dailyChangesButton.Click += dailyChangesButtonClick;
+
+            Height = (faculties.Count + 1)*25 + 150;
         }
 
 
@@ -165,6 +176,116 @@ namespace UchOtd.Schedule.Forms
 
             button.Image = null;
             button.Text = "Экспорт";
+        }
+
+        private async void dailyChangesButtonClick(object sender, EventArgs e)
+        {
+            var button = (sender as Button);
+            if (button == null) return;
+
+            if (button.Text == "Изменения за день")
+            {
+                _cToken = _tokenSource.Token;
+
+                button.Text = "";
+                button.Image = Resources.Loading;
+
+                await Task.Run(() => {
+                                         // facultyId + DOW
+                                         var result = new List<Tuple<int, DayOfWeek>>();
+
+                                         var evts = _repo.LessonLogEvents.GetFiltredLessonLogEvents(lle => lle.DateTime.Date == DateTime.Now.Date);
+
+                                         var fg = _repo.GroupsInFaculties.GetAllGroupsInFaculty()
+                                             .GroupBy(gif => gif.Faculty.FacultyId,
+                                                 gif => gif.StudentGroup.StudentGroupId)
+                                             .ToList();
+
+
+                                         foreach (var ev in evts)
+                                         {
+                                             int studentGroupId;
+                                             if (ev.OldLesson != null)
+                                             {
+                                                 studentGroupId = ev.OldLesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+
+                                                 var id = studentGroupId;
+                                                 var studentIds = _repo
+                                                     .StudentsInGroups
+                                                     .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == id)
+                                                     .Select(sig => sig.Student.StudentId)
+                                                     .ToList();
+
+                                                 var facultyScheduleChanged = (
+                                                     from faculty in fg
+                                                     where _repo
+                                                         .StudentsInGroups
+                                                         .GetFiltredStudentsInGroups(sig =>
+                                                             studentIds.Contains(sig.Student.StudentId) &&
+                                                             faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
+                                                     select faculty.Key)
+                                                     .ToList();
+
+                                                 var localEvent = ev;
+                                                 foreach (var dowFacTuple in facultyScheduleChanged
+                                                     .Select(faculty => Tuple.Create(faculty, localEvent.OldLesson.Calendar.Date.DayOfWeek))
+                                                     .Where(dowFacTuple => !result.Contains(dowFacTuple)))
+                                                 {
+                                                     result.Add(dowFacTuple);
+                                                 }
+                                             }
+
+
+
+                                             if (ev.NewLesson != null)
+                                             {
+                                                 studentGroupId = ev.NewLesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+
+                                                 var id = studentGroupId;
+                                                 var studentIds = _repo
+                                                     .StudentsInGroups
+                                                     .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == id)
+                                                     .Select(sig => sig.Student.StudentId)
+                                                     .ToList();
+
+                                                 var facultyScheduleChanged = (
+                                                     from faculty in fg
+                                                     where _repo
+                                                         .StudentsInGroups
+                                                         .GetFiltredStudentsInGroups(sig =>
+                                                             studentIds.Contains(sig.Student.StudentId) &&
+                                                             faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
+                                                     select faculty.Key)
+                                                     .ToList();
+
+                                                 var localEvent = ev;
+                                                 foreach (var dowFacTuple in facultyScheduleChanged
+                                                     .Select(faculty => Tuple.Create(faculty, localEvent.NewLesson.Calendar.Date.DayOfWeek))
+                                                     .Where(dowFacTuple => !result.Contains(dowFacTuple)))
+                                                 {
+                                                     result.Add(dowFacTuple);
+                                                 }
+                                             }
+                                         }
+
+                                         var messageString = result
+                                             .OrderBy(df => df.Item1)
+                                             .ThenBy(df => df.Item2)
+                                             .Aggregate("", (current, dowFac) =>
+                                                 current + (_repo.Faculties.GetFaculty(dowFac.Item1).Letter + " - " +
+                                                            Constants.DowLocal[Constants.DowRemap[(int)dowFac.Item2]] + Environment.NewLine));
+
+                                         MessageBox.Show(messageString, "Изменения на сегодня");
+                });
+
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            button.Image = null;
+            button.Text = "Изменения за день";
         }
     }
 }

@@ -333,7 +333,7 @@ namespace Schedule.Repositories.Common
                     result.Add(groupId, new Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>());
 
                     var studentIds = context.StudentsInGroups
-                        .Where(sig => sig.StudentGroup.StudentGroupId == groupId)
+                        .Where(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
                         .ToList()
                         .Select(stig => stig.Student.StudentId);
                     var groupsListIds = context.StudentsInGroups

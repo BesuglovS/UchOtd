@@ -381,6 +381,26 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 foreach (var id in discIds)
                 {
+                    var discNameIds =
+                    _repo.DisciplineNames.GetFiltredDisciplineNames(
+                        dn => dn.Discipline.DisciplineId == id)
+                        .Select(dn => dn.DisciplineNameId)
+                        .ToList();
+                    foreach (var discNameId in discNameIds)
+                    {
+                        _repo.DisciplineNames.RemoveDisciplineName(discNameId);
+                    }
+
+                    var discAttrIds =
+                        _repo.CustomDisciplineAttributes.GetFiltredCustomDisciplineAttributes(
+                            cda => cda.Discipline.DisciplineId == id)
+                            .Select(cda => cda.CustomDisciplineAttributeId)
+                            .ToList();
+                    foreach (var discAttrId in discAttrIds)
+                    {
+                        _repo.CustomDisciplineAttributes.RemoveCustomDisciplineAttribute(discAttrId);
+                    }
+
                     _repo.Disciplines.RemoveDiscipline(id);
                 }
 
@@ -396,6 +416,26 @@ namespace UchOtd.Schedule.Forms.DBLists
                 {
                     MessageBox.Show("Эта дисциплина определена преподавателю.");
                     return;
+                }
+
+                var discNameIds =
+                    _repo.DisciplineNames.GetFiltredDisciplineNames(
+                        dn => dn.Discipline.DisciplineId == discView.DisciplineId)
+                        .Select(dn => dn.DisciplineNameId)
+                        .ToList();
+                foreach (var discNameId in discNameIds)
+                {
+                    _repo.DisciplineNames.RemoveDisciplineName(discNameId);
+                }
+
+                var discAttrIds =
+                    _repo.CustomDisciplineAttributes.GetFiltredCustomDisciplineAttributes(
+                        cda => cda.Discipline.DisciplineId == discView.DisciplineId)
+                        .Select(cda => cda.CustomDisciplineAttributeId)
+                        .ToList();
+                foreach (var discAttrId in discAttrIds)
+                {
+                    _repo.CustomDisciplineAttributes.RemoveCustomDisciplineAttribute(discAttrId);
                 }
 
                 _repo.Disciplines.RemoveDiscipline(discView.DisciplineId);
@@ -530,6 +570,26 @@ namespace UchOtd.Schedule.Forms.DBLists
                 }
 
                 _repo.TeacherForDisciplines.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
+
+                var discNameIds =
+                    _repo.DisciplineNames.GetFiltredDisciplineNames(
+                        dn => dn.Discipline.DisciplineId == discView.DisciplineId)
+                        .Select(dn => dn.DisciplineNameId)
+                        .ToList();
+                foreach (var discNameId in discNameIds)
+                {
+                    _repo.DisciplineNames.RemoveDisciplineName(discNameId);
+                }
+
+                var discAttrIds =
+                    _repo.CustomDisciplineAttributes.GetFiltredCustomDisciplineAttributes(
+                        cda => cda.Discipline.DisciplineId == discView.DisciplineId)
+                        .Select(cda => cda.CustomDisciplineAttributeId)
+                        .ToList();
+                foreach (var discAttrId in discAttrIds)
+                {
+                    _repo.CustomDisciplineAttributes.RemoveCustomDisciplineAttribute(discAttrId);
+                }
 
                 _repo.Disciplines.RemoveDiscipline(discView.DisciplineId);
 
