@@ -1686,6 +1686,89 @@ namespace UchOtd.Schedule
         {
             Task.Run(() =>
             {
+
+
+                var facIds = new List<int> {1, 2, 3, 4, 5, 9, 10, 11};
+
+                var faculties = Repo.Faculties.GetFiltredFaculties(f => facIds.Contains(f.SortingOrder));
+
+                for (int i = 0; i < faculties.Count; i++)
+                {
+                    var faculty = faculties[i];
+
+                    
+
+                    var facultyGroups =
+                        Repo.GroupsInFaculties.GetFiltredGroupsInFaculty(
+                            gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                            .Select(gif => gif.StudentGroup);
+
+                    foreach (var facultyGroup in facultyGroups)
+                    {
+
+                        var studentIds = Repo
+                                .StudentsInGroups
+                                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == facultyGroup.StudentGroupId)
+                                .Select(stig => stig.Student.StudentId)
+                                .ToList();
+                        var groupsListIds = Repo
+                            .StudentsInGroups
+                            .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                            .Select(stig => stig.StudentGroup.StudentGroupId)
+                            .Distinct()
+                            .ToList();
+
+                        var discList = Repo.Disciplines.GetFiltredDisciplines(
+                            d => groupsListIds.Contains(d.StudentGroup.StudentGroupId) && 
+                            ((d.Attestation == 1) || (d.Attestation == 3) || (d.Attestation == 4)))
+                            .ToList();
+
+                        foreach (var discipline in discList)
+                        {
+                            var lastLesson =
+                                Repo.Lessons.GetFiltredLessons(
+                                    l =>
+                                        (l.State == 1) &&
+                                        (l.TeacherForDiscipline.Discipline.DisciplineId == discipline.DisciplineId))
+                                    .OrderBy(l => l.Calendar.Date).LastOrDefault();
+                            if (lastLesson != null)
+                            {
+                                var sw = new StreamWriter("ZachDates.txt", true);
+                                sw.WriteLine(facultyGroup.Name + "\t" + 
+                                    discipline.Name + "\t" +
+                                    lastLesson.Calendar.Date.Date.ToString("dd.MM.yyyy"));
+                                sw.Close();
+                            }
+                        }
+                    }
+                }
+
+                var sw2 = new StreamWriter("ZachDates.txt", true);
+                sw2.WriteLine("done");
+                sw2.Close();
+                var eprst = 999;
+            });
+
+            /*
+            Task.Run(() =>
+            {
+                var lessons =
+                    Repo.Lessons.GetFiltredLessons(
+                        l => l.State == 1 && (l.Calendar.Date.Date == new DateTime(2015, 12, 03)));
+                var sw = new StreamWriter("3dec.txt");
+                foreach (var lesson in lessons)
+                {
+                    sw.WriteLine(lesson.TeacherForDiscipline.Teacher.FIO + "\t" + 
+                        lesson.TeacherForDiscipline.Discipline.StudentGroup.Name + "\t" + 
+                        lesson.TeacherForDiscipline.Discipline.Name + "\t" + 
+                        lesson.Ring.Time.ToString("HH:mm") + "\t" + 
+                        lesson.Auditorium.Name);
+                }
+                sw.Close();
+            });*/
+            /*
+            Task.Run(() =>
+            {
                 var lastTwoDaysLessons =
                     Repo.Lessons.GetFiltredLessons(
                         l =>
@@ -1702,7 +1785,11 @@ namespace UchOtd.Schedule
                         (tfd.Discipline.Attestation == 4))
                     {
                         sw = new StreamWriter("zach.txt", true);
-                        sw.WriteLine(tfd.Discipline.StudentGroup.Name + "\t" + tfd.Discipline.Name + "\t" + lesson.Calendar.Date.ToString("dd.MM.yyyy"));
+                        sw.WriteLine(
+                            tfd.Teacher.FIO + "\t" + 
+                            tfd.Discipline.StudentGroup.Name + "\t" + 
+                            tfd.Discipline.Name + "\t" + 
+                            lesson.Calendar.Date.ToString("dd.MM.yyyy"));
                         sw.Close();
                     }
                 }
@@ -1710,7 +1797,7 @@ namespace UchOtd.Schedule
                 sw = new StreamWriter("zach.txt", true);
                 sw.WriteLine("done");
                 sw.Close();
-            });
+            });*/
 
             /*
             var lle = Repo.LessonLogEvents.GetAllLessonLogEvents().ToList();
