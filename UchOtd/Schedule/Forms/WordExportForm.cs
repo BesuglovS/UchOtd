@@ -194,7 +194,7 @@ namespace UchOtd.Schedule.Forms
                                          // facultyId + DOW
                                          var result = new List<Tuple<int, DayOfWeek>>();
 
-                                         var evts = _repo.LessonLogEvents.GetFiltredLessonLogEvents(lle => (lle.DateTime.Date == DateTime.Now.Date) || (lle.DateTime.Date == DateTime.Now.Date.AddDays(-1)));
+                                         var evts = _repo.LessonLogEvents.GetFiltredLessonLogEvents(lle => (lle.DateTime.Date == DateTime.Now.Date));
 
                                          var fg = _repo.GroupsInFaculties.GetAllGroupsInFaculty()
                                              .GroupBy(gif => gif.Faculty.FacultyId,
