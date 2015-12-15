@@ -100,7 +100,7 @@ namespace UchOtd.Forms.Session
 
         private void BigRedButton_Click(object sender, EventArgs e)
         {
-            _repo.Exams.FillExamListFromSchedule(_repo);
+            //_repo.Exams.FillExamListFromSchedule(_repo);
         }
 
         private void showAll_Click(object sender, EventArgs e)

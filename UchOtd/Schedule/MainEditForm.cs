@@ -1684,6 +1684,7 @@ namespace UchOtd.Schedule
 
         private void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
+            /*
             Task.Run(() =>
             {
 
@@ -1747,7 +1748,7 @@ namespace UchOtd.Schedule
                 sw2.WriteLine("done");
                 sw2.Close();
                 var eprst = 999;
-            });
+            });*/
 
             /*
             Task.Run(() =>
@@ -1766,7 +1767,8 @@ namespace UchOtd.Schedule
                 }
                 sw.Close();
             });*/
-            /*
+            
+
             Task.Run(() =>
             {
                 var lastTwoDaysLessons =
@@ -1797,7 +1799,7 @@ namespace UchOtd.Schedule
                 sw = new StreamWriter("zach.txt", true);
                 sw.WriteLine("done");
                 sw.Close();
-            });*/
+            });
 
             /*
             var lle = Repo.LessonLogEvents.GetAllLessonLogEvents().ToList();
