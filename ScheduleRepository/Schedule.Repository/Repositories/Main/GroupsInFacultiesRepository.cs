@@ -129,7 +129,7 @@ namespace Schedule.Repositories.Repositories.Main
                     groupsInFaculty.StudentGroup = context.StudentGroups.FirstOrDefault(gif => gif.StudentGroupId == groupsInFaculty.StudentGroup.StudentGroupId);
                     groupsInFaculty.Faculty = context.Faculties.FirstOrDefault(gif => gif.FacultyId == groupsInFaculty.Faculty.FacultyId);
 
-                    context.GroupsInFaculties.Remove(groupsInFaculty);
+                    context.GroupsInFaculties.Add(groupsInFaculty);
                 }
 
                 context.SaveChanges();

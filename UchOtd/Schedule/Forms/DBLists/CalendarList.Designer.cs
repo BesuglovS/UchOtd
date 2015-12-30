@@ -46,6 +46,8 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.calendarState = new System.Windows.Forms.ComboBox();
+            this.transferDate = new System.Windows.Forms.DateTimePicker();
+            this.transferDates = new System.Windows.Forms.Button();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CalendarListView)).BeginInit();
             this.SuspendLayout();
@@ -193,11 +195,31 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.calendarState.Size = new System.Drawing.Size(161, 21);
             this.calendarState.TabIndex = 18;
             // 
+            // transferDate
+            // 
+            this.transferDate.Location = new System.Drawing.Point(69, 296);
+            this.transferDate.Name = "transferDate";
+            this.transferDate.Size = new System.Drawing.Size(162, 20);
+            this.transferDate.TabIndex = 19;
+            this.transferDate.Value = new System.DateTime(2013, 12, 31, 0, 0, 0, 0);
+            // 
+            // transferDates
+            // 
+            this.transferDates.Location = new System.Drawing.Point(16, 322);
+            this.transferDates.Name = "transferDates";
+            this.transferDates.Size = new System.Drawing.Size(215, 23);
+            this.transferDates.TabIndex = 20;
+            this.transferDates.Text = "Перенести все даты начиная с данной";
+            this.transferDates.UseVisualStyleBackColor = true;
+            this.transferDates.Click += new System.EventHandler(this.transferDates_Click);
+            // 
             // CalendarList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(523, 485);
+            this.Controls.Add(this.transferDates);
+            this.Controls.Add(this.transferDate);
             this.Controls.Add(this.calendarState);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button1);
@@ -242,5 +264,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private Button button1;
         private Label label2;
         private ComboBox calendarState;
+        private DateTimePicker transferDate;
+        private Button transferDates;
     }
 }

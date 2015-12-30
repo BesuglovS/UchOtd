@@ -1687,6 +1687,32 @@ namespace UchOtd.Schedule
             /*
             Task.Run(() =>
             {
+                var compAuds = new List<string> {"Ауд. 307", "Ауд. 308", "Корп № 3 Ауд. 20"};
+                var audIds = Repo.Auditoriums.FindAll(a => compAuds.Contains(a.Name)).Select(a => a.AuditoriumId);
+
+                var teachers = new List<Teacher>();
+
+                foreach (var lesson in Repo.Lessons.GetAllActiveLessons())
+                {
+                    if (audIds.Contains(lesson.Auditorium.AuditoriumId))
+                    {
+                        teachers.Add(lesson.TeacherForDiscipline.Teacher);
+                    }
+                }
+
+                teachers = teachers.Distinct().ToList();
+
+                var sw = new StreamWriter("CompTeachers.txt");
+                for (int i = 0; i < teachers.Count; i++)
+                {
+                    sw.WriteLine(teachers[i].FIO);
+                }
+                sw.Close();
+            });*/
+
+            /*
+            Task.Run(() =>
+            {
 
 
                 var facIds = new List<int> {1, 2, 3, 4, 5, 9, 10, 11};
@@ -1767,8 +1793,8 @@ namespace UchOtd.Schedule
                 }
                 sw.Close();
             });*/
-            
 
+            /*
             Task.Run(() =>
             {
                 var lastTwoDaysLessons =
@@ -1799,7 +1825,7 @@ namespace UchOtd.Schedule
                 sw = new StreamWriter("zach.txt", true);
                 sw.WriteLine("done");
                 sw.Close();
-            });
+            });*/
 
             /*
             var lle = Repo.LessonLogEvents.GetAllLessonLogEvents().ToList();
@@ -1845,7 +1871,36 @@ namespace UchOtd.Schedule
                 }
             }*/
 
-            //Task.Run(new Action(() => DetectWindows("windows.txt")));            
+            //Task.Run(new Action(() => DetectWindows("windows.txt")));
+
+            Task.Run(() => CopyDBEssentials("Schedule15161", "Schedule15162"));
+        }
+
+        private void CopyDBEssentials(string dbFromName, string dbToName)
+        {
+            var repoFrom = new ScheduleRepository("data source=tcp:" + StartupForm.CurrentServerName + ",1433;Database=" + dbFromName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
+            var repoTo = new ScheduleRepository("data source=tcp:" + StartupForm.CurrentServerName + ",1433;Database=" + dbToName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
+
+            var students = repoFrom.Students.GetAllStudents();
+            repoTo.Students.AddStudentRange(students);
+
+            var studentGroups = repoFrom.StudentGroups.GetAllStudentGroups();
+            repoTo.StudentGroups.AddStudentGroupRange(studentGroups);
+
+            var studentsInGroups = repoFrom.StudentsInGroups.GetAllStudentsInGroups();
+            repoTo.StudentsInGroups.AddStudentsInGroupsRange(studentsInGroups);
+
+            var faculties = repoFrom.Faculties.GetAllFaculties();
+            repoTo.Faculties.AddFacultyRange(faculties);
+
+            var groupsInFaculties = repoFrom.GroupsInFaculties.GetAllGroupsInFaculty();
+            repoTo.GroupsInFaculties.AddGroupsInFacultyRange(groupsInFaculties);
+
+            var buildings = repoFrom.Buildings.GetAllBuildings();
+            repoTo.Buildings.AddBuildingRange(buildings);
+
+            var audList = repoFrom.Auditoriums.GetAll();
+            repoTo.Auditoriums.AddAuditoriumRange(audList);
         }
 
         private void WriteBuildingAuditoriumsBusyPercentage(StreamWriter sw, int buidingId)

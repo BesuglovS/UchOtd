@@ -158,5 +158,28 @@ namespace UchOtd.Schedule.Forms.DBLists
                 curDate = curDate.AddDays(1);
             } while (curDate <= finishDate.Value.Date);
         }
+
+        private void transferDates_Click(object sender, EventArgs e)
+        {
+            var newStartingDate = transferDate.Value;
+
+            var calendars = _repo.Calendars.GetAllCalendars();
+
+            var firstDate = calendars.OrderBy(c => c.Date).FirstOrDefault();
+
+            if (firstDate != null)
+            {
+                var diff = (newStartingDate - firstDate.Date).TotalDays;
+
+                foreach (var calendar in calendars)
+                {
+                    calendar.Date = calendar.Date.AddDays(diff);
+
+                    _repo.Calendars.UpdateCalendar(calendar);
+                }
+            }
+
+            RefreshView();
+        }
     }
 }

@@ -26,7 +26,7 @@ namespace UchOtd
     public partial class StartupForm : Form
     {
         public const bool School = false;
-        private const string DefaultDbName = "Schedule15161";
+        private const string DefaultDbName = "Schedule15162";
 
         public static string CurrentServerName = "";
         //public static string DefaultDbName = "School";

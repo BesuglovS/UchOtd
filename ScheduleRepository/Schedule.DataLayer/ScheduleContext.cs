@@ -10,7 +10,7 @@ namespace Schedule.DataLayer
     public class ScheduleContext : DbContext
     {
         public ScheduleContext()
-            :base("data source=tcp:" + "127.0.0.1" + ",1433;Database=Schedule15161;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
+            :base("data source=tcp:" + "127.0.0.1" + ",1433;Database=Schedule15162;User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True")
         {
             Database.CommandTimeout = 180;
         }

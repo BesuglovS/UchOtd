@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using Microsoft.Office.Core;
@@ -10,17 +11,22 @@ using Microsoft.Office.Interop.Word;
 using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using UchOtd.Properties;
 using UchOtd.Schedule.wnu;
 using UchOtd.Schedule.wnu.MySQLViews;
 using UchOtd.Views;
 using Application = Microsoft.Office.Interop.Word.Application;
 using Shape = Microsoft.Office.Interop.Word.Shape;
+using Task = System.Threading.Tasks.Task;
 
 namespace UchOtd.Forms.Session
 {
     public partial class Session : Form
     {
         readonly ScheduleRepository _repo;
+
+        CancellationTokenSource _tokenSource;
+        CancellationToken _cToken;
 
         public Session(ScheduleRepository repo)
         {
@@ -160,20 +166,6 @@ namespace UchOtd.Forms.Session
                     break;
             }
 
-        }
-        
-        private void UpdateExamsView()
-        {
-            var groupExams = _repo
-                .Exams
-                .GetGroupActiveExams(_repo, (int)groupBox.SelectedValue, false)
-                .ToList();
-
-            var examViewList = ExamView.FromExamList(_repo, groupExams);
-
-            examsView.DataSource = examViewList;
-
-            TuneDataView(examsView, DataViews.ExamsView);
         }
 
         private void examsView_DoubleClick(object sender, EventArgs e)
@@ -493,27 +485,84 @@ namespace UchOtd.Forms.Session
             endSessionDate = (maxConsDate <= maxExamDate) ? maxConsDate : maxExamDate;
         }
 
-        private void Refresh_Click(object sender, EventArgs e)
+        private async void Refresh_Click(object sender, EventArgs e)
         {
-            UpdateExamsView();
+            if (UpdateView.Text == "GO")
+            {
+
+                _tokenSource = new CancellationTokenSource();
+                _cToken = _tokenSource.Token;
+
+                UpdateView.Text = "";
+                UpdateView.Image = Resources.Loading;
+
+                var groupId = (int) groupBox.SelectedValue;
+
+                List<ExamView> examViewList = null;
+
+                await Task.Run(() => {
+                                         var groupExams = _repo
+                                             .Exams
+                                             .GetGroupActiveExams(_repo, groupId, false)
+                                             .ToList();
+
+                                         examViewList = ExamView.FromExamList(_repo, groupExams);
+                });
+
+                examsView.DataSource = examViewList;
+
+                TuneDataView(examsView, DataViews.ExamsView);
+
+                UpdateView.Image = null;
+                UpdateView.Text = "GO";
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
         }
 
-        private void TeacherSchedule_Click(object sender, EventArgs e)
+        private async void TeacherSchedule_Click(object sender, EventArgs e)
         {
-            var teacherExams = (
-                    from exam in _repo.Exams.GetAllExams()
-                    let tefd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd =>
-                        tfd.Discipline.DisciplineId == exam.DisciplineId)
-                    where tefd != null && 
-                          tefd.Teacher.TeacherId == (int) TeacherList.SelectedValue
-                    select exam)
-                .ToList();
+            if (TeacherSchedule.Text == "GO")
+            {
 
-            var examViewList = ExamView.FromExamList(_repo, teacherExams);
+                _tokenSource = new CancellationTokenSource();
+                _cToken = _tokenSource.Token;
 
-            examsView.DataSource = examViewList;
+                TeacherSchedule.Text = "";
+                TeacherSchedule.Image = Resources.Loading;
 
-            TuneDataView(examsView, DataViews.ExamsView);
+                var teacherId = (int) TeacherList.SelectedValue;
+
+                List<ExamView> examViewList = null;
+
+                await Task.Run(() => {
+                    var teacherExams = (
+                        from exam in _repo.Exams.GetAllExams()
+                        let tefd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd =>
+                            tfd.Discipline.DisciplineId == exam.DisciplineId)
+                        where tefd != null &&
+                              tefd.Teacher.TeacherId == teacherId
+                        select exam)
+                        .ToList();
+
+                    examViewList = ExamView.FromExamList(_repo, teacherExams);
+                    
+                });
+
+                examsView.DataSource = examViewList;
+
+                TuneDataView(examsView, DataViews.ExamsView);
+
+                TeacherSchedule.Image = null;
+                TeacherSchedule.Text = "GO";
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
         }
 
         private void AddExamsFromSchedule_Click(object sender, EventArgs e)
