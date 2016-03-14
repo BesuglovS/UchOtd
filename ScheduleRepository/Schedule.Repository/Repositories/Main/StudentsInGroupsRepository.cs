@@ -109,6 +109,10 @@ namespace Schedule.Repositories.Repositories.Main
                 foreach (var studentsInGroups in studentsInGroupsList)
                 {
                     studentsInGroups.StudentsInGroupsId = 0;
+
+                    studentsInGroups.Student = context.Students.FirstOrDefault(s => s.StudentId == studentsInGroups.Student.StudentId);
+                    studentsInGroups.StudentGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == studentsInGroups.StudentGroup.StudentGroupId);
+                    
                     context.StudentsInGroups.Add(studentsInGroups);
                 }
 

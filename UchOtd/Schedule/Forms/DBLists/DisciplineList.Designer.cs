@@ -57,6 +57,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.viewPanel = new System.Windows.Forms.Panel();
             this.LessonsToday = new System.Windows.Forms.DataGridView();
             this.filterPanel = new System.Windows.Forms.Panel();
+            this.WithLessonsToday = new System.Windows.Forms.CheckBox();
             this.noPost = new System.Windows.Forms.CheckBox();
             this.noArt = new System.Windows.Forms.CheckBox();
             this.WithExamsOnly = new System.Windows.Forms.CheckBox();
@@ -73,7 +74,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.groupnameFilter = new System.Windows.Forms.CheckBox();
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.filter = new System.Windows.Forms.TextBox();
-            this.WithLessonsToday = new System.Windows.Forms.CheckBox();
+            this.SyncGroupName = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -83,6 +84,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.SyncGroupName);
             this.controlsPanel.Controls.Add(this.AuditoriumHoursPerWeek);
             this.controlsPanel.Controls.Add(this.label9);
             this.controlsPanel.Controls.Add(this.checkForDoubleDiscsOnAdding);
@@ -138,7 +140,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // reloadGroupList
             // 
-            this.reloadGroupList.Location = new System.Drawing.Point(88, 332);
+            this.reloadGroupList.Location = new System.Drawing.Point(88, 343);
             this.reloadGroupList.Name = "reloadGroupList";
             this.reloadGroupList.Size = new System.Drawing.Size(115, 81);
             this.reloadGroupList.TabIndex = 103;
@@ -148,7 +150,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // CompletelyDelete
             // 
-            this.CompletelyDelete.Location = new System.Drawing.Point(8, 419);
+            this.CompletelyDelete.Location = new System.Drawing.Point(8, 430);
             this.CompletelyDelete.Name = "CompletelyDelete";
             this.CompletelyDelete.Size = new System.Drawing.Size(195, 57);
             this.CompletelyDelete.TabIndex = 102;
@@ -182,6 +184,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.Group.Name = "Group";
             this.Group.Size = new System.Drawing.Size(197, 21);
             this.Group.TabIndex = 5;
+            this.Group.SelectedIndexChanged += new System.EventHandler(this.Group_SelectedIndexChanged);
             // 
             // label6
             // 
@@ -255,7 +258,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // remove
             // 
-            this.remove.Location = new System.Drawing.Point(8, 390);
+            this.remove.Location = new System.Drawing.Point(8, 401);
             this.remove.Name = "remove";
             this.remove.Size = new System.Drawing.Size(75, 23);
             this.remove.TabIndex = 31;
@@ -265,7 +268,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(8, 361);
+            this.update.Location = new System.Drawing.Point(8, 372);
             this.update.Name = "update";
             this.update.Size = new System.Drawing.Size(75, 23);
             this.update.TabIndex = 30;
@@ -275,7 +278,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(7, 332);
+            this.add.Location = new System.Drawing.Point(7, 343);
             this.add.Name = "add";
             this.add.Size = new System.Drawing.Size(75, 23);
             this.add.TabIndex = 6;
@@ -360,6 +363,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filterPanel.Name = "filterPanel";
             this.filterPanel.Size = new System.Drawing.Size(1292, 67);
             this.filterPanel.TabIndex = 1;
+            // 
+            // WithLessonsToday
+            // 
+            this.WithLessonsToday.AutoSize = true;
+            this.WithLessonsToday.Location = new System.Drawing.Point(1105, 9);
+            this.WithLessonsToday.Name = "WithLessonsToday";
+            this.WithLessonsToday.Size = new System.Drawing.Size(134, 17);
+            this.WithLessonsToday.TabIndex = 18;
+            this.WithLessonsToday.Text = "с занятиями сегодня";
+            this.WithLessonsToday.UseVisualStyleBackColor = true;
             // 
             // noPost
             // 
@@ -486,6 +499,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.groupNameList.Name = "groupNameList";
             this.groupNameList.Size = new System.Drawing.Size(100, 21);
             this.groupNameList.TabIndex = 5;
+            this.groupNameList.SelectedIndexChanged += new System.EventHandler(this.groupNameList_SelectedIndexChanged);
             // 
             // groupnameFilter
             // 
@@ -512,15 +526,15 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
             // 
-            // WithLessonsToday
+            // SyncGroupName
             // 
-            this.WithLessonsToday.AutoSize = true;
-            this.WithLessonsToday.Location = new System.Drawing.Point(1105, 9);
-            this.WithLessonsToday.Name = "WithLessonsToday";
-            this.WithLessonsToday.Size = new System.Drawing.Size(134, 17);
-            this.WithLessonsToday.TabIndex = 18;
-            this.WithLessonsToday.Text = "с занятиями сегодня";
-            this.WithLessonsToday.UseVisualStyleBackColor = true;
+            this.SyncGroupName.AutoSize = true;
+            this.SyncGroupName.Location = new System.Drawing.Point(8, 322);
+            this.SyncGroupName.Name = "SyncGroupName";
+            this.SyncGroupName.Size = new System.Drawing.Size(157, 17);
+            this.SyncGroupName.TabIndex = 107;
+            this.SyncGroupName.Text = "Синхронизировать группу";
+            this.SyncGroupName.UseVisualStyleBackColor = true;
             // 
             // DisciplineList
             // 
@@ -588,5 +602,6 @@ namespace UchOtd.Schedule.Forms.DBLists
         private CheckBox noArt;
         private CheckBox noPost;
         private CheckBox WithLessonsToday;
+        private CheckBox SyncGroupName;
     }
 }

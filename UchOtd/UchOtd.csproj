@@ -26,7 +26,7 @@
     <InstallUrl>http://wiki.nayanova.edu/s/UchOtd/</InstallUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>49</ApplicationRevision>
+    <ApplicationRevision>51</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -138,6 +138,12 @@
     </Compile>
     <Compile Include="Forms\DailyLessons.Designer.cs">
       <DependentUpon>DailyLessons.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TeachersAddLessons.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TeachersAddLessons.Designer.cs">
+      <DependentUpon>TeachersAddLessons.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Notes\Notes.cs">
       <SubType>Form</SubType>
@@ -478,6 +484,7 @@
     <Compile Include="Views\ExamView.cs" />
     <Compile Include="Views\NoteView.cs" />
     <Compile Include="Views\StudentListView.cs" />
+    <Compile Include="Views\TeacherWithLocation.cs" />
     <EmbeddedResource Include="Forms\BuildingLessons.resx">
       <DependentUpon>BuildingLessons.cs</DependentUpon>
     </EmbeddedResource>
@@ -504,6 +511,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\StudentProperties.resx">
       <DependentUpon>StudentProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TeachersAddLessons.resx">
+      <DependentUpon>TeachersAddLessons.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TeacherSchedule.resx">
       <DependentUpon>TeacherSchedule.cs</DependentUpon>

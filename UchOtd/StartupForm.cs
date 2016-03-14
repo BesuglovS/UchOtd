@@ -192,7 +192,7 @@ namespace UchOtd
 
         private void BackupDb(string dbName, string filename)
         {
-            var sqlConnection1 = new SqlConnection("data source=tcp:" + CurrentServerName + ",1433;Database=" + dbName + ";User ID = sa;Password = ghjuhfvvf;multipleactiveresultsets=True");
+            var sqlConnection1 = new SqlConnection("data source=tcp:" + CurrentServerName + ",1433;Database=" + dbName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
             var cmd = new SqlCommand
             {
                 CommandText =

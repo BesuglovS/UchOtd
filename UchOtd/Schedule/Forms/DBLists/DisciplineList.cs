@@ -667,5 +667,21 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             LessonsToday.ClearSelection();
         }
+
+        private void Group_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if ((Group.SelectedIndex != 0) && (SyncGroupName.Checked))
+            {
+                groupNameList.SelectedIndex = Group.SelectedIndex;
+            }
+        }
+
+        private void groupNameList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if ((groupNameList.SelectedIndex != 0) && (SyncGroupName.Checked))
+            {
+                Group.SelectedIndex = groupNameList.SelectedIndex;
+            }
+        }
     }
 }

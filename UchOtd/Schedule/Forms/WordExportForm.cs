@@ -12,7 +12,7 @@ using UchOtd.Properties;
 
 namespace UchOtd.Schedule.Forms
 {
-    public partial class WordExportForm : Form
+    public partial class  WordExportForm : Form
     {
         private readonly ScheduleRepository _repo;
         Dictionary<int, List<int>> _choice;

@@ -1393,8 +1393,7 @@ namespace UchOtd.Core
 
                     if (dayOfWeek == daysOfWeek)
                     {
-                        var oPara3 =
-                            oDoc.Content.Paragraphs.Add(ref oMissing);
+                        var oPara3 = oDoc.Content.Paragraphs.Add(ref oMissing);
                         oPara3.Range.Font.Size = 12;
                         oPara3.Format.LineSpacing = oWord.LinesToPoints(1);
                         oPara3.Range.Text = "";
@@ -1404,8 +1403,31 @@ namespace UchOtd.Core
                         var headUchOtdNameOption = repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Начальник учебного отдела");
                         var headUchOtdName = (headUchOtdNameOption == null) ? "" : headUchOtdNameOption.Value;
 
-                        oPara3 =
-                            oDoc.Content.Paragraphs.Add(ref oMissing);
+
+                        Range wordRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+
+                        Table signTable = oDoc.Tables.Add(wordRng, 2, 2);
+                        signTable.Borders.Enable = 0;
+                        signTable.Range.Bold = 0;
+
+                        signTable.Cell(1, 1).Range.Text = "Начальник учебного отдела";
+                        signTable.Cell(1, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
+                        signTable.Cell(1, 2).Range.Text = "_________________  " + headUchOtdName;
+                        signTable.Cell(1, 2).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphRight;
+
+                        signTable.Rows[1].Height = oWord.CentimetersToPoints(1);
+
+                        signTable.Cell(2, 1).Range.Text = faculty.ScheduleSigningTitle;
+                        signTable.Cell(2, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
+                        signTable.Cell(2, 2).Range.Text = "_________________  " + faculty.DeanSigningSchedule;
+                        signTable.Cell(2, 2).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphRight;
+                        
+                        /*
+                        oPara3 = oDoc.Content.Paragraphs.Add(ref oMissing);
                         oPara3.Range.Text = "Начальник учебного отдела\t\t" + "_________________  " + headUchOtdName;
                         oPara3.Range.Font.Size = 12;
                         oPara3.Range.Font.Bold = 0;
@@ -1415,8 +1437,7 @@ namespace UchOtd.Core
                         oPara3.Range.InsertParagraphAfter();
                         oPara3.Range.InsertParagraphAfter();
 
-                        oPara3 =
-                            oDoc.Content.Paragraphs.Add(ref oMissing);
+                        oPara3 = oDoc.Content.Paragraphs.Add(ref oMissing);
                         //"Декан " + UchOtd.NUDS.Core.Constants.facultyTitles[facCounter] + "\t\t_________________  "
                         //+ UchOtd.NUDS.Core.Constants.HeadsOfFaculties.ElementAt(facCounter).Value;
                         oPara3.Range.Text = faculty.ScheduleSigningTitle + "\t\t_________________  " + faculty.DeanSigningSchedule;
@@ -1427,6 +1448,9 @@ namespace UchOtd.Core
                         oPara3.Format.SpaceAfter = 0;
                         oPara3.Range.InsertParagraphAfter();
                         oPara3.Range.InsertParagraphAfter();
+                        */
+
+
                     }
 
                     cToken.ThrowIfCancellationRequested();

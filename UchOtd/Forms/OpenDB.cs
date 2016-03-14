@@ -24,9 +24,8 @@ namespace UchOtd.Forms
         {
             if (sqlExpressDB.Checked)
             {
-                var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" + SQLExpressDatabaseName.Text + 
-                    ";User ID = " + Settings.Default.DBUserName +
-                    ";Password = " + Settings.Default.DBPassword;
+                var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" + SQLExpressDatabaseName.Text +
+                    "; Integrated Security = SSPI; multipleactiveresultsets=True";
 
                 _startupForm.Repo.SetConnectionString(connectionString);
 
@@ -37,8 +36,7 @@ namespace UchOtd.Forms
             {
                 var connectionString = "data source=tcp:" + remoteHost.Text +  "," + PortNumber.Text + 
                     ";Database=" + remoteDatabaseName.Text +
-                    ";User ID = " + Settings.Default.DBUserName +
-                    ";Password = " + Settings.Default.DBPassword;
+                    "; Integrated Security = SSPI; multipleactiveresultsets=True";
 
                 _startupForm.Repo.SetConnectionString(connectionString);
 
