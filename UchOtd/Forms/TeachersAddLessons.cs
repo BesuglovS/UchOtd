@@ -34,7 +34,7 @@ namespace UchOtd.Forms
             await Task.Run(() =>
             {
                 var todaysLesson = Repo.Lessons.GetFiltredLessons(l => (l.State == 1) && (l.Calendar.Date.Date == DateTime.Today.Date));
-                var todaysTeacherIds = (from t in todaysLesson where (t.TeacherForDiscipline != null) && (t.TeacherForDiscipline.Teacher != null) select t.TeacherForDiscipline.Teacher.TeacherId).ToList();
+                var todaysTeacherIds = (from t in todaysLesson where t.TeacherForDiscipline?.Teacher != null select t.TeacherForDiscipline.Teacher.TeacherId).ToList();
 
                 var groupedLessons = new Dictionary<int, List<Lesson>>();
                 for (int i = 0; i < todaysLesson.Count; i++)
@@ -65,13 +65,18 @@ namespace UchOtd.Forms
 
                 for (int i = 0; i < discs.Count; i++)
                 {
+                    if (discs[i].AuditoriumHours == 0)
+                    {
+                        continue;
+                    }
+
                     var teacher =
                         Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
                             tfd => tfd.Discipline.DisciplineId == discs[i].DisciplineId).Teacher;
 
                     if (teacher != null)
                     {
-                        if ((!discsLessons.ContainsKey(discs[i].DisciplineId)) || ((discs[i].AuditoriumHours/2) != discsLessons[discs[i].DisciplineId]))
+                        if (!discsLessons.ContainsKey(discs[i].DisciplineId) || (discs[i].AuditoriumHours/2 != discsLessons[discs[i].DisciplineId]))
                         {
                             if (todaysTeacherIds.Contains(teacher.TeacherId))
                             {

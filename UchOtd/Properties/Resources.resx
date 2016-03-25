@@ -196,4 +196,10 @@
   <data name="ScheduleNoteList_LongGoneText" xml:space="preserve">
     <value>Завершение раньше</value>
   </data>
+  <data name="SQLPassword" xml:space="preserve">
+    <value>ghjuhfvvf</value>
+  </data>
+  <data name="SQLUser" xml:space="preserve">
+    <value>sa</value>
+  </data>
 </root>
