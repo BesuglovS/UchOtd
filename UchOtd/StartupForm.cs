@@ -28,6 +28,14 @@ namespace UchOtd
         public const bool School = false;
         private const string DefaultDbName = "Schedule15162";
 
+        public static List<string> serverList = new List<string>
+            {
+                //"10.13.3.1",
+                //"uch-otd-disp",
+                @"UCH-OTD-DISP-2\SQLEXPRESS",
+                "127.0.0.1"
+            };
+
         public static string CurrentServerName = "";
         //public static string DefaultDbName = "School";
 
@@ -230,20 +238,13 @@ namespace UchOtd
 
         private void InitRepositories()
         {
-            var serverList = new List<string>
-            {
-                "10.13.3.1",
-                "uch-otd-disp",
-                "127.0.0.1"
-            };
-
             CurrentServerName = serverList[0];
 
             //Repo = new ScheduleRepository("data source=tcp:" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
             //UOrepo = new UchOtdRepository("data source=tcp:" + CurrentServerName + ",1433;Database=UchOtd; Integrated Security=SSPI;multipleactiveresultsets=True");
 
-            Repo = new ScheduleRepository("data source=tcp:" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True");
-            UOrepo = new UchOtdRepository("data source=tcp:" + CurrentServerName + ",1433;Database=UchOtd; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True");
+            Repo = new ScheduleRepository("Server=" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True");
+            UOrepo = new UchOtdRepository("Server=" + CurrentServerName + ",1433;Database=UchOtd; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True");
 
             if (School)
             {

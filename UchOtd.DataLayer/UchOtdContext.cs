@@ -6,7 +6,7 @@ namespace UchOtd.DataLayer
     public class UchOtdContext : DbContext
     {
         public UchOtdContext()
-            : base("data source=tcp:" + "127.0.0.1" + ",1433;Database=UchOtd; Integrated Security = SSPI; multipleactiveresultsets=True")
+            : base("data source=tcp:" + @"UCH-OTD-DISP-2\SQLEXPRESS" + ",1433;Database=UchOtd; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True")
         {
             Database.CommandTimeout = 180;
         }

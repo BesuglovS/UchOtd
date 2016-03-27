@@ -1195,9 +1195,10 @@ namespace UchOtd.Schedule
                                var result = new List<Tuple<int, DayOfWeek>>();
 
                                var evts = Repo.LessonLogEvents.GetFiltredLessonLogEvents(lle => 
-                                (lle.DateTime.Date == DateTime.Now.Date) || 
+                                (lle.DateTime.Date == DateTime.Now.Date) /*|| 
                                 (lle.DateTime.Date == DateTime.Now.Date.AddDays(-1)) ||
-                                (lle.DateTime.Date == DateTime.Now.Date.AddDays(-2)));
+                                (lle.DateTime.Date == DateTime.Now.Date.AddDays(-2)) ||
+                                (lle.DateTime.Date == DateTime.Now.Date.AddDays(-3))*/);
 
                                var fg = Repo.GroupsInFaculties.GetAllGroupsInFaculty()
                                    .GroupBy(gif => gif.Faculty.FacultyId, 
