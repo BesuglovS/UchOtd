@@ -60,7 +60,18 @@ namespace UchOtd.Schedule.wnu
             // Close the Stream object.
             dataStream.Close();
             // Get the response.
-            WebResponse response = request.GetResponse();
+            WebResponse response = null;
+            try
+            {
+                response = request.GetResponse();
+            }
+            catch (WebException exc)
+            {
+                var resp = new StreamReader(exc.Response.GetResponseStream()).ReadToEnd();
+                var eprst = 999;
+                return "";
+            }
+
             // Display the status.
             Console.WriteLine(((HttpWebResponse)response).StatusDescription);
             // Get the stream containing content returned by the server.
@@ -84,10 +95,10 @@ namespace UchOtd.Schedule.wnu
 
         public static void UploadSchedule(ScheduleRepository repo, string databaseTablesPrefix, string uploadEndPoint, CancellationToken cToken)
         {
-            var jsonSerializer = new JavaScriptSerializer {MaxJsonLength = 10000000};
+            var jsonSerializer = new JavaScriptSerializer {MaxJsonLength = 20000000};
 
             cToken.ThrowIfCancellationRequested();
-
+         
             var allAuditoriums = repo.Auditoriums.GetAll();
             var mySqlAuditoriums = MySqlAuditorium.FromAuditoriumList(allAuditoriums);
             var wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "auditoriums", data = jsonSerializer.Serialize(mySqlAuditoriums) };
@@ -95,7 +106,7 @@ namespace UchOtd.Schedule.wnu
             UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
-
+            
             var allBuildings = repo.Buildings.GetAllBuildings();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "buildings", data = jsonSerializer.Serialize(allBuildings) };
             json = jsonSerializer.Serialize(wud);
@@ -126,12 +137,12 @@ namespace UchOtd.Schedule.wnu
             UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
-
+            
             var studentGroups = repo.StudentGroups.GetAllStudentGroups();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "studentGroups", data = jsonSerializer.Serialize(studentGroups) };
             json = jsonSerializer.Serialize(wud);
             UploadTableData(json, uploadEndPoint);
-
+            
             cToken.ThrowIfCancellationRequested();
 
             var teachers = repo.Teachers.GetAllTeachers();
@@ -149,12 +160,19 @@ namespace UchOtd.Schedule.wnu
 
             cToken.ThrowIfCancellationRequested();
 
+            int splitCount = 1000;
             var studentsInGroups = repo.StudentsInGroups.GetAllStudentsInGroups();
-            var mySqlStudentsInGroups = MySqlStudentsInGroups.FromStudentsInGroupsList(studentsInGroups);
-            wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "studentsInGroups", data = jsonSerializer.Serialize(mySqlStudentsInGroups) };
-            json = jsonSerializer.Serialize(wud);
-            UploadTableData(json, uploadEndPoint);
+            var partsCount = Math.Ceiling((double)studentsInGroups.Count / splitCount);
 
+            for (int i = 0; i < partsCount; i++)
+            {
+                var studentsInGroupsChunk = studentsInGroups.Skip(i * splitCount).Take(splitCount).ToList();
+                var mySqlStudentsInGroups = MySqlStudentsInGroups.FromStudentsInGroupsList(studentsInGroupsChunk);
+                wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "studentsInGroups", append = (i == 0) ? "" : "1", data = jsonSerializer.Serialize(mySqlStudentsInGroups) };
+                json = jsonSerializer.Serialize(wud);
+                UploadTableData(json, uploadEndPoint);
+            }
+            
             cToken.ThrowIfCancellationRequested();
 
             var teacherForDisciplines = repo.TeacherForDisciplines.GetAllTeacherForDiscipline();
@@ -165,9 +183,9 @@ namespace UchOtd.Schedule.wnu
 
             cToken.ThrowIfCancellationRequested();
 
-            int splitCount = 3000;
+            splitCount = 1000;
             var lessons = repo.Lessons.GetFiltredLessons(l => l.State == 0 || l.State == 1);
-            var partsCount = Math.Ceiling((double)lessons.Count / splitCount);
+            partsCount = Math.Ceiling((double)lessons.Count / splitCount);
 
             for (int i = 0; i < partsCount; i++)
             {
@@ -187,7 +205,7 @@ namespace UchOtd.Schedule.wnu
 
             cToken.ThrowIfCancellationRequested();
 
-            splitCount = 3000;
+            splitCount = 1000;
             var lessonsLogEvents = repo.LessonLogEvents.GetAllLessonLogEvents();
             partsCount = Math.Ceiling((double)lessonsLogEvents.Count / splitCount);
 
@@ -210,7 +228,7 @@ namespace UchOtd.Schedule.wnu
              
 
             cToken.ThrowIfCancellationRequested();
-
+            
             var faculties = repo.Faculties.GetAllFaculties();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "faculties", data = jsonSerializer.Serialize(faculties) };
             json = jsonSerializer.Serialize(wud);
@@ -223,6 +241,7 @@ namespace UchOtd.Schedule.wnu
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "GroupsInFaculties", data = jsonSerializer.Serialize(mySqlgifs) };
             json = jsonSerializer.Serialize(wud);
             UploadTableData(json, uploadEndPoint);
+            
         }
 
         public static void UploadNotes(ScheduleRepository repo, CancellationToken cToken)

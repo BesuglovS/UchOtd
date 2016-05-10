@@ -10,10 +10,17 @@ namespace UchOtd.Schedule.wnu.MySQLViews
         public string Name { get; set; }
         public int Attestation { get; set; } // 0 - ничего; 1 - зачёт; 2 - экзамен; 3 - зачёт и экзамен
         public int AuditoriumHours { get; set; }
+        public int AuditoriumHoursPerWeek { get; set; }
         public int LectureHours { get; set; }
         public int PracticalHours { get; set; }
-        public int StudentGroupId { get; set; }
+        
+        public bool CourseProject { get; set; }
+        public bool CourseTask { get; set; }
+        public bool ControlTask { get; set; }
+        public bool Referat { get; set; }
+        public bool Essay { get; set; }
 
+        public int StudentGroupId { get; set; }
 
         public MySqlDiscipline(Discipline discipline)
         {
@@ -21,8 +28,15 @@ namespace UchOtd.Schedule.wnu.MySQLViews
             Name = discipline.Name;
             Attestation = discipline.Attestation;
             AuditoriumHours = discipline.AuditoriumHours;
+            AuditoriumHoursPerWeek = discipline.AuditoriumHoursPerWeek;
             LectureHours = discipline.LectureHours;
             PracticalHours = discipline.PracticalHours;
+            CourseProject = discipline.CourseProject;
+            CourseTask = discipline.CourseTask;
+            ControlTask = discipline.ControlTask;
+            Referat = discipline.Referat;
+            Essay = discipline.Essay;
+
             StudentGroupId = discipline.StudentGroup.StudentGroupId;
         }
 

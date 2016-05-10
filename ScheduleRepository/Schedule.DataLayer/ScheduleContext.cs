@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Config;
 using Schedule.DomainClasses.Logs;
@@ -9,16 +10,25 @@ namespace Schedule.DataLayer
 {
     public class ScheduleContext : DbContext
     {
-        public ScheduleContext()
-            :base("data source=tcp:" + @"UCH-OTD-DISP-2\SQLEXPRESS" + ",1433;Database=Schedule15162; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True")
+        private readonly string _connectionString;
+
+        public ScheduleContext():base(GetConnectionString())
         {
+            _connectionString = GetConnectionString();
             Database.CommandTimeout = 180;
         }
-
+        
         public ScheduleContext(string connectionString)
             : base(connectionString)
         {
+            _connectionString = connectionString;
             Database.CommandTimeout = 180;
+        }
+
+        private static string GetConnectionString()
+        {
+            return "data source=tcp:" + @"UCH-OTD-DISP\SQLEXPRESS" +
+                   ",1433;Database=Schedule15162; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True";
         }
 
         // Main

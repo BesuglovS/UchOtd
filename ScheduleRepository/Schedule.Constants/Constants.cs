@@ -64,6 +64,7 @@ namespace Schedule.Constants
 
         public static List<String> SitesUploadEndPoints = new List<string>
         {
+            "http://localhost/schedule/public/api/",
             "http://wiki.nayanova.edu/_php/includes/",
             "http://besuglovs.ru/wnu/_php/includes/"
         };

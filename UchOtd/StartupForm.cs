@@ -32,7 +32,7 @@ namespace UchOtd
             {
                 //"10.13.3.1",
                 //"uch-otd-disp",
-                @"UCH-OTD-DISP-2\SQLEXPRESS",
+                @"UCH-OTD-DISP\SQLEXPRESS",
                 "127.0.0.1"
             };
 

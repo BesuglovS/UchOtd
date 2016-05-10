@@ -1713,6 +1713,64 @@ namespace UchOtd.Schedule
             /*
             await Task.Run(() =>
             {
+                var events = Repo.LessonLogEvents.GetAllLessonLogEvents();
+
+                var addEvents = new Dictionary<DateTime, int>();
+                var remEvents = new Dictionary<DateTime, int>();
+                var audEvents = new Dictionary<DateTime, int>();
+
+                for (int i = 0; i < events.Count; i++)
+                {
+                    if (events[i].OldLesson == null)
+                    {
+                        if (!addEvents.ContainsKey(events[i].DateTime.Date))
+                        {
+                            addEvents.Add(events[i].DateTime.Date, 0);
+                        }
+
+                        addEvents[events[i].DateTime.Date]++;
+
+                        continue;
+                    }
+
+                    if (events[i].NewLesson == null)
+                    {
+                        if (!remEvents.ContainsKey(events[i].DateTime.Date))
+                        {
+                            remEvents.Add(events[i].DateTime.Date, 0);
+                        }
+
+                        remEvents[events[i].DateTime.Date]++;
+
+                        continue;
+                    }
+
+                    if (!audEvents.ContainsKey(events[i].DateTime.Date))
+                    {
+                        audEvents.Add(events[i].DateTime.Date, 0);
+                    }
+
+                    audEvents[events[i].DateTime.Date]++;
+                }
+
+                var addCount = addEvents.Sum(ev => ev.Value);
+                var remCount = remEvents.Sum(ev => ev.Value);
+                var audCount = audEvents.Sum(ev => ev.Value);
+                var totalCount = events.Count;
+
+                MessageBox.Show(
+                    "Add (min = " + addEvents.Select(ae => ae.Value).Min() + "; max = " + addEvents.Select(ae => ae.Value).Max() + ") = " + 
+                    addEvents.Count + " / " + addCount + "(" + string.Format("{0:0.00}", (addCount * 100.0 / totalCount)) + "%)" + "\n" + 
+                    "Rem (min = " + remEvents.Select(ae => ae.Value).Min() + "; max = " + remEvents.Select(ae => ae.Value).Max() + ") = " + 
+                    remEvents.Count + " / " + remCount + "(" + string.Format("{0:0.00}", (remCount * 100.0 / totalCount)) + "%)" + "\n" +
+                    "Aud (min = " + audEvents.Select(ae => ae.Value).Min() + "; max = " + audEvents.Select(ae => ae.Value).Max() + ") = " + 
+                    audEvents.Count + " / " + audCount + "(" + string.Format("{0:0.00}", (audCount * 100.0 / totalCount)) + "%)"
+                    );
+            });*/
+
+            /*
+            await Task.Run(() =>
+            {
                 var compAuds = new List<string> {"Ауд. 307", "Ауд. 308", "Корп № 3 Ауд. 20"};
                 ExportCompAudTeachers(compAuds);
             });*/
@@ -2107,15 +2165,16 @@ namespace UchOtd.Schedule
         {
             Task.Run(() =>
             {
+                
                 var message = Repo
                     .Students
                     .GetFiltredStudents(s => !s.Expelled)
-                    .Where(student => DateTime.Now.Date == student.BirthDate.Date)
+                    .Where(student => ((DateTime.Now.Date.Day == student.BirthDate.Date.Day) && (DateTime.Now.Date.Month == student.BirthDate.Date.Month)))
                     .Aggregate("", (current, student) =>
                         current + (student.F + " " + student.I + " " + student.O +
                                    " ( " + (DateTime.Now.Year - student.BirthDate.Year) + " / " +
                                    student.BirthDate.Year + " )" + Environment.NewLine));
-
+                
                 if (message == "")
                 {
                     message = "Нету дома никого.";
