@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Constants;
+using Schedule.DomainClasses.Logs;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using Schedule.Repositories.Common;
@@ -2483,6 +2484,64 @@ namespace UchOtd.Schedule
         {
             var teachersForm = new TeachersAddLessons(Repo);
             teachersForm.Show();
+        }
+
+        private async void процентЗанятийПоДатамToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                var allDiscLessonCount = (int)Math.Ceiling((double)Repo.Disciplines.GetAllDisciplines()
+                    .Where(d => (d.Name != "Физическая культура") && (d.Name != "Элективные курсы по физической культуре"))
+                    .Select(d => d.AuditoriumHours).Sum() / 2);
+
+                var currentLessonCount = 0;
+
+                var events = Repo.LessonLogEvents.GetAllLessonLogEvents();
+
+                var percentageByDateTime = new Dictionary<DateTime, Tuple<int, double>>();
+
+                var oldDate = new DateTime(1900, 1, 1, 0, 0, 0);
+
+                foreach (var evt in events.OrderBy(ev => ev.DateTime))
+                {
+                    if ((evt.NewLesson == null) || (evt.OldLesson == null))
+                    {
+                        if ((evt.DateTime.Year != oldDate.Year) || (evt.DateTime.Month != oldDate.Month) ||
+                        (evt.DateTime.Day != oldDate.Day))
+                        {
+                            percentageByDateTime.Add(evt.DateTime.Date, new Tuple<int, double>(0, 0d));
+                            oldDate = evt.DateTime.Date;
+                        }
+
+                        if (evt.NewLesson == null)
+                        {
+                            percentageByDateTime[evt.DateTime.Date] = new Tuple<int, double>(percentageByDateTime[evt.DateTime.Date].Item1 - 1, 0);
+                        }
+
+                        if (evt.OldLesson == null)
+                        {
+                            percentageByDateTime[evt.DateTime.Date] = new Tuple<int, double>(percentageByDateTime[evt.DateTime.Date].Item1 + 1, 0);
+                        }
+                    }
+                }
+
+                var sw = new StreamWriter("PercentageProgress.txt");
+
+                sw.WriteLine(allDiscLessonCount);
+
+                double total = 0d;
+                var keys = percentageByDateTime.Keys.OrderBy(d => d).ToList();
+                for (int i = 0; i < keys.Count; i++)
+                {
+                    double percent = (double)percentageByDateTime[keys[i]].Item1/allDiscLessonCount;
+                    total += percent;
+                    percentageByDateTime[keys[i]] = new Tuple<int, double>(percentageByDateTime[keys[i]].Item1, total);
+
+                    sw.WriteLine(keys[i].ToString("dd.MM.yyyy") + "\t" + percentageByDateTime[keys[i]].Item1 + "\t" + $"{total:P4}");
+                }
+                sw.Close();
+            });
+            MessageBox.Show("Done");
         }
     }
 }

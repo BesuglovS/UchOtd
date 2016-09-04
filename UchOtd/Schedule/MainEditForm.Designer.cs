@@ -109,14 +109,15 @@ namespace UchOtd.Schedule
             this.bigRedButtonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.удалитьРасписаниеТекущейГруппыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
-            this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
+            this.ScheduleView = new System.Windows.Forms.DataGridView();
+            this.процентЗанятийПоДатамToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ScheduleView)).BeginInit();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ScheduleView)).BeginInit();
             this.SuspendLayout();
             // 
             // controlsPanel
@@ -257,7 +258,7 @@ namespace UchOtd.Schedule
             this.ToDBName.Name = "ToDBName";
             this.ToDBName.Size = new System.Drawing.Size(88, 20);
             this.ToDBName.TabIndex = 61;
-            this.ToDBName.Text = "Schedule15162";
+            this.ToDBName.Text = "Schedule16171";
             // 
             // DownloadRestore
             // 
@@ -275,7 +276,7 @@ namespace UchOtd.Schedule
             this.FromDBName.Name = "FromDBName";
             this.FromDBName.Size = new System.Drawing.Size(100, 20);
             this.FromDBName.TabIndex = 59;
-            this.FromDBName.Text = "Schedule15162";
+            this.FromDBName.Text = "Schedule16171";
             // 
             // BackupUpload
             // 
@@ -822,10 +823,11 @@ namespace UchOtd.Schedule
             // bigRedButtonToolStripMenuItem
             // 
             this.bigRedButtonToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.удалитьРасписаниеТекущейГруппыToolStripMenuItem});
+            this.удалитьРасписаниеТекущейГруппыToolStripMenuItem,
+            this.процентЗанятийПоДатамToolStripMenuItem});
             this.bigRedButtonToolStripMenuItem.Name = "bigRedButtonToolStripMenuItem";
-            this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(98, 20);
-            this.bigRedButtonToolStripMenuItem.Text = "Big Red Button";
+            this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
+            this.bigRedButtonToolStripMenuItem.Text = "BIG RED BUTTON";
             // 
             // удалитьРасписаниеТекущейГруппыToolStripMenuItem
             // 
@@ -844,6 +846,21 @@ namespace UchOtd.Schedule
             this.viewPanel.Size = new System.Drawing.Size(971, 420);
             this.viewPanel.TabIndex = 1;
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.status});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 398);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(971, 22);
+            this.statusStrip1.TabIndex = 2;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // status
+            // 
+            this.status.Name = "status";
+            this.status.Size = new System.Drawing.Size(0, 17);
+            // 
             // ScheduleView
             // 
             this.ScheduleView.AllowUserToAddRows = false;
@@ -859,20 +876,12 @@ namespace UchOtd.Schedule
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // statusStrip1
+            // процентЗанятийПоДатамToolStripMenuItem
             // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.status});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 398);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(971, 22);
-            this.statusStrip1.TabIndex = 2;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // status
-            // 
-            this.status.Name = "status";
-            this.status.Size = new System.Drawing.Size(0, 17);
+            this.процентЗанятийПоДатамToolStripMenuItem.Name = "процентЗанятийПоДатамToolStripMenuItem";
+            this.процентЗанятийПоДатамToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
+            this.процентЗанятийПоДатамToolStripMenuItem.Text = "Процент занятий по датам";
+            this.процентЗанятийПоДатамToolStripMenuItem.Click += new System.EventHandler(this.процентЗанятийПоДатамToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -894,9 +903,9 @@ namespace UchOtd.Schedule
             this.menuStrip1.PerformLayout();
             this.viewPanel.ResumeLayout(false);
             this.viewPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ScheduleView)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ScheduleView)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -983,6 +992,7 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem teachersToolStripMenuItem;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel status;
+        private ToolStripMenuItem процентЗанятийПоДатамToolStripMenuItem;
     }
 }
 

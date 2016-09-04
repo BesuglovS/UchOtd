@@ -26,15 +26,11 @@ namespace UchOtd
     public partial class StartupForm : Form
     {
         public const bool School = false;
-        private const string DefaultDbName = "Schedule15162";
+        private const string DefaultDbName = "Schedule16171";
 
-        public static List<string> serverList = new List<string>
-            {
-                //"10.13.3.1",
-                //"uch-otd-disp",
-                @"UCH-OTD-DISP\SQLEXPRESS",
-                "127.0.0.1"
-            };
+        public static List<string> serverList = School ?
+            new List<string> { @"127.0.0.1\SQLEXPRESS" } :
+            new List<string> { @"UCH-OTD-DISP\SQLEXPRESS", /*@"127.0.0.1\SQLEXPRESS"*/ };
 
         public static string CurrentServerName = "";
         //public static string DefaultDbName = "School";
