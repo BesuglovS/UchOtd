@@ -444,13 +444,16 @@ namespace Schedule.Repositories.Repositories.Main
                                 grouped[keyValuePair.Value.Item2].Add(keyValuePair.Value.Item1);
                             }
 
-                            var weeksWithType = string.Join("; ", 
-                                grouped.Select(
-                                    lessonType =>
-                                        (Constants.Constants.LessonTypeAbbreviation.ContainsKey(lessonType.Key)
-                                            ? Constants.Constants.LessonTypeAbbreviation[lessonType.Key]
-                                            : lessonType.Key.ToString()) + ":" +
-                                        CommonFunctions.CombineWeeks(lessonType.Value)).ToList());
+                            var sorted = grouped.ToList().OrderBy(g => g.Value.Min()).ToList();
+
+                            var groups = sorted.Select(
+                                lessonType =>
+                                    (Constants.Constants.LessonTypeAbbreviation.ContainsKey(lessonType.Key)
+                                        ? Constants.Constants.LessonTypeAbbreviation[lessonType.Key]
+                                        : lessonType.Key.ToString()) + ":" +
+                                    CommonFunctions.CombineWeeks(lessonType.Value)).ToList();
+
+                            var weeksWithType = string.Join("; ", groups);
 
                             result[groupId][dateTimeLessons.time].Add(
                                 lessonGroup.TFDForLessonGroup.TeacherForDisciplineId,
