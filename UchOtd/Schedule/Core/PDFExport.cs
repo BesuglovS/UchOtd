@@ -18,7 +18,7 @@ namespace UchOtd.Schedule.Core
     public static class PdfExport
     {
         public static void ExportSchedulePage(
-            Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> schedule,
+            Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>> schedule,
             string facultyName,
             string filename,
             string dow,
@@ -87,7 +87,7 @@ namespace UchOtd.Schedule.Core
 
 
         private static Document CreateDocument(ScheduleRepository repo, string facultyName, string dow, 
-            Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> schedule,
+            Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>> schedule,
             double scheduleFontsize)
         {
             var result = new Document();
@@ -202,7 +202,7 @@ namespace UchOtd.Schedule.Core
         }        
 
         private static void PutScheduleTable(ScheduleRepository repo, Section section,
-            Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> schedule,
+            Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>> schedule,
             double scheduleFontsize)
         {
             var paragraph = section.AddParagraph();
@@ -329,11 +329,11 @@ namespace UchOtd.Schedule.Core
                         cellTable.AddColumn(table.Columns[columnGroupIndex].Width.Centimeter + "cm");
                         cellTable.Borders.Width = 0;
 
-                        foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min()))
+                        foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min()))
                         {
                             var cellText = "";
-                            cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
-                            var groupId = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+                            cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
+                            var groupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
 
                             if (plainGroupsListIds.ContainsKey(group.Key))
                             {
@@ -347,10 +347,10 @@ namespace UchOtd.Schedule.Core
                                 }
                             }
                             cellText += Environment.NewLine;
-                            cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
+                            cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
                             cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
 
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
                             var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();

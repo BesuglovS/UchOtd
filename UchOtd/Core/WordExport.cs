@@ -239,15 +239,15 @@ namespace UchOtd.Core
                         timeTable.Range.Font.Bold = 0;
 
                         var tfdIndex = 0;
-                        foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min()))
+                        foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(lwt => repo.CommonFunctions.CalculateWeekNumber(lwt.Item1.Calendar.Date)).Min()))
                         {
                             var cellText = "";
 
                             // Discipline name
-                            var primaryDisciplineName = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
+                            var primaryDisciplineName = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
                             var names =
                                 repo.DisciplineNames.GetDisciplineNamesDictionary(
-                                    tfdData.Value.Item2[0].TeacherForDiscipline.Discipline);
+                                    tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline);
 
                             if (names.ContainsKey(group.Key))
                             {
@@ -260,7 +260,7 @@ namespace UchOtd.Core
                             
                             
                             // N + Group modifiers
-                            var groupId = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+                            var groupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
                             if (plainGroupsListIds.ContainsKey(group.Key))
                             {
                                 if (plainGroupsListIds[group.Key].Contains(groupId) && nGroupsListIds[group.Key].Contains(groupId))
@@ -273,18 +273,18 @@ namespace UchOtd.Core
                                 }
                             }
 
-                            var tfdGroupId = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+                            var tfdGroupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
                             if ((tfdGroupId != group.Key))
                             {
                                 if ((!plainNGroupIds.ContainsKey(group.Key)) || ((tfdGroupId != plainNGroupIds[group.Key].Item1) && (tfdGroupId != plainNGroupIds[group.Key].Item2)))
                                 {
-                                    cellText += " (" + tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.Name + ")";
+                                    cellText += " (" + tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.Name + ")";
                                 }
                             }
 
                             cellText += Environment.NewLine;
                             // Teacher FIO
-                            cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
+                            cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
 
                             // Total weeks
                             if (weeksMarksVisible)
@@ -292,7 +292,7 @@ namespace UchOtd.Core
                                 cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
                             }
 
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
                             var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
@@ -461,7 +461,7 @@ namespace UchOtd.Core
         }
 
         private static Table PutDayScheduleInWord(ScheduleRepository repo, int lessonLength, bool weeksMarksVisible,
-            Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> schedule, _Document oDoc, object oEndOfDoc, _Application oWord, Table table, int dayOfWeek)
+            Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>> schedule, _Document oDoc, object oEndOfDoc, _Application oWord, Table table, int dayOfWeek)
         {
             var timeList = new List<string>();
             foreach (var group in schedule)
@@ -610,14 +610,14 @@ namespace UchOtd.Core
                         foreach (
                             var tfdData in
                                 @group.Value[time].OrderBy(
-                                    tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min()))
+                                    tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min()))
                         {
                             var cellText = "";
                             // Discipline name
-                            cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
+                            cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
 
                             // N + Group modifiers
-                            var groupId = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+                            var groupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
                             if (plainGroupsListIds.ContainsKey(@group.Key))
                             {
                                 if (plainGroupsListIds[@group.Key].Contains(groupId) &&
@@ -632,21 +632,21 @@ namespace UchOtd.Core
                                 }
                             }
 
-                            var tfdGroupId = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+                            var tfdGroupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
                             if ((tfdGroupId != @group.Key))
                             {
                                 if ((!plainNGroupIds.ContainsKey(@group.Key)) ||
                                     ((tfdGroupId != plainNGroupIds[@group.Key].Item1) &&
                                      (tfdGroupId != plainNGroupIds[@group.Key].Item2)))
                                 {
-                                    cellText += " (" + tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.Name +
+                                    cellText += " (" + tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.Name +
                                                 ")";
                                 }
                             }
 
                             cellText += Environment.NewLine;
                             // Teacher FIO
-                            cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
+                            cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
 
                             // Total weeks
                             if (weeksMarksVisible)
@@ -654,8 +654,8 @@ namespace UchOtd.Core
                                 cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
                             }
 
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date),
-                                l => l.Auditorium.Name);
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date),
+                                l => l.Item1.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
                             var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
@@ -930,11 +930,11 @@ namespace UchOtd.Core
                                 timeTable.Range.Font.Bold = 0;
 
                                 var tfdIndex = 0;
-                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min()))
+                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min()))
                                 {
                                     var cellText = "";
-                                    cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
-                                    var groupId = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+                                    cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
+                                    var groupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
                                     if (plainGroupsListIds.ContainsKey(group.Key))
                                     {
                                         if (plainGroupsListIds[group.Key].Contains(groupId) && nGroupsListIds[group.Key].Contains(groupId))
@@ -947,10 +947,10 @@ namespace UchOtd.Core
                                         }
                                     }
                                     cellText += Environment.NewLine;
-                                    cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
+                                    cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
                                     cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
 
-                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
+                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
                                     var grouped = audWeekList.GroupBy(a => a.Value);
 
                                     var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
@@ -1064,7 +1064,7 @@ namespace UchOtd.Core
         }
 
         public static void ExportCustomSchedule(
-            // facultyId, List od DOW
+            // facultyId, List of DOW
             Dictionary<int, List<int>> facultyDow, ScheduleRepository repo, string filename, bool save, bool quit, 
             int lessonLength, int daysOfWeek, bool schoolHeader, bool onlyFutureDates, 
             bool weekFiltered, int weekFilter, CancellationToken cToken)
@@ -1325,11 +1325,11 @@ namespace UchOtd.Core
                                 timeTable.Range.Font.Bold = 0;
 
                                 var tfdIndex = 0;
-                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min()))
+                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min()))
                                 {
                                     var cellText = "";
-                                    cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
-                                    var groupId = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+                                    cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
+                                    var groupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
                                     if (plainGroupsListIds.ContainsKey(group.Key))
                                     {
                                         if (plainGroupsListIds[group.Key].Contains(groupId) && nGroupsListIds[group.Key].Contains(groupId))
@@ -1342,19 +1342,22 @@ namespace UchOtd.Core
                                         }
                                     }
 
-                                    var tfdGroupId = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+                                    var tfdGroupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
                                     if ((tfdGroupId != group.Key))
                                     {
                                         if ((!plainNGroupIds.ContainsKey(group.Key)) || ((tfdGroupId != plainNGroupIds[group.Key].Item1) && (tfdGroupId != plainNGroupIds[group.Key].Item2)))
                                         {
-                                            cellText += " (" + tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.Name + ")";
+                                            cellText += " (" + tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.Name + ")";
                                         }
                                     }
                                     cellText += Environment.NewLine;
-                                    cellText += tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
-                                    cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
+                                    cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
 
-                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
+                                    // Weeks
+                                    //cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
+                                    cellText += "(" + tfdData.Value.Item3 + ")" + Environment.NewLine;
+
+                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
                                     var grouped = audWeekList.GroupBy(a => a.Value);
 
                                     var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
@@ -1492,7 +1495,7 @@ namespace UchOtd.Core
 
             Marshal.ReleaseComObject(oWord);
         }
-
+        
         private static string DetectSemesterString(ScheduleRepository repo)
         {
             var semesterSterts = repo.CommonFunctions.GetSemesterStarts();
@@ -2190,7 +2193,7 @@ namespace UchOtd.Core
 
                         var groupDowTimeLessons = @group.Value[time]
                             .OrderBy(tfd => tfd.Value.Item2.Select(l =>
-                                repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min())
+                                repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min())
                             .ToList();
 
                         var cellOrientation = Orientation.Vertical;
@@ -2202,17 +2205,17 @@ namespace UchOtd.Core
                         if (groupDowTimeLessons.Count() == 2)
                         {
                             if (((subGroupOne != null) && (subGroupTwo != null)) &&
-                                ((groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup
+                                ((groupDowTimeLessons[0].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup
                                     .StudentGroupId == subGroupOne.StudentGroupId) &&
-                                 (groupDowTimeLessons[1].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup
+                                 (groupDowTimeLessons[1].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup
                                      .StudentGroupId == subGroupTwo.StudentGroupId)))
                             {
                                 cellOrientation = Orientation.Horizontal;
                             }
 
                             if (((subGroupOne != null) && (subGroupTwo != null)) &&
-                                ((groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId) &&
-                                 (groupDowTimeLessons[1].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId)))
+                                ((groupDowTimeLessons[0].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId) &&
+                                 (groupDowTimeLessons[1].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId)))
                             {
                                 var tmp = groupDowTimeLessons[0];
                                 groupDowTimeLessons[0] = groupDowTimeLessons[1];
@@ -2226,23 +2229,23 @@ namespace UchOtd.Core
 
                         if ((groupDowTimeLessons.Count() == 1) &&
                             (subGroupOne != null) &&
-                            (groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId))
+                            (groupDowTimeLessons[0].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId))
                         {
                             cellOrientation = Orientation.Horizontal;
                             additionalColumn = 1;
 
-                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Lesson>>>(-1, null);
+                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Tuple<Lesson, int>>, string>>(-1, null);
                             groupDowTimeLessons.Add(emptytfd);
                         }
 
                         if ((groupDowTimeLessons.Count() == 1) &&
                             (subGroupTwo != null) &&
-                            (groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId))
+                            (groupDowTimeLessons[0].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId))
                         {
                             cellOrientation = Orientation.Horizontal;
                             additionalColumn = 1;
 
-                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Lesson>>>(-1, null);
+                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Tuple<Lesson, int>>, string>>(-1, null);
                             groupDowTimeLessons.Add(emptytfd);
 
                             var tmp = groupDowTimeLessons[0];
@@ -2323,7 +2326,7 @@ namespace UchOtd.Core
                             }
 
                             // Discipline name
-                            var discName = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
+                            var discName = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
 
                             var shorteningDictionary = new Dictionary<string, string>
                             {
@@ -2351,7 +2354,7 @@ namespace UchOtd.Core
                             cellText += Environment.NewLine;
                             // Teacher FIO
                             //var ommitInitials = @group.Value[time].Count != 1;
-                            string teacherFio = ShortenFio(tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO, cellOrientation == Orientation.Horizontal);
+                            string teacherFio = ShortenFio(tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO, cellOrientation == Orientation.Horizontal);
                             cellText += teacherFio + Environment.NewLine;
 
                             // Total weeks
@@ -2370,8 +2373,8 @@ namespace UchOtd.Core
                                 //cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
                             }
 
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date),
-                                l => l.Auditorium.Name);
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date),
+                                l => l.Item1.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
                             var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
@@ -2554,7 +2557,7 @@ namespace UchOtd.Core
 
                         var groupDowTimeLessons = @group.Value[time]
                             .OrderBy(tfd => tfd.Value.Item2.Select(l =>
-                                repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).Min())
+                                repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min())
                             .ToList();
                         var tfdIndex = 0;
                         
@@ -2586,8 +2589,8 @@ namespace UchOtd.Core
                         if (groupDowTimeLessons.Count() == 2)
                         {
                             if (((subGroupOne != null) && (subGroupTwo != null)) && 
-                                ((groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId) &&
-                                 (groupDowTimeLessons[1].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId)))
+                                ((groupDowTimeLessons[0].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId) &&
+                                 (groupDowTimeLessons[1].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId)))
                             {
                                 var tmp = groupDowTimeLessons[0];
                                 groupDowTimeLessons[0] = groupDowTimeLessons[1];
@@ -2599,21 +2602,21 @@ namespace UchOtd.Core
 
                         if ((groupDowTimeLessons.Count() == 1) &&
                             (subGroupOne != null) &&
-                            (groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId))
+                            (groupDowTimeLessons[0].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId))
                         {
                             addSubGroupColumn = 1;
 
-                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Lesson>>>(-1, null);
+                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Tuple<Lesson, int>>, string>>(-1, null);
                             groupDowTimeLessons.Add(emptytfd);
                         }
 
                         if ((groupDowTimeLessons.Count() == 1) &&
                             (subGroupTwo != null) &&
-                            (groupDowTimeLessons[0].Value.Item2[0].TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId))
+                            (groupDowTimeLessons[0].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId))
                        {
                             addSubGroupColumn = 1;
 
-                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Lesson>>>(-1, null);
+                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Tuple<Lesson, int>>, string>>(-1, null);
                             groupDowTimeLessons.Add(emptytfd);
 
                             var tmp = groupDowTimeLessons[0];
@@ -2651,7 +2654,7 @@ namespace UchOtd.Core
                                 continue;
                             }
 
-                            var discName = tfdData.Value.Item2[0].TeacherForDiscipline.Discipline.Name;
+                            var discName = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
 
                             var shorteningDictionary = new Dictionary<string, string>
                             {
@@ -2670,7 +2673,7 @@ namespace UchOtd.Core
 
                             // Teacher FIO
                             var ommitInitials = @group.Value[time].Count != 1;
-                            String teacherFio = ShortenFio(tfdData.Value.Item2[0].TeacherForDiscipline.Teacher.FIO, ommitInitials);
+                            String teacherFio = ShortenFio(tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO, ommitInitials);
                             cellText += teacherFio;
 
                             // Total weeks
@@ -2691,8 +2694,8 @@ namespace UchOtd.Core
 
                             String audText = "";
                             // Auditoriums
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date),
-                                l => l.Auditorium.Name);
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date),
+                                l => l.Item1.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
                             var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();

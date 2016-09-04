@@ -14,6 +14,7 @@
         public bool ControlTask { get; set; }
         public bool Referat { get; set; }
         public bool Essay { get; set; }
+        public string TypeSequence { get; set; }
 
         public virtual StudentGroup StudentGroup { get; set; }
 

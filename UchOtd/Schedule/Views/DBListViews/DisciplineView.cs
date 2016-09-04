@@ -18,7 +18,8 @@ namespace UchOtd.Schedule.Views.DBListViews
         public int ProposedHours { get; set; }
         public int AuditoriumHoursPerWeek { get; set; }
         public int LectureHours { get; set; }
-        public int PracticalHours { get; set; }        
+        public int PracticalHours { get; set; }
+        public string TypeSequence { get; set; }
 
         public DisciplineView()
         {
@@ -35,6 +36,7 @@ namespace UchOtd.Schedule.Views.DBListViews
             LectureHours = discipline.LectureHours;
             PracticalHours = discipline.PracticalHours;
             StudentGroupName = discipline.StudentGroup.Name;
+            TypeSequence = discipline.TypeSequence;
 
             var tefd = repo.TeacherForDisciplines
                 .GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);

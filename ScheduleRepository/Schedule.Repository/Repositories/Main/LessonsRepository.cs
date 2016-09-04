@@ -342,25 +342,25 @@ namespace Schedule.Repositories.Repositories.Main
             }
         }
 
-        public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>>
+        public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>>
             GetFacultyDowSchedule(int facultyId, int dowRu, bool weekFiltered, int weekFilter, bool includeProposed, bool onlyFutureDates)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                // GroupId - 08:00 - {tfdId - {weeks + List<Lesson>}}
-                var result = new Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>>();
+                // GroupId - 08:00 - {tfdId - {weeks + List<Lesson, LessonType> + weeksAndTypes}}
+                var result = new Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>>();
 
-                var listGroupIds = context
+                var facultyGroupIds = context
                     .GroupsInFaculties
                     .Where(gif => gif.Faculty.FacultyId == facultyId)
                     .Select(gif => gif.StudentGroup.StudentGroupId)
                     .ToList();
 
-                foreach (var gId in listGroupIds)
+                foreach (var facultyGroupId in facultyGroupIds)
                 {
-                    var groupId = gId;
+                    var groupId = facultyGroupId;
 
-                    result.Add(groupId, new Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>());
+                    result.Add(groupId, new Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>());
 
                     var studentIds = context.StudentsInGroups
                         .Where(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
@@ -423,30 +423,113 @@ namespace Schedule.Repositories.Repositories.Main
                     foreach (var dateTimeLessons in groupedLessons)
                     {
 
-                        result[groupId].Add(dateTimeLessons.time, new Dictionary<int, Tuple<string, List<Lesson>>>());
+                        result[groupId].Add(dateTimeLessons.time, new Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>());
 
                         foreach (var lessonGroup in dateTimeLessons.Groups)
                         {
                             var weekList = lessonGroup.Lessons
-                                .Select(lesson => _repo.CommonFunctions.CalculateWeekNumber(lesson.Calendar.Date.Date))
-                                .ToList();
+                                .ToDictionary(lesson => lesson.LessonId, lesson => new Tuple<int, int> (_repo.CommonFunctions.CalculateWeekNumber(lesson.Calendar.Date.Date), GetLessonType(lesson)));
 
-                            var weekString = CommonFunctions.CombineWeeks(weekList);
+                            var weekString = CommonFunctions.CombineWeeks(weekList.Select(kvp => kvp.Value.Item1).ToList());
+
+                            var grouped = new Dictionary<int, List<int>>(); // LessonType, List<weeks>
+
+                            foreach (var keyValuePair in weekList)
+                            {
+                                if (!grouped.ContainsKey(keyValuePair.Value.Item2))
+                                {
+                                    grouped.Add(keyValuePair.Value.Item2, new List<int>());
+                                }
+
+                                grouped[keyValuePair.Value.Item2].Add(keyValuePair.Value.Item1);
+                            }
+
+                            var weeksWithType = string.Join("; ", 
+                                grouped.Select(
+                                    lessonType =>
+                                        (Constants.Constants.LessonTypeAbbreviation.ContainsKey(lessonType.Key)
+                                            ? Constants.Constants.LessonTypeAbbreviation[lessonType.Key]
+                                            : lessonType.Key.ToString()) + ":" +
+                                        CommonFunctions.CombineWeeks(lessonType.Value)).ToList());
 
                             result[groupId][dateTimeLessons.time].Add(
                                 lessonGroup.TFDForLessonGroup.TeacherForDisciplineId,
-                                new Tuple<string, List<Lesson>>(weekString, new List<Lesson>()));
+                                new Tuple<string, List<Tuple<Lesson, int>>, string>(weekString, new List<Tuple<Lesson, int>>(), weeksWithType));
 
                             foreach (var lesson in lessonGroup.Lessons)
                             {
                                 result[groupId][dateTimeLessons.time][
-                                    lessonGroup.TFDForLessonGroup.TeacherForDisciplineId].Item2.Add(lesson);
+                                    lessonGroup.TFDForLessonGroup.TeacherForDisciplineId].Item2.Add(new Tuple<Lesson, int>(lesson, weekList[lesson.LessonId].Item2));
                             }
                         }
                     }
                 }
 
                 return result;
+            }
+        }
+
+        private int GetLessonType(Lesson lesson)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var typeSequence = lesson.TeacherForDiscipline.Discipline.TypeSequence;
+
+                if (typeSequence == null)
+                {
+                    return 0;
+                }
+
+                var lessonsList = context.Lessons
+                    .Where(l => (l.TeacherForDiscipline.TeacherForDisciplineId == lesson.TeacherForDiscipline.TeacherForDisciplineId) && (l.State == 1))
+                    .Include(l => l.Calendar)
+                    .Include(l => l.Ring)
+                    .ToList();
+
+                lessonsList.Sort((x, y) =>
+                {
+                    var xDate = x.Calendar.Date.Date;
+                    var yDate = y.Calendar.Date.Date;
+
+                    if (xDate > yDate)
+                    {
+                        return 1;
+                    }
+
+                    if (xDate < yDate)
+                    {
+                        return -1;
+                    }
+
+                    if (x.Ring.Time.Hour > y.Ring.Time.Hour)
+                    {
+                        return 1;
+                    }
+
+                    if (x.Ring.Time.Hour < y.Ring.Time.Hour)
+                    {
+                        return -1;
+                    }
+
+                    if (x.Ring.Time.Minute > y.Ring.Time.Minute)
+                    {
+                        return 1;
+                    }
+
+                    if (x.Ring.Time.Minute < y.Ring.Time.Minute)
+                    {
+                        return -1;
+                    }
+
+                    return 0;
+                });
+
+                var lessonIds = lessonsList.Select(l => l.LessonId).ToList();
+
+                var index = lessonIds.IndexOf(lesson.LessonId);
+
+                
+                return typeSequence.Length < index ? 0 : int.Parse(typeSequence[index].ToString());
             }
         }
     }

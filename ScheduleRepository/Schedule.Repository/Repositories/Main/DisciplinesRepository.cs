@@ -88,6 +88,7 @@ namespace Schedule.Repositories.Repositories.Main
                     curDiscipline.LectureHours = discipline.LectureHours;
                     curDiscipline.Name = discipline.Name;
                     curDiscipline.PracticalHours = discipline.PracticalHours;
+                    curDiscipline.TypeSequence = discipline.TypeSequence;
                     var disciplineGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == discipline.StudentGroup.StudentGroupId);
                     curDiscipline.StudentGroup = disciplineGroup;
                 }

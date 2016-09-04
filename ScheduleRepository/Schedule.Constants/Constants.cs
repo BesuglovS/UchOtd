@@ -6,6 +6,12 @@ namespace Schedule.Constants
 {
     public static class Constants
     {
+        public static Dictionary<int, string>  LessonTypeAbbreviation = new Dictionary<int, string>()
+        {
+            { 0, "*" }, // Нет данных
+            { 1, "Л" }, // Лекция
+            { 2, "П" }, // Практика
+        };
 
         public static DateTime DefaultEmptyDateForEvent = new DateTime(2020, 1, 1);
 
