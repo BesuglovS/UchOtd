@@ -12,7 +12,7 @@ using UchOtd.Properties;
 
 namespace UchOtd.Schedule.Forms
 {
-    public partial class  WordExportForm : Form
+    public partial class WordExportForm : Form
     {
         private readonly ScheduleRepository _repo;
         Dictionary<int, List<int>> _choice;
@@ -34,18 +34,18 @@ namespace UchOtd.Schedule.Forms
             _choice = new Dictionary<int, List<int>>();
 
             var faculties = _repo.Faculties.GetAllFaculties();
-            for (int i = 0; i < faculties.Count; i++)                
+            for (int i = 0; i < faculties.Count; i++)
             {
                 _choice.Add(faculties[i].FacultyId, new List<int>());
 
-                for (int j = 1; j <=7 ; j++)                
-                {   
+                for (int j = 1; j <= 7; j++)
+                {
                     var checkBox = new CheckBox
                     {
                         Parent = this,
                         Name = "cb_" + faculties[i].FacultyId + "_" + j,
                         Text = faculties[i].Letter + " " + Constants.DowLocal[j].Substring(0, 3),
-                        Bounds = new Rectangle(-50 + j*80, 10 + i*25, 75, 25)
+                        Bounds = new Rectangle(-50 + j * 80, 10 + i * 25, 75, 25)
                     };
                     Controls.Add(checkBox);
 
@@ -58,7 +58,7 @@ namespace UchOtd.Schedule.Forms
                 Parent = this,
                 Name = "ExportButton",
                 Text = "Экспорт",
-                Bounds = new Rectangle(30, 10 + (faculties.Count + 1)*25, 75, 25)
+                Bounds = new Rectangle(30, 10 + (faculties.Count + 1) * 25, 75, 25)
             };
             Controls.Add(wordButton);
 
@@ -70,7 +70,7 @@ namespace UchOtd.Schedule.Forms
                 Name = "cb90",
                 Text = "90 минут",
                 Checked = false,
-                Bounds = new Rectangle(130, 10 + (faculties.Count + 1)*25, 75, 25)
+                Bounds = new Rectangle(130, 10 + (faculties.Count + 1) * 25, 75, 25)
             };
             Controls.Add(checkBox90);
 
@@ -78,9 +78,9 @@ namespace UchOtd.Schedule.Forms
             {
                 Parent = this,
                 Name = "cbFuture",
-                Text = "только будущие даты",                
+                Text = "только будущие даты",
                 Checked = true,
-                Bounds = new Rectangle(210, 10 + (faculties.Count + 1)*25, 150, 25)
+                Bounds = new Rectangle(210, 10 + (faculties.Count + 1) * 25, 150, 25)
             };
             Controls.Add(future);
 
@@ -118,7 +118,7 @@ namespace UchOtd.Schedule.Forms
 
             dailyChangesButton.Click += dailyChangesButtonClick;
 
-            Height = (faculties.Count + 1)*25 + 150;
+            Height = (faculties.Count + 1) * 25 + 150;
         }
 
 
@@ -190,92 +190,95 @@ namespace UchOtd.Schedule.Forms
                 button.Text = "";
                 button.Image = Resources.Loading;
 
-                await Task.Run(() => {
-                                         // facultyId + DOW
-                                         var result = new List<Tuple<int, DayOfWeek>>();
+                await Task.Run(() =>
+                {
+                    // facultyId + DOW
+                    var result = new List<Tuple<int, DayOfWeek>>();
 
-                                         var evts = _repo.LessonLogEvents.GetFiltredLessonLogEvents(lle => (lle.DateTime.Date == DateTime.Now.Date.AddDays(-1)));
+                    var evts = _repo.LessonLogEvents.GetFiltredLessonLogEvents(lle => (lle.DateTime.Date == DateTime.Now.Date));
 
-                                         var fg = _repo.GroupsInFaculties.GetAllGroupsInFaculty()
+                    //var evts = _repo.LessonLogEvents.GetFiltredLessonLogEvents(lle => (lle.DateTime.Date >= new DateTime(2016, 9, 1, 0, 0, 0)));
+
+                    var fg = _repo.GroupsInFaculties.GetAllGroupsInFaculty()
                                              .GroupBy(gif => gif.Faculty.FacultyId,
                                                  gif => gif.StudentGroup.StudentGroupId)
                                              .ToList();
 
 
-                                         foreach (var ev in evts)
-                                         {
-                                             int studentGroupId;
-                                             if (ev.OldLesson != null)
-                                             {
-                                                 studentGroupId = ev.OldLesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+                    foreach (var ev in evts)
+                    {
+                        int studentGroupId;
+                        if (ev.OldLesson != null)
+                        {
+                            studentGroupId = ev.OldLesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
 
-                                                 var id = studentGroupId;
-                                                 var studentIds = _repo
-                                                     .StudentsInGroups
-                                                     .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == id)
-                                                     .Select(sig => sig.Student.StudentId)
-                                                     .ToList();
+                            var id = studentGroupId;
+                            var studentIds = _repo
+                                .StudentsInGroups
+                                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == id && !sig.Student.Expelled)
+                                .Select(sig => sig.Student.StudentId)
+                                .ToList();
 
-                                                 var facultyScheduleChanged = (
-                                                     from faculty in fg
-                                                     where _repo
-                                                         .StudentsInGroups
-                                                         .GetFiltredStudentsInGroups(sig =>
-                                                             studentIds.Contains(sig.Student.StudentId) &&
-                                                             faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
-                                                     select faculty.Key)
-                                                     .ToList();
+                            var facultyScheduleChanged = (
+                                from faculty in fg
+                                where _repo
+                                    .StudentsInGroups
+                                    .GetFiltredStudentsInGroups(sig =>
+                                        studentIds.Contains(sig.Student.StudentId) &&
+                                        faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
+                                select faculty.Key)
+                                .ToList();
 
-                                                 var localEvent = ev;
-                                                 foreach (var dowFacTuple in facultyScheduleChanged
-                                                     .Select(faculty => Tuple.Create(faculty, localEvent.OldLesson.Calendar.Date.DayOfWeek))
-                                                     .Where(dowFacTuple => !result.Contains(dowFacTuple)))
-                                                 {
-                                                     result.Add(dowFacTuple);
-                                                 }
-                                             }
+                            var localEvent = ev;
+                            foreach (var dowFacTuple in facultyScheduleChanged
+                                .Select(faculty => Tuple.Create(faculty, localEvent.OldLesson.Calendar.Date.DayOfWeek))
+                                .Where(dowFacTuple => !result.Contains(dowFacTuple)))
+                            {
+                                result.Add(dowFacTuple);
+                            }
+                        }
 
 
 
-                                             if (ev.NewLesson != null)
-                                             {
-                                                 studentGroupId = ev.NewLesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
+                        if (ev.NewLesson != null)
+                        {
+                            studentGroupId = ev.NewLesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
 
-                                                 var id = studentGroupId;
-                                                 var studentIds = _repo
-                                                     .StudentsInGroups
-                                                     .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == id)
-                                                     .Select(sig => sig.Student.StudentId)
-                                                     .ToList();
+                            var id = studentGroupId;
+                            var studentIds = _repo
+                                .StudentsInGroups
+                                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == id && !sig.Student.Expelled)
+                                .Select(sig => sig.Student.StudentId)
+                                .ToList();
 
-                                                 var facultyScheduleChanged = (
-                                                     from faculty in fg
-                                                     where _repo
-                                                         .StudentsInGroups
-                                                         .GetFiltredStudentsInGroups(sig =>
-                                                             studentIds.Contains(sig.Student.StudentId) &&
-                                                             faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
-                                                     select faculty.Key)
-                                                     .ToList();
+                            var facultyScheduleChanged = (
+                                from faculty in fg
+                                where _repo
+                                    .StudentsInGroups
+                                    .GetFiltredStudentsInGroups(sig =>
+                                        studentIds.Contains(sig.Student.StudentId) &&
+                                        faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
+                                select faculty.Key)
+                                .ToList();
 
-                                                 var localEvent = ev;
-                                                 foreach (var dowFacTuple in facultyScheduleChanged
-                                                     .Select(faculty => Tuple.Create(faculty, localEvent.NewLesson.Calendar.Date.DayOfWeek))
-                                                     .Where(dowFacTuple => !result.Contains(dowFacTuple)))
-                                                 {
-                                                     result.Add(dowFacTuple);
-                                                 }
-                                             }
-                                         }
+                            var localEvent = ev;
+                            foreach (var dowFacTuple in facultyScheduleChanged
+                                .Select(faculty => Tuple.Create(faculty, localEvent.NewLesson.Calendar.Date.DayOfWeek))
+                                .Where(dowFacTuple => !result.Contains(dowFacTuple)))
+                            {
+                                result.Add(dowFacTuple);
+                            }
+                        }
+                    }
 
-                                         var messageString = result
-                                             .OrderBy(df => df.Item1)
-                                             .ThenBy(df => df.Item2)
-                                             .Aggregate("", (current, dowFac) =>
-                                                 current + (_repo.Faculties.GetFaculty(dowFac.Item1).Letter + " - " +
-                                                            Constants.DowLocal[Constants.DowRemap[(int)dowFac.Item2]] + Environment.NewLine));
+                    var messageString = result
+                        .OrderBy(df => df.Item1)
+                        .ThenBy(df => df.Item2)
+                        .Aggregate("", (current, dowFac) =>
+                            current + (_repo.Faculties.GetFaculty(dowFac.Item1).Letter + " - " +
+                                       Constants.DowLocal[Constants.DowRemap[(int)dowFac.Item2]] + Environment.NewLine));
 
-                                         MessageBox.Show(messageString, "Изменения на сегодня");
+                    MessageBox.Show(messageString, "Изменения на сегодня");
                 });
 
             }

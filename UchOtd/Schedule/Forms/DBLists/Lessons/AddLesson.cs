@@ -205,7 +205,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             var tfd = _repo.TeacherForDisciplines.GetTeacherForDiscipline((int)teacherForDisciplineBox.SelectedValue);
             var disc = tfd.Discipline;
             var studentGroup = disc.StudentGroup;
-            var sigFromGroup = _repo.StudentsInGroups.GetFiltredStudentsInGroups(sing => sing.StudentGroup.StudentGroupId == studentGroup.StudentGroupId);
+            var sigFromGroup = _repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId && !sig.Student.Expelled);
             var studentIdsInGroup = sigFromGroup.Select(studentsInGroupse => studentsInGroupse.Student.StudentId).ToList();
             var studentGroupsIds = _repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => studentIdsInGroup.Contains(sig.Student.StudentId)).Select(sing => sing.StudentGroup.StudentGroupId).Distinct();
                                     

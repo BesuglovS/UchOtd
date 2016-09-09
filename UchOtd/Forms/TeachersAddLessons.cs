@@ -85,7 +85,7 @@ namespace UchOtd.Forms
                                     teachersList.Add(new TeacherWithLocation(teacher.FIO,
                                         groupedLessons[teacher.TeacherId][j].Auditorium.Name,
                                         groupedLessons[teacher.TeacherId][j].Calendar.Date.ToString("dd.MM.yyyy"),
-                                        groupedLessons[teacher.TeacherId][j].Ring.Time.ToString("H:mm")));
+                                        groupedLessons[teacher.TeacherId][j].Ring.Time.ToString("HH:mm")));
                                 }
                             }
                         }

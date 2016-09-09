@@ -478,7 +478,7 @@ namespace Schedule.Repositories.Repositories.Main
             {
                 var typeSequence = lesson.TeacherForDiscipline.Discipline.TypeSequence;
 
-                if (typeSequence == null)
+                if ((typeSequence == null) || (typeSequence == ""))
                 {
                     return 0;
                 }

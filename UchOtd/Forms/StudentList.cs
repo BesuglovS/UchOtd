@@ -80,7 +80,7 @@ namespace UchOtd.Forms
                     case "studentGroup":
                         var groupStudents = _repo
                             .StudentsInGroups
-                            .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == id)
+                            .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == id && !sig.Student.Expelled)
                             .Select(sig => sig.Student)
                             .OrderBy(s => s.Expelled)
                             .ThenBy(s => s.F)

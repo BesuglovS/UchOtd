@@ -418,7 +418,7 @@ namespace UchOtd.Schedule
 
                     var studentIds = Repo
                         .StudentsInGroups
-                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId && !sig.Student.Expelled)
                         .ToList()
                         .Select(stig => stig.Student.StudentId);
 
@@ -516,7 +516,7 @@ namespace UchOtd.Schedule
 
                 var studentIds = Repo
                         .StudentsInGroups
-                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId && !sig.Student.Expelled)
                         .ToList()
                         .Select(stig => stig.Student.StudentId);
 
@@ -534,7 +534,7 @@ namespace UchOtd.Schedule
 
                     var studentsInGroup = Repo
                         .StudentsInGroups
-                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == g.StudentGroupId)
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == g.StudentGroupId && !sig.Student.Expelled)
                         .Select(sig => sig.Student)
                         .ToList()
                         .OrderBy(s => s.F)
@@ -570,7 +570,7 @@ namespace UchOtd.Schedule
 
                     var studentIds = Repo
                         .StudentsInGroups
-                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId && !sig.Student.Expelled)
                         .ToList()
                         .Select(stig => stig.Student.StudentId);
 
@@ -1487,7 +1487,7 @@ namespace UchOtd.Schedule
 
                 var studentIds = Repo
                     .StudentsInGroups
-                    .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
+                    .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId && !sig.Student.Expelled)
                     .Select(sig => sig.Student.StudentId)
                     .ToList();
                 var groupIds = Repo
@@ -1844,7 +1844,7 @@ namespace UchOtd.Schedule
                 {
                     var studentIds = Repo
                         .StudentsInGroups
-                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == facultyGroup.StudentGroupId)
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == facultyGroup.StudentGroupId && !sig.Student.Expelled)
                         .Select(stig => stig.Student.StudentId)
                         .ToList();
                     var groupsListIds = Repo

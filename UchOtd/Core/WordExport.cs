@@ -1354,8 +1354,14 @@ namespace UchOtd.Core
                                     cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
 
                                     // Weeks
-                                    //cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
-                                    cellText += "(" + tfdData.Value.Item3 + ")" + Environment.NewLine;
+                                    if (!tfdData.Value.Item3.Contains("*"))
+                                    {
+                                        cellText += "(" + tfdData.Value.Item3 + ")" + Environment.NewLine;
+                                    }
+                                    else
+                                    {
+                                        cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
+                                    }
 
                                     var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
                                     var grouped = audWeekList.GroupBy(a => a.Value);

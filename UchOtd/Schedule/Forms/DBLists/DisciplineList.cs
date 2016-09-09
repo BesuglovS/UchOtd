@@ -103,24 +103,14 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                         if (groupNameF)
                         {
-                            var studentIds = _repo
-                                .StudentsInGroups
-                                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
-                                .Select(stig => stig.Student.StudentId)
-                                .ToList();
-                            var groupsListIds = _repo
-                                .StudentsInGroups
-                                .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
-                                .Select(stig => stig.StudentGroup.StudentGroupId)
-                                .Distinct()
-                                .ToList();
+                            var groupsListIds = StudentGroupIdsFromGroupId(groupId);
 
                             discList = discList
                                 .Where(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId))
                                 .ToList();
                         }
 
-                        if (HoursFitFiltered.Checked)
+                                                        if (HoursFitFiltered.Checked)
                         {
                             var discListFiltered = new List<Discipline>();
 
@@ -240,6 +230,23 @@ namespace UchOtd.Schedule.Forms.DBLists
             FormatView();
 
             DisciplinesList.ClearSelection();
+        }
+
+        private List<int> StudentGroupIdsFromGroupId(int groupId)
+        {
+            var studentIds = _repo
+                .StudentsInGroups
+                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
+                .Select(stig => stig.Student.StudentId)
+                .ToList();
+        
+            var groupsListIds = _repo
+                .StudentsInGroups
+                .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                .Select(stig => stig.StudentGroup.StudentGroupId)
+                .Distinct()
+                .ToList();
+            return groupsListIds;
         }
 
         private void FormatView()

@@ -99,7 +99,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                         {
                             var studentIds = _repo
                                 .StudentsInGroups
-                                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupNameFilter)
+                                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupNameFilter && !sig.Student.Expelled)
                                 .ToList()
                                 .Select(stig => stig.Student.StudentId);
                             var groupsListIds = _repo
