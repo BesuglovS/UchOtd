@@ -65,7 +65,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private async void RefreshView()
         {
             List<DisciplineView> discView = null;
-                       
+
 
             if (refresh.Text == "Обновить")
             {
@@ -86,10 +86,12 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var noArtF = noArt.Checked;
                 var noPostF = noPost.Checked;
                 var withLessonsToday = WithLessonsToday.Checked;
+                var woTypeSequence = withoutTypeSequence.Checked;
 
                 try
                 {
-                    discView = await Task.Run(() => {
+                    discView = await Task.Run(() =>
+                    {
                         List<Discipline> discList = null;
 
                         if ((filterText != "") && discnameFilter.Checked)
@@ -110,7 +112,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                                 .ToList();
                         }
 
-                                                        if (HoursFitFiltered.Checked)
+                        if (HoursFitFiltered.Checked)
                         {
                             var discListFiltered = new List<Discipline>();
 
@@ -160,7 +162,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                             discList =
                                 discList.Where(
                                     d =>
-                                        !(d.StudentGroup.Name.StartsWith("1 ") || 
+                                        !(d.StudentGroup.Name.StartsWith("1 ") ||
                                           d.StudentGroup.Name.StartsWith("2 ") ||
                                           d.StudentGroup.Name.StartsWith("3 "))).ToList();
                         }
@@ -204,6 +206,14 @@ namespace UchOtd.Schedule.Forms.DBLists
                             discList = tempList;
                         }
 
+                        if (woTypeSequence)
+                        {
+                            discList =
+                                discList.Where(
+                                    d => d.AuditoriumHours != 0 && string.IsNullOrEmpty(d.TypeSequence))
+                                    .ToList();
+                        }
+
                         discList = orderbyGroupNameF ?
                             discList.OrderBy(disc => disc.StudentGroup.Name).ToList() :
                             discList.OrderBy(disc => disc.Name).ToList();
@@ -220,11 +230,11 @@ namespace UchOtd.Schedule.Forms.DBLists
                 _tokenSource.Cancel();
             }
 
-            Text = "Дисциплины - " + ((discView != null) ? discView.Count().ToString() : "");
+            Text = "Дисциплины - " + (discView?.Count.ToString() ?? "");
 
             refresh.Image = null;
             refresh.Text = "Обновить";
-            
+
             DisciplinesList.DataSource = discView;
 
             FormatView();
@@ -239,7 +249,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
                 .Select(stig => stig.Student.StudentId)
                 .ToList();
-        
+
             var groupsListIds = _repo
                 .StudentsInGroups
                 .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
@@ -311,8 +321,8 @@ namespace UchOtd.Schedule.Forms.DBLists
             int.TryParse(LectureHours.Text, out lecHours);
             int practHours;
             int.TryParse(PracticalHours.Text, out practHours);
-            
-            if ((checkForDoubleDiscsOnAdding.Checked) && 
+
+            if ((checkForDoubleDiscsOnAdding.Checked) &&
                 (_repo.Disciplines.FindDiscipline(DisciplineName.Text, Attestation.SelectedIndex,
                 audHours, lecHours, practHours, Group.Text) != null))
             {
@@ -492,7 +502,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             if (tefd != null)
             {
                 var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId);
-                addLessonForm.Show();               
+                addLessonForm.Show();
             }
             else
             {
@@ -513,16 +523,16 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private Color PickPercentColor(int auditoriumHours, int scheduleHours)
         {
-            if (scheduleHours > auditoriumHours+1)
+            if (scheduleHours > auditoriumHours + 1)
             {
                 return Color.FromArgb(255, 0, 255);
             }
 
-            if (scheduleHours == auditoriumHours+1)
+            if (scheduleHours == auditoriumHours + 1)
             {
                 return Color.FromArgb(200, 255, 0);
             }
-            
+
             if (scheduleHours == auditoriumHours)
             {
                 return Color.FromArgb(0, 255, 0);
@@ -532,7 +542,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 return Color.FromArgb(255, 255, 0);
             }
-            
+
             if (scheduleHours >= auditoriumHours * 0.5)
             {
                 return Color.FromArgb(255, 128, 0);
@@ -546,9 +556,9 @@ namespace UchOtd.Schedule.Forms.DBLists
             if (DisciplinesList.SelectedCells.Count > 0)
             {
                 var discView = ((List<DisciplineView>)DisciplinesList.DataSource)[DisciplinesList.SelectedCells[0].RowIndex];
-                
+
                 var tfd = _repo.TeacherForDisciplines
-                    .GetFirstFiltredTeacherForDiscipline(tefd => 
+                    .GetFirstFiltredTeacherForDiscipline(tefd =>
                         tefd.Discipline.DisciplineId == discView.DisciplineId);
 
                 if (tfd == null)
@@ -632,7 +642,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             foreach (var disc in _repo.Disciplines.GetAllDisciplines())
             {
-                if ((disc.AuditoriumHours == 0) || 
+                if ((disc.AuditoriumHours == 0) ||
                     ((noCulture.Checked) && (disc.Name.ToLower().Contains("физическая культура") || disc.Name.ToLower().Contains("физической культуре"))) ||  // без физической культуры по чекбоксу
                     ((noArt.Checked) && (disc.StudentGroup.Name.Contains(" И")))) // без факультета искусств по чекбоксу
                 {
@@ -651,7 +661,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 var localDisc = disc;
                 var tfd = _repo.TeacherForDisciplines
-                    .GetFirstFiltredTeacherForDiscipline(tefd => 
+                    .GetFirstFiltredTeacherForDiscipline(tefd =>
                     tefd.Discipline.DisciplineId == localDisc.DisciplineId);
 
                 if (tfd != null)

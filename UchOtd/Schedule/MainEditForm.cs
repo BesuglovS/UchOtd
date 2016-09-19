@@ -560,11 +560,11 @@ namespace UchOtd.Schedule
             /*
             foreach (var faculty in Repo.Faculties.GetAllFaculties().OrderBy(f => f.SortingOrder))
             {*/
-            //var faculty = _repo.GetFirstFiltredFaculty(f => f.Letter == "Г");
-            /*
+            var faculty = Repo.Faculties.GetFirstFiltredFaculty(f => f.Letter == "И");
+            
                 foreach (var group in Repo.Faculties.GetFacultyGroups(faculty.FacultyId))
-                {*/
-            var group = Repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == "12 Т");
+                {
+            //var group = Repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == "12 Т");
 
                     AppendToFile(filename, "*" + group.Name + semesterString);
 
@@ -603,7 +603,7 @@ namespace UchOtd.Schedule
 
                         AppendToFile(filename, sb.ToString());
                     }            
-              //  }
+                }
             //}
         }
 
@@ -1821,7 +1821,7 @@ namespace UchOtd.Schedule
             //Task.Run(() => CopyDBEssentials("Schedule15161", "Schedule15162"));
 
             //await Task.Run(() => CheckAudHoursSum());
-            //MessageBox.Show("Done!");
+            MessageBox.Show("Done!");
 
             
         }
@@ -2542,6 +2542,101 @@ namespace UchOtd.Schedule
                 sw.Close();
             });
             MessageBox.Show("Done");
+        }
+
+        private void экспортДатЗачётовToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExportZachDates(Repo.Faculties.GetAllFaculties().Select(f => f.FacultyId).ToList(), "ZachetDates.txt");
+        }
+
+        private void проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CheckDisciplinesTypeSeuqences("TypeSequenceCheck.txt");
+        }
+
+        private void CheckDisciplinesTypeSeuqences(string filename)
+        {
+            var sw = new StreamWriter(filename);
+
+            foreach (var faculty in Repo.Faculties.GetAllFaculties().OrderBy(f => f.SortingOrder))
+            {
+                sw.WriteLine(faculty.SortingOrder + "\t" + faculty.Letter + "\t" + faculty.Name);
+
+                var facultyGroups =
+                    Repo.GroupsInFaculties.GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId).Select(sig => sig.StudentGroup)
+                        .ToList();
+
+                foreach (var studentGroup in facultyGroups)
+                {
+                    sw.WriteLine(studentGroup.Name);
+
+                    var studentIds = Repo
+                        .StudentsInGroups
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId && !sig.Student.Expelled)
+                        .ToList()
+                        .Select(stig => stig.Student.StudentId);
+
+                    var groupIdsList = Repo
+                        .StudentsInGroups
+                        .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                        .ToList()
+                        .Select(stig => stig.StudentGroup.StudentGroupId)
+                        .Distinct()
+                        .ToList();
+
+                    var disciplines =
+                        Repo.Disciplines.GetFiltredDisciplines(
+                            d => d.AuditoriumHours > 0 && groupIdsList.Contains(d.StudentGroup.StudentGroupId)).ToList();
+
+                    foreach (var discipline in disciplines)
+                    {
+                        if (discipline.TypeSequence == null || discipline.TypeSequence == "")
+                        {
+                            sw.WriteLine(discipline.Name + "\t" + discipline.StudentGroup.Name + "\tНет данных");
+                        }
+                        else
+                        {
+                            var lessonsCountByType = Constants.LessonTypeAbbreviation.ToDictionary(lessonType => lessonType.Key, lessonType => 0);
+
+                            for (int i = 0; i < discipline.TypeSequence.Length; i++)
+                            {
+                                try
+                                {
+                                    int type = int.Parse(discipline.TypeSequence[i].ToString());
+
+                                    if (lessonsCountByType.ContainsKey(type))
+                                    {
+                                        lessonsCountByType[type]++;
+                                    }
+                                    else
+                                    {
+                                        sw.WriteLine("Найден неизвестный тип пары: " + discipline.TypeSequence[i]);
+                                    }
+                                }
+                                catch 
+                                {   
+                                }
+                            }
+
+                            var lec1 = discipline.LectureHours;
+                            var lec2 = lessonsCountByType[1]*2 + lessonsCountByType[3] + lessonsCountByType[4];
+                            if (lec1 != lec2)
+                            {
+                                sw.WriteLine(discipline.Name + "\t" + discipline.StudentGroup.Name + "\t" + "Не совпадает количество лекций. По плану / В последовательности = " + lec1 + " / " + lec2 );
+                            }
+
+                            var prac1 = discipline.PracticalHours;
+                            var prac2 = lessonsCountByType[2] * 2 + lessonsCountByType[3] + lessonsCountByType[4] + lessonsCountByType[5] * 2;
+                            if (prac1 != prac2)
+                            {
+                                sw.WriteLine(discipline.Name + "\t" + discipline.StudentGroup.Name + "\t" + "Не совпадает количество практик. По плану / В последовательности = " + prac1 + " / " + prac2);
+                            }
+                        }
+                    }
+                }
+            }
+
+            sw.Close();
         }
     }
 }

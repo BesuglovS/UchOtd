@@ -11,6 +11,9 @@ namespace Schedule.Constants
             { 0, "*" }, // Нет данных
             { 1, "Л" }, // Лекция
             { 2, "П" }, // Практика
+            { 3, "ЛП" }, // Лекция / Практика
+            { 4, "ПЛ" }, // Практика / Лекция
+            { 5, "И" }, // Индивидуальные занятия
         };
 
         public static DateTime DefaultEmptyDateForEvent = new DateTime(2020, 1, 1);

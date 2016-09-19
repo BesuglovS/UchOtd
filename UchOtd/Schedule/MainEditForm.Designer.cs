@@ -108,11 +108,13 @@ namespace UchOtd.Schedule
             this.датыПоФизическойКультуреToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bigRedButtonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.удалитьРасписаниеТекущейГруппыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.процентЗанятийПоДатамToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.процентЗанятийПоДатамToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.экспортДатЗачётовToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -824,7 +826,9 @@ namespace UchOtd.Schedule
             // 
             this.bigRedButtonToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.удалитьРасписаниеТекущейГруппыToolStripMenuItem,
-            this.процентЗанятийПоДатамToolStripMenuItem});
+            this.процентЗанятийПоДатамToolStripMenuItem,
+            this.экспортДатЗачётовToolStripMenuItem,
+            this.проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem});
             this.bigRedButtonToolStripMenuItem.Name = "bigRedButtonToolStripMenuItem";
             this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
             this.bigRedButtonToolStripMenuItem.Text = "BIG RED BUTTON";
@@ -835,6 +839,13 @@ namespace UchOtd.Schedule
             this.удалитьРасписаниеТекущейГруппыToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
             this.удалитьРасписаниеТекущейГруппыToolStripMenuItem.Text = "Удалить расписание текущей группы";
             this.удалитьРасписаниеТекущейГруппыToolStripMenuItem.Click += new System.EventHandler(this.удалитьРасписаниеТекущейГруппыToolStripMenuItem_Click);
+            // 
+            // процентЗанятийПоДатамToolStripMenuItem
+            // 
+            this.процентЗанятийПоДатамToolStripMenuItem.Name = "процентЗанятийПоДатамToolStripMenuItem";
+            this.процентЗанятийПоДатамToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
+            this.процентЗанятийПоДатамToolStripMenuItem.Text = "Процент занятий по датам";
+            this.процентЗанятийПоДатамToolStripMenuItem.Click += new System.EventHandler(this.процентЗанятийПоДатамToolStripMenuItem_Click);
             // 
             // viewPanel
             // 
@@ -876,12 +887,19 @@ namespace UchOtd.Schedule
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // процентЗанятийПоДатамToolStripMenuItem
+            // экспортДатЗачётовToolStripMenuItem
             // 
-            this.процентЗанятийПоДатамToolStripMenuItem.Name = "процентЗанятийПоДатамToolStripMenuItem";
-            this.процентЗанятийПоДатамToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
-            this.процентЗанятийПоДатамToolStripMenuItem.Text = "Процент занятий по датам";
-            this.процентЗанятийПоДатамToolStripMenuItem.Click += new System.EventHandler(this.процентЗанятийПоДатамToolStripMenuItem_Click);
+            this.экспортДатЗачётовToolStripMenuItem.Name = "экспортДатЗачётовToolStripMenuItem";
+            this.экспортДатЗачётовToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
+            this.экспортДатЗачётовToolStripMenuItem.Text = "Экспорт дат зачётов";
+            this.экспортДатЗачётовToolStripMenuItem.Click += new System.EventHandler(this.экспортДатЗачётовToolStripMenuItem_Click);
+            // 
+            // проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem
+            // 
+            this.проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem.Name = "проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem";
+            this.проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem.Text = "Проверить правильность последовательностей видов занятий (Л/П)";
+            this.проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem.Click += new System.EventHandler(this.проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -993,6 +1011,8 @@ namespace UchOtd.Schedule
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel status;
         private ToolStripMenuItem процентЗанятийПоДатамToolStripMenuItem;
+        private ToolStripMenuItem экспортДатЗачётовToolStripMenuItem;
+        private ToolStripMenuItem проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem;
     }
 }
 

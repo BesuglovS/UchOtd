@@ -32,6 +32,10 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.TypeSequence = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.SyncGroupName = new System.Windows.Forms.CheckBox();
             this.AuditoriumHoursPerWeek = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -75,8 +79,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.groupnameFilter = new System.Windows.Forms.CheckBox();
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.filter = new System.Windows.Forms.TextBox();
-            this.TypeSequence = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
+            this.withoutTypeSequence = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -86,6 +89,8 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.label12);
+            this.controlsPanel.Controls.Add(this.label11);
             this.controlsPanel.Controls.Add(this.TypeSequence);
             this.controlsPanel.Controls.Add(this.label10);
             this.controlsPanel.Controls.Add(this.SyncGroupName);
@@ -115,6 +120,40 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(233, 630);
             this.controlsPanel.TabIndex = 27;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(164, 326);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(35, 13);
+            this.label12.TabIndex = 111;
+            this.label12.Text = "ПЛ=4";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(164, 306);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(35, 13);
+            this.label11.TabIndex = 110;
+            this.label11.Text = "ЛП=3";
+            // 
+            // TypeSequence
+            // 
+            this.TypeSequence.Location = new System.Drawing.Point(8, 361);
+            this.TypeSequence.Name = "TypeSequence";
+            this.TypeSequence.Size = new System.Drawing.Size(198, 20);
+            this.TypeSequence.TabIndex = 108;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(6, 345);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(189, 13);
+            this.label10.TabIndex = 109;
+            this.label10.Text = "Последовательность лекц=1 / пр=2";
             // 
             // SyncGroupName
             // 
@@ -325,7 +364,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ListPanel.Location = new System.Drawing.Point(233, 0);
             this.ListPanel.Name = "ListPanel";
-            this.ListPanel.Size = new System.Drawing.Size(1292, 630);
+            this.ListPanel.Size = new System.Drawing.Size(1304, 630);
             this.ListPanel.TabIndex = 28;
             // 
             // viewPanel
@@ -334,7 +373,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 67);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(1292, 563);
+            this.viewPanel.Size = new System.Drawing.Size(1304, 563);
             this.viewPanel.TabIndex = 2;
             // 
             // DisciplinesList
@@ -347,7 +386,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.DisciplinesList.Location = new System.Drawing.Point(0, 0);
             this.DisciplinesList.Name = "DisciplinesList";
             this.DisciplinesList.ReadOnly = true;
-            this.DisciplinesList.Size = new System.Drawing.Size(1292, 563);
+            this.DisciplinesList.Size = new System.Drawing.Size(1304, 563);
             this.DisciplinesList.TabIndex = 0;
             this.DisciplinesList.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DiscipineListViewCellClick);
             this.DisciplinesList.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DiscipineListView_CellFormatting);
@@ -355,6 +394,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // filterPanel
             // 
+            this.filterPanel.Controls.Add(this.withoutTypeSequence);
             this.filterPanel.Controls.Add(this.WithLessonsToday);
             this.filterPanel.Controls.Add(this.noPost);
             this.filterPanel.Controls.Add(this.noArt);
@@ -375,7 +415,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filterPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.filterPanel.Location = new System.Drawing.Point(0, 0);
             this.filterPanel.Name = "filterPanel";
-            this.filterPanel.Size = new System.Drawing.Size(1292, 67);
+            this.filterPanel.Size = new System.Drawing.Size(1304, 67);
             this.filterPanel.TabIndex = 1;
             // 
             // WithLessonsToday
@@ -540,27 +580,21 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
             // 
-            // TypeSequence
+            // withoutTypeSequence
             // 
-            this.TypeSequence.Location = new System.Drawing.Point(8, 361);
-            this.TypeSequence.Name = "TypeSequence";
-            this.TypeSequence.Size = new System.Drawing.Size(198, 20);
-            this.TypeSequence.TabIndex = 108;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 345);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(189, 13);
-            this.label10.TabIndex = 109;
-            this.label10.Text = "Последовательность лекц=1 / пр=2";
+            this.withoutTypeSequence.AutoSize = true;
+            this.withoutTypeSequence.Location = new System.Drawing.Point(1105, 29);
+            this.withoutTypeSequence.Name = "withoutTypeSequence";
+            this.withoutTypeSequence.Size = new System.Drawing.Size(197, 17);
+            this.withoutTypeSequence.TabIndex = 19;
+            this.withoutTypeSequence.Text = "без последовательности занятий";
+            this.withoutTypeSequence.UseVisualStyleBackColor = true;
             // 
             // DisciplineList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1525, 630);
+            this.ClientSize = new System.Drawing.Size(1537, 630);
             this.Controls.Add(this.ListPanel);
             this.Controls.Add(this.controlsPanel);
             this.Name = "DisciplineList";
@@ -625,5 +659,8 @@ namespace UchOtd.Schedule.Forms.DBLists
         private CheckBox SyncGroupName;
         private TextBox TypeSequence;
         private Label label10;
+        private Label label12;
+        private Label label11;
+        private CheckBox withoutTypeSequence;
     }
 }
