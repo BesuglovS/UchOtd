@@ -205,8 +205,9 @@ namespace UchOtd.Schedule.Forms
                                              .ToList();
 
 
-                    foreach (var ev in evts)
+                    for (int index = 0; index < evts.Count; index++)
                     {
+                        var ev = evts[index];
                         int studentGroupId;
                         if (ev.OldLesson != null)
                         {
@@ -215,7 +216,8 @@ namespace UchOtd.Schedule.Forms
                             var id = studentGroupId;
                             var studentIds = _repo
                                 .StudentsInGroups
-                                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == id && !sig.Student.Expelled)
+                                .GetFiltredStudentsInGroups(
+                                    sig => sig.StudentGroup.StudentGroupId == id && !sig.Student.Expelled)
                                 .Select(sig => sig.Student.StudentId)
                                 .ToList();
 
@@ -239,7 +241,6 @@ namespace UchOtd.Schedule.Forms
                         }
 
 
-
                         if (ev.NewLesson != null)
                         {
                             studentGroupId = ev.NewLesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
@@ -247,7 +248,8 @@ namespace UchOtd.Schedule.Forms
                             var id = studentGroupId;
                             var studentIds = _repo
                                 .StudentsInGroups
-                                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == id && !sig.Student.Expelled)
+                                .GetFiltredStudentsInGroups(
+                                    sig => sig.StudentGroup.StudentGroupId == id && !sig.Student.Expelled)
                                 .Select(sig => sig.Student.StudentId)
                                 .ToList();
 
@@ -269,6 +271,8 @@ namespace UchOtd.Schedule.Forms
                                 result.Add(dowFacTuple);
                             }
                         }
+
+                        status.Text = index + " / " + evts.Count + " = " + $"{(double) index*100/evts.Count:0.00}%";
                     }
 
                     var messageString = result

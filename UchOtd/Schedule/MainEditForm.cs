@@ -1714,103 +1714,125 @@ namespace UchOtd.Schedule
             /*
             await Task.Run(() =>
             {
-                var events = Repo.LessonLogEvents.GetAllLessonLogEvents();
+                var Repo2 = new ScheduleRepository("Server=UCH-OTD-DISP\\SQLEXPRESS,1433;Database=Schedule16171-old; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True");
 
-                var addEvents = new Dictionary<DateTime, int>();
-                var remEvents = new Dictionary<DateTime, int>();
-                var audEvents = new Dictionary<DateTime, int>();
+                var disciplinesFrom = Repo2.Disciplines.GetAllDisciplines();
 
-                for (int i = 0; i < events.Count; i++)
+                var disciplinesTo = Repo.Disciplines.GetAllDisciplines();
+
+                foreach (var discipline in disciplinesTo)
                 {
-                    if (events[i].OldLesson == null)
+                    var find = disciplinesFrom.FirstOrDefault(d => d.DisciplineId == discipline.DisciplineId);
+                    string sequence = "";
+                    if (find != null)
                     {
-                        if (!addEvents.ContainsKey(events[i].DateTime.Date))
-                        {
-                            addEvents.Add(events[i].DateTime.Date, 0);
-                        }
-
-                        addEvents[events[i].DateTime.Date]++;
-
-                        continue;
+                        sequence = find.TypeSequence;
                     }
 
-                    if (events[i].NewLesson == null)
-                    {
-                        if (!remEvents.ContainsKey(events[i].DateTime.Date))
-                        {
-                            remEvents.Add(events[i].DateTime.Date, 0);
-                        }
-
-                        remEvents[events[i].DateTime.Date]++;
-
-                        continue;
-                    }
-
-                    if (!audEvents.ContainsKey(events[i].DateTime.Date))
-                    {
-                        audEvents.Add(events[i].DateTime.Date, 0);
-                    }
-
-                    audEvents[events[i].DateTime.Date]++;
+                    discipline.TypeSequence = sequence;
+                    Repo.Disciplines.UpdateDiscipline(discipline);
                 }
-
-                var addCount = addEvents.Sum(ev => ev.Value);
-                var remCount = remEvents.Sum(ev => ev.Value);
-                var audCount = audEvents.Sum(ev => ev.Value);
-                var totalCount = events.Count;
-
-                MessageBox.Show(
-                    "Add (min = " + addEvents.Select(ae => ae.Value).Min() + "; max = " + addEvents.Select(ae => ae.Value).Max() + ") = " + 
-                    addEvents.Count + " / " + addCount + "(" + string.Format("{0:0.00}", (addCount * 100.0 / totalCount)) + "%)" + "\n" + 
-                    "Rem (min = " + remEvents.Select(ae => ae.Value).Min() + "; max = " + remEvents.Select(ae => ae.Value).Max() + ") = " + 
-                    remEvents.Count + " / " + remCount + "(" + string.Format("{0:0.00}", (remCount * 100.0 / totalCount)) + "%)" + "\n" +
-                    "Aud (min = " + audEvents.Select(ae => ae.Value).Min() + "; max = " + audEvents.Select(ae => ae.Value).Max() + ") = " + 
-                    audEvents.Count + " / " + audCount + "(" + string.Format("{0:0.00}", (audCount * 100.0 / totalCount)) + "%)"
-                    );
             });*/
+             /*
+             await Task.Run(() =>
+             {
+                 var events = Repo.LessonLogEvents.GetAllLessonLogEvents();
 
-            /*
-            await Task.Run(() =>
-            {
-                var compAuds = new List<string> {"Ауд. 307", "Ауд. 308", "Корп № 3 Ауд. 20"};
-                ExportCompAudTeachers(compAuds);
-            });*/
+                 var addEvents = new Dictionary<DateTime, int>();
+                 var remEvents = new Dictionary<DateTime, int>();
+                 var audEvents = new Dictionary<DateTime, int>();
 
-            /*
-            await Task.Run(() =>
-            {
-                var facIds = new List<int> {1, 2, 3, 4, 5, 9, 10, 11};
-                ExportZachDates(facIds, "ZachDates.txt");
-            });
-            */
+                 for (int i = 0; i < events.Count; i++)
+                 {
+                     if (events[i].OldLesson == null)
+                     {
+                         if (!addEvents.ContainsKey(events[i].DateTime.Date))
+                         {
+                             addEvents.Add(events[i].DateTime.Date, 0);
+                         }
+
+                         addEvents[events[i].DateTime.Date]++;
+
+                         continue;
+                     }
+
+                     if (events[i].NewLesson == null)
+                     {
+                         if (!remEvents.ContainsKey(events[i].DateTime.Date))
+                         {
+                             remEvents.Add(events[i].DateTime.Date, 0);
+                         }
+
+                         remEvents[events[i].DateTime.Date]++;
+
+                         continue;
+                     }
+
+                     if (!audEvents.ContainsKey(events[i].DateTime.Date))
+                     {
+                         audEvents.Add(events[i].DateTime.Date, 0);
+                     }
+
+                     audEvents[events[i].DateTime.Date]++;
+                 }
+
+                 var addCount = addEvents.Sum(ev => ev.Value);
+                 var remCount = remEvents.Sum(ev => ev.Value);
+                 var audCount = audEvents.Sum(ev => ev.Value);
+                 var totalCount = events.Count;
+
+                 MessageBox.Show(
+                     "Add (min = " + addEvents.Select(ae => ae.Value).Min() + "; max = " + addEvents.Select(ae => ae.Value).Max() + ") = " + 
+                     addEvents.Count + " / " + addCount + "(" + string.Format("{0:0.00}", (addCount * 100.0 / totalCount)) + "%)" + "\n" + 
+                     "Rem (min = " + remEvents.Select(ae => ae.Value).Min() + "; max = " + remEvents.Select(ae => ae.Value).Max() + ") = " + 
+                     remEvents.Count + " / " + remCount + "(" + string.Format("{0:0.00}", (remCount * 100.0 / totalCount)) + "%)" + "\n" +
+                     "Aud (min = " + audEvents.Select(ae => ae.Value).Min() + "; max = " + audEvents.Select(ae => ae.Value).Max() + ") = " + 
+                     audEvents.Count + " / " + audCount + "(" + string.Format("{0:0.00}", (audCount * 100.0 / totalCount)) + "%)"
+                     );
+             });*/
+
+             /*
+             await Task.Run(() =>
+             {
+                 var compAuds = new List<string> {"Ауд. 307", "Ауд. 308", "Корп № 3 Ауд. 20"};
+                 ExportCompAudTeachers(compAuds);
+             });*/
+
+             /*
+             await Task.Run(() =>
+             {
+                 var facIds = new List<int> {1, 2, 3, 4, 5, 9, 10, 11};
+                 ExportZachDates(facIds, "ZachDates.txt");
+             });
+             */
 
 
 
 
-            /*
-            await Task.Run(() =>
-            {
-                var sw = new StreamWriter("AudPercentage.txt");
+             /*
+             await Task.Run(() =>
+             {
+                 var sw = new StreamWriter("AudPercentage.txt");
 
-                sw.WriteLine("buildingId = 2");
-                WriteBuildingAuditoriumsBusyPercentage(sw, 2);
-                sw.WriteLine();
+                 sw.WriteLine("buildingId = 2");
+                 WriteBuildingAuditoriumsBusyPercentage(sw, 2);
+                 sw.WriteLine();
 
-                sw.WriteLine("buildingId = 3");
-                WriteBuildingAuditoriumsBusyPercentage(sw, 3);
-                sw.Close();
-                var eprst = 999;
-            });*/
-            
-            
-            // Oops
-            // ExportStudentsData("StudentsExport-1sem.txt");
-            // ImportStudentData("StudentsExport-1sem.txt");
-            // CopyINOGroupLessonsFromRealSchedule();
-            // ExportScheduleDates("Oops\\stat.txt");
-            // ExportFacultyGroups();
-            // ExportDiscAuds("Auds.txt");
-            // ExportGroupDisciplines("Oops\\Discs.txt");
+                 sw.WriteLine("buildingId = 3");
+                 WriteBuildingAuditoriumsBusyPercentage(sw, 3);
+                 sw.Close();
+                 var eprst = 999;
+             });*/
+
+
+             // Oops
+             // ExportStudentsData("StudentsExport-1sem.txt");
+             // ImportStudentData("StudentsExport-1sem.txt");
+             // CopyINOGroupLessonsFromRealSchedule();
+             // ExportScheduleDates("Oops\\stat.txt");
+             // ExportFacultyGroups();
+             // ExportDiscAuds("Auds.txt");
+             // ExportGroupDisciplines("Oops\\Discs.txt");
              dayDelta_Click();            
             // setLayout_Click(sender, e);
             // ExportGroupDisciplines("Oops\\Discs.txt");
@@ -2637,6 +2659,42 @@ namespace UchOtd.Schedule
             }
 
             sw.Close();
+        }
+
+        private async void экспортСпискаПреподавателейНа308ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                var dialog = new SaveFileDialog();
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    var filename = dialog.FileName;
+
+
+                    var aud = Repo.Auditoriums.Find("Ауд. 308");
+
+                    if (aud != null)
+                    {
+                        var sw = new StreamWriter(filename);
+
+                        var teachersList = Repo
+                            .Lessons
+                            .GetAllActiveLessons()
+                            .Where(l => l.Auditorium.AuditoriumId == aud.AuditoriumId)
+                            .Select(l => l.TeacherForDiscipline.Teacher)
+                            .Distinct()
+                            .OrderBy(t => t.FIO)
+                            .ToList();
+
+                        foreach (var teacher in teachersList)
+                        {
+                            sw.WriteLine(teacher.FIO);
+                        }
+
+                        sw.Close();
+                    }
+                }
+            });
         }
     }
 }

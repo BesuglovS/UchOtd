@@ -239,8 +239,8 @@ namespace UchOtd
             //Repo = new ScheduleRepository("data source=tcp:" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
             //UOrepo = new UchOtdRepository("data source=tcp:" + CurrentServerName + ",1433;Database=UchOtd; Integrated Security=SSPI;multipleactiveresultsets=True");
 
-            Repo = new ScheduleRepository("Server=" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True");
-            UOrepo = new UchOtdRepository("Server=" + CurrentServerName + ",1433;Database=UchOtd; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True");
+            Repo = new ScheduleRepository("Server=" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; Integrated Security=SSPI; multipleactiveresultsets=True");
+            UOrepo = new UchOtdRepository("Server=" + CurrentServerName + ",1433;Database=UchOtd; Integrated Security=SSPI; multipleactiveresultsets=True");
 
             if (School)
             {
