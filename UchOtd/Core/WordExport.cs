@@ -3276,6 +3276,41 @@ namespace UchOtd.Core
         {
             var discs = repo.Disciplines.GetFiltredDisciplines(d => d.Name.Contains("изическ")).ToList();
 
+            discs.Sort((x, y) =>
+            {
+                var teacherFIO1 = "";
+                var tfd1 =
+                    repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
+                        tefd => tefd.Discipline.DisciplineId == x.DisciplineId);
+                if (tfd1 != null)
+                {
+                    teacherFIO1 = tfd1.Teacher.FIO;
+                }
+
+                var teacherFIO2 = "";
+                var tfd2 =
+                    repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
+                        tefd => tefd.Discipline.DisciplineId == y.DisciplineId);
+                if (tfd2 != null)
+                {
+                    teacherFIO2 = tfd2.Teacher.FIO;
+                }
+
+                if ((teacherFIO1 == "") || (teacherFIO2 == ""))
+                {
+                    return String.CompareOrdinal(teacherFIO1, teacherFIO2);
+                }
+
+                if (teacherFIO1 == teacherFIO2)
+                {
+                    return tfd1.Discipline.StudentGroup.Name == tfd2.Discipline.StudentGroup.Name ? 
+                        String.CompareOrdinal(tfd1.Discipline.Name, tfd2.Discipline.Name) : 
+                        String.CompareOrdinal(tfd1.Discipline.StudentGroup.Name, tfd2.Discipline.StudentGroup.Name);
+                }
+
+                return String.Compare(teacherFIO1, teacherFIO2, StringComparison.Ordinal);
+            });
+
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
             
@@ -3367,11 +3402,66 @@ namespace UchOtd.Core
                     }
 
                     pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
-                } while (pageCount > (i + 1));
+                } while (pageCount > ((i + 1)*2 - 1));
 
                 var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
                 endOfDoc.Font.Size = 1;
                 endOfDoc.InsertBreak(WdBreakType.wdSectionBreakNextPage);
+
+                oPara1 = oDoc.Content.Paragraphs.Add();
+                oPara1.Range.Text = teacherFIO + " " +
+                    discs[i].Name + " " +
+                    discs[i].PracticalHours.ToString() + " " +
+                    ((Constants.Attestation.ContainsKey(discs[i].Attestation)) ? Constants.Attestation[discs[i].Attestation] : "") + " " +
+                    discs[i].StudentGroup.Name;
+                oPara1.Range.Font.Bold = 0;
+                oPara1.Range.Font.Size = 10;
+                oPara1.Range.ParagraphFormat.LineSpacingRule =
+                    WdLineSpacing.wdLineSpaceSingle;
+                oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                oPara1.SpaceAfter = 0;
+                oPara1.Range.InsertParagraphAfter();
+
+                var students = repo.StudentsInGroups
+                    .GetFiltredStudentsInGroups(
+                        sig =>
+                            sig.StudentGroup.StudentGroupId == discs[i].StudentGroup.StudentGroupId &&
+                            !sig.Student.Expelled)
+                    .Select(sig => sig.Student)
+                    .OrderBy(s => s.F)
+                    .ThenBy(s => s.I)
+                    .ThenBy(s => s.O)
+                    .ThenBy(s => s.ZachNumber)
+                    .ToList();
+
+                endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+
+                oTable = endOfDoc.Tables.Add(endOfDoc, students.Count, 2);
+                oTable.Borders.Enable = 1;
+                oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+                oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                oTable.Range.Font.Size = 14;
+                oTable.Range.Font.Bold = 0;
+
+                oTable.Columns[1].Width = oWord.CentimetersToPoints(1.2f);
+
+
+                for (int j = 0; j < students.Count; j++)
+                {
+                    var student = students[j];
+
+                    oTable.Cell(j + 1, 1).Range.Text = (j + 1).ToString();
+                    oTable.Cell(j + 1, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    oTable.Cell(j + 1, 2).Range.Text = student.F + " " + student.I + " " + student.O;
+                    oTable.Cell(j + 1, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                }
+                
+
+                endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                endOfDoc.Font.Size = 1;
+                endOfDoc.InsertBreak(WdBreakType.wdSectionBreakNextPage);
+
             }
 
             oDoc.Undo();

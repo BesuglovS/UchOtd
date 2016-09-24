@@ -532,7 +532,7 @@ namespace Schedule.Repositories.Repositories.Main
                 var index = lessonIds.IndexOf(lesson.LessonId);
 
                 
-                return typeSequence.Length < index ? 0 : int.Parse(typeSequence[index].ToString());
+                return typeSequence.Length <= index ? 0 : int.Parse(typeSequence[index].ToString());
             }
         }
     }

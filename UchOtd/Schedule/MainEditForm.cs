@@ -1889,12 +1889,14 @@ namespace UchOtd.Schedule
                                     (l.State == 1) &&
                                     (l.TeacherForDiscipline.Discipline.DisciplineId == discipline.DisciplineId))
                                 .OrderBy(l => l.Calendar.Date).LastOrDefault();
+
                         if (lastLesson != null)
                         {
                             var sw = new StreamWriter(filename, true);
                             sw.WriteLine(facultyGroup.Name + "\t" +
                                          discipline.Name + "\t" +
-                                         lastLesson.Calendar.Date.Date.ToString("dd.MM.yyyy"));
+                                         lastLesson.Calendar.Date.Date.ToString("dd.MM.yyyy") + "\t" + 
+                                         lastLesson.TeacherForDiscipline.Teacher.FIO);
                             sw.Close();
                         }
                     }
