@@ -68,7 +68,11 @@ namespace UchOtd.Schedule.Forms
 
                 _cToken = _tokenSource.Token;
 
+                var groupFilter = groupFiltered.Checked;
                 var selectedGroupId = (int)groupList.SelectedValue;
+
+                var dateFilter = dateFiltered.Checked;
+                var dateValue = filterDate.Value;
 
                 try
                 {
@@ -78,18 +82,25 @@ namespace UchOtd.Schedule.Forms
 
                         var disciplines = repo.Disciplines
                             .GetFiltredDisciplines(d =>
-                                (d.Attestation == 1 || d.Attestation == 3 || d.Attestation == 4) &&
-                                groupIds.Contains(d.StudentGroup.StudentGroupId))
-                            .OrderBy(d => d.Name)
+                                d.Attestation == 1 || d.Attestation == 3 || d.Attestation == 4)
                             .ToList();
+
+                        if (groupFilter)
+                        {
+                            disciplines =
+                                disciplines.Where(d => groupIds.Contains(d.StudentGroup.StudentGroupId)).ToList();
+                        }
 
                         var result = new List<ZachDate>();
 
-                        foreach (var discipline in disciplines)
+                        for (int index = 0; index < disciplines.Count; index++)
                         {
+                            var discipline = disciplines[index];
                             var lessons =
                                 repo.Lessons.GetFiltredLessons(
-                                    l => l.TeacherForDiscipline.Discipline.DisciplineId == discipline.DisciplineId && l.State == 1)
+                                    l =>
+                                        l.TeacherForDiscipline.Discipline.DisciplineId == discipline.DisciplineId &&
+                                        l.State == 1)
                                     .OrderBy(l => l.Calendar.Date)
                                     .ThenBy(l => l.Ring.Time.TimeOfDay)
                                     .ToList();
@@ -101,10 +112,20 @@ namespace UchOtd.Schedule.Forms
                                 DisciplineName = discipline.Name,
                                 dtDate = lessons.Count != 0 ? lessons.Last().Calendar.Date : new DateTime(2100, 1, 1),
                                 Date = lessons.Count != 0 ? lessons.Last().Calendar.Date.ToString("dd.MM.yyyy") : "",
-                                ScheduleCompleted = lessons.Count * 2 == discipline.AuditoriumHours
+                                ScheduleCompleted = lessons.Count*2 == discipline.AuditoriumHours
                             };
 
                             result.Add(zd);
+
+                            statusStrip.Invoke((MethodInvoker)(() => status.Text = (index+1) + " / " + disciplines.Count));
+                        }
+
+                        if (dateFilter)
+                        {
+                            result = result.Where(z =>
+                                z.dtDate.Year == dateValue.Year &&
+                                z.dtDate.Month == dateValue.Month &&
+                                z.dtDate.Day == dateValue.Day).ToList();
                         }
 
                         result = result.OrderBy(z => z.dtDate).ToList();
@@ -158,6 +179,11 @@ namespace UchOtd.Schedule.Forms
         private void ZachDates_ResizeEnd(object sender, EventArgs e)
         {
             FormatView();
+        }
+
+        private void ZachDates_Load(object sender, EventArgs e)
+        {
+            filterDate.Value = DateTime.Now;
         }
     }
 }
