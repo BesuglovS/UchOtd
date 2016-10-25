@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="wnuUserName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">eduxxi</Value>
+      <Value Profile="(Default)">u461885</Value>
     </Setting>
     <Setting Name="wnuPassword" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Ueuk,tp58Xfnf</Value>
+      <Value Profile="(Default)">comericer4s</Value>
     </Setting>
   </Settings>
 </SettingsFile>

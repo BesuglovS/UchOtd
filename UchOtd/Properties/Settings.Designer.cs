@@ -25,7 +25,7 @@ namespace UchOtd.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("eduxxi")]
+        [global::System.Configuration.DefaultSettingValueAttribute("u461885")]
         public string wnuUserName {
             get {
                 return ((string)(this["wnuUserName"]));
@@ -37,7 +37,7 @@ namespace UchOtd.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Ueuk,tp58Xfnf")]
+        [global::System.Configuration.DefaultSettingValueAttribute("comericer4s")]
         public string wnuPassword {
             get {
                 return ((string)(this["wnuPassword"]));

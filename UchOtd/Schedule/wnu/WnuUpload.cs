@@ -14,7 +14,7 @@ namespace UchOtd.Schedule.wnu
     public static class WnuUpload
     {
         
-        public static string UploadFtpPath = "ftp://wiki.nayanova.edu/";
+        public static string UploadFtpPath = "ftp://u461885.ftp.masterhost.ru/wiki.nayanova.edu/www/";
         //public static string UploadPath = "http://localhost/phpstorm/wnu/_php/includes/";
 
         public static void UploadFile(string sourcefile, string destfile)
@@ -103,7 +103,7 @@ namespace UchOtd.Schedule.wnu
             var mySqlAuditoriums = MySqlAuditorium.FromAuditoriumList(allAuditoriums);
             var wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "auditoriums", data = jsonSerializer.Serialize(mySqlAuditoriums) };
             string json = jsonSerializer.Serialize(wud);
-            UploadTableData(json, uploadEndPoint);
+            var result = UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
             

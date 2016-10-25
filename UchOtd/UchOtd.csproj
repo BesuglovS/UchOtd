@@ -12,10 +12,10 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>ftp://wiki.nayanova.edu/httpdocs/s/UchOtd/</PublishUrl>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>\\uch-otd-disp\Public\UchOtd\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
+    <InstallFrom>Unc</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
@@ -23,10 +23,9 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://wiki.nayanova.edu/s/UchOtd/</InstallUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>72</ApplicationRevision>
+    <ApplicationRevision>80</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -429,6 +428,12 @@
     <Compile Include="Schedule\Forms\WordExportForm.Designer.cs">
       <DependentUpon>WordExportForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Schedule\Forms\ZachDates.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\ZachDates.Designer.cs">
+      <DependentUpon>ZachDates.cs</DependentUpon>
+    </Compile>
     <Compile Include="Schedule\MainEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -456,6 +461,7 @@
     <Compile Include="Schedule\Views\GroupBuildingAuditoriumView.cs" />
     <Compile Include="Schedule\Views\TeacherForDisciplineView.cs" />
     <Compile Include="Schedule\Views\tfdView.cs" />
+    <Compile Include="Schedule\Views\ZachDate.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLAuditorium.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLAuditoriumEvent.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLCalendar.cs" />
@@ -624,6 +630,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\WordExportForm.resx">
       <DependentUpon>WordExportForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\ZachDates.resx">
+      <DependentUpon>ZachDates.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\MainEditForm.resx">
       <DependentUpon>MainEditForm.cs</DependentUpon>

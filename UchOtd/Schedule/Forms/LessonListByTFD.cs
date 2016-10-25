@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.Constants;
 using Schedule.Repositories;
 using UchOtd.Schedule.Views;
 
@@ -42,6 +43,27 @@ namespace UchOtd.Schedule.Forms
 
             var lessonsView = LessonViewAtLessonListByTfd.FromLessonList(lessons);
 
+            var tfd =
+                _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
+                    tefd => tefd.TeacherForDisciplineId == (int) tfdBox.SelectedValue);
+            var typeSequence = tfd.Discipline.TypeSequence;
+
+            for (int i = 0; i < lessonsView.Count; i++)
+            {
+                try
+                {
+                    var intType = int.Parse(typeSequence[i].ToString());
+
+                    lessonsView[i].Type = Constants.LessonTypeLongAbbreviation[intType];
+                }
+                catch
+                {
+                    lessonsView[i].Type = "";
+                }
+
+                
+            }
+
             view.DataSource = lessonsView;
 
             FormatView();
@@ -60,15 +82,17 @@ namespace UchOtd.Schedule.Forms
             view.Columns["CalendarDate"].HeaderText = "Дата";            
             view.Columns["RingTime"].HeaderText = "Время";            
             view.Columns["AuditoriumName"].HeaderText = "Аудитория";
+            view.Columns["Type"].HeaderText = "Тип занятия";
 
             DivideViewInThreeColumns();
         }
 
         private void DivideViewInThreeColumns()
         {
-            view.Columns["CalendarDate"].Width = (int)Math.Round(view.Width * 0.32);
-            view.Columns["RingTime"].Width = (int)Math.Round(view.Width * 0.32);
-            view.Columns["AuditoriumName"].Width = (int)Math.Round(view.Width * 0.32);
+            view.Columns["CalendarDate"].Width = (int)Math.Round(view.Width * 0.28);
+            view.Columns["RingTime"].Width = (int)Math.Round(view.Width * 0.28);
+            view.Columns["AuditoriumName"].Width = (int)Math.Round(view.Width * 0.28);
+            view.Columns["Type"].Width = (int)Math.Round(view.Width * 0.12);
         }
 
         private void LessonListByTFD_ResizeEnd(object sender, EventArgs e)

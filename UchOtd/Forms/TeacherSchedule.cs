@@ -30,7 +30,7 @@ namespace UchOtd.Forms
             _repo = repo;
 
             weekFilter.Items.Clear();
-            for (int i = 1; i <= 18; i++)
+            for (int i = 1; i <= 20; i++)
             {
                 weekFilter.Items.Add(i);
             }

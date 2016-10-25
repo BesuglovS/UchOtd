@@ -76,10 +76,12 @@ namespace UchOtd.NUDS.Core
 
         public static string GatherWeeksToString(List<int> weekArray)
         {
-            var result = new List<string>();
-            var boolWeeks = new bool[21];
+            var maxWeek = weekArray.Max();
 
-            for (var i = 0; i <= 20; i++)
+            var result = new List<string>();
+            var boolWeeks = new bool[maxWeek + 3];
+
+            for (var i = 0; i <= maxWeek; i++)
             {
                 boolWeeks[i] = false;
             }
@@ -90,8 +92,8 @@ namespace UchOtd.NUDS.Core
             }
 
             bool prev = false;
-            int baseNum = 20;
-            for (var i = 0; i <= 19; i++)
+            int baseNum = maxWeek;
+            for (var i = 0; i <= maxWeek+1; i++)
             {
                 if (!prev && boolWeeks[i])
                 {
@@ -110,15 +112,15 @@ namespace UchOtd.NUDS.Core
 
                 if (!boolWeeks[i])
                 {
-                    baseNum = 20;
+                    baseNum = maxWeek;
                 }
 
                 prev = boolWeeks[i];
             }
 
             prev = false;
-            baseNum = 20;
-            for (var i = 1; i <= 19; i += 2)
+            baseNum = maxWeek;
+            for (var i = 1; i <= maxWeek+2; i += 2)
             {
                 if (!prev && boolWeeks[i])
                 {
@@ -137,15 +139,15 @@ namespace UchOtd.NUDS.Core
 
                 if (!boolWeeks[i])
                 {
-                    baseNum = 20;
+                    baseNum = maxWeek;
                 }
 
                 prev = boolWeeks[i];
             }
 
             prev = false;
-            baseNum = 20;
-            for (var i = 2; i <= 20; i += 2)
+            baseNum = maxWeek;
+            for (var i = 2; i <= maxWeek+2; i += 2)
             {
                 if (!prev && boolWeeks[i])
                 {
@@ -164,7 +166,7 @@ namespace UchOtd.NUDS.Core
 
                 if (!boolWeeks[i])
                 {
-                    baseNum = 20;
+                    baseNum = maxWeek;
                 }
 
                 prev = boolWeeks[i];
@@ -172,7 +174,7 @@ namespace UchOtd.NUDS.Core
 
 
 
-            for (var i = 1; i <= 18; i++)
+            for (var i = 1; i <= maxWeek; i++)
             {
                 if (boolWeeks[i])
                 {

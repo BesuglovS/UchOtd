@@ -1077,10 +1077,11 @@ namespace UchOtd.Schedule
             cToken.ThrowIfCancellationRequested();
 
             var allDiscLessonCount = (int) Math.Ceiling((double)Repo.Disciplines.GetAllDisciplines()
-                .Where(d => (d.Name != "Физическая культура") && (d.Name != "Элективные курсы по физической культуре"))
+                .Where(d => (!d.Name.ToLower().Contains("физическая культ")) && (!d.Name.ToLower().Contains("физической культ")))
                 .Select(d => d.AuditoriumHours).Sum() / 2);
             var activeLessonsCount = Repo.Lessons.GetAllActiveLessons()
-                .Count(l => (l.TeacherForDiscipline.Discipline.Name != "Физическая культура") && (l.TeacherForDiscipline.Discipline.Name != "Элективные курсы по физической культуре"));
+                .Count(l => (!l.TeacherForDiscipline.Discipline.Name.ToLower().Contains("физическая культ") && 
+                            (!l.TeacherForDiscipline.Discipline.Name.ToLower().Contains("физической культ"))));
 
             var diff = allDiscLessonCount - activeLessonsCount;
             String message = activeLessonsCount + " (" +
@@ -2285,7 +2286,7 @@ namespace UchOtd.Schedule
             toDbName = StartupForm.School ? "s_" : "" + toDbName;
             
             Repo.BackupDb(Application.StartupPath + "\\" + dbName + ".bak");
-            WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak", "httpdocs/upload/DB-Backup/" + toDbName + ".bak");
+            WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak", "upload/DB-Backup/" + toDbName + ".bak");
         }
 
         private async void startSchoolWordExport_Click(object sender, EventArgs e)
@@ -2697,6 +2698,17 @@ namespace UchOtd.Schedule
                     }
                 }
             });
+        }
+
+        private void последовательностьТиповЗанятийЛППоФакультетамToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            WordExport.ExportTypeSequenceInfoByFaculty(Repo);
+        }
+
+        private void датыЗачётовToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var zdForm = new ZachDates(Repo);
+            zdForm.Show();
         }
     }
 }

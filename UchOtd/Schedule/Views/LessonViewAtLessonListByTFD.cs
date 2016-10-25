@@ -10,6 +10,7 @@ namespace UchOtd.Schedule.Views
         public string CalendarDate { get; set; }
         public string RingTime { get; set; }
         public string AuditoriumName { get; set; }
+        public string Type { get; set; }
 
         public LessonViewAtLessonListByTfd()
         {

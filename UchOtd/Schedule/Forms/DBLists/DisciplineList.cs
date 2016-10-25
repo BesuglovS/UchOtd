@@ -79,7 +79,16 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var groupNameF = groupnameFilter.Checked;
                 var hourFitF = HoursFitFiltered.Checked;
                 var mixedGroupsF = mixedGroups.Checked;
-                var groupId = (int)groupNameList.SelectedValue;
+                var groupId = -1;
+                if (groupNameList.SelectedValue != null)
+                {
+                    groupId = (int) groupNameList.SelectedValue;
+                }
+                else
+                {
+                    groupNameF = false;
+                }
+                
                 var noCultureF = noCulture.Checked;
                 var withExamsOnlyF = WithExamsOnly.Checked;
                 var orderbyGroupNameF = orderByGroupname.Checked;

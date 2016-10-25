@@ -24,15 +24,15 @@ namespace UchOtd.Core
 {
     public static class WordExport
     {
-        public static void ExportSchedulePage(ScheduleRepository repo, string filename, bool save, bool quit, 
-            int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, 
+        public static void ExportSchedulePage(ScheduleRepository repo, string filename, bool save, bool quit,
+            int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter,
             bool weeksMarksVisible, bool onlyFutureDates, CancellationToken cToken)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             cToken.ThrowIfCancellationRequested();
-            
+
             //Start Word and create a new document.
             _Application oWord = new Application { Visible = true };
             _Document oDoc = oWord.Documents.Add();
@@ -257,8 +257,8 @@ namespace UchOtd.Core
                             {
                                 cellText += primaryDisciplineName;
                             }
-                            
-                            
+
+
                             // N + Group modifiers
                             var groupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
                             if (plainGroupsListIds.ContainsKey(group.Key))
@@ -724,7 +724,7 @@ namespace UchOtd.Core
 
             if (facultyFilter != -1)
             {
-                facultiesList = new List<Faculty> {repo.Faculties.GetFaculty(facultyFilter)};
+                facultiesList = new List<Faculty> { repo.Faculties.GetFaculty(facultyFilter) };
             }
 
 
@@ -1065,8 +1065,8 @@ namespace UchOtd.Core
 
         public static void ExportCustomSchedule(
             // facultyId, List of DOW
-            Dictionary<int, List<int>> facultyDow, ScheduleRepository repo, string filename, bool save, bool quit, 
-            int lessonLength, int daysOfWeek, bool schoolHeader, bool onlyFutureDates, 
+            Dictionary<int, List<int>> facultyDow, ScheduleRepository repo, string filename, bool save, bool quit,
+            int lessonLength, int daysOfWeek, bool schoolHeader, bool onlyFutureDates,
             bool weekFiltered, int weekFilter, CancellationToken cToken)
         {
             object oMissing = Missing.Value;
@@ -1434,7 +1434,7 @@ namespace UchOtd.Core
                         signTable.Cell(2, 2).Range.Text = "_________________  " + faculty.DeanSigningSchedule;
                         signTable.Cell(2, 2).Range.ParagraphFormat.Alignment =
                             WdParagraphAlignment.wdAlignParagraphRight;
-                        
+
                         /*
                         oPara3 = oDoc.Content.Paragraphs.Add(ref oMissing);
                         oPara3.Range.Text = "Начальник учебного отдела\t\t" + "_________________  " + headUchOtdName;
@@ -1501,7 +1501,7 @@ namespace UchOtd.Core
 
             Marshal.ReleaseComObject(oWord);
         }
-        
+
         private static string DetectSemesterString(ScheduleRepository repo)
         {
             var semesterSterts = repo.CommonFunctions.GetSemesterStarts();
@@ -1887,8 +1887,8 @@ namespace UchOtd.Core
             return emptyColumn;
         }
 
-        public static void AuditoriumsExport(ScheduleRepository repo, 
-            Dictionary<int, Dictionary<int, List<string>>> auds, 
+        public static void AuditoriumsExport(ScheduleRepository repo,
+            Dictionary<int, Dictionary<int, List<string>>> auds,
             int dow, bool addTeacherFio, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
@@ -2226,7 +2226,7 @@ namespace UchOtd.Core
                                 var tmp = groupDowTimeLessons[0];
                                 groupDowTimeLessons[0] = groupDowTimeLessons[1];
                                 groupDowTimeLessons[1] = tmp;
-                                
+
                                 cellOrientation = Orientation.Horizontal;
                             }
                         }
@@ -2280,7 +2280,7 @@ namespace UchOtd.Core
                             for (int i = 0; i < @group.Value[time].Count + additionalColumn - 1; i++)
                             {
                                 timeTable.Cell(i + 1, 1).Borders[
-                                    (cellOrientation == Orientation.Vertical)?
+                                    (cellOrientation == Orientation.Vertical) ?
                                         WdBorderType.wdBorderBottom :
                                         WdBorderType.wdBorderRight
                                     ].Visible = true;
@@ -2294,10 +2294,10 @@ namespace UchOtd.Core
 
                         var tfdIndex = 0;
 
-                        
+
                         if (groupDowTimeLessons.Count == 2)
                         {
-                            if (((groupDowTimeLessons[0].Value != null) && (groupDowTimeLessons[1].Value != null)) && 
+                            if (((groupDowTimeLessons[0].Value != null) && (groupDowTimeLessons[1].Value != null)) &&
                                 (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.") &&
                                 groupDowTimeLessons[1].Value.Item1.Contains("(нечёт.")))
                             {
@@ -2310,7 +2310,7 @@ namespace UchOtd.Core
                         if (
                             ((@group.Value[time].Count == 2) &&
                             ((groupDowTimeLessons[0].Value != null) && (groupDowTimeLessons[1].Value != null)) &&
-                            ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && 
+                            ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) &&
                             (groupDowTimeLessons[1].Value.Item1.Contains("чёт."))))
                             || ((@group.Value[time].Count == 1) &&
                             (groupDowTimeLessons[0].Value != null) &&
@@ -2566,7 +2566,7 @@ namespace UchOtd.Core
                                 repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min())
                             .ToList();
                         var tfdIndex = 0;
-                        
+
                         if (groupDowTimeLessons.Count() == 2)
                         {
                             if (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.") &&
@@ -2594,7 +2594,7 @@ namespace UchOtd.Core
 
                         if (groupDowTimeLessons.Count() == 2)
                         {
-                            if (((subGroupOne != null) && (subGroupTwo != null)) && 
+                            if (((subGroupOne != null) && (subGroupTwo != null)) &&
                                 ((groupDowTimeLessons[0].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId) &&
                                  (groupDowTimeLessons[1].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId)))
                             {
@@ -2619,7 +2619,7 @@ namespace UchOtd.Core
                         if ((groupDowTimeLessons.Count() == 1) &&
                             (subGroupTwo != null) &&
                             (groupDowTimeLessons[0].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId))
-                       {
+                        {
                             addSubGroupColumn = 1;
 
                             var emptytfd = new KeyValuePair<int, Tuple<string, List<Tuple<Lesson, int>>, string>>(-1, null);
@@ -2632,7 +2632,7 @@ namespace UchOtd.Core
 
                         var timeTable = oDoc.Tables.Add(oTable.Cell(timeRowIndex, columnGroupIndex).Range, 1, @group.Value[time].Count + addSubGroupColumn);
 
-                        if (!((groupDowTimeLessons.Count == 2) && 
+                        if (!((groupDowTimeLessons.Count == 2) &&
                             (((groupDowTimeLessons[0].Value != null) && (groupDowTimeLessons[1].Value != null)) &&
                              ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт."))))))
                         {
@@ -2647,7 +2647,7 @@ namespace UchOtd.Core
                         timeTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
                         timeTable.Range.Font.Size = 10;
                         timeTable.Range.Font.Bold = 0;
-                       
+
 
                         foreach (var tfdData in groupDowTimeLessons)
                         {
@@ -2742,7 +2742,7 @@ namespace UchOtd.Core
                             timeTable.Cell(1, tfdIndex + 1).Range.Text = cellText;
                             timeTable.Cell(1, tfdIndex + 1).Range.ParagraphFormat.Alignment =
                                 WdParagraphAlignment.wdAlignParagraphCenter;
-                            
+
                             /*
                              * FIO in one line
                             var lineSpacing = timeTable.Cell(1, tfdIndex + 1).Range.ParagraphFormat.LineSpacing;
@@ -2815,10 +2815,10 @@ namespace UchOtd.Core
             {
                 return fio;
             }
-            
-            return ommitInitials?
+
+            return ommitInitials ?
                  fioParts[0]
-                :fioParts[0] + " " + fioParts[1].Substring(0, 1) + "." + fioParts[2].Substring(0, 1) + ".";
+                : fioParts[0] + " " + fioParts[1].Substring(0, 1) + "." + fioParts[2].Substring(0, 1) + ".";
         }
 
         public static void ExportWholeScheduleOneGroupPerPage(ScheduleRepository repo, MainEditForm form, CancellationToken cToken)
@@ -3303,8 +3303,8 @@ namespace UchOtd.Core
 
                 if (teacherFIO1 == teacherFIO2)
                 {
-                    return tfd1.Discipline.StudentGroup.Name == tfd2.Discipline.StudentGroup.Name ? 
-                        String.CompareOrdinal(tfd1.Discipline.Name, tfd2.Discipline.Name) : 
+                    return tfd1.Discipline.StudentGroup.Name == tfd2.Discipline.StudentGroup.Name ?
+                        String.CompareOrdinal(tfd1.Discipline.Name, tfd2.Discipline.Name) :
                         String.CompareOrdinal(tfd1.Discipline.StudentGroup.Name, tfd2.Discipline.StudentGroup.Name);
                 }
 
@@ -3313,7 +3313,7 @@ namespace UchOtd.Core
 
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
-            
+
             //Start Word and create a new document.
             _Application oWord = new Application { Visible = true };
             _Document oDoc = oWord.Documents.Add();
@@ -3339,10 +3339,10 @@ namespace UchOtd.Core
                 }
 
                 Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
-                oPara1.Range.Text = teacherFIO + " " + 
+                oPara1.Range.Text = teacherFIO + " " +
                     discs[i].Name + " " +
-                    discs[i].PracticalHours.ToString() + " " + 
-                    ((Constants.Attestation.ContainsKey(discs[i].Attestation)) ? Constants.Attestation[discs[i].Attestation] : "") + " " + 
+                    discs[i].PracticalHours.ToString() + " " +
+                    ((Constants.Attestation.ContainsKey(discs[i].Attestation)) ? Constants.Attestation[discs[i].Attestation] : "") + " " +
                     discs[i].StudentGroup.Name;
                 oPara1.Range.Font.Bold = 0;
                 oPara1.Range.Font.Size = 10;
@@ -3402,7 +3402,7 @@ namespace UchOtd.Core
                     }
 
                     pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
-                } while (pageCount > ((i + 1)*2 - 1));
+                } while (pageCount > ((i + 1) * 2 - 1));
 
                 var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
                 endOfDoc.Font.Size = 1;
@@ -3456,7 +3456,7 @@ namespace UchOtd.Core
                     oTable.Cell(j + 1, 2).Range.Text = student.F + " " + student.I + " " + student.O;
                     oTable.Cell(j + 1, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
                 }
-                
+
 
                 endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
                 endOfDoc.Font.Size = 1;
@@ -3468,6 +3468,154 @@ namespace UchOtd.Core
 
             Marshal.ReleaseComObject(oWord);
 
+        }
+
+        public static void ExportTypeSequenceInfoByFaculty(ScheduleRepository repo)
+        {
+            var faculties = repo.Faculties.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
+
+            object oMissing = Missing.Value;
+            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+            //Start Word and create a new document.
+            _Application oWord = new Application { Visible = true };
+            _Document oDoc = oWord.Documents.Add();
+
+            oDoc.PageSetup.Orientation = WdOrientation.wdOrientPortrait;
+            oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
+
+            for (int i = 0; i < faculties.Count; i++)
+            {
+                var faculty = faculties[i];
+
+                AddPara(oDoc, faculty.Name, 14);
+
+                var facultyGroups =
+                    repo.GroupsInFaculties
+                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                    .Select(gif => gif.StudentGroup)
+                    .ToList();
+
+                for (int j = 0; j < facultyGroups.Count; j++)
+                {
+                    var studentGroup = facultyGroups[j];
+                    
+                    AddPara(oDoc, studentGroup.Name);
+
+                    var studentIds = repo
+                        .StudentsInGroups
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId && !sig.Student.Expelled)
+                        .ToList()
+                        .Select(stig => stig.Student.StudentId);
+
+                    var groupsListIds = repo
+                        .StudentsInGroups
+                        .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                        .ToList()
+                        .Select(stig => stig.StudentGroup.StudentGroupId)
+                        .Distinct()
+                        .ToList();
+
+                    var groupDisciplines =
+                        repo.Disciplines.GetFiltredDisciplines(
+                            d => groupsListIds.Contains(d.StudentGroup.StudentGroupId)).ToList();
+
+
+                    Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                    Table oTable = oDoc.Tables.Add(wrdRng, groupDisciplines.Count+1, 2);
+                    oTable.Borders.Enable = 1;
+                    oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+                    oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                    oTable.Range.Font.Size = 14;
+                    oTable.Range.Font.Bold = 0;
+
+                    oTable.Cell(1, 1).Range.Text = "Дисциплина";
+                    oTable.Cell(1, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    oTable.Cell(1, 2).Range.Text = "Последовательность занятий";
+                    oTable.Cell(1, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    for (int k = 0; k < groupDisciplines.Count; k++)
+                    {
+                        var discipline = groupDisciplines[k];
+
+                        oTable.Cell(k + 2, 1).Range.Text = discipline.Name;
+                        oTable.Cell(k + 2, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
+                        var sequence = (discipline.AuditoriumHours != 0 && string.IsNullOrEmpty(discipline.TypeSequence))
+                            ? "Нет данных"
+                            : discipline.TypeSequence;
+
+                        oTable.Cell(k + 2, 2).Range.Text = sequence;
+                        oTable.Cell(k + 2, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                    }
+                }
+
+                AddPara(oDoc, "", 1);
+
+                Range wordRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+
+                Table legendTable = oDoc.Tables.Add(wordRng, 1 + Constants.LessonTypeLongAbbreviation.Count, 2);
+                legendTable.Borders.Enable = 1;
+                
+                legendTable.Cell(1, 1).Range.Text = "Код";
+                legendTable.Cell(1, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
+                legendTable.Cell(1, 2).Range.Text = "Вид занятия";
+                legendTable.Cell(1, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
+                var lineNumber = 2;
+                foreach (var kvp in Constants.LessonTypeLongAbbreviation.OrderBy(p => p.Key))
+                {
+                    legendTable.Cell(lineNumber, 1).Range.Text = kvp.Key.ToString();
+                    legendTable.Cell(lineNumber, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
+                    legendTable.Cell(lineNumber, 2).Range.Text = kvp.Value;
+                    legendTable.Cell(lineNumber, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
+                    lineNumber++;
+                }
+
+                AddPara(oDoc, "", 1);
+
+                var wordRng2 = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+
+                Table signTable = oDoc.Tables.Add(wordRng2, 1, 2);
+                signTable.Borders.Enable = 0;
+                signTable.Range.Bold = 0;
+
+                
+                signTable.Cell(1, 1).Range.Text = faculty.ScheduleSigningTitle;
+                signTable.Cell(1, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
+                signTable.Cell(1, 2).Range.Text = "_________________  " + faculty.DeanSigningSchedule;
+                signTable.Cell(1, 2).Range.ParagraphFormat.Alignment =
+                    WdParagraphAlignment.wdAlignParagraphRight;
+
+                var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                endOfDoc.Font.Size = 1;
+                endOfDoc.InsertBreak(WdBreakType.wdSectionBreakNextPage);
+            }
+
+            oDoc.Undo();
+
+            Marshal.ReleaseComObject(oWord);
+        }
+
+        private static void AddPara(_Document oDoc, string text, int size = 10, int bold = 0, WdLineSpacing spacing = WdLineSpacing.wdLineSpaceSingle, WdParagraphAlignment alignment = WdParagraphAlignment.wdAlignParagraphCenter)
+        {
+            Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
+            oPara1.Range.Text = text;
+            oPara1.Range.Font.Bold = 0;
+            oPara1.Range.Font.Size = 10;
+            oPara1.Range.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+            oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oPara1.SpaceAfter = 0;
+            oPara1.Range.InsertParagraphAfter();
         }
     }
 }

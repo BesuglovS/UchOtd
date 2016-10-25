@@ -30,7 +30,7 @@ namespace UchOtd
 
         public static List<string> serverList = School ?
             new List<string> { @"127.0.0.1\SQLEXPRESS" } :
-            new List<string> { @"UCH-OTD-DISP\SQLEXPRESS", /*@"127.0.0.1\SQLEXPRESS"*/ };
+            new List<string> { @"UCH-OTD-DISP\SQLEXPRESS", @"127.0.0.1\SQLEXPRESS" };
 
         public static string CurrentServerName = "";
         //public static string DefaultDbName = "School";
@@ -196,7 +196,8 @@ namespace UchOtd
 
         private void BackupDb(string dbName, string filename)
         {
-            var sqlConnection1 = new SqlConnection("data source=tcp:" + CurrentServerName + ",1433;Database=" + dbName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
+            // Integrated Security=SSPI;
+            var sqlConnection1 = new SqlConnection("data source=tcp:" + CurrentServerName + ",1433;Database=" + dbName + "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True");
             var cmd = new SqlCommand
             {
                 CommandText =
@@ -239,8 +240,8 @@ namespace UchOtd
             //Repo = new ScheduleRepository("data source=tcp:" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
             //UOrepo = new UchOtdRepository("data source=tcp:" + CurrentServerName + ",1433;Database=UchOtd; Integrated Security=SSPI;multipleactiveresultsets=True");
 
-            Repo = new ScheduleRepository("Server=" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; Integrated Security=SSPI; multipleactiveresultsets=True");
-            UOrepo = new UchOtdRepository("Server=" + CurrentServerName + ",1433;Database=UchOtd; Integrated Security=SSPI; multipleactiveresultsets=True");
+            Repo = new ScheduleRepository("Server=" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True");
+            UOrepo = new UchOtdRepository("Server=" + CurrentServerName + ",1433;Database=UchOtd; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True");
 
             if (School)
             {

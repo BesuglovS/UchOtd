@@ -16,6 +16,16 @@ namespace Schedule.Constants
             { 5, "И" }, // Индивидуальные занятия
         };
 
+        public static Dictionary<int, string> LessonTypeLongAbbreviation = new Dictionary<int, string>()
+        {
+            { 0, "*" }, // Нет данных
+            { 1, "Лекция" }, // Лекция
+            { 2, "Практика" }, // Практика
+            { 3, "Лекция/Практика" }, // Лекция / Практика
+            { 4, "Практика/Лекция" }, // Практика / Лекция
+            { 5, "Индивидуальные занятия" }, // Индивидуальные занятия
+        };
+
         public static DateTime DefaultEmptyDateForEvent = new DateTime(2020, 1, 1);
 
         public static Dictionary<int, int> DowRemap = new Dictionary<int, int> 
@@ -73,9 +83,9 @@ namespace Schedule.Constants
 
         public static List<String> SitesUploadEndPoints = new List<string>
         {
-            "http://localhost/schedule/public/api/",
             "http://wiki.nayanova.edu/_php/includes/",
-            "http://besuglovs.ru/wnu/_php/includes/"
+            "http://besuglovs.ru/wnu/_php/includes/",
+            "http://localhost/schedule/public/api/",
         };
 
         public static int schoolEndPointIndex = 0;
