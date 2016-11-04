@@ -25,7 +25,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>80</ApplicationRevision>
+    <ApplicationRevision>81</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -422,6 +422,12 @@
     <Compile Include="Schedule\Forms\Analysis\Wishes.Designer.cs">
       <DependentUpon>Wishes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Schedule\Forms\TfdByMonth.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\TfdByMonth.Designer.cs">
+      <DependentUpon>TfdByMonth.cs</DependentUpon>
+    </Compile>
     <Compile Include="Schedule\Forms\WordExportForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -460,6 +466,7 @@
     <Compile Include="Schedule\Views\RingWeekView.cs" />
     <Compile Include="Schedule\Views\GroupBuildingAuditoriumView.cs" />
     <Compile Include="Schedule\Views\TeacherForDisciplineView.cs" />
+    <Compile Include="Schedule\Views\TfdItemByMonth.cs" />
     <Compile Include="Schedule\Views\tfdView.cs" />
     <Compile Include="Schedule\Views\ZachDate.cs" />
     <Compile Include="Schedule\wnu\MySQLViews\MySQLAuditorium.cs" />
@@ -627,6 +634,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\Analysis\Wishes.resx">
       <DependentUpon>Wishes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\TfdByMonth.resx">
+      <DependentUpon>TfdByMonth.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\WordExportForm.resx">
       <DependentUpon>WordExportForm.cs</DependentUpon>

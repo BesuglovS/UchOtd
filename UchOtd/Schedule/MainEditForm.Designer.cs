@@ -104,6 +104,7 @@ namespace UchOtd.Schedule
             this.сменыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.teachersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.датыЗачётовToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.экспортВWordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.датыПоФизическойКультуреToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.последовательностьТиповЗанятийЛППоФакультетамToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -117,7 +118,7 @@ namespace UchOtd.Schedule
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.датыЗачётовToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.датыЗанятийПоМесяцамToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -724,7 +725,8 @@ namespace UchOtd.Schedule
             this.сменыToolStripMenuItem,
             this.toolStripMenuItem2,
             this.teachersToolStripMenuItem,
-            this.датыЗачётовToolStripMenuItem});
+            this.датыЗачётовToolStripMenuItem,
+            this.датыЗанятийПоМесяцамToolStripMenuItem});
             this.анализToolStripMenuItem.Name = "анализToolStripMenuItem";
             this.анализToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
             this.анализToolStripMenuItem.Text = "Анализ";
@@ -810,6 +812,13 @@ namespace UchOtd.Schedule
             this.teachersToolStripMenuItem.Size = new System.Drawing.Size(416, 22);
             this.teachersToolStripMenuItem.Text = "Преподаватели, которым необходимо дополнить расписание";
             this.teachersToolStripMenuItem.Click += new System.EventHandler(this.teachersToolStripMenuItem_Click);
+            // 
+            // датыЗачётовToolStripMenuItem
+            // 
+            this.датыЗачётовToolStripMenuItem.Name = "датыЗачётовToolStripMenuItem";
+            this.датыЗачётовToolStripMenuItem.Size = new System.Drawing.Size(416, 22);
+            this.датыЗачётовToolStripMenuItem.Text = "Даты зачётов";
+            this.датыЗачётовToolStripMenuItem.Click += new System.EventHandler(this.датыЗачётовToolStripMenuItem_Click);
             // 
             // экспортВWordToolStripMenuItem
             // 
@@ -921,12 +930,12 @@ namespace UchOtd.Schedule
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // датыЗачётовToolStripMenuItem
+            // датыЗанятийПоМесяцамToolStripMenuItem
             // 
-            this.датыЗачётовToolStripMenuItem.Name = "датыЗачётовToolStripMenuItem";
-            this.датыЗачётовToolStripMenuItem.Size = new System.Drawing.Size(416, 22);
-            this.датыЗачётовToolStripMenuItem.Text = "Даты зачётов";
-            this.датыЗачётовToolStripMenuItem.Click += new System.EventHandler(this.датыЗачётовToolStripMenuItem_Click);
+            this.датыЗанятийПоМесяцамToolStripMenuItem.Name = "датыЗанятийПоМесяцамToolStripMenuItem";
+            this.датыЗанятийПоМесяцамToolStripMenuItem.Size = new System.Drawing.Size(416, 22);
+            this.датыЗанятийПоМесяцамToolStripMenuItem.Text = "Даты занятий по месяцам";
+            this.датыЗанятийПоМесяцамToolStripMenuItem.Click += new System.EventHandler(this.датыЗанятийПоМесяцамToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -1043,6 +1052,7 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem экспортСпискаПреподавателейНа308ToolStripMenuItem;
         private ToolStripMenuItem последовательностьТиповЗанятийЛППоФакультетамToolStripMenuItem;
         private ToolStripMenuItem датыЗачётовToolStripMenuItem;
+        private ToolStripMenuItem датыЗанятийПоМесяцамToolStripMenuItem;
     }
 }
 

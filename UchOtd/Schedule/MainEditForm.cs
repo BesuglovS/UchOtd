@@ -2710,5 +2710,11 @@ namespace UchOtd.Schedule
             var zdForm = new ZachDates(Repo);
             zdForm.Show();
         }
+
+        private void датыЗанятийПоМесяцамToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var byMonth = new TfdByMonth(Repo);
+            byMonth.Show();
+        }
     }
 }
