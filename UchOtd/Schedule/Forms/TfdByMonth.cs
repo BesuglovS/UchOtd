@@ -35,6 +35,23 @@ namespace UchOtd.Schedule.Forms
             RefreshView();
         }
 
+        private List<int> StudentGroupIdsFromGroupId(int groupId)
+        {
+            var studentIds = _repo
+                .StudentsInGroups
+                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
+                .Select(stig => stig.Student.StudentId)
+                .ToList();
+
+            var groupsListIds = _repo
+                .StudentsInGroups
+                .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                .Select(stig => stig.StudentGroup.StudentGroupId)
+                .Distinct()
+                .ToList();
+            return groupsListIds;
+        }
+
         private async void RefreshView()
         {
             List<TfdItemByMonth> resultView = null;
@@ -50,6 +67,8 @@ namespace UchOtd.Schedule.Forms
                 var DiscNameFilter = DisciplineNameFilter.Text;
                 var filteredByTeacherFIO = this.filteredByTeacherFIO.Checked;
                 var TeacherFioFilter = (int)TeacherFIOFilter.SelectedValue;
+                var filteredByGroup = FilteredByStudentGroup.Checked;
+                var GroupFilter = (int)StudentGroupFilter.SelectedValue;
                 
                 try
                 {
@@ -67,6 +86,13 @@ namespace UchOtd.Schedule.Forms
                             tfdList = tfdList.Where(tfd => tfd.Teacher.TeacherId == TeacherFioFilter).ToList();
                         }
 
+                        if (filteredByGroup && (GroupFilter != -1))
+                        {
+                            var groups = StudentGroupIdsFromGroupId(GroupFilter);
+
+                            tfdList = tfdList.Where(tfd => groups.Contains(tfd.Discipline.StudentGroup.StudentGroupId)).ToList();
+                        }
+
                         var result = new List<TfdItemByMonth>();
 
                         _pristineMonth = new bool[13] { false, true, true, true, true, true, true, true, true, true, true, true, true };
@@ -74,9 +100,12 @@ namespace UchOtd.Schedule.Forms
                         for (int i = 0; i < tfdList.Count; i++)
                         {
                             var tfdId = tfdList[i].TeacherForDisciplineId;
-                            var resultItem = new TfdItemByMonth();
-                            resultItem.DisciplineName = tfdList[i].Discipline.Name;
-                            
+                            var resultItem = new TfdItemByMonth
+                            {
+                                TfdId = tfdList[i].TeacherForDisciplineId,
+                                DisciplineName = tfdList[i].Discipline.Name
+                            };
+
                             var lessons =
                                 _repo.Lessons.GetFiltredLessons(
                                     l => l.TeacherForDiscipline.TeacherForDisciplineId == tfdId && l.State == 1)
@@ -190,6 +219,7 @@ namespace UchOtd.Schedule.Forms
             ByMonthView.Columns["NovHours"].HeaderText = Constants.RuMonthNames[11];
             ByMonthView.Columns["DecHours"].HeaderText = Constants.RuMonthNames[12];
 
+            ByMonthView.Columns["TfdId"].Visible = false;
             ByMonthView.Columns["JanHours"].Visible = !_pristineMonth[1];
             ByMonthView.Columns["FebHours"].Visible = !_pristineMonth[2];
             ByMonthView.Columns["MarHours"].Visible = !_pristineMonth[3];
@@ -236,15 +266,32 @@ namespace UchOtd.Schedule.Forms
             _tokenSource = new CancellationTokenSource();
 
             var teachersList = _repo.Teachers.GetAllTeachers().OrderBy(t => t.FIO).ToList();
-
             TeacherFIOFilter.ValueMember = "TeacherId";
             TeacherFIOFilter.DisplayMember = "FIO";
             TeacherFIOFilter.DataSource = teachersList;
+
+            var studentGroups = _repo.StudentGroups.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
+            StudentGroupFilter.ValueMember = "StudentGroupId";
+            StudentGroupFilter.DisplayMember = "Name";
+            StudentGroupFilter.DataSource = studentGroups;
         }
 
         private void TfdByMonth_ResizeEnd(object sender, EventArgs e)
         {
             FormatView();
+        }
+
+        private void ByMonthView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex == -1)
+            {
+                return;
+            }
+
+            var tfdId = ((List<TfdItemByMonth>)ByMonthView.DataSource)[e.RowIndex].TfdId;
+
+            var lessonsByTfd = new LessonListByTfd(_repo, tfdId);
+            lessonsByTfd.Show();
         }
     }
 }

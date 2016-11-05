@@ -36,6 +36,8 @@
             this.filteredByDisciplineName = new System.Windows.Forms.CheckBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.ByMonthView = new System.Windows.Forms.DataGridView();
+            this.StudentGroupFilter = new System.Windows.Forms.ComboBox();
+            this.FilteredByStudentGroup = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ByMonthView)).BeginInit();
@@ -43,6 +45,8 @@
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.StudentGroupFilter);
+            this.controlsPanel.Controls.Add(this.FilteredByStudentGroup);
             this.controlsPanel.Controls.Add(this.refresh);
             this.controlsPanel.Controls.Add(this.TeacherFIOFilter);
             this.controlsPanel.Controls.Add(this.filteredByTeacherFIO);
@@ -51,7 +55,7 @@
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(887, 85);
+            this.controlsPanel.Size = new System.Drawing.Size(887, 111);
             this.controlsPanel.TabIndex = 0;
             // 
             // refresh
@@ -103,9 +107,9 @@
             // 
             this.viewPanel.Controls.Add(this.ByMonthView);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 85);
+            this.viewPanel.Location = new System.Drawing.Point(0, 111);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(887, 521);
+            this.viewPanel.Size = new System.Drawing.Size(887, 495);
             this.viewPanel.TabIndex = 1;
             // 
             // ByMonthView
@@ -115,8 +119,27 @@
             this.ByMonthView.Location = new System.Drawing.Point(0, 0);
             this.ByMonthView.Name = "ByMonthView";
             this.ByMonthView.ReadOnly = true;
-            this.ByMonthView.Size = new System.Drawing.Size(887, 521);
+            this.ByMonthView.Size = new System.Drawing.Size(887, 495);
             this.ByMonthView.TabIndex = 0;
+            this.ByMonthView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ByMonthView_CellDoubleClick);
+            // 
+            // StudentGroupFilter
+            // 
+            this.StudentGroupFilter.FormattingEnabled = true;
+            this.StudentGroupFilter.Location = new System.Drawing.Point(152, 63);
+            this.StudentGroupFilter.Name = "StudentGroupFilter";
+            this.StudentGroupFilter.Size = new System.Drawing.Size(339, 21);
+            this.StudentGroupFilter.TabIndex = 6;
+            // 
+            // FilteredByStudentGroup
+            // 
+            this.FilteredByStudentGroup.AutoSize = true;
+            this.FilteredByStudentGroup.Location = new System.Drawing.Point(12, 65);
+            this.FilteredByStudentGroup.Name = "FilteredByStudentGroup";
+            this.FilteredByStudentGroup.Size = new System.Drawing.Size(61, 17);
+            this.FilteredByStudentGroup.TabIndex = 5;
+            this.FilteredByStudentGroup.Text = "Группа";
+            this.FilteredByStudentGroup.UseVisualStyleBackColor = true;
             // 
             // TfdByMonth
             // 
@@ -147,5 +170,7 @@
         private System.Windows.Forms.CheckBox filteredByDisciplineName;
         private System.Windows.Forms.Panel viewPanel;
         private System.Windows.Forms.DataGridView ByMonthView;
+        private System.Windows.Forms.ComboBox StudentGroupFilter;
+        private System.Windows.Forms.CheckBox FilteredByStudentGroup;
     }
 }

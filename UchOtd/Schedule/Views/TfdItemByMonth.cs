@@ -8,6 +8,7 @@ namespace UchOtd.Schedule.Views
 {
     public class TfdItemByMonth
     {
+        public int TfdId { get; set; }
         public string DisciplineName { get; set; }
         public int JanHours { get; set; }
         public int FebHours { get; set; }

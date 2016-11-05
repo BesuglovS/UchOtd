@@ -11,11 +11,15 @@ namespace UchOtd.Schedule.Forms
     {
         private readonly ScheduleRepository _repo;
 
-        public LessonListByTfd(ScheduleRepository repo)
+        public int StartId { get; set; }
+
+        public LessonListByTfd(ScheduleRepository repo, int startId = -1)
         {
             InitializeComponent();
 
             _repo = repo;
+
+            StartId = startId;
         }
 
         private void LessonListByTFD_Load(object sender, EventArgs e)
@@ -28,6 +32,11 @@ namespace UchOtd.Schedule.Forms
             tfdBox.DisplayMember = "TfdSummary";
             tfdBox.ValueMember = "TeacherForDisciplineId";
             tfdBox.DataSource = tfdViewList;
+
+            if ((StartId != -1) && (tfdList.Count(tfd => tfd.TeacherForDisciplineId == StartId) != 0))
+            {
+                tfdBox.SelectedValue = StartId;
+            }
         }
 
         private void tfdBox_SelectedIndexChanged(object sender, EventArgs e)
