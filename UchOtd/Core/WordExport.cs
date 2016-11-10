@@ -2256,15 +2256,13 @@ namespace UchOtd.Core
                                 WdCellVerticalAlignment.wdCellAlignVerticalCenter;
                             subgroupsTable.Cell(1, 1).Borders[WdBorderType.wdBorderRight].Visible = true;
 
-                            PutDowSchedulePutGroupOrSubGroupDowTimeItem(repo, oDoc, subgroupsTable.Cell(1, 1).Range,
-                                subgroupsTable, group1Items, true);
+                            PutDowSchedulePutGroupOrSubGroupDowTimeItem(repo, oDoc, subgroupsTable.Cell(1, 1), group1Items, true);
 
-                            PutDowSchedulePutGroupOrSubGroupDowTimeItem(repo, oDoc, subgroupsTable.Cell(1, 2).Range,
-                                subgroupsTable, group2Items, true);
+                            PutDowSchedulePutGroupOrSubGroupDowTimeItem(repo, oDoc, subgroupsTable.Cell(1, 2), group2Items, true);
                         }
                         else
                         {
-                            PutDowSchedulePutGroupOrSubGroupDowTimeItem(repo, oDoc, oTable.Cell(tableRowOffset + timeRowIndex, columnGroupIndex).Range, subgroupsTable, groupDowTimeLessons, false);
+                            PutDowSchedulePutGroupOrSubGroupDowTimeItem(repo, oDoc, oTable.Cell(tableRowOffset + timeRowIndex, columnGroupIndex), groupDowTimeLessons, false);
                         }
                     }
 
@@ -2277,10 +2275,9 @@ namespace UchOtd.Core
             return oTable;
         }
 
-        private static void PutDowSchedulePutGroupOrSubGroupDowTimeItem(ScheduleRepository repo, _Document oDoc, Range tableRange, Table subgroupsTable,
-            List<KeyValuePair<int, Tuple<string, List<Tuple<Lesson, int>>, string>>> groupDowTimeLessons, bool subgroups)
+        private static void PutDowSchedulePutGroupOrSubGroupDowTimeItem(ScheduleRepository repo, _Document oDoc, Cell tableCell, List<KeyValuePair<int, Tuple<string, List<Tuple<Lesson, int>>, string>>> groupDowTimeLessons, bool subgroups)
         {
-            Table timeTable = oDoc.Tables.Add(tableRange, 1, 1);
+            Table timeTable = oDoc.Tables.Add(tableCell.Range, 1, 1);
             for (int i = 0; i < groupDowTimeLessons.Count - 1; i++)
             {
                 timeTable.Rows.Add();
@@ -2301,7 +2298,7 @@ namespace UchOtd.Core
             timeTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
             timeTable.Range.Font.Size = 10;
             timeTable.Range.Font.Bold = 0;
-
+            
             if (groupDowTimeLessons.Count == 2)
             {
                 if (((groupDowTimeLessons[0].Value != null) && (groupDowTimeLessons[1].Value != null)) &&
@@ -2323,7 +2320,7 @@ namespace UchOtd.Core
                     (groupDowTimeLessons[0].Value != null) &&
                     (groupDowTimeLessons[0].Value.Item1.Contains("чёт."))))
             {
-                tableRange.Borders[WdBorderType.wdBorderDiagonalUp].LineStyle = WdLineStyle.wdLineStyleSingle;
+                tableCell.Range.Borders[WdBorderType.wdBorderDiagonalUp].LineStyle = WdLineStyle.wdLineStyleSingle;
             }
 
             for (int dowTimeIndex = 0; dowTimeIndex < groupDowTimeLessons.Count; dowTimeIndex++)
@@ -2423,10 +2420,17 @@ namespace UchOtd.Core
                 }
 
                 if ((groupDowTimeLessons.Count == 1) &&
+                    (groupDowTimeLessons[0].Value.Item1.Contains("(нечёт.")))
+                {
+                    tableCell.VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalTop;
+                }
+
+                    if ((groupDowTimeLessons.Count == 1) &&
                     (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.")))
                 {
                     timeTable.Cell(rowIndex, columnIndex).Range.ParagraphFormat.Alignment =
                         WdParagraphAlignment.wdAlignParagraphRight;
+                    tableCell.VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalBottom;
                 }
             }
         }
