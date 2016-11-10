@@ -105,6 +105,7 @@ namespace UchOtd.Schedule
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.teachersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.датыЗачётовToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.датыЗанятийПоМесяцамToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.экспортВWordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.датыПоФизическойКультуреToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.последовательностьТиповЗанятийЛППоФакультетамToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -114,11 +115,11 @@ namespace UchOtd.Schedule
             this.экспортДатЗачётовToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.экспортСпискаПреподавателейНа308ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.спискиПреподавателейПоКорпусамToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.датыЗанятийПоМесяцамToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -357,7 +358,7 @@ namespace UchOtd.Schedule
             this.WordSchool.Name = "WordSchool";
             this.WordSchool.Size = new System.Drawing.Size(93, 26);
             this.WordSchool.TabIndex = 50;
-            this.WordSchool.Text = "Word (ШКОЛА)";
+            this.WordSchool.Text = "Word (8-11)";
             this.WordSchool.UseVisualStyleBackColor = true;
             this.WordSchool.Click += new System.EventHandler(this.WordSchool_Click_1);
             // 
@@ -820,6 +821,13 @@ namespace UchOtd.Schedule
             this.датыЗачётовToolStripMenuItem.Text = "Даты зачётов";
             this.датыЗачётовToolStripMenuItem.Click += new System.EventHandler(this.датыЗачётовToolStripMenuItem_Click);
             // 
+            // датыЗанятийПоМесяцамToolStripMenuItem
+            // 
+            this.датыЗанятийПоМесяцамToolStripMenuItem.Name = "датыЗанятийПоМесяцамToolStripMenuItem";
+            this.датыЗанятийПоМесяцамToolStripMenuItem.Size = new System.Drawing.Size(416, 22);
+            this.датыЗанятийПоМесяцамToolStripMenuItem.Text = "Даты занятий по месяцам";
+            this.датыЗанятийПоМесяцамToolStripMenuItem.Click += new System.EventHandler(this.датыЗанятийПоМесяцамToolStripMenuItem_Click);
+            // 
             // экспортВWordToolStripMenuItem
             // 
             this.экспортВWordToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -850,7 +858,8 @@ namespace UchOtd.Schedule
             this.процентЗанятийПоДатамToolStripMenuItem,
             this.экспортДатЗачётовToolStripMenuItem,
             this.проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem,
-            this.экспортСпискаПреподавателейНа308ToolStripMenuItem});
+            this.экспортСпискаПреподавателейНа308ToolStripMenuItem,
+            this.спискиПреподавателейПоКорпусамToolStripMenuItem});
             this.bigRedButtonToolStripMenuItem.Name = "bigRedButtonToolStripMenuItem";
             this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
             this.bigRedButtonToolStripMenuItem.Text = "BIG RED BUTTON";
@@ -889,6 +898,13 @@ namespace UchOtd.Schedule
             this.экспортСпискаПреподавателейНа308ToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
             this.экспортСпискаПреподавателейНа308ToolStripMenuItem.Text = "Экспорт списка преподавателей на 308";
             this.экспортСпискаПреподавателейНа308ToolStripMenuItem.Click += new System.EventHandler(this.экспортСпискаПреподавателейНа308ToolStripMenuItem_Click);
+            // 
+            // спискиПреподавателейПоКорпусамToolStripMenuItem
+            // 
+            this.спискиПреподавателейПоКорпусамToolStripMenuItem.Name = "спискиПреподавателейПоКорпусамToolStripMenuItem";
+            this.спискиПреподавателейПоКорпусамToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.спискиПреподавателейПоКорпусамToolStripMenuItem.Text = "Списки преподавателей по корпусам";
+            this.спискиПреподавателейПоКорпусамToolStripMenuItem.Click += new System.EventHandler(this.спискиПреподавателейПоКорпусамToolStripMenuItem_Click);
             // 
             // viewPanel
             // 
@@ -929,13 +945,6 @@ namespace UchOtd.Schedule
             this.ScheduleView.Size = new System.Drawing.Size(971, 420);
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
-            // 
-            // датыЗанятийПоМесяцамToolStripMenuItem
-            // 
-            this.датыЗанятийПоМесяцамToolStripMenuItem.Name = "датыЗанятийПоМесяцамToolStripMenuItem";
-            this.датыЗанятийПоМесяцамToolStripMenuItem.Size = new System.Drawing.Size(416, 22);
-            this.датыЗанятийПоМесяцамToolStripMenuItem.Text = "Даты занятий по месяцам";
-            this.датыЗанятийПоМесяцамToolStripMenuItem.Click += new System.EventHandler(this.датыЗанятийПоМесяцамToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -1053,6 +1062,7 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem последовательностьТиповЗанятийЛППоФакультетамToolStripMenuItem;
         private ToolStripMenuItem датыЗачётовToolStripMenuItem;
         private ToolStripMenuItem датыЗанятийПоМесяцамToolStripMenuItem;
+        private ToolStripMenuItem спискиПреподавателейПоКорпусамToolStripMenuItem;
     }
 }
 
