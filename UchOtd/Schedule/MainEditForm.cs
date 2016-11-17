@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Constants;
-using Schedule.DomainClasses.Logs;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using Schedule.Repositories.Common;
@@ -173,7 +172,7 @@ namespace UchOtd.Schedule
                 var groupId = (int) groupList.SelectedValue;
                 var showProposed = showProposedLessons.Checked;
                 var isWeekFilered = weekFiltered.Checked;
-                int weekFilterNum = -1;
+                int weekFilterNum;
                 int.TryParse(WeekFilter.Text, out weekFilterNum);
                 var onlyFutureDates = OnlyFutureDatesExportInWord.Checked;
 
@@ -2777,34 +2776,29 @@ namespace UchOtd.Schedule
         {
             await Task.Run(() =>
             {
-                var dialog = new SaveFileDialog();
-                if (dialog.ShowDialog() == DialogResult.OK)
+                var filename = "308.txt";
+
+                var aud = Repo.Auditoriums.Find("Ауд. 308");
+
+                if (aud != null)
                 {
-                    var filename = dialog.FileName;
+                    var sw = new StreamWriter(filename);
 
+                    var teachersList = Repo
+                        .Lessons
+                        .GetAllActiveLessons()
+                        .Where(l => l.Auditorium.AuditoriumId == aud.AuditoriumId)
+                        .Select(l => l.TeacherForDiscipline.Teacher)
+                        .Distinct()
+                        .OrderBy(t => t.FIO)
+                        .ToList();
 
-                    var aud = Repo.Auditoriums.Find("Ауд. 308");
-
-                    if (aud != null)
+                    foreach (var teacher in teachersList)
                     {
-                        var sw = new StreamWriter(filename);
-
-                        var teachersList = Repo
-                            .Lessons
-                            .GetAllActiveLessons()
-                            .Where(l => l.Auditorium.AuditoriumId == aud.AuditoriumId)
-                            .Select(l => l.TeacherForDiscipline.Teacher)
-                            .Distinct()
-                            .OrderBy(t => t.FIO)
-                            .ToList();
-
-                        foreach (var teacher in teachersList)
-                        {
-                            sw.WriteLine(teacher.FIO);
-                        }
-
-                        sw.Close();
+                        sw.WriteLine(teacher.FIO);
                     }
+
+                    sw.Close();
                 }
             });
         }
