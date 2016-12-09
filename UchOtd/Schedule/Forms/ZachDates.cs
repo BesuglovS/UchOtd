@@ -33,6 +33,12 @@ namespace UchOtd.Schedule.Forms
             groupList.ValueMember = "StudentGroupId";
             groupList.DisplayMember = "Name";
             groupList.DataSource = groups;
+
+            var teachers = repo.Teachers.GetAllTeachers().OrderBy(t => t.FIO).ToList();
+
+            teachersList.ValueMember = "TeacherId";
+            teachersList.DisplayMember = "FIO";
+            teachersList.DataSource = teachers;
         }
 
         private List<int> StudentGroupIdsFromGroupId(int groupId)
@@ -74,6 +80,9 @@ namespace UchOtd.Schedule.Forms
                 var dateFilter = dateFiltered.Checked;
                 var dateValue = filterDate.Value;
 
+                var teacherFilter = teacherFiltered.Checked;
+                var teacherId = (int)teachersList.SelectedValue;
+
                 try
                 {
                     var datesView = await Task.Run(() =>
@@ -89,6 +98,15 @@ namespace UchOtd.Schedule.Forms
                         {
                             disciplines =
                                 disciplines.Where(d => groupIds.Contains(d.StudentGroup.StudentGroupId)).ToList();
+                        }
+
+                        if (teacherFilter)
+                        {
+                            disciplines = (from d in disciplines let 
+                                           dTfd = repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == d.DisciplineId)
+                                           where dTfd != null && dTfd.Teacher.TeacherId == teacherId
+                                           select d)
+                                           .ToList();
                         }
 
                         var result = new List<ZachDate>();

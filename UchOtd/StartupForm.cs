@@ -528,22 +528,22 @@ namespace UchOtd
             ShowBuildingForm();
         }
 
-        private void заметкиToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ЗаметкиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowNotesForm();
         }
 
-        private void телефоныToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ТелефоныToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowPhonesForm();
         }
 
-        private void контингентToolStripMenuItem_Click(object sender, EventArgs e)
+        private void КонтингентToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowStudentListForm();
         }
 
-        private void openDBToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenDBToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var openDbForm = new OpenDb(this);
             openDbForm.Show();
@@ -556,7 +556,7 @@ namespace UchOtd
             ShowEditScheduleForm();
         }
 
-        private void списокПарПоДисциплинеAltLToolStripMenuItem_Click(object sender, EventArgs e)
+        private void СписокПарПоДисциплинеAltLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowLessonListByTfd();
         }
@@ -577,7 +577,7 @@ namespace UchOtd
             
         }
 
-        private void часыПоПреподавателюAltShiftTToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ЧасыПоПреподавателюAltShiftTToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowTeacherLessons();
         }
@@ -597,7 +597,7 @@ namespace UchOtd
             _teacherLessonsFormOpened = false;            
         }
 
-        private void списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void СписокПарПоПреподавателюCtrlShiftTToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             ShowTeacherHours();
         }
@@ -617,12 +617,12 @@ namespace UchOtd
             _teacherHoursFormOpened = false;
         }
 
-        private void расписаниеНаДеньToolStripMenuItem_Click(object sender, EventArgs e)
+        private void РасписаниеНаДеньToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowDailyLessons();
         }
 
-        private void расписаниеСессииToolStripMenuItem_Click(object sender, EventArgs e)
+        private void РасписаниеСессииToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowSession();
         }
@@ -642,7 +642,7 @@ namespace UchOtd
             _sessionFormOpened = false;
         }
 
-        private void uploadTimer_Tick(object sender, EventArgs e)
+        private void UploadTimer_Tick(object sender, EventArgs e)
         {
             var tokenSource = new CancellationTokenSource();
             var cToken = tokenSource.Token;

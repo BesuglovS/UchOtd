@@ -53,6 +53,8 @@ namespace UchOtd.Forms.Session
                 .Select(e => e.DisciplineId)
                 .ToList();
 
+            discIds = discIds.Where(discId => _repo.Disciplines.GetDiscipline(discId) != null).ToList();
+
             var teachersList = (
                     from discId in discIds
                     select _repo.Disciplines.GetDiscipline(discId)

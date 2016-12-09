@@ -90,7 +90,7 @@ namespace UchOtd
             this.контингентToolStripMenuItem.Name = "контингентToolStripMenuItem";
             this.контингентToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.контингентToolStripMenuItem.Text = "Контингент (Alt+S)";
-            this.контингентToolStripMenuItem.Click += new System.EventHandler(this.контингентToolStripMenuItem_Click);
+            this.контингентToolStripMenuItem.Click += new System.EventHandler(this.КонтингентToolStripMenuItem_Click);
             // 
             // заметкиToolStripMenuItem
             // 
@@ -98,7 +98,7 @@ namespace UchOtd
             this.заметкиToolStripMenuItem.Name = "заметкиToolStripMenuItem";
             this.заметкиToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.заметкиToolStripMenuItem.Text = "Заметки (Alt+N)";
-            this.заметкиToolStripMenuItem.Click += new System.EventHandler(this.заметкиToolStripMenuItem_Click);
+            this.заметкиToolStripMenuItem.Click += new System.EventHandler(this.ЗаметкиToolStripMenuItem_Click);
             // 
             // телефоныToolStripMenuItem
             // 
@@ -106,7 +106,7 @@ namespace UchOtd
             this.телефоныToolStripMenuItem.Name = "телефоныToolStripMenuItem";
             this.телефоныToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.телефоныToolStripMenuItem.Text = "Телефоны (Alt+P)";
-            this.телефоныToolStripMenuItem.Click += new System.EventHandler(this.телефоныToolStripMenuItem_Click);
+            this.телефоныToolStripMenuItem.Click += new System.EventHandler(this.ТелефоныToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
@@ -132,7 +132,7 @@ namespace UchOtd
             this.расписаниеСессииToolStripMenuItem.Name = "расписаниеСессииToolStripMenuItem";
             this.расписаниеСессииToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.расписаниеСессииToolStripMenuItem.Text = "Расписание сессии (Ctrl+Alt+S)";
-            this.расписаниеСессииToolStripMenuItem.Click += new System.EventHandler(this.расписаниеСессииToolStripMenuItem_Click);
+            this.расписаниеСессииToolStripMenuItem.Click += new System.EventHandler(this.РасписаниеСессииToolStripMenuItem_Click);
             // 
             // toolStripMenuItem5
             // 
@@ -153,7 +153,7 @@ namespace UchOtd
             this.расписаниеНаДеньToolStripMenuItem.Name = "расписаниеНаДеньToolStripMenuItem";
             this.расписаниеНаДеньToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.расписаниеНаДеньToolStripMenuItem.Text = "Расписание на день";
-            this.расписаниеНаДеньToolStripMenuItem.Click += new System.EventHandler(this.расписаниеНаДеньToolStripMenuItem_Click);
+            this.расписаниеНаДеньToolStripMenuItem.Click += new System.EventHandler(this.РасписаниеНаДеньToolStripMenuItem_Click);
             // 
             // расписаниеПреподавателяToolStripMenuItem
             // 
@@ -180,7 +180,7 @@ namespace UchOtd
             this.списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1.Name = "списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1";
             this.списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1.Size = new System.Drawing.Size(296, 22);
             this.списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1.Text = "Часы преподавателя (Ctrl+Shift+T)";
-            this.списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1.Click += new System.EventHandler(this.списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1_Click);
+            this.списокПарПоПреподавателюCtrlShiftTToolStripMenuItem1.Click += new System.EventHandler(this.СписокПарПоПреподавателюCtrlShiftTToolStripMenuItem1_Click);
             // 
             // часыПоПреподавателюAltShiftTToolStripMenuItem
             // 
@@ -188,7 +188,7 @@ namespace UchOtd
             this.часыПоПреподавателюAltShiftTToolStripMenuItem.Name = "часыПоПреподавателюAltShiftTToolStripMenuItem";
             this.часыПоПреподавателюAltShiftTToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
             this.часыПоПреподавателюAltShiftTToolStripMenuItem.Text = "Список пар преподавателя (Alt+Shift+T)";
-            this.часыПоПреподавателюAltShiftTToolStripMenuItem.Click += new System.EventHandler(this.часыПоПреподавателюAltShiftTToolStripMenuItem_Click);
+            this.часыПоПреподавателюAltShiftTToolStripMenuItem.Click += new System.EventHandler(this.ЧасыПоПреподавателюAltShiftTToolStripMenuItem_Click);
             // 
             // списокПарПоДисциплинеAltLToolStripMenuItem
             // 
@@ -196,7 +196,7 @@ namespace UchOtd
             this.списокПарПоДисциплинеAltLToolStripMenuItem.Name = "списокПарПоДисциплинеAltLToolStripMenuItem";
             this.списокПарПоДисциплинеAltLToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.списокПарПоДисциплинеAltLToolStripMenuItem.Text = "Список пар по дисциплине (Alt+L)";
-            this.списокПарПоДисциплинеAltLToolStripMenuItem.Click += new System.EventHandler(this.списокПарПоДисциплинеAltLToolStripMenuItem_Click);
+            this.списокПарПоДисциплинеAltLToolStripMenuItem.Click += new System.EventHandler(this.СписокПарПоДисциплинеAltLToolStripMenuItem_Click);
             // 
             // занятостьАудиторийAltAToolStripMenuItem
             // 
@@ -225,7 +225,7 @@ namespace UchOtd
             this.openDBToolStripMenuItem.Name = "openDBToolStripMenuItem";
             this.openDBToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.openDBToolStripMenuItem.Text = "Сменить базу данных";
-            this.openDBToolStripMenuItem.Click += new System.EventHandler(this.openDBToolStripMenuItem_Click);
+            this.openDBToolStripMenuItem.Click += new System.EventHandler(this.OpenDBToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -249,7 +249,7 @@ namespace UchOtd
             // uploadTimer
             // 
             this.uploadTimer.Interval = 1800000;
-            this.uploadTimer.Tick += new System.EventHandler(this.uploadTimer_Tick);
+            this.uploadTimer.Tick += new System.EventHandler(this.UploadTimer_Tick);
             // 
             // StartupForm
             // 
