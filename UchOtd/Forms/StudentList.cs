@@ -5,6 +5,8 @@ using Schedule.Repositories;
 using UchOtd.Core;
 using UchOtd.Properties;
 using UchOtd.Views;
+using System.Collections.Generic;
+using Schedule.DomainClasses.Main;
 
 namespace UchOtd.Forms
 {
@@ -38,12 +40,12 @@ namespace UchOtd.Forms
                 .OrderBy(g => g.Name)
                 .ToList();
             var searchList = StudentListView.FromGroupList(groups);
-            
+
             var students = _repo
                 .Students
                 .GetFiltredStudents(s => !s.Expelled)
                 .OrderBy(s => s.F)
-                .ThenBy(s => s.I)                
+                .ThenBy(s => s.I)
                 .ToList();
             searchList.AddRange(StudentListView.FromStudentList(students));
 
@@ -66,7 +68,7 @@ namespace UchOtd.Forms
                     return;
                 }
 
-                var keyword = ((string)searchBox.SelectedValue).Split('@')[0];
+                var keyword = ((string) searchBox.SelectedValue).Split('@')[0];
                 var id = int.Parse(((string) searchBox.SelectedValue).Split('@')[1]);
 
                 switch (keyword)
@@ -80,7 +82,8 @@ namespace UchOtd.Forms
                     case "studentGroup":
                         var groupStudents = _repo
                             .StudentsInGroups
-                            .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == id && !sig.Student.Expelled)
+                            .GetFiltredStudentsInGroups(
+                                sig => sig.StudentGroup.StudentGroupId == id && !sig.Student.Expelled)
                             .Select(sig => sig.Student)
                             .OrderBy(s => s.Expelled)
                             .ThenBy(s => s.F)
@@ -93,8 +96,8 @@ namespace UchOtd.Forms
                         break;
                 }
 
-                Left = (Screen.PrimaryScreen.Bounds.Width - Width) / 2;
-                Top = (Screen.PrimaryScreen.Bounds.Height - Height) / 2;
+                Left = (Screen.PrimaryScreen.Bounds.Width - Width)/2;
+                Top = (Screen.PrimaryScreen.Bounds.Height - Height)/2;
             }
 
             if (e.KeyCode == Keys.Escape)
@@ -163,7 +166,7 @@ namespace UchOtd.Forms
         {
             if (viewGrid.SelectedCells.Count == 0) return;
 
-            var studentId = (int)viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["StudentId"].Value;
+            var studentId = (int) viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["StudentId"].Value;
             var groupName = searchBox.Text;
 
             var studentDetailsForm = new StudentProperties(this, _repo, studentId, StudentDetailsMode.Edit);
@@ -180,19 +183,19 @@ namespace UchOtd.Forms
         {
             if (viewGrid.SelectedCells.Count == 0) return;
 
-            var fioDeleted = 
+            var fioDeleted =
                 ((viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["F"].Value as string) ?? "") + " " +
                 ((viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["I"].Value as string) ?? "") + " " +
-                ((viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["O"].Value as string) ?? "");            
+                ((viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["O"].Value as string) ?? "");
             if (MessageBox.Show(
-                caption: "Точно удалить студента?",
-                text: fioDeleted,
-                buttons: MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                    caption: "Точно удалить студента?",
+                    text: fioDeleted,
+                    buttons: MessageBoxButtons.OKCancel) == DialogResult.Cancel)
             {
                 return;
             }
 
-            var studentId = (int)viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["StudentId"].Value;
+            var studentId = (int) viewGrid.Rows[viewGrid.SelectedCells[0].RowIndex].Cells["StudentId"].Value;
 
             _repo.Students.RemoveStudent(studentId);
         }
@@ -200,6 +203,26 @@ namespace UchOtd.Forms
         private void viewGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             EditToolStripMenuItem_Click(this, e);
+        }
+
+        private void copyListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var students = (List<Student>)viewGrid.DataSource;
+            
+            var stString = "";
+
+            for (int i = 0; i < students.Count; i++)
+            {
+                var s = students[i];
+                // stString += (i + 1) + ") ";
+                stString += s.F + " " + s.I + " " + s.O;
+                if (i != students.Count - 1)
+                {
+                    stString += Environment.NewLine;
+                }
+            }
+
+            Clipboard.SetText(stString);
         }
     }
 }

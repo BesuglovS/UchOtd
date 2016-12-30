@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -16,6 +17,7 @@ using UchOtd.Schedule.wnu;
 using UchOtd.Schedule.wnu.MySQLViews;
 using UchOtd.Views;
 using Application = Microsoft.Office.Interop.Word.Application;
+using Point = System.Drawing.Point;
 using Shape = Microsoft.Office.Interop.Word.Shape;
 using Task = System.Threading.Tasks.Task;
 

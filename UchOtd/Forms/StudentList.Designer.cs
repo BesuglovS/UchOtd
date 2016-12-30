@@ -40,6 +40,7 @@ namespace UchOtd.Forms
             this.добавитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.редактироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.contentPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.viewGrid)).BeginInit();
@@ -96,36 +97,44 @@ namespace UchOtd.Forms
             this.StudentListContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.добавитьToolStripMenuItem,
             this.редактироватьToolStripMenuItem,
-            this.удалитьToolStripMenuItem});
+            this.удалитьToolStripMenuItem,
+            this.copyListToolStripMenuItem});
             this.StudentListContextMenu.Name = "StudentListContextMenu";
-            this.StudentListContextMenu.Size = new System.Drawing.Size(155, 70);
+            this.StudentListContextMenu.Size = new System.Drawing.Size(189, 92);
             // 
             // добавитьToolStripMenuItem
             // 
             this.добавитьToolStripMenuItem.Name = "добавитьToolStripMenuItem";
-            this.добавитьToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.добавитьToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
             this.добавитьToolStripMenuItem.Text = "Добавить";
             this.добавитьToolStripMenuItem.Click += new System.EventHandler(this.добавитьToolStripMenuItem_Click);
             // 
             // редактироватьToolStripMenuItem
             // 
             this.редактироватьToolStripMenuItem.Name = "редактироватьToolStripMenuItem";
-            this.редактироватьToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.редактироватьToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
             this.редактироватьToolStripMenuItem.Text = "Редактировать";
             this.редактироватьToolStripMenuItem.Click += new System.EventHandler(this.EditToolStripMenuItem_Click);
             // 
             // удалитьToolStripMenuItem
             // 
             this.удалитьToolStripMenuItem.Name = "удалитьToolStripMenuItem";
-            this.удалитьToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.удалитьToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
             this.удалитьToolStripMenuItem.Text = "Удалить";
             this.удалитьToolStripMenuItem.Click += new System.EventHandler(this.удалитьToolStripMenuItem_Click);
+            // 
+            // copyListToolStripMenuItem
+            // 
+            this.copyListToolStripMenuItem.Name = "copyListToolStripMenuItem";
+            this.copyListToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.copyListToolStripMenuItem.Text = "Скопировать список";
+            this.copyListToolStripMenuItem.Click += new System.EventHandler(this.copyListToolStripMenuItem_Click);
             // 
             // StudentList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(654, 49);
+            this.ClientSize = new System.Drawing.Size(654, 51);
             this.Controls.Add(this.contentPanel);
             this.Controls.Add(this.controlsPanel);
             this.Name = "StudentList";
@@ -151,6 +160,6 @@ namespace UchOtd.Forms
         private ToolStripMenuItem добавитьToolStripMenuItem;
         private ToolStripMenuItem редактироватьToolStripMenuItem;
         private ToolStripMenuItem удалитьToolStripMenuItem;
-
+        private ToolStripMenuItem copyListToolStripMenuItem;
     }
 }

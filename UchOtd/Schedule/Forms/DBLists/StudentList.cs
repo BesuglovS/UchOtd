@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Schedule.Views.DBListViews;
@@ -274,6 +276,33 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void Filter_Click(object sender, EventArgs e)
         {
             RefreshView(FBox.Text);
+        }
+
+        private void ImportStudentListFromJson_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                Title = "Import Student List",
+                Filter = "All files|*.*"
+            };
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                ImportStudentListFromJsonJsonFile(ofd.FileName);
+            }
+        }
+
+        private void ImportStudentListFromJsonJsonFile(string fileName)
+        {
+            var sr = new StreamReader(fileName);
+            var studentsJsonString = sr.ReadLine();
+            sr.Close();
+
+            List<Student> importedList = JsonConvert.DeserializeObject<List<Student>>(studentsJsonString);
+
+            foreach (var student in importedList)
+            {
+                _repo.Students.AddStudent(student);
+            }
         }
     }
 }

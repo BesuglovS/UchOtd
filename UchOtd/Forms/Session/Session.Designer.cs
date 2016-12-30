@@ -46,9 +46,9 @@ namespace UchOtd.Forms.Session
             this.label1 = new System.Windows.Forms.Label();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.siteToUpload = new System.Windows.Forms.ComboBox();
             this.oneFaculty = new System.Windows.Forms.CheckBox();
             this.FacultyList = new System.Windows.Forms.ComboBox();
-            this.siteToUpload = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.examsView)).BeginInit();
             this.viewPanel.SuspendLayout();
             this.controlsPanel.SuspendLayout();
@@ -215,6 +215,14 @@ namespace UchOtd.Forms.Session
             this.controlsPanel.Size = new System.Drawing.Size(763, 124);
             this.controlsPanel.TabIndex = 2;
             // 
+            // siteToUpload
+            // 
+            this.siteToUpload.FormattingEnabled = true;
+            this.siteToUpload.Location = new System.Drawing.Point(222, 31);
+            this.siteToUpload.Name = "siteToUpload";
+            this.siteToUpload.Size = new System.Drawing.Size(86, 21);
+            this.siteToUpload.TabIndex = 16;
+            // 
             // oneFaculty
             // 
             this.oneFaculty.AutoSize = true;
@@ -232,14 +240,6 @@ namespace UchOtd.Forms.Session
             this.FacultyList.Name = "FacultyList";
             this.FacultyList.Size = new System.Drawing.Size(53, 21);
             this.FacultyList.TabIndex = 14;
-            // 
-            // siteToUpload
-            // 
-            this.siteToUpload.FormattingEnabled = true;
-            this.siteToUpload.Location = new System.Drawing.Point(222, 31);
-            this.siteToUpload.Name = "siteToUpload";
-            this.siteToUpload.Size = new System.Drawing.Size(86, 21);
-            this.siteToUpload.TabIndex = 16;
             // 
             // Session
             // 

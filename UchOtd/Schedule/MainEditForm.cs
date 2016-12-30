@@ -2866,5 +2866,78 @@ namespace UchOtd.Schedule
                 sw.Close();
             });
         }
+
+        private void экспортАудиторийДисциплинToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExportDisciplineAuditoriums("DisciplineAuditoriums.txt");
+        }
+
+        private async void ExportDisciplineAuditoriums(string filename)
+        {
+            await Task.Run(() =>
+            {
+                var sw = new StreamWriter(filename);
+
+                //var faculties = Repo.Faculties.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
+
+                var faculties = new List<Faculty>();
+
+                faculties.Add(Repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)")));
+
+                for (int i = 0; i < faculties.Count; i++)
+                {
+                    var faculty = faculties[i];
+
+                    sw.WriteLine("Факультет (" + faculty.FacultyId + ") - " + faculty.Name);
+
+                    var facultyGroups =
+                        Repo.GroupsInFaculties.GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                        .Select(gif => gif.StudentGroup)
+                        .ToList();
+
+                    for (int j = 0; j < facultyGroups.Count; j++)
+                    {
+                        var group = facultyGroups[j];
+
+                        sw.WriteLine("Группа " + group.Name);
+
+                        var studentIds = Repo
+                            .StudentsInGroups
+                            .GetFiltredStudentsInGroups(
+                                sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId && !sig.Student.Expelled)
+                            .ToList()
+                            .Select(stig => stig.Student.StudentId);
+
+                        var groupsListIds = Repo
+                            .StudentsInGroups
+                            .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                            .ToList()
+                            .Select(stig => stig.StudentGroup.StudentGroupId);
+
+                        var tfds =
+                            Repo.TeacherForDisciplines.GetFiltredTeacherForDiscipline(
+                                tfd => groupsListIds.Contains(tfd.Discipline.StudentGroup.StudentGroupId));
+
+                        for (int k = 0; k < tfds.Count; k++)
+                        {
+                            var tfd = tfds[k];
+
+                            var tfdLessons =
+                                Repo.Lessons.GetFiltredLessons(
+                                        l =>
+                                            l.State == 1 &&
+                                            l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
+                                    .ToList();
+                            var auds = tfdLessons.Select(l => l.Auditorium.Name).Distinct().OrderBy(a => a).ToList().Aggregate((a, b) => a + "\t" + b);
+
+                            sw.WriteLine(tfd.Discipline.Name + "\t" + auds);
+                        }
+                    }
+
+                }
+
+                sw.Close();
+            }, _cToken);
+        }
     }
 }

@@ -120,6 +120,7 @@ namespace UchOtd.Schedule
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
+            this.экспортАудиторийДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -265,7 +266,7 @@ namespace UchOtd.Schedule
             this.ToDBName.Name = "ToDBName";
             this.ToDBName.Size = new System.Drawing.Size(88, 20);
             this.ToDBName.TabIndex = 61;
-            this.ToDBName.Text = "Schedule16171";
+            this.ToDBName.Text = "Schedule16172";
             // 
             // DownloadRestore
             // 
@@ -283,7 +284,7 @@ namespace UchOtd.Schedule
             this.FromDBName.Name = "FromDBName";
             this.FromDBName.Size = new System.Drawing.Size(100, 20);
             this.FromDBName.TabIndex = 59;
-            this.FromDBName.Text = "Schedule16171";
+            this.FromDBName.Text = "Schedule16172";
             // 
             // BackupUpload
             // 
@@ -859,7 +860,8 @@ namespace UchOtd.Schedule
             this.экспортДатЗачётовToolStripMenuItem,
             this.проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem,
             this.экспортСпискаПреподавателейНа308ToolStripMenuItem,
-            this.спискиПреподавателейПоКорпусамToolStripMenuItem});
+            this.спискиПреподавателейПоКорпусамToolStripMenuItem,
+            this.экспортАудиторийДисциплинToolStripMenuItem});
             this.bigRedButtonToolStripMenuItem.Name = "bigRedButtonToolStripMenuItem";
             this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
             this.bigRedButtonToolStripMenuItem.Text = "BIG RED BUTTON";
@@ -945,6 +947,13 @@ namespace UchOtd.Schedule
             this.ScheduleView.Size = new System.Drawing.Size(971, 420);
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
+            // 
+            // экспортАудиторийДисциплинToolStripMenuItem
+            // 
+            this.экспортАудиторийДисциплинToolStripMenuItem.Name = "экспортАудиторийДисциплинToolStripMenuItem";
+            this.экспортАудиторийДисциплинToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.экспортАудиторийДисциплинToolStripMenuItem.Text = "Экспорт аудиторий дисциплин";
+            this.экспортАудиторийДисциплинToolStripMenuItem.Click += new System.EventHandler(this.экспортАудиторийДисциплинToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -1063,6 +1072,7 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem датыЗачётовToolStripMenuItem;
         private ToolStripMenuItem датыЗанятийПоМесяцамToolStripMenuItem;
         private ToolStripMenuItem спискиПреподавателейПоКорпусамToolStripMenuItem;
+        private ToolStripMenuItem экспортАудиторийДисциплинToolStripMenuItem;
     }
 }
 
