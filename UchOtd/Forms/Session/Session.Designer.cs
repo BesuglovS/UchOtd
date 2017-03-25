@@ -49,6 +49,7 @@ namespace UchOtd.Forms.Session
             this.siteToUpload = new System.Windows.Forms.ComboBox();
             this.oneFaculty = new System.Windows.Forms.CheckBox();
             this.FacultyList = new System.Windows.Forms.ComboBox();
+            this.uploadPrefix = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.examsView)).BeginInit();
             this.viewPanel.SuspendLayout();
             this.controlsPanel.SuspendLayout();
@@ -194,6 +195,7 @@ namespace UchOtd.Forms.Session
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.uploadPrefix);
             this.controlsPanel.Controls.Add(this.siteToUpload);
             this.controlsPanel.Controls.Add(this.oneFaculty);
             this.controlsPanel.Controls.Add(this.FacultyList);
@@ -218,7 +220,7 @@ namespace UchOtd.Forms.Session
             // siteToUpload
             // 
             this.siteToUpload.FormattingEnabled = true;
-            this.siteToUpload.Location = new System.Drawing.Point(222, 31);
+            this.siteToUpload.Location = new System.Drawing.Point(222, 16);
             this.siteToUpload.Name = "siteToUpload";
             this.siteToUpload.Size = new System.Drawing.Size(86, 21);
             this.siteToUpload.TabIndex = 16;
@@ -240,6 +242,13 @@ namespace UchOtd.Forms.Session
             this.FacultyList.Name = "FacultyList";
             this.FacultyList.Size = new System.Drawing.Size(53, 21);
             this.FacultyList.TabIndex = 14;
+            // 
+            // uploadPrefix
+            // 
+            this.uploadPrefix.Location = new System.Drawing.Point(221, 43);
+            this.uploadPrefix.Name = "uploadPrefix";
+            this.uploadPrefix.Size = new System.Drawing.Size(87, 20);
+            this.uploadPrefix.TabIndex = 17;
             // 
             // Session
             // 
@@ -279,5 +288,6 @@ namespace UchOtd.Forms.Session
         private CheckBox oneFaculty;
         private ComboBox FacultyList;
         private ComboBox siteToUpload;
+        private TextBox uploadPrefix;
     }
 }

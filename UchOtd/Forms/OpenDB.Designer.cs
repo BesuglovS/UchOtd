@@ -32,10 +32,12 @@ namespace UchOtd.Forms
         private void InitializeComponent()
         {
             this.ChoosePanel = new System.Windows.Forms.Panel();
+            this.remoteDatabaseName = new System.Windows.Forms.ComboBox();
+            this.remoteHost = new System.Windows.Forms.ComboBox();
+            this.PortNumber = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.remoteDatabaseName = new System.Windows.Forms.TextBox();
-            this.remoteHost = new System.Windows.Forms.TextBox();
             this.remoteDB = new System.Windows.Forms.RadioButton();
             this.DatabaseFilename = new System.Windows.Forms.TextBox();
             this.fileDatabase = new System.Windows.Forms.RadioButton();
@@ -44,20 +46,18 @@ namespace UchOtd.Forms
             this.actionPanel = new System.Windows.Forms.Panel();
             this.Cancel = new System.Windows.Forms.Button();
             this.openDatabase = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.PortNumber = new System.Windows.Forms.TextBox();
             this.ChoosePanel.SuspendLayout();
             this.actionPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // ChoosePanel
             // 
+            this.ChoosePanel.Controls.Add(this.remoteDatabaseName);
+            this.ChoosePanel.Controls.Add(this.remoteHost);
             this.ChoosePanel.Controls.Add(this.PortNumber);
             this.ChoosePanel.Controls.Add(this.label3);
             this.ChoosePanel.Controls.Add(this.label2);
             this.ChoosePanel.Controls.Add(this.label1);
-            this.ChoosePanel.Controls.Add(this.remoteDatabaseName);
-            this.ChoosePanel.Controls.Add(this.remoteHost);
             this.ChoosePanel.Controls.Add(this.remoteDB);
             this.ChoosePanel.Controls.Add(this.DatabaseFilename);
             this.ChoosePanel.Controls.Add(this.fileDatabase);
@@ -68,6 +68,41 @@ namespace UchOtd.Forms
             this.ChoosePanel.Name = "ChoosePanel";
             this.ChoosePanel.Size = new System.Drawing.Size(655, 122);
             this.ChoosePanel.TabIndex = 2;
+            // 
+            // remoteDatabaseName
+            // 
+            this.remoteDatabaseName.FormattingEnabled = true;
+            this.remoteDatabaseName.Location = new System.Drawing.Point(359, 93);
+            this.remoteDatabaseName.Name = "remoteDatabaseName";
+            this.remoteDatabaseName.Size = new System.Drawing.Size(273, 21);
+            this.remoteDatabaseName.TabIndex = 12;
+            // 
+            // remoteHost
+            // 
+            this.remoteHost.FormattingEnabled = true;
+            this.remoteHost.Location = new System.Drawing.Point(359, 66);
+            this.remoteHost.Name = "remoteHost";
+            this.remoteHost.Size = new System.Drawing.Size(121, 21);
+            this.remoteHost.TabIndex = 11;
+            this.remoteHost.SelectedIndexChanged += new System.EventHandler(this.remoteHost_SelectedIndexChanged);
+            // 
+            // PortNumber
+            // 
+            this.PortNumber.Location = new System.Drawing.Point(532, 63);
+            this.PortNumber.Name = "PortNumber";
+            this.PortNumber.Size = new System.Drawing.Size(100, 20);
+            this.PortNumber.TabIndex = 10;
+            this.PortNumber.Text = "1433";
+            this.PortNumber.Enter += new System.EventHandler(this.PortNumber_Enter);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(494, 68);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(32, 13);
+            this.label3.TabIndex = 9;
+            this.label3.Text = "Порт";
             // 
             // label2
             // 
@@ -87,25 +122,10 @@ namespace UchOtd.Forms
             this.label1.TabIndex = 7;
             this.label1.Text = "Имя сервера";
             // 
-            // remoteDatabaseName
-            // 
-            this.remoteDatabaseName.Location = new System.Drawing.Point(359, 91);
-            this.remoteDatabaseName.Name = "remoteDatabaseName";
-            this.remoteDatabaseName.Size = new System.Drawing.Size(280, 20);
-            this.remoteDatabaseName.TabIndex = 6;
-            this.remoteDatabaseName.Enter += new System.EventHandler(this.remoteDatabaseName_Enter);
-            // 
-            // remoteHost
-            // 
-            this.remoteHost.Location = new System.Drawing.Point(359, 65);
-            this.remoteHost.Name = "remoteHost";
-            this.remoteHost.Size = new System.Drawing.Size(129, 20);
-            this.remoteHost.TabIndex = 5;
-            this.remoteHost.Enter += new System.EventHandler(this.remoteHost_Enter);
-            // 
             // remoteDB
             // 
             this.remoteDB.AutoSize = true;
+            this.remoteDB.Checked = true;
             this.remoteDB.Location = new System.Drawing.Point(12, 66);
             this.remoteDB.Name = "remoteDB";
             this.remoteDB.Size = new System.Drawing.Size(209, 17);
@@ -129,7 +149,6 @@ namespace UchOtd.Forms
             this.fileDatabase.Name = "fileDatabase";
             this.fileDatabase.Size = new System.Drawing.Size(123, 17);
             this.fileDatabase.TabIndex = 2;
-            this.fileDatabase.TabStop = true;
             this.fileDatabase.Text = "Файл базы данных";
             this.fileDatabase.UseVisualStyleBackColor = true;
             // 
@@ -149,7 +168,6 @@ namespace UchOtd.Forms
             this.sqlExpressDB.Name = "sqlExpressDB";
             this.sqlExpressDB.Size = new System.Drawing.Size(209, 17);
             this.sqlExpressDB.TabIndex = 0;
-            this.sqlExpressDB.TabStop = true;
             this.sqlExpressDB.Text = "Локальная база данных SQLExpress";
             this.sqlExpressDB.UseVisualStyleBackColor = true;
             // 
@@ -183,25 +201,7 @@ namespace UchOtd.Forms
             this.openDatabase.UseVisualStyleBackColor = true;
             this.openDatabase.Click += new System.EventHandler(this.openDatabase_Click);
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(494, 68);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(32, 13);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "Порт";
-            // 
-            // PortNumber
-            // 
-            this.PortNumber.Location = new System.Drawing.Point(532, 63);
-            this.PortNumber.Name = "PortNumber";
-            this.PortNumber.Size = new System.Drawing.Size(100, 20);
-            this.PortNumber.TabIndex = 10;
-            this.PortNumber.Text = "1433";
-            this.PortNumber.Enter += new System.EventHandler(this.PortNumber_Enter);
-            // 
-            // OpenDB
+            // OpenDb
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -223,8 +223,6 @@ namespace UchOtd.Forms
         private Panel ChoosePanel;
         private Label label2;
         private Label label1;
-        private TextBox remoteDatabaseName;
-        private TextBox remoteHost;
         private RadioButton remoteDB;
         private TextBox DatabaseFilename;
         private RadioButton fileDatabase;
@@ -235,5 +233,7 @@ namespace UchOtd.Forms
         private Button openDatabase;
         private Label label3;
         private TextBox PortNumber;
+        private ComboBox remoteHost;
+        private ComboBox remoteDatabaseName;
     }
 }

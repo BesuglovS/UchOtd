@@ -13,7 +13,7 @@ namespace Schedule.Repositories.Common
 {
     public class CommonFunctions
     {
-        private ScheduleRepository _repo;
+        private readonly ScheduleRepository _repo;
         public string ConnectionString { get; set; }
 
         public CommonFunctions(ScheduleRepository repo)

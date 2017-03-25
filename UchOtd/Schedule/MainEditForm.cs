@@ -1338,7 +1338,7 @@ namespace UchOtd.Schedule
                         }
                     }
 
-                    this.Invoke((MethodInvoker) delegate
+                    Invoke((MethodInvoker) delegate
                     {
                         status.Text = (index + 1) + " / " + evts.Count;
                             // runs on UI thread
@@ -1787,6 +1787,7 @@ namespace UchOtd.Schedule
 
         private async void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
+            
             /*
             await Task.Run(() =>
             {
@@ -2671,19 +2672,22 @@ namespace UchOtd.Schedule
             ExportZachDates(Repo.Faculties.GetAllFaculties().Select(f => f.FacultyId).ToList(), "ZachetDates.txt");
         }
 
-        private void проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem_Click(object sender,
+        private async void проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem_Click(object sender,
             EventArgs e)
         {
-            CheckDisciplinesTypeSeuqences("TypeSequenceCheck.txt");
+            await Task.Run(() => CheckDisciplinesTypeSeuqences("TypeSequenceCheck.txt"), _cToken);
+            MessageBox.Show("Done");
         }
 
         private void CheckDisciplinesTypeSeuqences(string filename)
         {
-            var sw = new StreamWriter(filename);
+            TextFileUtilities.CreateOrEmptyFile(filename);
 
             foreach (var faculty in Repo.Faculties.GetAllFaculties().OrderBy(f => f.SortingOrder))
             {
-                sw.WriteLine(faculty.SortingOrder + "\t" + faculty.Letter + "\t" + faculty.Name);
+                var buffer = new List<string>();
+                var bufferPristine = true;
+                buffer.Add(faculty.SortingOrder + "\t" + faculty.Letter + "\t" + faculty.Name);
 
                 var facultyGroups =
                     Repo.GroupsInFaculties.GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
@@ -2692,7 +2696,7 @@ namespace UchOtd.Schedule
 
                 foreach (var studentGroup in facultyGroups)
                 {
-                    sw.WriteLine(studentGroup.Name);
+                    buffer.Add(studentGroup.Name);
 
                     var studentIds = Repo
                         .StudentsInGroups
@@ -2718,7 +2722,8 @@ namespace UchOtd.Schedule
                     {
                         if (discipline.TypeSequence == null || discipline.TypeSequence == "")
                         {
-                            sw.WriteLine(discipline.Name + "\t" + discipline.StudentGroup.Name + "\tНет данных");
+                            buffer.Add(discipline.Name + "\t" + discipline.StudentGroup.Name + "\tНет данных");
+                            bufferPristine = false;
                         }
                         else
                         {
@@ -2738,7 +2743,8 @@ namespace UchOtd.Schedule
                                     }
                                     else
                                     {
-                                        sw.WriteLine("Найден неизвестный тип пары: " + discipline.TypeSequence[i]);
+                                        buffer.Add("Найден неизвестный тип пары: " + discipline.TypeSequence[i]);
+                                        bufferPristine = false;
                                     }
                                 }
                                 catch
@@ -2750,9 +2756,10 @@ namespace UchOtd.Schedule
                             var lec2 = lessonsCountByType[1]*2 + lessonsCountByType[3] + lessonsCountByType[4];
                             if (lec1 != lec2)
                             {
-                                sw.WriteLine(discipline.Name + "\t" + discipline.StudentGroup.Name + "\t" +
+                                buffer.Add(discipline.Name + "\t" + discipline.StudentGroup.Name + "\t" +
                                              "Не совпадает количество лекций. По плану / В последовательности = " + lec1 +
                                              " / " + lec2);
+                                bufferPristine = false;
                             }
 
                             var prac1 = discipline.PracticalHours;
@@ -2760,16 +2767,21 @@ namespace UchOtd.Schedule
                                         lessonsCountByType[5]*2;
                             if (prac1 != prac2)
                             {
-                                sw.WriteLine(discipline.Name + "\t" + discipline.StudentGroup.Name + "\t" +
+                                buffer.Add(discipline.Name + "\t" + discipline.StudentGroup.Name + "\t" +
                                              "Не совпадает количество практик. По плану / В последовательности = " +
                                              prac1 + " / " + prac2);
+                                bufferPristine = false;
                             }
                         }
                     }
                 }
-            }
 
-            sw.Close();
+                if (!bufferPristine)
+                {
+                    TextFileUtilities.WriteStringList("TypeSequenceCheck.txt", buffer);
+                }
+            }
+           
         }
 
         private async void экспортСпискаПреподавателейНа308ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2869,75 +2881,14 @@ namespace UchOtd.Schedule
 
         private void экспортАудиторийДисциплинToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ExportDisciplineAuditoriums("DisciplineAuditoriums.txt");
+            var exportDisciplineAuditoriumsForm = new DisciplineAuditoriums(Repo);
+            exportDisciplineAuditoriumsForm.Show();
+            //ExportDisciplineAuditoriums("DisciplineAuditoriums.txt");
         }
 
         private async void ExportDisciplineAuditoriums(string filename)
         {
-            await Task.Run(() =>
-            {
-                var sw = new StreamWriter(filename);
-
-                //var faculties = Repo.Faculties.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
-
-                var faculties = new List<Faculty>();
-
-                faculties.Add(Repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)")));
-
-                for (int i = 0; i < faculties.Count; i++)
-                {
-                    var faculty = faculties[i];
-
-                    sw.WriteLine("Факультет (" + faculty.FacultyId + ") - " + faculty.Name);
-
-                    var facultyGroups =
-                        Repo.GroupsInFaculties.GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
-                        .Select(gif => gif.StudentGroup)
-                        .ToList();
-
-                    for (int j = 0; j < facultyGroups.Count; j++)
-                    {
-                        var group = facultyGroups[j];
-
-                        sw.WriteLine("Группа " + group.Name);
-
-                        var studentIds = Repo
-                            .StudentsInGroups
-                            .GetFiltredStudentsInGroups(
-                                sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId && !sig.Student.Expelled)
-                            .ToList()
-                            .Select(stig => stig.Student.StudentId);
-
-                        var groupsListIds = Repo
-                            .StudentsInGroups
-                            .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
-                            .ToList()
-                            .Select(stig => stig.StudentGroup.StudentGroupId);
-
-                        var tfds =
-                            Repo.TeacherForDisciplines.GetFiltredTeacherForDiscipline(
-                                tfd => groupsListIds.Contains(tfd.Discipline.StudentGroup.StudentGroupId));
-
-                        for (int k = 0; k < tfds.Count; k++)
-                        {
-                            var tfd = tfds[k];
-
-                            var tfdLessons =
-                                Repo.Lessons.GetFiltredLessons(
-                                        l =>
-                                            l.State == 1 &&
-                                            l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
-                                    .ToList();
-                            var auds = tfdLessons.Select(l => l.Auditorium.Name).Distinct().OrderBy(a => a).ToList().Aggregate((a, b) => a + "\t" + b);
-
-                            sw.WriteLine(tfd.Discipline.Name + "\t" + auds);
-                        }
-                    }
-
-                }
-
-                sw.Close();
-            }, _cToken);
+            
         }
     }
 }

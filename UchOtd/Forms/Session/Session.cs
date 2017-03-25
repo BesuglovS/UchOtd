@@ -187,15 +187,17 @@ namespace UchOtd.Forms.Session
 
         private void UploadClick(object sender, EventArgs e)
         {
+            var dbPrefix = uploadPrefix.Text;
+
             var jsonSerializer = new JavaScriptSerializer();
 
             var mySqlExams = MySqlExam.FromExamList(_repo.Exams.GetAllExamRecords());
-            var wud = new WnuUploadData { tableSelector = "exams", data = jsonSerializer.Serialize(mySqlExams) };
+            var wud = new WnuUploadData { dbPrefix = dbPrefix, tableSelector = "exams", data = jsonSerializer.Serialize(mySqlExams) };
             string json = jsonSerializer.Serialize(wud);
-            WnuUpload.UploadTableData(json, siteToUpload.Text);
+            var result = WnuUpload.UploadTableData(json, siteToUpload.Text);
 
             var mySqLlogEvents = MySqlExamLogEvent.FromLogEventList(_repo.Exams.GetAllLogEvents());
-            wud = new WnuUploadData { tableSelector = "examsLogEvents", data = jsonSerializer.Serialize(mySqLlogEvents) };
+            wud = new WnuUploadData { dbPrefix = dbPrefix, tableSelector = "examsLogEvents", data = jsonSerializer.Serialize(mySqLlogEvents) };
             json = jsonSerializer.Serialize(wud);
             WnuUpload.UploadTableData(json, siteToUpload.Text);
         }

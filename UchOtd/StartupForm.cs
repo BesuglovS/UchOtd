@@ -30,7 +30,7 @@ namespace UchOtd
 
         public static List<string> serverList = School ?
             new List<string> { @"127.0.0.1\SQLEXPRESS" } :
-            new List<string> { @"UCH-OTD-DISP\SQLEXPRESS", @"127.0.0.1\SQLEXPRESS" };
+            new List<string> { @".\SQLEXPRESS", @"UCH-OTD-DISP\SQLEXPRESS" };
 
         public static string CurrentServerName = "";
         //public static string DefaultDbName = "School";
@@ -237,11 +237,11 @@ namespace UchOtd
         {
             CurrentServerName = serverList[0];
 
-            //Repo = new ScheduleRepository("data source=tcp:" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
-            //UOrepo = new UchOtdRepository("data source=tcp:" + CurrentServerName + ",1433;Database=UchOtd; Integrated Security=SSPI;multipleactiveresultsets=True");
+            Repo = new ScheduleRepository("data source=tcp:" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
+            UOrepo = new UchOtdRepository("data source=tcp:" + CurrentServerName + ",1433;Database=UchOtd; Integrated Security=SSPI;multipleactiveresultsets=True");
 
-            Repo = new ScheduleRepository("Server=" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True");
-            UOrepo = new UchOtdRepository("Server=" + CurrentServerName + ",1433;Database=UchOtd; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True");
+            //Repo = new ScheduleRepository("Server=" + CurrentServerName + ",1433;Database=" + DefaultDbName + "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True");
+            //UOrepo = new UchOtdRepository("Server=" + CurrentServerName + ",1433;Database=UchOtd; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True");
 
             if (School)
             {

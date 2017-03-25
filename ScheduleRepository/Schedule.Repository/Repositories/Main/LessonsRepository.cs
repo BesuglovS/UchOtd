@@ -12,7 +12,7 @@ namespace Schedule.Repositories.Repositories.Main
 {
     public class LessonsRepository: BaseRepository<Lesson>
     {
-        private ScheduleRepository _repo;
+        private readonly ScheduleRepository _repo;
 
         public LessonsRepository(ScheduleRepository repo)
         {

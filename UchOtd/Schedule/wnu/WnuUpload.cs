@@ -43,7 +43,7 @@ namespace UchOtd.Schedule.wnu
         public static string UploadTableData(string postData, string uploadEndPoint)
         {
             // Create a request using a URL that can receive a post. 
-            WebRequest request = WebRequest.Create(uploadEndPoint + "import.php");
+            WebRequest request = WebRequest.Create(uploadEndPoint);
 
             // Set the Method property of the request to POST.
             request.Method = "POST";
@@ -110,7 +110,7 @@ namespace UchOtd.Schedule.wnu
             var allBuildings = repo.Buildings.GetAllBuildings();
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "buildings", data = jsonSerializer.Serialize(allBuildings) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json, uploadEndPoint);
+            result = UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 
