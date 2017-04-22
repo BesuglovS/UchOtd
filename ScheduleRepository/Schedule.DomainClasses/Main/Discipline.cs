@@ -17,13 +17,14 @@
         public string TypeSequence { get; set; }
 
         public virtual StudentGroup StudentGroup { get; set; }
+        public virtual Semester Semester { get; set; }
 
         public Discipline()
         {
         }
 
         public Discipline(string name, StudentGroup studentGroup,
-            int attestation, int auditoriumHours, int lectureHours, int practicalHours)
+            int attestation, int auditoriumHours, int lectureHours, int practicalHours, Semester semester)
         {
             Name = name;
             StudentGroup = studentGroup;
@@ -31,6 +32,7 @@
             AuditoriumHours = auditoriumHours;
             LectureHours = lectureHours;
             PracticalHours = practicalHours;
+            Semester = semester;
         }       
     }
 }

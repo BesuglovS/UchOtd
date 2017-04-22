@@ -41,7 +41,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentList = new System.Windows.Forms.ComboBox();
             this.removeStudentFrunGroup = new System.Windows.Forms.Button();
             this.addStudentToGroup = new System.Windows.Forms.Button();
-            this.deletewithlessons = new System.Windows.Forms.Button();
             this.remove = new System.Windows.Forms.Button();
             this.update = new System.Windows.Forms.Button();
             this.add = new System.Windows.Forms.Button();
@@ -49,6 +48,11 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.label1 = new System.Windows.Forms.Label();
             this.StudentListPanel = new System.Windows.Forms.Panel();
             this.StudentsInGroupListView = new System.Windows.Forms.DataGridView();
+            this.label3 = new System.Windows.Forms.Label();
+            this.semesterList = new System.Windows.Forms.ComboBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.semesterFiltered = new System.Windows.Forms.CheckBox();
+            this.refresh = new System.Windows.Forms.Button();
             this.LeftPanel.SuspendLayout();
             this.GroupListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudentGroupListView)).BeginInit();
@@ -64,16 +68,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.LeftPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.LeftPanel.Location = new System.Drawing.Point(0, 0);
             this.LeftPanel.Name = "LeftPanel";
-            this.LeftPanel.Size = new System.Drawing.Size(281, 586);
+            this.LeftPanel.Size = new System.Drawing.Size(281, 710);
             this.LeftPanel.TabIndex = 16;
             // 
             // GroupListPanel
             // 
             this.GroupListPanel.Controls.Add(this.StudentGroupListView);
             this.GroupListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GroupListPanel.Location = new System.Drawing.Point(0, 318);
+            this.GroupListPanel.Location = new System.Drawing.Point(0, 360);
             this.GroupListPanel.Name = "GroupListPanel";
-            this.GroupListPanel.Size = new System.Drawing.Size(281, 268);
+            this.GroupListPanel.Size = new System.Drawing.Size(281, 350);
             this.GroupListPanel.TabIndex = 23;
             // 
             // StudentGroupListView
@@ -89,19 +93,23 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentGroupListView.Name = "StudentGroupListView";
             this.StudentGroupListView.ReadOnly = true;
             this.StudentGroupListView.RowHeadersVisible = false;
-            this.StudentGroupListView.Size = new System.Drawing.Size(281, 268);
+            this.StudentGroupListView.Size = new System.Drawing.Size(281, 350);
             this.StudentGroupListView.TabIndex = 1;
             this.StudentGroupListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.StudentGroupListView_CellClick);
             // 
             // ControlsPanel
             // 
+            this.ControlsPanel.Controls.Add(this.refresh);
+            this.ControlsPanel.Controls.Add(this.semesterFiltered);
+            this.ControlsPanel.Controls.Add(this.comboBox1);
+            this.ControlsPanel.Controls.Add(this.semesterList);
+            this.ControlsPanel.Controls.Add(this.label3);
             this.ControlsPanel.Controls.Add(this.addFromGroup);
             this.ControlsPanel.Controls.Add(this.groupsList);
             this.ControlsPanel.Controls.Add(this.label2);
             this.ControlsPanel.Controls.Add(this.StudentList);
             this.ControlsPanel.Controls.Add(this.removeStudentFrunGroup);
             this.ControlsPanel.Controls.Add(this.addStudentToGroup);
-            this.ControlsPanel.Controls.Add(this.deletewithlessons);
             this.ControlsPanel.Controls.Add(this.remove);
             this.ControlsPanel.Controls.Add(this.update);
             this.ControlsPanel.Controls.Add(this.add);
@@ -110,12 +118,12 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ControlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.ControlsPanel.Location = new System.Drawing.Point(0, 0);
             this.ControlsPanel.Name = "ControlsPanel";
-            this.ControlsPanel.Size = new System.Drawing.Size(281, 318);
+            this.ControlsPanel.Size = new System.Drawing.Size(281, 360);
             this.ControlsPanel.TabIndex = 22;
             // 
             // addFromGroup
             // 
-            this.addFromGroup.Location = new System.Drawing.Point(16, 254);
+            this.addFromGroup.Location = new System.Drawing.Point(16, 233);
             this.addFromGroup.Name = "addFromGroup";
             this.addFromGroup.Size = new System.Drawing.Size(119, 49);
             this.addFromGroup.TabIndex = 34;
@@ -126,7 +134,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // groupsList
             // 
             this.groupsList.FormattingEnabled = true;
-            this.groupsList.Location = new System.Drawing.Point(141, 269);
+            this.groupsList.Location = new System.Drawing.Point(141, 248);
             this.groupsList.Name = "groupsList";
             this.groupsList.Size = new System.Drawing.Size(112, 21);
             this.groupsList.TabIndex = 33;
@@ -134,7 +142,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 173);
+            this.label2.Location = new System.Drawing.Point(13, 152);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(47, 13);
             this.label2.TabIndex = 32;
@@ -143,7 +151,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // StudentList
             // 
             this.StudentList.FormattingEnabled = true;
-            this.StudentList.Location = new System.Drawing.Point(16, 197);
+            this.StudentList.Location = new System.Drawing.Point(16, 176);
             this.StudentList.Name = "StudentList";
             this.StudentList.Size = new System.Drawing.Size(237, 21);
             this.StudentList.TabIndex = 31;
@@ -151,7 +159,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // removeStudentFrunGroup
             // 
-            this.removeStudentFrunGroup.Location = new System.Drawing.Point(141, 224);
+            this.removeStudentFrunGroup.Location = new System.Drawing.Point(141, 203);
             this.removeStudentFrunGroup.Name = "removeStudentFrunGroup";
             this.removeStudentFrunGroup.Size = new System.Drawing.Size(112, 23);
             this.removeStudentFrunGroup.TabIndex = 30;
@@ -161,7 +169,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // addStudentToGroup
             // 
-            this.addStudentToGroup.Location = new System.Drawing.Point(16, 224);
+            this.addStudentToGroup.Location = new System.Drawing.Point(16, 203);
             this.addStudentToGroup.Name = "addStudentToGroup";
             this.addStudentToGroup.Size = new System.Drawing.Size(119, 23);
             this.addStudentToGroup.TabIndex = 28;
@@ -169,19 +177,9 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.addStudentToGroup.UseVisualStyleBackColor = true;
             this.addStudentToGroup.Click += new System.EventHandler(this.addStudentToGroup_Click);
             // 
-            // deletewithlessons
-            // 
-            this.deletewithlessons.Location = new System.Drawing.Point(16, 89);
-            this.deletewithlessons.Name = "deletewithlessons";
-            this.deletewithlessons.Size = new System.Drawing.Size(237, 49);
-            this.deletewithlessons.TabIndex = 27;
-            this.deletewithlessons.Text = "Удалить вместе c дисциплинами и убрать студентов из группы";
-            this.deletewithlessons.UseVisualStyleBackColor = true;
-            this.deletewithlessons.Click += new System.EventHandler(this.deletewithlessons_Click);
-            // 
             // remove
             // 
-            this.remove.Location = new System.Drawing.Point(178, 60);
+            this.remove.Location = new System.Drawing.Point(178, 115);
             this.remove.Name = "remove";
             this.remove.Size = new System.Drawing.Size(75, 23);
             this.remove.TabIndex = 26;
@@ -191,7 +189,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(96, 60);
+            this.update.Location = new System.Drawing.Point(96, 115);
             this.update.Name = "update";
             this.update.Size = new System.Drawing.Size(75, 23);
             this.update.TabIndex = 25;
@@ -201,7 +199,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(15, 60);
+            this.add.Location = new System.Drawing.Point(15, 115);
             this.add.Name = "add";
             this.add.Size = new System.Drawing.Size(75, 23);
             this.add.TabIndex = 24;
@@ -232,7 +230,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.StudentListPanel.Location = new System.Drawing.Point(281, 0);
             this.StudentListPanel.Name = "StudentListPanel";
-            this.StudentListPanel.Size = new System.Drawing.Size(963, 586);
+            this.StudentListPanel.Size = new System.Drawing.Size(963, 710);
             this.StudentListPanel.TabIndex = 17;
             // 
             // StudentsInGroupListView
@@ -247,20 +245,64 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentsInGroupListView.Name = "StudentsInGroupListView";
             this.StudentsInGroupListView.ReadOnly = true;
             this.StudentsInGroupListView.RowHeadersVisible = false;
-            this.StudentsInGroupListView.Size = new System.Drawing.Size(963, 586);
+            this.StudentsInGroupListView.Size = new System.Drawing.Size(963, 710);
             this.StudentsInGroupListView.TabIndex = 2;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 64);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(51, 13);
+            this.label3.TabIndex = 35;
+            this.label3.Text = "Семестр";
+            // 
+            // semesterList
+            // 
+            this.semesterList.FormattingEnabled = true;
+            this.semesterList.Location = new System.Drawing.Point(15, 82);
+            this.semesterList.Name = "semesterList";
+            this.semesterList.Size = new System.Drawing.Size(238, 21);
+            this.semesterList.TabIndex = 36;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(16, 322);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(238, 21);
+            this.comboBox1.TabIndex = 38;
+            // 
+            // semesterFiltered
+            // 
+            this.semesterFiltered.AutoSize = true;
+            this.semesterFiltered.Location = new System.Drawing.Point(15, 299);
+            this.semesterFiltered.Name = "semesterFiltered";
+            this.semesterFiltered.Size = new System.Drawing.Size(132, 17);
+            this.semesterFiltered.TabIndex = 39;
+            this.semesterFiltered.Text = "Фильтр по семестру";
+            this.semesterFiltered.UseVisualStyleBackColor = true;
+            // 
+            // refresh
+            // 
+            this.refresh.Location = new System.Drawing.Point(153, 295);
+            this.refresh.Name = "refresh";
+            this.refresh.Size = new System.Drawing.Size(100, 23);
+            this.refresh.TabIndex = 40;
+            this.refresh.Text = "Обновить";
+            this.refresh.UseVisualStyleBackColor = true;
+            this.refresh.Click += new System.EventHandler(this.refresh_Click);
             // 
             // StudentGroupList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1244, 586);
+            this.ClientSize = new System.Drawing.Size(1244, 710);
             this.Controls.Add(this.StudentListPanel);
             this.Controls.Add(this.LeftPanel);
             this.Name = "StudentGroupList";
             this.Text = "Группы студентов";
             this.Load += new System.EventHandler(this.StudentGroupListLoad);
-            this.Resize += new System.EventHandler(this.StudentGroupList_Resize);
             this.LeftPanel.ResumeLayout(false);
             this.GroupListPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.StudentGroupListView)).EndInit();
@@ -277,7 +319,6 @@ namespace UchOtd.Schedule.Forms.DBLists
         private Panel LeftPanel;
         private Panel GroupListPanel;
         private Panel ControlsPanel;
-        private Button deletewithlessons;
         private Button remove;
         private Button update;
         private Button add;
@@ -292,5 +333,10 @@ namespace UchOtd.Schedule.Forms.DBLists
         private DataGridView StudentsInGroupListView;
         private Button addFromGroup;
         private ComboBox groupsList;
+        private ComboBox semesterList;
+        private Label label3;
+        private Button refresh;
+        private CheckBox semesterFiltered;
+        private ComboBox comboBox1;
     }
 }

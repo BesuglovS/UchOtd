@@ -4,7 +4,6 @@ using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using Schedule.DataLayer;
-using Schedule.DomainClasses.Logs;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories.Common;
 
@@ -142,7 +141,7 @@ namespace Schedule.Repositories.Repositories.Main
                             PublicComment = publicComment,
                             HiddenComment = hiddenComment
                         }
-                        );
+                    );
                 }
                 
                 context.SaveChanges();                
@@ -242,7 +241,6 @@ namespace Schedule.Repositories.Repositories.Main
                     lesson.Calendar = context.Calendars.FirstOrDefault(c => c.CalendarId == lesson.Calendar.CalendarId);
                     lesson.Ring = context.Rings.FirstOrDefault(r => r.RingId == lesson.Ring.RingId);
                     lesson.Auditorium = context.Auditoriums.FirstOrDefault(a => a.AuditoriumId == lesson.Auditorium.AuditoriumId);
-
                     context.Lessons.Add(lesson);
                 }
 
@@ -343,7 +341,7 @@ namespace Schedule.Repositories.Repositories.Main
         }
 
         public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>>
-            GetFacultyDowSchedule(int facultyId, int dowRu, bool weekFiltered, int weekFilter, bool includeProposed, bool onlyFutureDates)
+            GetFacultyDowSchedule(Semester semester, int facultyId, int dowRu, bool weekFiltered, int weekFilter, bool includeProposed, bool onlyFutureDates)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -380,9 +378,9 @@ namespace Schedule.Repositories.Repositories.Main
                         .Include(l => l.Auditorium.Building)
                         .Where(
                             l =>
+                            (l.TeacherForDiscipline.Discipline.Semester.SemesterId == semester.SemesterId) && 
                             ((l.State == 1) || ((l.State == 2) && (includeProposed))) &&
-                            groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId)
-                        )
+                            groupsListIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId))
                         .ToList();
 
                     if (onlyFutureDates)

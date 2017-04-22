@@ -73,6 +73,7 @@
     <Compile Include="Repositories\Main\LessonsRepository.cs" />
     <Compile Include="Repositories\Main\RingsRepository.cs" />
     <Compile Include="Repositories\Main\ScheduleNotesRepository.cs" />
+    <Compile Include="Repositories\Main\SemesterRepository.cs" />
     <Compile Include="Repositories\Main\StudentGroupsRepository.cs" />
     <Compile Include="Repositories\Main\StudentsInGroupsRepository.cs" />
     <Compile Include="Repositories\Main\StudentsRepository.cs" />

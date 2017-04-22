@@ -104,7 +104,7 @@ namespace UchOtd.Forms
             if (sqlExpressDB.Checked)
             {
                 var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" + SQLExpressDatabaseName.Text +
-                    "; Integrated Security = SSPI; multipleactiveresultsets=True";
+                    "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
 
                 _startupForm.Repo.SetConnectionString(connectionString);
 
@@ -115,7 +115,7 @@ namespace UchOtd.Forms
             {
                 var connectionString = "data source=tcp:" + remoteHost.Text +  "," + PortNumber.Text + 
                     ";Database=" + remoteDatabaseName.Text +
-                    "; Integrated Security = SSPI; multipleactiveresultsets=True";
+                    "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
 
                 _startupForm.Repo.SetConnectionString(connectionString);
 
@@ -172,7 +172,7 @@ namespace UchOtd.Forms
 
             var dbNamesList = new List<string>();
 
-            using (var con = new SqlConnection("Data Source=" + serverName + "; Integrated Security=True;"))
+            using (var con = new SqlConnection("Data Source=" + serverName + "; User ID=sa;Password=ghjuhfvvf;"))
             {
                 con.Open();
                 DataTable databases = con.GetSchema("Databases");

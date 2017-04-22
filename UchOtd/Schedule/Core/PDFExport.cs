@@ -18,6 +18,7 @@ namespace UchOtd.Schedule.Core
     public static class PdfExport
     {
         public static void ExportSchedulePage(
+            Semester semester,
             Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>> schedule,
             string facultyName,
             string filename,
@@ -33,7 +34,7 @@ namespace UchOtd.Schedule.Core
             do
             {
                 // Create a new PDF document
-                document = CreateDocument(repo, facultyName, dow, schedule, scheduleFontsize);
+                document = CreateDocument(repo, semester, facultyName, dow, schedule, scheduleFontsize);
 
                 // Create a renderer and prepare (=layout) the document
                 var docRenderer = new DocumentRenderer(document);
@@ -86,7 +87,7 @@ namespace UchOtd.Schedule.Core
         }
 
 
-        private static Document CreateDocument(ScheduleRepository repo, string facultyName, string dow, 
+        private static Document CreateDocument(ScheduleRepository repo, Semester semester, string facultyName, string dow, 
             Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>> schedule,
             double scheduleFontsize)
         {
@@ -102,7 +103,7 @@ namespace UchOtd.Schedule.Core
 
             SetHeaderText(section, repo, facultyName, dow);
 
-            PutScheduleTable(repo, section, schedule, scheduleFontsize);
+            PutScheduleTable(repo, semester, section, schedule, scheduleFontsize);
 
             return result;
         }
@@ -201,7 +202,7 @@ namespace UchOtd.Schedule.Core
             return "второго семестра " + (ssYear-1) + " – " + ssYear + " учебного года";
         }        
 
-        private static void PutScheduleTable(ScheduleRepository repo, Section section,
+        private static void PutScheduleTable(ScheduleRepository repo, Semester semester, Section section,
             Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>> schedule,
             double scheduleFontsize)
         {
@@ -262,7 +263,7 @@ namespace UchOtd.Schedule.Core
                     var plainGroupName = groupName.Replace(" (+Н)", "");
                     var nGroupName = groupName.Replace(" (+", "(");
 
-                    var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName).StudentGroupId;
+                    var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName, semester).StudentGroupId;
                     var plainStudentIds = repo
                             .StudentsInGroups
                             .GetAllStudentsInGroups()
@@ -277,7 +278,7 @@ namespace UchOtd.Schedule.Core
                             .Distinct()
                             .ToList());
 
-                    var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName).StudentGroupId;
+                    var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName, semester).StudentGroupId;
                     var nStudentIds = repo
                             .StudentsInGroups
                             .GetAllStudentsInGroups()
@@ -399,7 +400,7 @@ namespace UchOtd.Schedule.Core
             throw new NotImplementedException();
         }
 
-        public static void PrintWholeSchedule(ScheduleRepository repo)
+        public static void PrintWholeSchedule(ScheduleRepository repo, Semester semester)
         {
             
             /*foreach (var faculty in _repo.GetAllFaculties().OrderBy(f => f.SortingOrder))
@@ -412,8 +413,8 @@ namespace UchOtd.Schedule.Core
                 for (int i = 1; i <= 6; i++)
                 {
                     //var i = 4;
-                    var facultyDowLessons = repo.Lessons.GetFacultyDowSchedule(facultyId, i, false, -1, false, false);
-                    ExportSchedulePage(facultyDowLessons, facultyName, "Export.pdf", Constants.DowLocal[i], repo, false, false, true);
+                    var facultyDowLessons = repo.Lessons.GetFacultyDowSchedule(semester, facultyId, i, false, -1, false, false);
+                    ExportSchedulePage(semester, facultyDowLessons, facultyName, "Export.pdf", Constants.DowLocal[i], repo, false, false, true);
                 }
             //}
         }

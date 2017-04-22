@@ -13,7 +13,10 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.StudentsInGroups.Include(sig => sig.Student).Include(sig => sig.StudentGroup).ToList();
+                return context.StudentsInGroups
+                    .Include(sig => sig.Student)
+                    .Include(sig => sig.StudentGroup)
+                    .ToList();
             }
         }
 
@@ -21,7 +24,10 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.StudentsInGroups.Include(sig => sig.Student).Include(sig => sig.StudentGroup).ToList().Where(condition).ToList();
+                return context.StudentsInGroups
+                    .Include(sig => sig.Student)
+                    .Include(sig => sig.StudentGroup)
+                    .ToList().Where(condition).ToList();
             }
         }
 
@@ -29,7 +35,10 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.StudentsInGroups.Include(sig => sig.Student).Include(sig => sig.StudentGroup).ToList().FirstOrDefault(condition);
+                return context.StudentsInGroups
+                    .Include(sig => sig.Student)
+                    .Include(sig => sig.StudentGroup)
+                    .ToList().FirstOrDefault(condition);
             }
         }
 
@@ -37,7 +46,10 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.StudentsInGroups.Include(sig => sig.Student).Include(sig => sig.StudentGroup).FirstOrDefault(sig => sig.StudentsInGroupsId == studentsInGroupsId);
+                return context.StudentsInGroups
+                    .Include(sig => sig.Student)
+                    .Include(sig => sig.StudentGroup)
+                    .FirstOrDefault(sig => sig.StudentsInGroupsId == studentsInGroupsId);
             }
         }
 
@@ -45,7 +57,10 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.StudentsInGroups.Include(sig => sig.Student).Include(sig => sig.StudentGroup).FirstOrDefault(sig => sig.Student.StudentId == s.StudentId && sig.StudentGroup.StudentGroupId == sg.StudentGroupId);
+                return context.StudentsInGroups
+                    .Include(sig => sig.Student)
+                    .Include(sig => sig.StudentGroup)
+                    .FirstOrDefault(sig => sig.Student.StudentId == s.StudentId && sig.StudentGroup.StudentGroupId == sg.StudentGroupId);
             }
         }
 
@@ -53,7 +68,10 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.StudentsInGroups.Include(sig => sig.Student).Include(sig => sig.StudentGroup).FirstOrDefault(sig =>
+                return context.StudentsInGroups
+                    .Include(sig => sig.Student)
+                    .Include(sig => sig.StudentGroup)
+                    .FirstOrDefault(sig =>
                     sig.Student.F == studentF &&
                     sig.Student.I == studentI &&
                     sig.Student.O == studentO &&
@@ -112,7 +130,7 @@ namespace Schedule.Repositories.Repositories.Main
 
                     studentsInGroups.Student = context.Students.FirstOrDefault(s => s.StudentId == studentsInGroups.Student.StudentId);
                     studentsInGroups.StudentGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == studentsInGroups.StudentGroup.StudentGroupId);
-                    
+
                     context.StudentsInGroups.Add(studentsInGroups);
                 }
 

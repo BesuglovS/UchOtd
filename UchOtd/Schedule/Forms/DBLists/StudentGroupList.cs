@@ -21,8 +21,20 @@ namespace UchOtd.Schedule.Forms.DBLists
             _repo = repo;            
         }
 
-        private void LoadStudentsList()
+        private void LoadLists()
         {
+            var semesters = _repo
+                .Semesters
+                .GetAllSemesters()
+                .OrderBy(s => s.StartingYear)
+                .ThenBy(s => s.SemesterInYear)
+                .ToList();
+
+            semesterList.ValueMember = "SemesterId";
+            semesterList.DisplayMember = "DisplayName";
+            semesterList.DataSource = semesters;
+
+
             var studentList = _repo
                 //.GetFiltredStudents(st => st.Expelled == false)
                 .Students
@@ -36,25 +48,22 @@ namespace UchOtd.Schedule.Forms.DBLists
             StudentList.DataSource = studentView;
             StudentList.ValueMember = "StudentId";
             StudentList.DisplayMember = "Summary";
-        }
 
-        private void StudentGroupListLoad(object sender, EventArgs e)
-        {
-            RefreshView((int)RefreshType.FullRefresh);
-
-            LoadStudentsList();
-
-            LoadGroupList();
-        }
-
-        private void LoadGroupList()
-        {
             var studentGroupList = _repo.StudentGroups.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
 
             groupsList.DataSource = studentGroupList;
             groupsList.DisplayMember = "Name";
             groupsList.ValueMember = "StudentGroupId";
         }
+
+        private void StudentGroupListLoad(object sender, EventArgs e)
+        {
+            RefreshView((int)RefreshType.FullRefresh);
+            
+            LoadLists();
+        }
+
+        
 
         private void RefreshView(int refreshType)
         {
@@ -65,6 +74,15 @@ namespace UchOtd.Schedule.Forms.DBLists
             if ((refreshType == 1) || (refreshType == 3))
             {
                 var studentGroupList = _repo.StudentGroups.GetAllStudentGroups();
+
+                var semester = (Semester)semesterList.SelectedItem;
+
+                if ((semesterFiltered.Checked) && (semester != null))
+                {
+                    studentGroupList =
+                        studentGroupList.Where(sg => sg.Semester.SemesterId == semester.SemesterId).ToList();
+                }
+
                 studentGroupList = studentGroupList.OrderBy(sg => sg.Name).ToList();
 
                 StudentGroupListView.DataSource = studentGroupList;
@@ -121,10 +139,13 @@ namespace UchOtd.Schedule.Forms.DBLists
             var studentGroup = ((List<StudentGroup>)StudentGroupListView.DataSource)[e.RowIndex];
 
             StudentGroupName.Text = studentGroup.Name;
+            semesterList.SelectedItem = studentGroup.Semester.SemesterId;
 
             var groupStudents = _repo.Students.GetGroupStudents(StudentGroupName.Text)
                 .OrderBy(s => s.Expelled)
                 .ThenBy(s => s.F)
+                .ThenBy(s => s.I)
+                .ThenBy(s => s.O)
                 .ToList();
 
             var studentsView = StudentView.StudentsToView(groupStudents);
@@ -158,13 +179,20 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void add_Click(object sender, EventArgs e)
         {
-            if (_repo.StudentGroups.FindStudentGroup(StudentGroupName.Text) != null)
+            var semester = (Semester)semesterList.SelectedItem;
+
+            if (_repo.StudentGroups.FindStudentGroup(StudentGroupName.Text, semester) != null)
             {
                 MessageBox.Show("Такая группа уже есть.");
                 return;
             }
 
-            var newStudentGroup = new StudentGroup { Name = StudentGroupName.Text };
+            var newStudentGroup = new StudentGroup
+            {
+                Name = StudentGroupName.Text,
+                Semester = semester
+            };
+
             _repo.StudentGroups.AddStudentGroup(newStudentGroup);
 
             RefreshView((int)RefreshType.GroupsOnly);
@@ -177,6 +205,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var studentGroup = ((List<StudentGroup>)StudentGroupListView.DataSource)[StudentGroupListView.SelectedCells[0].RowIndex];
 
                 studentGroup.Name = StudentGroupName.Text;
+                studentGroup.Semester = _repo.Semesters.GetSemester((int)semesterList.SelectedItem);
 
                 _repo.StudentGroups.UpdateStudentGroup(studentGroup);
 
@@ -215,42 +244,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 RefreshView((int)RefreshType.GroupsOnly);
             }
         }
-
-        private void deletewithlessons_Click(object sender, EventArgs e)
-        {
-            if (StudentGroupListView.SelectedCells.Count > 0)
-            {
-                var studentGroup = ((List<StudentGroup>)StudentGroupListView.DataSource)[StudentGroupListView.SelectedCells[0].RowIndex];
-
-                var studentsInGroup = _repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId);
-                if (studentsInGroup.Count > 0)
-                {
-                    foreach (var sig in studentsInGroup)
-                    {
-                        _repo.StudentsInGroups.RemoveStudentsInGroups(sig.StudentsInGroupsId);
-                    }
-                }
-
-                var groupDisciplines = _repo.Disciplines.GetFiltredDisciplines(d => d.StudentGroup.StudentGroupId == studentGroup.StudentGroupId);
-                if (groupDisciplines.Count > 0)
-                {
-                    foreach (var disc in groupDisciplines)
-                    {
-                        _repo.Disciplines.RemoveDiscipline(disc.DisciplineId);
-                    }
-                }
-
-                _repo.StudentGroups.RemoveStudentGroup(studentGroup.StudentGroupId);
-
-                RefreshView((int)RefreshType.GroupsOnly);
-            }
-        }
-
-        private void StudentGroupList_Resize(object sender, EventArgs e)
-        {
-            //StudentsInGroupListView.Columns["Fio"].Width = StudentListPanel.Width - 20;
-        }
-
+        
         private void addStudentToGroup_Click(object sender, EventArgs e)
         {
             if (StudentList.SelectedValue == null)
@@ -340,6 +334,11 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 add.PerformClick();
             }
+        }
+
+        private void refresh_Click(object sender, EventArgs e)
+        {
+            RefreshView((int)RefreshType.GroupsOnly);
         }
     }
 }

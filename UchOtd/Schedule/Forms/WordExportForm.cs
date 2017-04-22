@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Constants;
+using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Core;
 using UchOtd.Properties;
@@ -15,16 +16,18 @@ namespace UchOtd.Schedule.Forms
     public partial class WordExportForm : Form
     {
         private readonly ScheduleRepository _repo;
+        private readonly Semester _semester;
         Dictionary<int, List<int>> _choice;
 
         CancellationTokenSource _tokenSource;
         CancellationToken _cToken;
 
-        public WordExportForm(ScheduleRepository repo)
+        public WordExportForm(ScheduleRepository repo, Semester semester)
         {
             InitializeComponent();
 
             _repo = repo;
+            _semester = semester;
         }
 
         private void WordExportForm_Load(object sender, EventArgs e)
@@ -162,7 +165,7 @@ namespace UchOtd.Schedule.Forms
                 try
                 {
                     await Task.Run(() => WordExport.ExportCustomSchedule(
-                                _choice, _repo, "Расписание.docx", false, false,
+                                _choice, _repo, _semester, "Расписание.docx", false, false,
                                 lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, weekFilteredF, weekFilterF, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)

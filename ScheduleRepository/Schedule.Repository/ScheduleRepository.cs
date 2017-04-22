@@ -17,6 +17,8 @@ namespace Schedule.Repositories
 {
     public class ScheduleRepository : IDisposable
     {
+        public SemesterRepository Semesters;
+
         public AuditoriumsRepository Auditoriums;
         public BuildingsRepository Buildings;
         public CalendarsRepository Calendars;
@@ -59,6 +61,7 @@ namespace Schedule.Repositories
         {
             _connectionString = value;
 
+            Semesters.ConnectionString = value;
             Auditoriums.ConnectionString = value;
             Buildings.ConnectionString = value;
             Calendars.ConnectionString = value;
@@ -102,6 +105,7 @@ namespace Schedule.Repositories
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<ScheduleContext, Configuration>());
 
+            Semesters = new SemesterRepository();
             Auditoriums = new AuditoriumsRepository();
             Buildings = new BuildingsRepository();
             Calendars = new CalendarsRepository();
@@ -180,13 +184,21 @@ namespace Schedule.Repositories
             return connectionString.Substring(startIndex, endIndex - startIndex);
         }
 
-        public void BackupDb(string filename)
+        public void BackupDb(string databaseName, string filename)
         {
-            var dbName = ExtractDbName(GetConnectionString());
-
-            if (dbName == "")
+            string dbName = "";
+            if (databaseName == null)
             {
-                return;
+                dbName = ExtractDbName(GetConnectionString());
+
+                if (dbName == "")
+                {
+                    return;
+                }
+            }
+            else
+            {
+                dbName = databaseName;
             }
 
             var backupSql = "BACKUP DATABASE " + dbName + " TO DISK = '" + filename + "' WITH FORMAT, MEDIANAME='" + dbName + "'";
@@ -236,19 +248,6 @@ namespace Schedule.Repositories
         
         public void Dispose()
         {
-        }
-
-        public void TxtBackup(string filename)
-        {
-            var sw = new StreamWriter(filename);
-
-            foreach (var aud in Auditoriums.GetAll())
-            {
-                sw.WriteLine(aud.AuditoriumId);
-                sw.WriteLine(aud.Building.BuildingId);
-            }
-
-            sw.Close();
         }
     }
 }

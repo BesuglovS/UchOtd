@@ -39,6 +39,17 @@ namespace UchOtd.Schedule.Forms.DBLists
                 Attestation.Items.Add(attestationForm.Value);
             }
 
+            var semesters = _repo
+                .Semesters
+                .GetAllSemesters()
+                .OrderBy(s => s.StartingYear)
+                .ThenBy(s => s.SemesterInYear)
+                .ToList();
+
+            semesterList.ValueMember = "SemesterId";
+            semesterList.DisplayMember = "DisplayName";
+            semesterList.DataSource = semesters;
+
 
             var groups = _repo.StudentGroups.GetAllStudentGroups()
                 .OrderBy(g => g.Name)
@@ -101,15 +112,26 @@ namespace UchOtd.Schedule.Forms.DBLists
                 {
                     discView = await Task.Run(() =>
                     {
-                        List<Discipline> discList = null;
+                        List<Discipline> discList;
 
-                        if ((filterText != "") && discnameFilter.Checked)
+                        if (semesterFiletered.Checked)
                         {
-                            discList = _repo.Disciplines.GetFiltredDisciplines(disc => disc.Name.Contains(filter.Text));
+                            var semester =
+                                _repo.Semesters.GetFirstFiltredSemester(
+                                    s => s.SemesterId == (int) semesterList.SelectedItem);
+
+                            discList =
+                                _repo.Disciplines.GetFiltredDisciplines(
+                                    disc => disc.Semester.SemesterId == semester.SemesterId);
                         }
                         else
                         {
                             discList = _repo.Disciplines.GetAllDisciplines();
+                        }
+
+                        if ((filterText != "") && discnameFilter.Checked)
+                        {
+                            discList = discList.Where(disc => disc.Name.Contains(filter.Text)).ToList();
                         }
 
                         if (groupNameF)
@@ -351,12 +373,8 @@ namespace UchOtd.Schedule.Forms.DBLists
                 Attestation.SelectedIndex = Constants.Attestation.FirstOrDefault(a => a.Value == "-").Key;
             }
 
-            var disciplineGroup = _repo.StudentGroups.FindStudentGroup(Group.Text);
-            if (disciplineGroup == null)
-            {
-                disciplineGroup = new StudentGroup { Name = Group.Text };
-                _repo.StudentGroups.AddStudentGroup(disciplineGroup);
-            }
+            var disciplineGroup = _repo.StudentGroups.GetStudentGroup((int)Group.SelectedItem);
+            var semester = (Semester) semesterList.SelectedItem;
 
             var newDiscipline = new Discipline
             {
@@ -367,7 +385,8 @@ namespace UchOtd.Schedule.Forms.DBLists
                 PracticalHours = practHours,
                 Name = DisciplineName.Text,
                 StudentGroup = disciplineGroup,
-                TypeSequence = TypeSequence.Text
+                TypeSequence = TypeSequence.Text,
+                Semester = semester
             };
 
             _repo.Disciplines.AddDiscipline(newDiscipline);
@@ -391,6 +410,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 discipline.TypeSequence = TypeSequence.Text;
 
                 discipline.StudentGroup = _repo.StudentGroups.GetStudentGroup((int)Group.SelectedValue);
+                discipline.Semester = _repo.Semesters.GetSemester((int)semesterList.SelectedItem);
 
                 _repo.Disciplines.UpdateDiscipline(discipline);
 

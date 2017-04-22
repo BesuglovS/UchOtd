@@ -47,7 +47,6 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void update_Click(object sender, EventArgs e)
         {
-
             if (BuildingsListView.SelectedCells.Count > 0)
             {
                 var building = ((List<Building>)BuildingsListView.DataSource)[BuildingsListView.SelectedCells[0].RowIndex];

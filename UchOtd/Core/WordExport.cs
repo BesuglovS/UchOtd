@@ -24,7 +24,7 @@ namespace UchOtd.Core
 {
     public static class WordExport
     {
-        public static void ExportSchedulePage(ScheduleRepository repo, string filename, bool save, bool quit,
+        public static void ExportSchedulePage(ScheduleRepository repo, Semester semester, string filename, bool save, bool quit,
             int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter,
             bool weeksMarksVisible, bool onlyFutureDates, CancellationToken cToken)
         {
@@ -47,7 +47,7 @@ namespace UchOtd.Core
 
             var dow = Constants.DowLocal[dayOfWeek];
 
-            var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, onlyFutureDates);
+            var schedule = repo.Lessons.GetFacultyDowSchedule(semester, faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, onlyFutureDates);
 
             Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
             oPara1.Range.Text = "Расписание";
@@ -163,7 +163,7 @@ namespace UchOtd.Core
                     var plainGroupName = groupName.Replace(" (+Н)", "");
                     var nGroupName = groupName.Replace(" (+", "(");
 
-                    var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName).StudentGroupId;
+                    var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName, semester).StudentGroupId;
                     var plainStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                             .Where(sig => sig.StudentGroup.StudentGroupId == plainGroupId)
                             .Select(stig => stig.Student.StudentId)
@@ -174,7 +174,7 @@ namespace UchOtd.Core
                             .Distinct()
                             .ToList());
 
-                    var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName).StudentGroupId;
+                    var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName, semester).StudentGroupId;
                     var nStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                             .Where(sig => sig.StudentGroup.StudentGroupId == nGroupId)
                             .Select(stig => stig.Student.StudentId)
@@ -397,7 +397,7 @@ namespace UchOtd.Core
         }
 
         public static void ExportTwoSchedulePages(
-            ScheduleRepository repo, string filename, bool save, bool quit,
+            ScheduleRepository repo, Semester semester, string filename, bool save, bool quit,
             int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek,
             bool weekFiltered, int weekFilter, bool weeksMarksVisible)
         {
@@ -415,16 +415,16 @@ namespace UchOtd.Core
 
             var faculty = repo.Faculties.GetFaculty(facultyId);
 
-            var firstDaySchedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
+            var firstDaySchedule = repo.Lessons.GetFacultyDowSchedule(semester, faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
 
-            var firstDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, firstDaySchedule, oDoc, oEndOfDoc, oWord, null, dayOfWeek);
+            var firstDayTable = PutDayScheduleInWord(repo, semester, lessonLength, weeksMarksVisible, firstDaySchedule, oDoc, oEndOfDoc, oWord, null, dayOfWeek);
 
             Table secondDayTable = null;
 
             if (dayOfWeek != 7)
             {
-                var secondDaySchedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter, false, false);
-                secondDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, secondDaySchedule, oDoc, oEndOfDoc, oWord, firstDayTable, dayOfWeek + 1);
+                var secondDaySchedule = repo.Lessons.GetFacultyDowSchedule(semester, faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter, false, false);
+                secondDayTable = PutDayScheduleInWord(repo, semester, lessonLength, weeksMarksVisible, secondDaySchedule, oDoc, oEndOfDoc, oWord, firstDayTable, dayOfWeek + 1);
             }
 
             int pageCount;
@@ -460,7 +460,7 @@ namespace UchOtd.Core
             Marshal.ReleaseComObject(oWord);
         }
 
-        private static Table PutDayScheduleInWord(ScheduleRepository repo, int lessonLength, bool weeksMarksVisible,
+        private static Table PutDayScheduleInWord(ScheduleRepository repo, Semester semester, int lessonLength, bool weeksMarksVisible,
             Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>> schedule, _Document oDoc, object oEndOfDoc, _Application oWord, Table table, int dayOfWeek)
         {
             var timeList = new List<string>();
@@ -534,7 +534,7 @@ namespace UchOtd.Core
                     var plainGroupName = groupName.Replace(" (+Н)", "");
                     var nGroupName = groupName.Replace(" (+", "(");
 
-                    var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName).StudentGroupId;
+                    var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName, semester).StudentGroupId;
                     var plainStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                         .Where(sig => sig.StudentGroup.StudentGroupId == plainGroupId)
                         .Select(stig => stig.Student.StudentId)
@@ -545,7 +545,7 @@ namespace UchOtd.Core
                         .Distinct()
                         .ToList());
 
-                    var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName).StudentGroupId;
+                    var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName, semester).StudentGroupId;
                     var nStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                         .Where(sig => sig.StudentGroup.StudentGroupId == nGroupId)
                         .Select(stig => stig.Student.StudentId)
@@ -697,6 +697,7 @@ namespace UchOtd.Core
 
         public static void ExportWholeSchedule(
             ScheduleRepository repo,
+            Semester semester,
             string filename,
             bool save,
             bool quit,
@@ -736,7 +737,7 @@ namespace UchOtd.Core
                 {
                     string dow = Constants.DowLocal[dayOfWeek];
 
-                    var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, false, -1, false, futureDatesOnly);
+                    var schedule = repo.Lessons.GetFacultyDowSchedule(semester, faculty.FacultyId, dayOfWeek, false, -1, false, futureDatesOnly);
 
                     Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
                     oPara1.Range.Text = "Расписание";
@@ -860,7 +861,7 @@ namespace UchOtd.Core
                             var plainGroupName = groupName.Replace(" (+Н)", "");
                             var nGroupName = groupName.Replace(" (+", "(");
 
-                            var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName).StudentGroupId;
+                            var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName, semester).StudentGroupId;
                             var plainStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => sig.StudentGroup.StudentGroupId == plainGroupId)
                                     .Select(stig => stig.Student.StudentId)
@@ -871,7 +872,7 @@ namespace UchOtd.Core
                                     .Distinct()
                                     .ToList());
 
-                            var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName).StudentGroupId;
+                            var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName, semester).StudentGroupId;
                             var nStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => sig.StudentGroup.StudentGroupId == nGroupId)
                                     .Select(stig => stig.Student.StudentId)
@@ -1065,7 +1066,7 @@ namespace UchOtd.Core
 
         public static void ExportCustomSchedule(
             // facultyId, List of DOW
-            Dictionary<int, List<int>> facultyDow, ScheduleRepository repo, string filename, bool save, bool quit,
+            Dictionary<int, List<int>> facultyDow, ScheduleRepository repo, Semester semester, string filename, bool save, bool quit,
             int lessonLength, int daysOfWeek, bool schoolHeader, bool onlyFutureDates,
             bool weekFiltered, int weekFilter, CancellationToken cToken)
         {
@@ -1107,7 +1108,7 @@ namespace UchOtd.Core
 
                     cToken.ThrowIfCancellationRequested();
 
-                    var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, onlyFutureDates);
+                    var schedule = repo.Lessons.GetFacultyDowSchedule(semester, faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, onlyFutureDates);
 
                     cToken.ThrowIfCancellationRequested();
 
@@ -1249,7 +1250,7 @@ namespace UchOtd.Core
                             var plainGroupName = groupName.Replace(" (+Н)", "");
                             var nGroupName = groupName.Replace(" (+", "(");
 
-                            var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName).StudentGroupId;
+                            var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName, semester).StudentGroupId;
                             var plainStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => sig.StudentGroup.StudentGroupId == plainGroupId)
                                     .Select(stig => stig.Student.StudentId)
@@ -1260,7 +1261,7 @@ namespace UchOtd.Core
                                     .Distinct()
                                     .ToList());
 
-                            var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName).StudentGroupId;
+                            var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName, semester).StudentGroupId;
                             var nStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => sig.StudentGroup.StudentGroupId == nGroupId)
                                     .Select(stig => stig.Student.StudentId)
@@ -1516,7 +1517,7 @@ namespace UchOtd.Core
         }
 
         internal static void ExportTwoDaysInPageFacultySchedule(
-            ScheduleRepository repo, string filename, bool save, bool quit,
+            ScheduleRepository repo, Semester semester, string filename, bool save, bool quit,
             int lessonLength, int facultyId, int daysOfWeek,
             bool weekFiltered, int weekFilter, bool weeksMarksVisible)
         {
@@ -1538,13 +1539,13 @@ namespace UchOtd.Core
 
             for (int dayOfWeek = 1; dayOfWeek <= 5; dayOfWeek += 2)
             {
-                var firstDaySchedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
+                var firstDaySchedule = repo.Lessons.GetFacultyDowSchedule(semester, faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
 
-                var firstDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, firstDaySchedule, oDoc, oEndOfDoc, oWord, null, dayOfWeek);
+                var firstDayTable = PutDayScheduleInWord(repo, semester, lessonLength, weeksMarksVisible, firstDaySchedule, oDoc, oEndOfDoc, oWord, null, dayOfWeek);
 
 
-                var secondDaySchedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter, false, false);
-                var secondDayTable = PutDayScheduleInWord(repo, lessonLength, weeksMarksVisible, secondDaySchedule, oDoc, oEndOfDoc, oWord, firstDayTable, dayOfWeek + 1);
+                var secondDaySchedule = repo.Lessons.GetFacultyDowSchedule(semester, faculty.FacultyId, dayOfWeek + 1, weekFiltered, weekFilter, false, false);
+                var secondDayTable = PutDayScheduleInWord(repo, semester, lessonLength, weeksMarksVisible, secondDaySchedule, oDoc, oEndOfDoc, oWord, firstDayTable, dayOfWeek + 1);
 
                 var fontSize = 10.5F;
                 int pageCount;
@@ -1588,7 +1589,7 @@ namespace UchOtd.Core
             Marshal.ReleaseComObject(oWord);
         }
 
-        public static void WordSchool(ScheduleRepository repo, string filename, bool save, bool quit, int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, CancellationToken cToken)
+        public static void WordSchool(ScheduleRepository repo, Semester semester, string filename, bool save, bool quit, int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, CancellationToken cToken)
         {
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
@@ -1668,13 +1669,13 @@ namespace UchOtd.Core
 
             cToken.ThrowIfCancellationRequested();
 
-            Table oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null, cToken);
+            Table oTable = GetAndPutDowSchedule(repo, semester, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null, cToken);
 
             Table oTable2 = null;
 
             if ((dayOfWeek != 6) && (dayOfWeek != 7))
             {
-                oTable2 = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, oTable, cToken);
+                oTable2 = GetAndPutDowSchedule(repo, semester, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, oTable, cToken);
             }
 
             cToken.ThrowIfCancellationRequested();
@@ -2033,7 +2034,7 @@ namespace UchOtd.Core
             Marshal.ReleaseComObject(oWord);
         }
 
-        public static void WordSchoolTwoDays(ScheduleRepository repo, string filename, bool save, bool quit, int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, CancellationToken cToken)
+        public static void WordSchoolTwoDays(ScheduleRepository repo, Semester semester, string filename, bool save, bool quit, int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, CancellationToken cToken)
         {
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
@@ -2049,10 +2050,10 @@ namespace UchOtd.Core
 
             var faculty = repo.Faculties.GetFaculty(facultyId);
 
-            var oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null, cToken);
+            var oTable = GetAndPutDowSchedule(repo, semester, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, null, cToken);
             if (dayOfWeek != 7)
             {
-                oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, oTable, cToken);
+                oTable = GetAndPutDowSchedule(repo, semester, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, oTable, cToken);
             }
 
 
@@ -2085,11 +2086,11 @@ namespace UchOtd.Core
             Marshal.ReleaseComObject(oWord);
         }
 
-        private static Table GetAndPutDowSchedule(ScheduleRepository repo, int lessonLength, int dayOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord, Table tableToContinue, CancellationToken cToken)
+        private static Table GetAndPutDowSchedule(ScheduleRepository repo, Semester semester, int lessonLength, int dayOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord, Table tableToContinue, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
 
-            var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
+            var schedule = repo.Lessons.GetFacultyDowSchedule(semester, faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -2435,11 +2436,11 @@ namespace UchOtd.Core
             }
         }
 
-        private static Table GetAndPutDowStartSchedule(ScheduleRepository repo, int lessonLength, int dayOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord, CancellationToken cToken)
+        private static Table GetAndPutDowStartSchedule(ScheduleRepository repo, Semester semester, int lessonLength, int dayOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
 
-            var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
+            var schedule = repo.Lessons.GetFacultyDowSchedule(semester, faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -2996,7 +2997,7 @@ namespace UchOtd.Core
             } while (pageCount > 1);
         }
 
-        public static void WordStartSchool(ScheduleRepository repo, string filename, bool save, bool quit, int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, CancellationToken cToken)
+        public static void WordStartSchool(ScheduleRepository repo, Semester semester, string filename, bool save, bool quit, int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
 
@@ -3058,7 +3059,7 @@ namespace UchOtd.Core
 
             cToken.ThrowIfCancellationRequested();
 
-            Table oTable = GetAndPutDowStartSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
+            Table oTable = GetAndPutDowStartSchedule(repo, semester, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
 
             Table oTable2 = null;
 
@@ -3073,7 +3074,7 @@ namespace UchOtd.Core
                     WdLineSpacing.wdLineSpaceSingle;
                 oPara1.Range.InsertParagraphAfter();
 
-                oTable2 = GetAndPutDowStartSchedule(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
+                oTable2 = GetAndPutDowStartSchedule(repo, semester, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
             }
 
             cToken.ThrowIfCancellationRequested();

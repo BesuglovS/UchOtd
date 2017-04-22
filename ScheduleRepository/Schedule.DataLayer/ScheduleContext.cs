@@ -2,7 +2,6 @@
 using System.Data.Entity.Infrastructure;
 using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Config;
-using Schedule.DomainClasses.Logs;
 using Schedule.DomainClasses.Main;
 using Schedule.DomainClasses.Session;
 
@@ -28,10 +27,12 @@ namespace Schedule.DataLayer
         private static string GetConnectionString()
         {
             return "data source=tcp:" + @"UCH-OTD-DISP\SQLEXPRESS" +
-                   ",1433;Database=Schedule16172; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True";
+                   ",1433;Database=Schedule; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True";
         }
 
         // Main
+        public DbSet<Semester> Semesters { get; set; }
+
         public DbSet<Auditorium> Auditoriums { get; set; }
         public DbSet<Building> Buildings { get; set; }
         public DbSet<Calendar> Calendars { get; set; }

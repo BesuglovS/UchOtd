@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Config;
+using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 
 namespace UchOtd.Schedule.Forms.DBLists
@@ -14,6 +15,17 @@ namespace UchOtd.Schedule.Forms.DBLists
         public ConfigOptionsList(ScheduleRepository repo)
         {
             InitializeComponent();
+
+            var semesters = repo
+                .Semesters
+                .GetAllSemesters()
+                .OrderBy(s => s.StartingYear)
+                .ThenBy(s => s.SemesterInYear)
+                .ToList();
+
+            semesterList.ValueMember = "SemesterId";
+            semesterList.DisplayMember = "DisplayName";
+            semesterList.DataSource = semesters;
 
             _repo = repo;
         }
@@ -52,13 +64,20 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void add_Click(object sender, EventArgs e)
         {
-            if (_repo.ConfigOptions.FindConfigOption(optionKey.Text) != null)
+            var semester = (Semester)semesterList.SelectedItem;
+
+            if (_repo.ConfigOptions.FindConfigOption(optionKey.Text, semester) != null)
             {
                 MessageBox.Show("Такая настройка уже есть.");
                 return;
             }
 
-            var newConfigOption = new ConfigOption { Key = optionKey.Text, Value = optionValue.Text};
+            var newConfigOption = new ConfigOption
+            {
+                Key = optionKey.Text,
+                Value = optionValue.Text,
+                Semester = semester
+            };
             _repo.ConfigOptions.AddConfigOption(newConfigOption);
 
             RefreshView();
@@ -72,7 +91,8 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 option.Key = optionKey.Text;
                 option.Value = optionValue.Text;
-                
+                option.Semester = _repo.Semesters.GetSemester((int)semesterList.SelectedItem);
+
                 _repo.ConfigOptions.UpdateConfigOption(option);
 
                 RefreshView();

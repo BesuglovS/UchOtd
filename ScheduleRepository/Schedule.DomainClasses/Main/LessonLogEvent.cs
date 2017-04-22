@@ -1,7 +1,6 @@
 ﻿using System;
-using Schedule.DomainClasses.Main;
 
-namespace Schedule.DomainClasses.Logs
+namespace Schedule.DomainClasses.Main
 {
     public class LessonLogEvent
     {

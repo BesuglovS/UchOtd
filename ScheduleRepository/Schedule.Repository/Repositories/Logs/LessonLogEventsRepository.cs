@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Schedule.DataLayer;
-using Schedule.DomainClasses.Logs;
+using Schedule.DomainClasses.Main;
 
 namespace Schedule.Repositories.Repositories.Logs
 {

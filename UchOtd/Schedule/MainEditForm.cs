@@ -63,6 +63,17 @@ namespace UchOtd.Schedule
 
         private void LoadLists()
         {
+            var semesters = Repo
+                .Semesters
+                .GetAllSemesters()
+                .OrderBy(s => s.StartingYear)
+                .ThenBy(s => s.SemesterInYear)
+                .ToList();
+
+            semesterList.ValueMember = "SemesterId";
+            semesterList.DisplayMember = "DisplayName";
+            semesterList.DataSource = semesters;
+
             var groups = Repo
                 .StudentGroups
                 .GetAllStudentGroups()
@@ -1493,33 +1504,19 @@ namespace UchOtd.Schedule
         {
             cToken.ThrowIfCancellationRequested();
 
+            var semester = (Semester)semesterList.SelectedItem;
+
             var facultyDowLessons = Repo.Lessons
-                .GetFacultyDowSchedule(facultyId, ruDow, false, -1, false, false);
+                .GetFacultyDowSchedule(semester, facultyId, ruDow, false, -1, false, false);
 
             cToken.ThrowIfCancellationRequested();
 
-            PdfExport.ExportSchedulePage(facultyDowLessons, facultyName, "Export.pdf",
+            PdfExport.ExportSchedulePage(semester, facultyDowLessons, facultyName, "Export.pdf",
                 DOWList.Text, Repo, true, false, false);
 
             cToken.ThrowIfCancellationRequested();
 
             Process.Start("Export.pdf");
-        }
-
-        private void AllInPDF_Click(object sender, EventArgs e)
-        {
-            //PDFExport.ExportWholeSchedule("Export.pdf", _repo, false, false, false);
-
-            PdfExport.PrintWholeSchedule(Repo);
-        }
-
-        private void BackupAndUpload_Click(object sender, EventArgs e)
-        {
-            var dbName = Repo.ExtractDbName(Repo.GetConnectionString());
-
-            Repo.BackupDb(Application.StartupPath + "\\" + dbName + ".bak");
-            WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak",
-                "httpdocs/upload/DB-Backup/" + dbName + ".bak");
         }
 
         private void DownloadAndRestore_Click(object sender, EventArgs e)
@@ -1610,14 +1607,16 @@ namespace UchOtd.Schedule
 
         private void ExportInWord_Click(object sender, EventArgs e)
         {
+            var semester = (Semester)semesterList.SelectedItem;
+
             if (WordOneFaculty.Checked)
             {
-                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, 90,
+                WordExport.ExportWholeSchedule(Repo, semester, "Расписание.docx", false, false, 90,
                     (int) WordFacultyFilter.SelectedValue, 6, SchoolHeader, OnlyFutureDatesExportInWord.Checked);
             }
             else
             {
-                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, 90, -1, 6, SchoolHeader,
+                WordExport.ExportWholeSchedule(Repo, semester, "Расписание.docx", false, false, 90, -1, 6, SchoolHeader,
                     OnlyFutureDatesExportInWord.Checked);
             }
 
@@ -1625,14 +1624,16 @@ namespace UchOtd.Schedule
 
         private void button2_Click(object sender, EventArgs e)
         {
+            var semester = (Semester)semesterList.SelectedItem;
+
             if (WordOneFaculty.Checked)
             {
-                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, cb90.Checked ? 90 : 80,
+                WordExport.ExportWholeSchedule(Repo, semester, "Расписание.docx", false, false, cb90.Checked ? 90 : 80,
                     (int) WordFacultyFilter.SelectedValue, 6, SchoolHeader, OnlyFutureDatesExportInWord.Checked);
             }
             else
             {
-                WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, cb90.Checked ? 90 : 80, -1, 6,
+                WordExport.ExportWholeSchedule(Repo, semester, "Расписание.docx", false, false, cb90.Checked ? 90 : 80, -1, 6,
                     SchoolHeader, OnlyFutureDatesExportInWord.Checked);
             }
         }
@@ -1732,8 +1733,10 @@ namespace UchOtd.Schedule
 
                 try
                 {
+                    var semester = (Semester)semesterList.SelectedItem;
+
                     await Task.Run(() => WordExport.ExportSchedulePage(
-                        repo, "Расписание.docx", false, false, length80Or90, facultyId, ruDow, 6,
+                        repo, semester, "Расписание.docx", false, false, length80Or90, facultyId, ruDow, 6,
                         wordWeekFiltered, weekFilter, !wordWeekFiltered, onlyFutureDates, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
@@ -1751,7 +1754,9 @@ namespace UchOtd.Schedule
 
         private void WordCustom_Click(object sender, EventArgs e)
         {
-            var wordCustomForm = new WordExportForm(Repo);
+            var semester = (Semester)semesterList.SelectedItem;
+
+            var wordCustomForm = new WordExportForm(Repo, semester);
             wordCustomForm.Show();
         }
 
@@ -1762,19 +1767,10 @@ namespace UchOtd.Schedule
             int weekFilter;
             int.TryParse(WordExportWeekFilter.Text, out weekFilter);
 
+            var semester = (Semester)semesterList.SelectedItem;
+
             WordExport.ExportTwoSchedulePages(
-                Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
-                wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
-        }
-
-        private void FacultyTwoDaysInList_Click(object sender, EventArgs e)
-        {
-            var facultyId = (int) WordFacultyFilter.SelectedValue;
-            int weekFilter;
-            int.TryParse(WordExportWeekFilter.Text, out weekFilter);
-
-            WordExport.ExportTwoDaysInPageFacultySchedule(
-                Repo, "Расписание.docx", false, false, 80, facultyId, 6,
+                Repo, semester, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
                 wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
         }
 
@@ -1787,130 +1783,170 @@ namespace UchOtd.Schedule
 
         private async void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
-            
-            /*
             await Task.Run(() =>
             {
-                var Repo2 = new ScheduleRepository("Server=UCH-OTD-DISP\\SQLEXPRESS,1433;Database=Schedule16171-old; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True");
+                var sw = new StreamWriter("AuditoriumTeachers.txt");
 
-                var disciplinesFrom = Repo2.Disciplines.GetAllDisciplines();
+                var buildings = Repo.Buildings.GetAllBuildings();
 
-                var disciplinesTo = Repo.Disciplines.GetAllDisciplines();
-
-                foreach (var discipline in disciplinesTo)
+                for (int i = 0; i < buildings.Count; i++)
                 {
-                    var find = disciplinesFrom.FirstOrDefault(d => d.DisciplineId == discipline.DisciplineId);
-                    string sequence = "";
-                    if (find != null)
+                    var building = buildings[i];
+
+                    sw.WriteLine("Корпус - " + building.Name);
+
+                    var buildingAuditoriums =
+                        Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList();
+
+                    for (int j = 0; j < buildingAuditoriums.Count; j++)
                     {
-                        sequence = find.TypeSequence;
+                        var auditorium = buildingAuditoriums[j];
+
+                        sw.WriteLine(auditorium.Name);
+
+                        var auditoriumTeachers = Repo.Lessons
+                            .GetFiltredLessons(l =>
+                                l.State == 1 &&
+                                l.Auditorium.AuditoriumId == auditorium.AuditoriumId)
+                            .Select(l => l.TeacherForDiscipline.Teacher.FIO)
+                            .Distinct()
+                            .OrderBy(fio => fio)
+                            .ToList();
+
+                        for (int k = 0; k < auditoriumTeachers.Count; k++)
+                        {
+                            sw.WriteLine(auditoriumTeachers[k]);
+                        }
+                        
+                        sw.WriteLine();
                     }
-
-                    discipline.TypeSequence = sequence;
-                    Repo.Disciplines.UpdateDiscipline(discipline);
                 }
-            });*/
-            /*
-             await Task.Run(() =>
-             {
-                 var events = Repo.LessonLogEvents.GetAllLessonLogEvents();
 
-                 var addEvents = new Dictionary<DateTime, int>();
-                 var remEvents = new Dictionary<DateTime, int>();
-                 var audEvents = new Dictionary<DateTime, int>();
+                sw.Close();
+            });
+                /*
+                await Task.Run(() =>
+                {
+                    var Repo2 = new ScheduleRepository("Server=UCH-OTD-DISP\\SQLEXPRESS,1433;Database=Schedule16171-old; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True");
 
-                 for (int i = 0; i < events.Count; i++)
+                    var disciplinesFrom = Repo2.Disciplines.GetAllDisciplines();
+
+                    var disciplinesTo = Repo.Disciplines.GetAllDisciplines();
+
+                    foreach (var discipline in disciplinesTo)
+                    {
+                        var find = disciplinesFrom.FirstOrDefault(d => d.DisciplineId == discipline.DisciplineId);
+                        string sequence = "";
+                        if (find != null)
+                        {
+                            sequence = find.TypeSequence;
+                        }
+
+                        discipline.TypeSequence = sequence;
+                        Repo.Disciplines.UpdateDiscipline(discipline);
+                    }
+                });*/
+                /*
+                 await Task.Run(() =>
                  {
-                     if (events[i].OldLesson == null)
+                     var events = Repo.LessonLogEvents.GetAllLessonLogEvents();
+
+                     var addEvents = new Dictionary<DateTime, int>();
+                     var remEvents = new Dictionary<DateTime, int>();
+                     var audEvents = new Dictionary<DateTime, int>();
+
+                     for (int i = 0; i < events.Count; i++)
                      {
-                         if (!addEvents.ContainsKey(events[i].DateTime.Date))
+                         if (events[i].OldLesson == null)
                          {
-                             addEvents.Add(events[i].DateTime.Date, 0);
+                             if (!addEvents.ContainsKey(events[i].DateTime.Date))
+                             {
+                                 addEvents.Add(events[i].DateTime.Date, 0);
+                             }
+
+                             addEvents[events[i].DateTime.Date]++;
+
+                             continue;
                          }
 
-                         addEvents[events[i].DateTime.Date]++;
-
-                         continue;
-                     }
-
-                     if (events[i].NewLesson == null)
-                     {
-                         if (!remEvents.ContainsKey(events[i].DateTime.Date))
+                         if (events[i].NewLesson == null)
                          {
-                             remEvents.Add(events[i].DateTime.Date, 0);
+                             if (!remEvents.ContainsKey(events[i].DateTime.Date))
+                             {
+                                 remEvents.Add(events[i].DateTime.Date, 0);
+                             }
+
+                             remEvents[events[i].DateTime.Date]++;
+
+                             continue;
                          }
 
-                         remEvents[events[i].DateTime.Date]++;
+                         if (!audEvents.ContainsKey(events[i].DateTime.Date))
+                         {
+                             audEvents.Add(events[i].DateTime.Date, 0);
+                         }
 
-                         continue;
+                         audEvents[events[i].DateTime.Date]++;
                      }
 
-                     if (!audEvents.ContainsKey(events[i].DateTime.Date))
-                     {
-                         audEvents.Add(events[i].DateTime.Date, 0);
-                     }
+                     var addCount = addEvents.Sum(ev => ev.Value);
+                     var remCount = remEvents.Sum(ev => ev.Value);
+                     var audCount = audEvents.Sum(ev => ev.Value);
+                     var totalCount = events.Count;
 
-                     audEvents[events[i].DateTime.Date]++;
-                 }
+                     MessageBox.Show(
+                         "Add (min = " + addEvents.Select(ae => ae.Value).Min() + "; max = " + addEvents.Select(ae => ae.Value).Max() + ") = " + 
+                         addEvents.Count + " / " + addCount + "(" + string.Format("{0:0.00}", (addCount * 100.0 / totalCount)) + "%)" + "\n" + 
+                         "Rem (min = " + remEvents.Select(ae => ae.Value).Min() + "; max = " + remEvents.Select(ae => ae.Value).Max() + ") = " + 
+                         remEvents.Count + " / " + remCount + "(" + string.Format("{0:0.00}", (remCount * 100.0 / totalCount)) + "%)" + "\n" +
+                         "Aud (min = " + audEvents.Select(ae => ae.Value).Min() + "; max = " + audEvents.Select(ae => ae.Value).Max() + ") = " + 
+                         audEvents.Count + " / " + audCount + "(" + string.Format("{0:0.00}", (audCount * 100.0 / totalCount)) + "%)"
+                         );
+                 });*/
 
-                 var addCount = addEvents.Sum(ev => ev.Value);
-                 var remCount = remEvents.Sum(ev => ev.Value);
-                 var audCount = audEvents.Sum(ev => ev.Value);
-                 var totalCount = events.Count;
+                /*
+                 await Task.Run(() =>
+                 {
+                     var compAuds = new List<string> {"Ауд. 307", "Ауд. 308", "Корп № 3 Ауд. 20"};
+                     ExportCompAudTeachers(compAuds);
+                 });*/
 
-                 MessageBox.Show(
-                     "Add (min = " + addEvents.Select(ae => ae.Value).Min() + "; max = " + addEvents.Select(ae => ae.Value).Max() + ") = " + 
-                     addEvents.Count + " / " + addCount + "(" + string.Format("{0:0.00}", (addCount * 100.0 / totalCount)) + "%)" + "\n" + 
-                     "Rem (min = " + remEvents.Select(ae => ae.Value).Min() + "; max = " + remEvents.Select(ae => ae.Value).Max() + ") = " + 
-                     remEvents.Count + " / " + remCount + "(" + string.Format("{0:0.00}", (remCount * 100.0 / totalCount)) + "%)" + "\n" +
-                     "Aud (min = " + audEvents.Select(ae => ae.Value).Min() + "; max = " + audEvents.Select(ae => ae.Value).Max() + ") = " + 
-                     audEvents.Count + " / " + audCount + "(" + string.Format("{0:0.00}", (audCount * 100.0 / totalCount)) + "%)"
-                     );
-             });*/
-
-            /*
-             await Task.Run(() =>
-             {
-                 var compAuds = new List<string> {"Ауд. 307", "Ауд. 308", "Корп № 3 Ауд. 20"};
-                 ExportCompAudTeachers(compAuds);
-             });*/
-
-            /*
-             await Task.Run(() =>
-             {
-                 var facIds = new List<int> {1, 2, 3, 4, 5, 9, 10, 11};
-                 ExportZachDates(facIds, "ZachDates.txt");
-             });
-             */
+                /*
+                 await Task.Run(() =>
+                 {
+                     var facIds = new List<int> {1, 2, 3, 4, 5, 9, 10, 11};
+                     ExportZachDates(facIds, "ZachDates.txt");
+                 });
+                 */
 
 
 
 
-            /*
-             await Task.Run(() =>
-             {
-                 var sw = new StreamWriter("AudPercentage.txt");
+                /*
+                 await Task.Run(() =>
+                 {
+                     var sw = new StreamWriter("AudPercentage.txt");
 
-                 sw.WriteLine("buildingId = 2");
-                 WriteBuildingAuditoriumsBusyPercentage(sw, 2);
-                 sw.WriteLine();
+                     sw.WriteLine("buildingId = 2");
+                     WriteBuildingAuditoriumsBusyPercentage(sw, 2);
+                     sw.WriteLine();
 
-                 sw.WriteLine("buildingId = 3");
-                 WriteBuildingAuditoriumsBusyPercentage(sw, 3);
-                 sw.Close();
-                 var eprst = 999;
-             });*/
+                     sw.WriteLine("buildingId = 3");
+                     WriteBuildingAuditoriumsBusyPercentage(sw, 3);
+                     sw.Close();
+                     var eprst = 999;
+                 });*/
 
 
-            // Oops
-            // ExportStudentsData("StudentsExport-1sem.txt");
-            // ImportStudentData("StudentsExport-1sem.txt");
-            // CopyINOGroupLessonsFromRealSchedule();
-            // ExportScheduleDates("Oops\\stat.txt");
-            // ExportFacultyGroups();
-            // ExportDiscAuds("Auds.txt");
-            // ExportGroupDisciplines("Oops\\Discs.txt");
-            dayDelta_Click();
+                // Oops
+                // ExportStudentsData("StudentsExport-1sem.txt");
+                // ImportStudentData("StudentsExport-1sem.txt");
+                // CopyINOGroupLessonsFromRealSchedule();
+                // ExportScheduleDates("Oops\\stat.txt");
+                // ExportFacultyGroups();
+                // ExportDiscAuds("Auds.txt");
+                // ExportGroupDisciplines("Oops\\Discs.txt");
+                dayDelta_Click();
             // setLayout_Click(sender, e);
             // ExportGroupDisciplines("Oops\\Discs.txt");
 
@@ -2226,8 +2262,10 @@ namespace UchOtd.Schedule
 
                 try
                 {
+                    var semester = (Semester)semesterList.SelectedItem;
+
                     await Task.Run(() => WordExport.WordSchool(
-                        Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
+                        Repo, semester, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
                         wordWeekFiltered, weekFilter, !wordWeekFiltered, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
@@ -2260,8 +2298,10 @@ namespace UchOtd.Schedule
 
                 try
                 {
+                    var semester = (Semester)semesterList.SelectedItem;
+
                     await Task.Run(() => WordExport.WordSchoolTwoDays(
-                        Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
+                        Repo, semester, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
                         wordWeekFiltered, weekFilter, !wordWeekFiltered, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
@@ -2378,7 +2418,7 @@ namespace UchOtd.Schedule
             string toDbName = (ToDBName.Text == "") ? Repo.ExtractDbName(Repo.GetConnectionString()) : ToDBName.Text;
             toDbName = StartupForm.School ? "s_" : "" + toDbName;
 
-            Repo.BackupDb(Application.StartupPath + "\\" + dbName + ".bak");
+            Repo.BackupDb(dbName, Application.StartupPath + "\\" + dbName + ".bak");
             WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak",
                 "upload/DB-Backup/" + toDbName + ".bak");
         }
@@ -2400,8 +2440,10 @@ namespace UchOtd.Schedule
 
                 try
                 {
+                    var semester = (Semester)semesterList.SelectedItem;
+
                     await Task.Run(() => WordExport.WordStartSchool(
-                        Repo, "Расписание.docx", false, false, 40, facultyId, ruDow, 6,
+                        Repo, semester, "Расписание.docx", false, false, 40, facultyId, ruDow, 6,
                         wordWeekFiltered, weekFilter, !wordWeekFiltered, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
@@ -2537,7 +2579,7 @@ namespace UchOtd.Schedule
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Repo.TxtBackup("backup.txt");
+            //Repo.TxtBackup("backup.txt");
         }
 
         private void заметкиКРасписаниюToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2886,9 +2928,10 @@ namespace UchOtd.Schedule
             //ExportDisciplineAuditoriums("DisciplineAuditoriums.txt");
         }
 
-        private async void ExportDisciplineAuditoriums(string filename)
+        private void семестрыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            var semestersForm = new SemesterList(Repo);
+            semestersForm.Show();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Disciplines.Include(d => d.StudentGroup).ToList();
+                return context.Disciplines.Include(d => d.StudentGroup).Include(d => d.Semester).ToList();
             }
         }
 
@@ -21,7 +22,7 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Disciplines.Include(d => d.StudentGroup).ToList().Where(condition).ToList();
+                return context.Disciplines.Include(d => d.StudentGroup).Include(d => d.Semester).ToList().Where(condition).ToList();
             }
         }
 
@@ -29,7 +30,7 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.TeacherForDiscipline.Where(tfd => tfd.Teacher.TeacherId == teacher.TeacherId).Select(tefd => tefd.Discipline).Include(d => d.StudentGroup).ToList();
+                return context.TeacherForDiscipline.Where(tfd => tfd.Teacher.TeacherId == teacher.TeacherId).Select(tefd => tefd.Discipline).Include(d => d.StudentGroup).Include(d => d.Semester).ToList();
             }
         }
 
@@ -37,7 +38,7 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Disciplines.Include(d => d.StudentGroup).ToList().FirstOrDefault(condition);
+                return context.Disciplines.Include(d => d.StudentGroup).Include(d => d.Semester).ToList().FirstOrDefault(condition);
             }
         }
 
@@ -45,7 +46,7 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Disciplines.Include(d => d.StudentGroup).FirstOrDefault(d => d.DisciplineId == disciplineId);
+                return context.Disciplines.Include(d => d.StudentGroup).Include(d => d.Semester).FirstOrDefault(d => d.DisciplineId == disciplineId);
             }
         }
 
@@ -53,7 +54,7 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Disciplines.Include(d => d.StudentGroup).FirstOrDefault(
+                return context.Disciplines.Include(d => d.StudentGroup).Include(d => d.Semester).FirstOrDefault(
                     d => d.Name == name &&
                          d.Attestation == attestation &&
                          d.AuditoriumHours == auditoriumHours &&
@@ -68,6 +69,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 discipline.StudentGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == discipline.StudentGroup.StudentGroupId);
+                discipline.Semester = context.Semesters.FirstOrDefault(s => s.SemesterId == discipline.Semester.SemesterId);
                 context.Disciplines.Add(discipline);
 
                 context.SaveChanges();
@@ -89,8 +91,8 @@ namespace Schedule.Repositories.Repositories.Main
                     curDiscipline.Name = discipline.Name;
                     curDiscipline.PracticalHours = discipline.PracticalHours;
                     curDiscipline.TypeSequence = discipline.TypeSequence;
-                    var disciplineGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == discipline.StudentGroup.StudentGroupId);
-                    curDiscipline.StudentGroup = disciplineGroup;
+                    curDiscipline.StudentGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == discipline.StudentGroup.StudentGroupId);
+                    curDiscipline.Semester = context.Semesters.FirstOrDefault(s => s.SemesterId == discipline.Semester.SemesterId);
                 }
 
                 context.SaveChanges();
@@ -114,8 +116,8 @@ namespace Schedule.Repositories.Repositories.Main
             {
                 foreach (var discipline in disciplineList)
                 {
-                    var disciplineGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == discipline.StudentGroup.StudentGroupId);
-                    discipline.StudentGroup = disciplineGroup;
+                    discipline.StudentGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == discipline.StudentGroup.StudentGroupId);
+                    discipline.Semester = context.Semesters.FirstOrDefault(s => s.SemesterId == discipline.Semester.SemesterId);
                     context.Disciplines.Add(discipline);
                 }
 
