@@ -102,7 +102,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(172, 13);
             this.label3.TabIndex = 43;
-            this.label3.Text = "Номер семестар в учебном году";
+            this.label3.Text = "Номер семестра в учебном году";
             // 
             // StartingYear
             // 

@@ -21,8 +21,9 @@ namespace UchOtd.Schedule.Forms.DBLists
             _repo = repo;
 
             var groups = _repo.StudentGroups.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
-            studentGroups.DataSource = groups;
-            studentGroups.DisplayMember = "Name";
+            var sgView = StudentGroupView.ViewFromList(groups);
+            studentGroups.DataSource = sgView;
+            studentGroups.DisplayMember = "NameWithSemester";
             studentGroups.ValueMember = "StudentGroupId";
         }
 
@@ -282,7 +283,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             OpenFileDialog ofd = new OpenFileDialog
             {
-                Title = "Import Student List",
+                Title = "Import StudentFioZachNum List",
                 Filter = "All files|*.*"
             };
             if (ofd.ShowDialog() == DialogResult.OK)

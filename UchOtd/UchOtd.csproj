@@ -470,6 +470,8 @@
     <Compile Include="Schedule\Views\DBListViews\GroupView.cs" />
     <Compile Include="Schedule\Views\DBListViews\RingView.cs" />
     <Compile Include="Schedule\Views\DBListViews\ScheduleNoteView.cs" />
+    <Compile Include="Schedule\Views\DBListViews\StudentGroupView.cs" />
+    <Compile Include="Schedule\Views\DBListViews\StudentsInGroupsView.cs" />
     <Compile Include="Schedule\Views\DBListViews\StudentView.cs" />
     <Compile Include="Schedule\Views\DisciplineNameView.cs" />
     <Compile Include="Schedule\Views\DisciplineTextView.cs" />

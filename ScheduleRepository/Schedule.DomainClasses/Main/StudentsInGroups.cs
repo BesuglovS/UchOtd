@@ -1,4 +1,6 @@
-﻿namespace Schedule.DomainClasses.Main
+﻿using System;
+
+namespace Schedule.DomainClasses.Main
 {
     public class StudentsInGroups
     {
@@ -15,5 +17,8 @@
         public int StudentsInGroupsId { get; set; }
         public virtual Student Student { get; set; }
         public virtual StudentGroup StudentGroup { get; set; }
+
+        public DateTime PeriodFrom { get; set; }
+        public DateTime PeriodTo { get; set; }
     }
 }

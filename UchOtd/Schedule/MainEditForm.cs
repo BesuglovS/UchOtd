@@ -2933,5 +2933,13 @@ namespace UchOtd.Schedule
             var semestersForm = new SemesterList(Repo);
             semestersForm.Show();
         }
+
+        private async void импортИзБазРасписанийToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                
+            }, _cToken);
+        }
     }
 }

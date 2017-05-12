@@ -89,6 +89,7 @@ namespace UchOtd.Schedule
             this.опцииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.факультетыгруппыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.занятостьАудиторийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.семестрыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.заметкиКРасписаниюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.анализToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -121,7 +122,7 @@ namespace UchOtd.Schedule
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.семестрыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.импортИзБазРасписанийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -700,6 +701,13 @@ namespace UchOtd.Schedule
             this.занятостьАудиторийToolStripMenuItem.Text = "Занятость аудиторий";
             this.занятостьАудиторийToolStripMenuItem.Click += new System.EventHandler(this.занятостьАудиторийToolStripMenuItem_Click);
             // 
+            // семестрыToolStripMenuItem
+            // 
+            this.семестрыToolStripMenuItem.Name = "семестрыToolStripMenuItem";
+            this.семестрыToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.семестрыToolStripMenuItem.Text = "Семестры";
+            this.семестрыToolStripMenuItem.Click += new System.EventHandler(this.семестрыToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
@@ -861,7 +869,8 @@ namespace UchOtd.Schedule
             this.проверитьПравильностьПоследовательностейВидовЗанятийЛПToolStripMenuItem,
             this.экспортСпискаПреподавателейНа308ToolStripMenuItem,
             this.спискиПреподавателейПоКорпусамToolStripMenuItem,
-            this.экспортАудиторийДисциплинToolStripMenuItem});
+            this.экспортАудиторийДисциплинToolStripMenuItem,
+            this.импортИзБазРасписанийToolStripMenuItem});
             this.bigRedButtonToolStripMenuItem.Name = "bigRedButtonToolStripMenuItem";
             this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
             this.bigRedButtonToolStripMenuItem.Text = "BIG RED BUTTON";
@@ -955,12 +964,12 @@ namespace UchOtd.Schedule
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // семестрыToolStripMenuItem
+            // импортИзБазРасписанийToolStripMenuItem
             // 
-            this.семестрыToolStripMenuItem.Name = "семестрыToolStripMenuItem";
-            this.семестрыToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            this.семестрыToolStripMenuItem.Text = "Семестры";
-            this.семестрыToolStripMenuItem.Click += new System.EventHandler(this.семестрыToolStripMenuItem_Click);
+            this.импортИзБазРасписанийToolStripMenuItem.Name = "импортИзБазРасписанийToolStripMenuItem";
+            this.импортИзБазРасписанийToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.импортИзБазРасписанийToolStripMenuItem.Text = "Импорт из баз расписаний";
+            this.импортИзБазРасписанийToolStripMenuItem.Click += new System.EventHandler(this.импортИзБазРасписанийToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -1081,6 +1090,7 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem экспортАудиторийДисциплинToolStripMenuItem;
         private ComboBox semesterList;
         private ToolStripMenuItem семестрыToolStripMenuItem;
+        private ToolStripMenuItem импортИзБазРасписанийToolStripMenuItem;
     }
 }
 
