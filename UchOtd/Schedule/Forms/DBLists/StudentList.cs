@@ -42,11 +42,11 @@ namespace UchOtd.Schedule.Forms.DBLists
                     .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == (int)studentGroups.SelectedValue)
                     .Select(sig => sig.Student.StudentId)
                     .ToList();
-                studentList = _repo.Students.GetAllStudents().Where(s => studentIds.Contains(s.StudentId)).OrderBy(s => s.Expelled).ThenBy(s => s.F).ToList();
+                studentList = _repo.Students.GetAllStudents().Where(s => studentIds.Contains(s.StudentId)).OrderBy(s => s.F).ToList();
             }
             else
             {
-                studentList = _repo.Students.GetAllStudents().OrderBy(s => s.Expelled).ThenBy(s => s.F).ToList();
+                studentList = _repo.Students.GetAllStudents().OrderBy(s => s.F).ToList();
             }
 
             if (fFilter != "")
@@ -102,7 +102,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             Starosta.Checked = student.Starosta;
             NFactor.Checked = student.NFactor;
             PayForThis.Checked = student.PaidEdu;
-            Expelled.Checked = student.Expelled;
             OrderList.Text = student.Orders;
         }
 
@@ -123,7 +122,6 @@ namespace UchOtd.Schedule.Forms.DBLists
                 O = OBox.Text, 
                 Address = Address.Text, 
                 BirthDate = BirthDate.Value, 
-                Expelled = Expelled.Checked, 
                 NFactor = NFactor.Checked, 
                 Orders = OrderList.Text,
                 PaidEdu = PayForThis.Checked,
@@ -149,7 +147,6 @@ namespace UchOtd.Schedule.Forms.DBLists
                 student.O = OBox.Text;
                 student.Address = Address.Text;
                 student.BirthDate = BirthDate.Value;
-                student.Expelled = Expelled.Checked;
                 student.NFactor = NFactor.Checked;
                 student.Orders = OrderList.Text;
                 student.PaidEdu = PayForThis.Checked;

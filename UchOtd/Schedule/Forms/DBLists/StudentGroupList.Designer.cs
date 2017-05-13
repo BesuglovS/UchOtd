@@ -35,14 +35,15 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.GroupListPanel = new System.Windows.Forms.Panel();
             this.StudentGroupListView = new System.Windows.Forms.DataGridView();
             this.ControlsPanel = new System.Windows.Forms.Panel();
+            this.updateSig = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.PeriodEnd = new System.Windows.Forms.DateTimePicker();
             this.label4 = new System.Windows.Forms.Label();
             this.PeriodStart = new System.Windows.Forms.DateTimePicker();
             this.refresh = new System.Windows.Forms.Button();
             this.semesterFiltered = new System.Windows.Forms.CheckBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.semesterList = new System.Windows.Forms.ComboBox();
+            this.SemesterFilter = new System.Windows.Forms.ComboBox();
+            this.SemesterList = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.addFromGroup = new System.Windows.Forms.Button();
             this.groupsList = new System.Windows.Forms.ComboBox();
@@ -57,7 +58,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.label1 = new System.Windows.Forms.Label();
             this.StudentListPanel = new System.Windows.Forms.Panel();
             this.StudentsInGroupListView = new System.Windows.Forms.DataGridView();
-            this.updateSig = new System.Windows.Forms.Button();
             this.LeftPanel.SuspendLayout();
             this.GroupListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudentGroupListView)).BeginInit();
@@ -111,8 +111,8 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ControlsPanel.Controls.Add(this.PeriodStart);
             this.ControlsPanel.Controls.Add(this.refresh);
             this.ControlsPanel.Controls.Add(this.semesterFiltered);
-            this.ControlsPanel.Controls.Add(this.comboBox1);
-            this.ControlsPanel.Controls.Add(this.semesterList);
+            this.ControlsPanel.Controls.Add(this.SemesterFilter);
+            this.ControlsPanel.Controls.Add(this.SemesterList);
             this.ControlsPanel.Controls.Add(this.label3);
             this.ControlsPanel.Controls.Add(this.addFromGroup);
             this.ControlsPanel.Controls.Add(this.groupsList);
@@ -130,6 +130,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ControlsPanel.Name = "ControlsPanel";
             this.ControlsPanel.Size = new System.Drawing.Size(281, 454);
             this.ControlsPanel.TabIndex = 22;
+            // 
+            // updateSig
+            // 
+            this.updateSig.Location = new System.Drawing.Point(96, 203);
+            this.updateSig.Name = "updateSig";
+            this.updateSig.Size = new System.Drawing.Size(75, 23);
+            this.updateSig.TabIndex = 45;
+            this.updateSig.Text = "Изменить";
+            this.updateSig.UseVisualStyleBackColor = true;
+            this.updateSig.Click += new System.EventHandler(this.updateSig_Click);
             // 
             // label5
             // 
@@ -183,21 +193,21 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.semesterFiltered.Text = "Фильтр по семестру";
             this.semesterFiltered.UseVisualStyleBackColor = true;
             // 
-            // comboBox1
+            // SemesterFilter
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(16, 416);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(238, 21);
-            this.comboBox1.TabIndex = 38;
+            this.SemesterFilter.FormattingEnabled = true;
+            this.SemesterFilter.Location = new System.Drawing.Point(16, 416);
+            this.SemesterFilter.Name = "SemesterFilter";
+            this.SemesterFilter.Size = new System.Drawing.Size(238, 21);
+            this.SemesterFilter.TabIndex = 38;
             // 
-            // semesterList
+            // SemesterList
             // 
-            this.semesterList.FormattingEnabled = true;
-            this.semesterList.Location = new System.Drawing.Point(15, 82);
-            this.semesterList.Name = "semesterList";
-            this.semesterList.Size = new System.Drawing.Size(238, 21);
-            this.semesterList.TabIndex = 36;
+            this.SemesterList.FormattingEnabled = true;
+            this.SemesterList.Location = new System.Drawing.Point(15, 82);
+            this.SemesterList.Name = "SemesterList";
+            this.SemesterList.Size = new System.Drawing.Size(238, 21);
+            this.SemesterList.TabIndex = 36;
             // 
             // label3
             // 
@@ -336,16 +346,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentsInGroupListView.TabIndex = 2;
             this.StudentsInGroupListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.StudentsInGroupListView_CellClick);
             // 
-            // updateSig
-            // 
-            this.updateSig.Location = new System.Drawing.Point(96, 203);
-            this.updateSig.Name = "updateSig";
-            this.updateSig.Size = new System.Drawing.Size(75, 23);
-            this.updateSig.TabIndex = 45;
-            this.updateSig.Text = "Изменить";
-            this.updateSig.UseVisualStyleBackColor = true;
-            this.updateSig.Click += new System.EventHandler(this.updateSig_Click);
-            // 
             // StudentGroupList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -386,11 +386,11 @@ namespace UchOtd.Schedule.Forms.DBLists
         private DataGridView StudentsInGroupListView;
         private Button addFromGroup;
         private ComboBox groupsList;
-        private ComboBox semesterList;
+        private ComboBox SemesterList;
         private Label label3;
         private Button refresh;
         private CheckBox semesterFiltered;
-        private ComboBox comboBox1;
+        private ComboBox SemesterFilter;
         private Label label5;
         private DateTimePicker PeriodEnd;
         private Label label4;

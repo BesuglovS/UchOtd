@@ -90,7 +90,7 @@ namespace UchOtd.Forms
                                 var studentIds = repo
                                     .StudentsInGroups
                                     .GetFiltredStudentsInGroups(
-                                        sig => sig.StudentGroup.StudentGroupId == @group.StudentGroupId && !sig.Student.Expelled)
+                                        sig => sig.StudentGroup.StudentGroupId == @group.StudentGroupId)
                                     .ToList()
                                     .Select(stig => stig.Student.StudentId);
 

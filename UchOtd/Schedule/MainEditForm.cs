@@ -442,7 +442,7 @@ namespace UchOtd.Schedule
                     var studentIds = Repo
                         .StudentsInGroups
                         .GetFiltredStudentsInGroups(
-                            sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId && !sig.Student.Expelled)
+                            sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
                         .ToList()
                         .Select(stig => stig.Student.StudentId);
 
@@ -547,7 +547,7 @@ namespace UchOtd.Schedule
                 var studentIds = Repo
                     .StudentsInGroups
                     .GetFiltredStudentsInGroups(
-                        sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId && !sig.Student.Expelled)
+                        sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
                     .ToList()
                     .Select(stig => stig.Student.StudentId);
 
@@ -566,7 +566,7 @@ namespace UchOtd.Schedule
                     var studentsInGroup = Repo
                         .StudentsInGroups
                         .GetFiltredStudentsInGroups(
-                            sig => sig.StudentGroup.StudentGroupId == g.StudentGroupId && !sig.Student.Expelled)
+                            sig => sig.StudentGroup.StudentGroupId == g.StudentGroupId)
                         .Select(sig => sig.Student)
                         .ToList()
                         .OrderBy(s => s.F)
@@ -605,7 +605,7 @@ namespace UchOtd.Schedule
                 var studentIds = Repo
                     .StudentsInGroups
                     .GetFiltredStudentsInGroups(
-                        sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId && !sig.Student.Expelled)
+                        sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
                     .ToList()
                     .Select(stig => stig.Student.StudentId);
 
@@ -689,7 +689,6 @@ namespace UchOtd.Schedule
                         O = studentParts[3],
                         Address = "",
                         BirthDate = new DateTime(2000, 1, 1),
-                        Expelled = false,
                         NFactor = false,
                         Orders = "",
                         PaidEdu = false,
@@ -788,7 +787,7 @@ namespace UchOtd.Schedule
             var sw = new StreamWriter(filename);
 
             sw.WriteLine("Students");
-            foreach (var student in Repo.Students.GetFiltredStudents(s => !s.Expelled))
+            foreach (var student in Repo.Students.GetAllStudents())
             {
                 sw.WriteLine(
                     student.StudentId + "@" +
@@ -805,7 +804,7 @@ namespace UchOtd.Schedule
             }
 
             sw.WriteLine("StudentsInGroups");
-            foreach (var sig in Repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => !sig.Student.Expelled))
+            foreach (var sig in Repo.StudentsInGroups.GetAllStudentsInGroups())
             {
                 sw.WriteLine(sig.Student.StudentId + "@" + sig.StudentGroup.StudentGroupId);
             }
@@ -828,7 +827,7 @@ namespace UchOtd.Schedule
         {
             var sw = new StreamWriter(filename);
             sw.Close();
-            var students = Repo.Students.GetFiltredStudents(s => !s.Expelled);
+            var students = Repo.Students.GetAllStudents();
             foreach (var student in students)
             {
                 var studentGroupIds = Repo
@@ -1552,7 +1551,7 @@ namespace UchOtd.Schedule
                 var studentIds = Repo
                     .StudentsInGroups
                     .GetFiltredStudentsInGroups(
-                        sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId && !sig.Student.Expelled)
+                        sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId)
                     .Select(sig => sig.Student.StudentId)
                     .ToList();
                 var groupIds = Repo
@@ -1981,7 +1980,7 @@ namespace UchOtd.Schedule
                         .StudentsInGroups
                         .GetFiltredStudentsInGroups(
                             sig =>
-                                sig.StudentGroup.StudentGroupId == facultyGroup.StudentGroupId && !sig.Student.Expelled)
+                                sig.StudentGroup.StudentGroupId == facultyGroup.StudentGroupId)
                         .Select(stig => stig.Student.StudentId)
                         .ToList();
                     var groupsListIds = Repo
@@ -2195,7 +2194,7 @@ namespace UchOtd.Schedule
         private void DetectWindows(string filename)
         {
             foreach (
-                var student in Repo.Students.GetFiltredStudents(s => !s.Expelled).OrderBy(s => s.F).ThenBy(s => s.I))
+                var student in Repo.Students.GetAllStudents().OrderBy(s => s.F).ThenBy(s => s.I))
             {
                 var calendars = Repo.Calendars.GetFiltredCalendars(c => c.Date.Date >= DateTime.Now.Date);
 
@@ -2324,7 +2323,7 @@ namespace UchOtd.Schedule
 
                 var message = Repo
                     .Students
-                    .GetFiltredStudents(s => !s.Expelled)
+                    .GetAllStudents()
                     .Where(
                         student =>
                             ((DateTime.Now.Date.Day == student.BirthDate.Date.Day) &&
@@ -2744,7 +2743,7 @@ namespace UchOtd.Schedule
                         .StudentsInGroups
                         .GetFiltredStudentsInGroups(
                             sig =>
-                                sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId && !sig.Student.Expelled)
+                                sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId)
                         .ToList()
                         .Select(stig => stig.Student.StudentId);
 

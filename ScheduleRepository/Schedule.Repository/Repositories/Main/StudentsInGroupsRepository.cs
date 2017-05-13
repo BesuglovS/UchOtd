@@ -103,6 +103,9 @@ namespace Schedule.Repositories.Repositories.Main
                 {
                     curStudentsInGroups.Student = context.Students.FirstOrDefault(s => s.StudentId == studentsInGroups.Student.StudentId);
                     curStudentsInGroups.StudentGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == studentsInGroups.StudentGroup.StudentGroupId);
+
+                    curStudentsInGroups.PeriodFrom = studentsInGroups.PeriodFrom;
+                    curStudentsInGroups.PeriodTo = studentsInGroups.PeriodTo;
                 }
 
                 context.SaveChanges();

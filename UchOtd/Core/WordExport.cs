@@ -3399,8 +3399,7 @@ namespace UchOtd.Core
                 var students = repo.StudentsInGroups
                     .GetFiltredStudentsInGroups(
                         sig =>
-                            sig.StudentGroup.StudentGroupId == discs[i].StudentGroup.StudentGroupId &&
-                            !sig.Student.Expelled)
+                            sig.StudentGroup.StudentGroupId == discs[i].StudentGroup.StudentGroupId)
                     .Select(sig => sig.Student)
                     .OrderBy(s => s.F)
                     .ThenBy(s => s.I)
@@ -3481,7 +3480,7 @@ namespace UchOtd.Core
 
                     var studentIds = repo
                         .StudentsInGroups
-                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId && !sig.Student.Expelled)
+                        .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId)
                         .ToList()
                         .Select(stig => stig.Student.StudentId);
 

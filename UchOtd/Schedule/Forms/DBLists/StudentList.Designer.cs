@@ -32,6 +32,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void InitializeComponent()
         {
             this.ControlsPanel = new System.Windows.Forms.Panel();
+            this.ImportStudentListFromJson = new System.Windows.Forms.Button();
             this.Filter = new System.Windows.Forms.Button();
             this.showAll = new System.Windows.Forms.Button();
             this.checkZachNumberDistinction = new System.Windows.Forms.CheckBox();
@@ -42,7 +43,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.OrderList = new System.Windows.Forms.TextBox();
             this.PayForThis = new System.Windows.Forms.CheckBox();
             this.NFactor = new System.Windows.Forms.CheckBox();
-            this.Expelled = new System.Windows.Forms.CheckBox();
             this.Starosta = new System.Windows.Forms.CheckBox();
             this.Phone = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -64,7 +64,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.label1 = new System.Windows.Forms.Label();
             this.ListPanel = new System.Windows.Forms.Panel();
             this.StudentListView = new System.Windows.Forms.DataGridView();
-            this.ImportStudentListFromJson = new System.Windows.Forms.Button();
             this.ControlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudentListView)).BeginInit();
@@ -83,7 +82,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ControlsPanel.Controls.Add(this.OrderList);
             this.ControlsPanel.Controls.Add(this.PayForThis);
             this.ControlsPanel.Controls.Add(this.NFactor);
-            this.ControlsPanel.Controls.Add(this.Expelled);
             this.ControlsPanel.Controls.Add(this.Starosta);
             this.ControlsPanel.Controls.Add(this.Phone);
             this.ControlsPanel.Controls.Add(this.label7);
@@ -108,6 +106,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ControlsPanel.Name = "ControlsPanel";
             this.ControlsPanel.Size = new System.Drawing.Size(230, 821);
             this.ControlsPanel.TabIndex = 10;
+            // 
+            // ImportStudentListFromJson
+            // 
+            this.ImportStudentListFromJson.Location = new System.Drawing.Point(14, 685);
+            this.ImportStudentListFromJson.Name = "ImportStudentListFromJson";
+            this.ImportStudentListFromJson.Size = new System.Drawing.Size(206, 23);
+            this.ImportStudentListFromJson.TabIndex = 66;
+            this.ImportStudentListFromJson.Text = "Импортировать из JSON";
+            this.ImportStudentListFromJson.UseVisualStyleBackColor = true;
+            this.ImportStudentListFromJson.Click += new System.EventHandler(this.ImportStudentListFromJson_Click);
             // 
             // Filter
             // 
@@ -189,7 +197,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // PayForThis
             // 
             this.PayForThis.AutoSize = true;
-            this.PayForThis.Location = new System.Drawing.Point(98, 372);
+            this.PayForThis.Location = new System.Drawing.Point(19, 372);
             this.PayForThis.Name = "PayForThis";
             this.PayForThis.Size = new System.Drawing.Size(118, 17);
             this.PayForThis.TabIndex = 47;
@@ -205,16 +213,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.NFactor.TabIndex = 45;
             this.NFactor.Text = "Наяновец";
             this.NFactor.UseVisualStyleBackColor = true;
-            // 
-            // Expelled
-            // 
-            this.Expelled.AutoSize = true;
-            this.Expelled.Location = new System.Drawing.Point(19, 372);
-            this.Expelled.Name = "Expelled";
-            this.Expelled.Size = new System.Drawing.Size(74, 17);
-            this.Expelled.TabIndex = 44;
-            this.Expelled.Text = "Отчислен";
-            this.Expelled.UseVisualStyleBackColor = true;
             // 
             // Starosta
             // 
@@ -406,16 +404,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentListView.TabIndex = 1;
             this.StudentListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.StudentListView_CellClick);
             // 
-            // ImportStudentListFromJson
-            // 
-            this.ImportStudentListFromJson.Location = new System.Drawing.Point(14, 685);
-            this.ImportStudentListFromJson.Name = "ImportStudentListFromJson";
-            this.ImportStudentListFromJson.Size = new System.Drawing.Size(206, 23);
-            this.ImportStudentListFromJson.TabIndex = 66;
-            this.ImportStudentListFromJson.Text = "Импортировать из JSON";
-            this.ImportStudentListFromJson.UseVisualStyleBackColor = true;
-            this.ImportStudentListFromJson.Click += new System.EventHandler(this.ImportStudentListFromJson_Click);
-            // 
             // StudentList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -441,7 +429,6 @@ namespace UchOtd.Schedule.Forms.DBLists
         private TextBox OrderList;
         private CheckBox PayForThis;
         private CheckBox NFactor;
-        private CheckBox Expelled;
         private CheckBox Starosta;
         private TextBox Phone;
         private Label label7;

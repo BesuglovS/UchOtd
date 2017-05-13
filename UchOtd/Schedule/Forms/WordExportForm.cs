@@ -220,7 +220,7 @@ namespace UchOtd.Schedule.Forms
                             var studentIds = _repo
                                 .StudentsInGroups
                                 .GetFiltredStudentsInGroups(
-                                    sig => sig.StudentGroup.StudentGroupId == id && !sig.Student.Expelled)
+                                    sig => sig.StudentGroup.StudentGroupId == id)
                                 .Select(sig => sig.Student.StudentId)
                                 .ToList();
 
@@ -252,7 +252,7 @@ namespace UchOtd.Schedule.Forms
                             var studentIds = _repo
                                 .StudentsInGroups
                                 .GetFiltredStudentsInGroups(
-                                    sig => sig.StudentGroup.StudentGroupId == id && !sig.Student.Expelled)
+                                    sig => sig.StudentGroup.StudentGroupId == id)
                                 .Select(sig => sig.Student.StudentId)
                                 .ToList();
 

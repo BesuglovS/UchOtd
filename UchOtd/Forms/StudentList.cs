@@ -43,7 +43,7 @@ namespace UchOtd.Forms
 
             var students = _repo
                 .Students
-                .GetFiltredStudents(s => !s.Expelled)
+                .GetAllStudents()
                 .OrderBy(s => s.F)
                 .ThenBy(s => s.I)
                 .ToList();
@@ -83,10 +83,9 @@ namespace UchOtd.Forms
                         var groupStudents = _repo
                             .StudentsInGroups
                             .GetFiltredStudentsInGroups(
-                                sig => sig.StudentGroup.StudentGroupId == id && !sig.Student.Expelled)
+                                sig => sig.StudentGroup.StudentGroupId == id)
                             .Select(sig => sig.Student)
-                            .OrderBy(s => s.Expelled)
-                            .ThenBy(s => s.F)
+                            .OrderBy(s => s.F)
                             .ThenBy(s => s.I)
                             .ToList();
                         viewGrid.DataSource = groupStudents;

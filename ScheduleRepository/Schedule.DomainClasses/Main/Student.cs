@@ -32,6 +32,5 @@ namespace Schedule.DomainClasses.Main
         public bool Starosta { get; set; }
         public bool NFactor { get; set; }
         public bool PaidEdu { get; set; }
-        public bool Expelled { get; set; }
     }    
 }

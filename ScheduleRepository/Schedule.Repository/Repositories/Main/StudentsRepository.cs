@@ -100,7 +100,6 @@ namespace Schedule.Repositories.Repositories.Main
                     curStudent.Starosta = student.Starosta;
                     curStudent.NFactor = student.NFactor;
                     curStudent.PaidEdu = student.PaidEdu;
-                    curStudent.Expelled = student.Expelled;
                     curStudent.Orders = student.Orders;
                 }
 

@@ -257,7 +257,7 @@ namespace Schedule.Repositories.Repositories.Main
                 var result = new Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>>();
 
                 var studentIds = context.StudentsInGroups
-                    .Where(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
+                    .Where(sig => sig.StudentGroup.StudentGroupId == groupId)
                     .ToList()
                     .Select(stig => stig.Student.StudentId);
                 var groupsListIds = context.StudentsInGroups
@@ -361,7 +361,7 @@ namespace Schedule.Repositories.Repositories.Main
                     result.Add(groupId, new Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>());
 
                     var studentIds = context.StudentsInGroups
-                        .Where(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
+                        .Where(sig => sig.StudentGroup.StudentGroupId == groupId)
                         .Select(stig => stig.Student.StudentId)
                         .ToList();
                     var groupsListIds = context.StudentsInGroups

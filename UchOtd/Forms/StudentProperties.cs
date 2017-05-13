@@ -74,7 +74,6 @@ namespace UchOtd.Forms
             StarostaBox.Checked = studentToSet.Starosta;
             FromSchoolBox.Checked = studentToSet.NFactor;
             PaidLearningBox.Checked = studentToSet.PaidEdu;
-            ExpelledBox.Checked = studentToSet.Expelled;
 
             var studentGroupIds = _repo
                 .StudentsInGroups

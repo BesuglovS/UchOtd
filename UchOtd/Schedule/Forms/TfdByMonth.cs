@@ -39,7 +39,7 @@ namespace UchOtd.Schedule.Forms
         {
             var studentIds = _repo
                 .StudentsInGroups
-                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
+                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
                 .Select(stig => stig.Student.StudentId)
                 .ToList();
 
