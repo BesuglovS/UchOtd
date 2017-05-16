@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
@@ -2937,7 +2938,7 @@ namespace UchOtd.Schedule
         {
             await Task.Run(() =>
             {
-                
+                Core.MainImport.Execute(Repo, status, this);
             }, _cToken);
         }
     }

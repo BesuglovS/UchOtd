@@ -220,6 +220,7 @@
     <Compile Include="NUDS\View\DailyScheduleGroupLessonView.cs" />
     <Compile Include="NUDS\View\LleView.cs" />
     <Compile Include="NUDS\View\TeacherScheduleTimeView.cs" />
+    <Compile Include="Schedule\Core\MainImport.cs" />
     <Compile Include="Schedule\Core\PDFExport.cs" />
     <Compile Include="Schedule\Core\Utilities.cs" />
     <Compile Include="Schedule\Forms\AllChanges.cs">
@@ -462,6 +463,24 @@
     <Compile Include="Schedule\MainEditForm.Designer.cs">
       <DependentUpon>MainEditForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Schedule\MainImport\Auditorium.cs" />
+    <Compile Include="Schedule\MainImport\AuditoriumEvent.cs" />
+    <Compile Include="Schedule\MainImport\Building.cs" />
+    <Compile Include="Schedule\MainImport\Calendar.cs" />
+    <Compile Include="Schedule\MainImport\ConfigOption.cs" />
+    <Compile Include="Schedule\MainImport\Discipline.cs" />
+    <Compile Include="Schedule\MainImport\Exam.cs" />
+    <Compile Include="Schedule\MainImport\Faculty.cs" />
+    <Compile Include="Schedule\MainImport\GroupsInFaculty.cs" />
+    <Compile Include="Schedule\MainImport\Lesson.cs" />
+    <Compile Include="Schedule\MainImport\LessonLogEvent.cs" />
+    <Compile Include="Schedule\MainImport\LogEvent.cs" />
+    <Compile Include="Schedule\MainImport\Ring.cs" />
+    <Compile Include="Schedule\MainImport\Student.cs" />
+    <Compile Include="Schedule\MainImport\StudentGroup.cs" />
+    <Compile Include="Schedule\MainImport\StudentsInGroups.cs" />
+    <Compile Include="Schedule\MainImport\Teacher.cs" />
+    <Compile Include="Schedule\MainImport\TeacherForDiscipline.cs" />
     <Compile Include="Schedule\Views\DBListViews\AuditoriumEventView.cs" />
     <Compile Include="Schedule\Views\DBListViews\AuditoriumView.cs" />
     <Compile Include="Schedule\Views\DBListViews\CalendarView.cs" />
@@ -866,6 +885,7 @@
     <Content Include="NU.ico" />
     <Content Include="Publication-Addresses.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
