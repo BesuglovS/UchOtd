@@ -20,7 +20,11 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             _repo = repo;
 
-            var groups = _repo.StudentGroups.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
+            var groups = _repo.StudentGroups.GetAllStudentGroups()
+                .OrderBy(sg => sg.Semester.StartingYear)
+                .ThenBy(sg => sg.Semester.SemesterInYear)
+                .ThenBy(sg => sg.Name)
+                .ToList();
             var sgView = StudentGroupView.ViewFromList(groups);
             studentGroups.DataSource = sgView;
             studentGroups.DisplayMember = "NameWithSemester";
@@ -81,8 +85,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             StudentListView.Columns["NFactor"].HeaderText = "Наяновец";
             StudentListView.Columns["PaidEdu"].Width = 50;
             StudentListView.Columns["PaidEdu"].HeaderText = "Платное обучение";
-            StudentListView.Columns["Expelled"].Width = 50;
-            StudentListView.Columns["Expelled"].HeaderText = "Отчислен";
             
             StudentListView.ClearSelection();
         }

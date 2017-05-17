@@ -50,22 +50,26 @@ namespace UchOtd.Schedule.Forms.DBLists
             semesterList.DisplayMember = "DisplayName";
             semesterList.DataSource = semesters;
 
-
             var groups = _repo.StudentGroups.GetAllStudentGroups()
-                .OrderBy(g => g.Name)
+                .OrderBy(sg => sg.Semester.StartingYear)
+                .ThenBy(sg => sg.Semester.SemesterInYear)
+                .ThenBy(sg => sg.Name)
                 .ToList();
-
+            var sgView = StudentGroupView.ViewFromList(groups);
+            Group.DataSource = sgView;
+            Group.DisplayMember = "NameWithSemester";
             Group.ValueMember = "StudentGroupId";
-            Group.DisplayMember = "Name";
-            Group.DataSource = groups;
 
             var groups2 = _repo.StudentGroups.GetAllStudentGroups()
-                .OrderBy(g => g.Name)
+                .OrderBy(sg => sg.Semester.StartingYear)
+                .ThenBy(sg => sg.Semester.SemesterInYear)
+                .ThenBy(sg => sg.Name)
                 .ToList();
+            var sgView2 = StudentGroupView.ViewFromList(groups2);
 
+            groupNameList.DisplayMember = "NameWithSemester";
             groupNameList.ValueMember = "StudentGroupId";
-            groupNameList.DisplayMember = "Name";
-            groupNameList.DataSource = groups2;
+            groupNameList.DataSource = sgView2;
 
 
             checkForDoubleDiscsOnAdding.Text = "Проверять дубликаты дисциплин\r\nпри добавлении";
@@ -110,16 +114,14 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 try
                 {
+                    var semester = (Semester) semesterList.SelectedItem;
+
                     discView = await Task.Run(() =>
                     {
                         List<Discipline> discList;
 
                         if (semesterFiletered.Checked)
                         {
-                            var semester =
-                                _repo.Semesters.GetFirstFiltredSemester(
-                                    s => s.SemesterId == (int) semesterList.SelectedItem);
-
                             discList =
                                 _repo.Disciplines.GetFiltredDisciplines(
                                     disc => disc.Semester.SemesterId == semester.SemesterId);
@@ -275,6 +277,8 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private List<int> StudentGroupIdsFromGroupId(int groupId)
         {
+            var group = _repo.StudentGroups.GetStudentGroup(groupId);
+
             var studentIds = _repo
                 .StudentsInGroups
                 .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
@@ -283,7 +287,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             var groupsListIds = _repo
                 .StudentsInGroups
-                .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.Semester.SemesterId == group.Semester.SemesterId && studentIds.Contains(sig.Student.StudentId))
                 .Select(stig => stig.StudentGroup.StudentGroupId)
                 .Distinct()
                 .ToList();

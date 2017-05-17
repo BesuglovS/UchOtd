@@ -59,7 +59,12 @@ namespace UchOtd.Schedule.Forms.DBLists
             StudentList.ValueMember = "StudentId";
             StudentList.DisplayMember = "Summary";
 
-            var studentGroupList = _repo.StudentGroups.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
+            var studentGroupList = _repo.StudentGroups
+                .GetAllStudentGroups()
+                .OrderBy(sg => sg.Semester.StartingYear)
+                .ThenBy(sg => sg.Semester.SemesterInYear)
+                .ThenBy(sg => sg.Name)
+                .ToList();
             var sgViewList = StudentGroupView.ViewFromList(studentGroupList);
 
             groupsList.DataSource = sgViewList;
@@ -94,7 +99,11 @@ namespace UchOtd.Schedule.Forms.DBLists
                         studentGroupList.Where(sg => sg.Semester.SemesterId == semester.SemesterId).ToList();
                 }
 
-                studentGroupList = studentGroupList.OrderBy(sg => sg.Name).ToList();
+                studentGroupList = studentGroupList
+                    .OrderBy(sg => sg.Semester.StartingYear)
+                    .ThenBy(sg => sg.Semester.SemesterInYear)
+                    .ThenBy(sg => sg.Name)
+                    .ToList();
                 var sgViewList = StudentGroupView.ViewFromList(studentGroupList);
 
                 StudentGroupListView.DataSource = sgViewList;

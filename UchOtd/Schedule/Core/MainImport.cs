@@ -246,7 +246,7 @@ namespace UchOtd.Schedule.Core
                 {
                     var student = students[j];
 
-                    var searchStudent = repo.Students.GetFirstFiltredStudents(st => st.F.Trim() == student.F.Trim() && st.I.Trim() == student.I.Trim() && st.O.Trim() == student.O.Trim());
+                    var searchStudent = repo.Students.GetFirstFiltredStudents(st => st.ZachNumber == student.ZachNumber);
                     if (searchStudent == null)
                     {
                         var newStudent = new global::Schedule.DomainClasses.Main.Student()
@@ -279,6 +279,280 @@ namespace UchOtd.Schedule.Core
                         studentIds.Add(student.StudentId, searchStudent.StudentId);
                     }
                 }
+
+                // 6  StudentGroups
+                var studentGroupIds = new Dictionary<int, int>();
+                for (int j = 0; j < studentGroups.Count; j++)
+                {
+                    var studentGroup = studentGroups[j];
+                    
+                    var newStudentGroup = new global::Schedule.DomainClasses.Main.StudentGroup()
+                    {
+                        Name = studentGroup.Name,
+                        Semester = semester
+                    };
+
+                    repo.StudentGroups.AddStudentGroup(newStudentGroup);
+
+                    studentGroupIds.Add(studentGroup.StudentGroupId, newStudentGroup.StudentGroupId);
+                }
+
+                // 18 StudentsInGroups
+                var studentInGroupIds = new Dictionary<int, int>();
+                for (int j = 0; j < studentsInGroups.Count; j++)
+                {
+                    var studentInGroup = studentsInGroups[j];
+                    
+                    var newStudentInGroups = new global::Schedule.DomainClasses.Main.StudentsInGroups()
+                    {
+                        PeriodFrom = (semester.SemesterInYear == 1) ? (new DateTime(semester.StartingYear,  9,  1)) : (new DateTime(semester.StartingYear + 1, 2,  1)),
+                        PeriodTo   = (semester.SemesterInYear == 1) ? (new DateTime(semester.StartingYear, 12, 31)) : (new DateTime(semester.StartingYear + 1, 8, 31)),
+                        Student = repo.Students.GetStudent(studentIds[studentInGroup.Student.StudentId]),
+                        StudentGroup = repo.StudentGroups.GetStudentGroup(studentGroupIds[studentInGroup.StudentGroup.StudentGroupId]) 
+                    };
+
+                    repo.StudentsInGroups.AddStudentsInGroups(newStudentInGroups);
+
+                    studentInGroupIds.Add(studentInGroup.StudentsInGroupsId, newStudentInGroups.StudentsInGroupsId);
+                }
+
+                // 7  Teachers
+                var teacherIds = new Dictionary<int, int>();
+                for (int j = 0; j < teachers.Count; j++)
+                {
+                    var teacher = teachers[j];
+
+                    var searchTeacher = repo.Teachers.GetFirstFiltredTeachers(t => t.FIO == teacher.FIO);
+                    if (searchTeacher == null)
+                    {
+                        var newTeacher = new global::Schedule.DomainClasses.Main.Teacher()
+                        {
+                            FIO = teacher.FIO,
+                            Phone = teacher.Phone
+                        };
+
+                        repo.Teachers.AddTeacher(newTeacher);
+
+                        teacherIds.Add(teacher.TeacherId, newTeacher.TeacherId);
+                    }
+                    else
+                    {
+                        teacherIds.Add(teacher.TeacherId, searchTeacher.TeacherId);
+                    }
+                }
+
+                // 8  Disciplines
+                var disciplineIds = new Dictionary<int, int>();
+                for (int j = 0; j < disciplines.Count; j++)
+                {
+                    var discipline = disciplines[j];
+
+                    var newDiscipline = new global::Schedule.DomainClasses.Main.Discipline()
+                    {
+                        Semester = semester,
+                        Name = discipline.Name,
+                        Attestation = discipline.Attestation,
+                        AuditoriumHours = discipline.AuditoriumHours,
+                        AuditoriumHoursPerWeek = discipline.AuditoriumHoursPerWeek,
+                        ControlTask = discipline.ControlTask,
+                        CourseProject = discipline.CourseProject,
+                        CourseTask = discipline.CourseTask,
+                        Essay = discipline.Essay,
+                        LectureHours = discipline.LectureHours,
+                        PracticalHours = discipline.PracticalHours,
+                        Referat = discipline.Referat,
+                        TypeSequence = discipline.TypeSequence,
+                        StudentGroup = repo.StudentGroups.GetStudentGroup(studentGroupIds[discipline.StudentGroup.StudentGroupId])
+                    };
+
+                    repo.Disciplines.AddDiscipline(newDiscipline);
+                    
+                    disciplineIds.Add(discipline.DisciplineId, newDiscipline.DisciplineId);
+                }
+
+                // 9  TeacherForDisciplines
+                var teacherForDisciplineIds = new Dictionary<int, int>();
+                for (int j = 0; j < teacherForDiscviplines.Count; j++)
+                {
+                    var teacherForDiscipline = teacherForDiscviplines[j];
+
+                    var newtfd = new global::Schedule.DomainClasses.Main.TeacherForDiscipline()
+                    {
+                        Teacher = repo.Teachers.GetTeacher(teacherIds[teacherForDiscipline.Teacher.TeacherId]),
+                        Discipline = repo.Disciplines.GetDiscipline(disciplineIds[teacherForDiscipline.Discipline.DisciplineId])
+                    };
+
+                    repo.TeacherForDisciplines.AddTeacherForDiscipline(newtfd);
+
+                    teacherForDisciplineIds.Add(teacherForDiscipline.TeacherForDisciplineId, newtfd.TeacherForDisciplineId);
+                }
+
+                // 10 Lessons
+                var lessonIds = new Dictionary<int, int>();
+                for (int j = 0; j < lessons.Count; j++)
+                {
+                    var lesson = lessons[j];
+
+                    var newLesson = new global::Schedule.DomainClasses.Main.Lesson()
+                    {
+                        State = lesson.State,
+                        Auditorium = repo.Auditoriums.Get(auditoriumIds[lesson.Auditorium.AuditoriumId]),
+                        Calendar = repo.Calendars.GetCalendar(calendarIds[lesson.Calendar.Date.Date]),
+                        Ring = repo.Rings.GetRing(ringIds[lesson.Ring.RingId]),
+                        TeacherForDiscipline = repo.TeacherForDisciplines.GetTeacherForDiscipline(teacherForDisciplineIds[lesson.TeacherForDiscipline.TeacherForDisciplineId])
+                    };
+
+                    repo.Lessons.AddLesson(newLesson);
+
+                    lessonIds.Add(lesson.LessonId, newLesson.LessonId);
+                }
+
+                // 11 ConfigOptions
+                for (int j = 0; j < configOptions.Count; j++)
+                {
+                    var configoption = configOptions[j];
+
+                    var newConfigOption = new global::Schedule.DomainClasses.Config.ConfigOption()
+                    {
+                        Semester = semester,
+                        Key = configoption.Key,
+                        Value = configoption.Value
+                    };
+
+                    repo.ConfigOptions.AddConfigOption(newConfigOption);
+                }
+
+                // 12 LessonLogEvents
+                var lessonLogEventIds = new Dictionary<int, int>();
+                for (int j = 0; j < lessonLogEvents.Count; j++)
+                {
+                    var lessonLogEvent = lessonLogEvents[j];
+
+                    var newLessonLogEvent = new global::Schedule.DomainClasses.Main.LessonLogEvent()
+                    {
+                        DateTime = lessonLogEvent.DateTime,
+                        HiddenComment = lessonLogEvent.HiddenComment,
+                        PublicComment = lessonLogEvent.PublicComment,
+                        OldLesson = (lessonLogEvent.OldLesson != null) ? repo.Lessons.GetLesson(lessonIds[lessonLogEvent.OldLesson.LessonId]) : null,
+                        NewLesson = (lessonLogEvent.NewLesson != null) ? repo.Lessons.GetLesson(lessonIds[lessonLogEvent.NewLesson.LessonId]) : null
+                    };
+
+                    repo.LessonLogEvents.AddLessonLogEvent(newLessonLogEvent);
+
+                    lessonLogEventIds.Add(lessonLogEvent.LessonLogEventId, newLessonLogEvent.LessonLogEventId);
+                }
+
+                // 13 AuditoriumEvents
+                for (int j = 0; j < auditoriumsEvents.Count; j++)
+                {
+                    var auditoriumEvent = auditoriumsEvents[j];
+
+                    var newAuditoriumEvents = new global::Schedule.DomainClasses.Main.AuditoriumEvent()
+                    {
+                        Name = auditoriumEvent.Name,
+                        Calendar = repo.Calendars.GetCalendar(calendarIds[auditoriumEvent.Calendar.Date.Date]),
+                        Ring = repo.Rings.GetRing(ringIds[auditoriumEvent.Ring.RingId]),
+                        Auditorium = repo.Auditoriums.Get(auditoriumIds[auditoriumEvent.Auditorium.AuditoriumId])
+                    };
+
+                    repo.AuditoriumEvents.AddAuditoriumEvent(newAuditoriumEvents);
+                }
+
+
+                // 14 Faculties
+                var facultyIds = new Dictionary<int, int>();
+                for (int j = 0; j < faculties.Count; j++)
+                {
+                    var faculty = faculties[j];
+                    
+                    var searchFaculty = repo.Faculties.GetFirstFiltredFaculty(f => f.Name == faculty.Name);
+                    if (searchFaculty == null)
+                    {
+                        var newFaculty = new global::Schedule.DomainClasses.Main.Faculty()
+                        {
+                            Name = faculty.Name,
+                            DeanSigningSchedule = faculty.DeanSigningSchedule,
+                            DeanSigningSessionSchedule = faculty.DeanSigningSessionSchedule,
+                            Letter = faculty.Letter,
+                            ScheduleSigningTitle = faculty.ScheduleSigningTitle,
+                            SessionSigningTitle = faculty.SessionSigningTitle,
+                            SortingOrder = faculty.SortingOrder
+                        };
+
+                        repo.Faculties.AddFaculty(newFaculty);
+
+                        facultyIds.Add(faculty.FacultyId, newFaculty.FacultyId);
+                    }
+                    else
+                    {
+                        facultyIds.Add(faculty.FacultyId, searchFaculty.FacultyId);
+                    }
+
+                }
+
+                // 15 GroupsInFaculties
+                for (int j = 0; j < groupsInFaculties.Count; j++)
+                {
+                    var groupInFaculty = groupsInFaculties[j];
+
+                    var newGroupInFaculty = new global::Schedule.DomainClasses.Main.GroupsInFaculty()
+                    {
+                        StudentGroup = repo.StudentGroups.GetStudentGroup(studentGroupIds[groupInFaculty.StudentGroup.StudentGroupId]),
+                        Faculty = repo.Faculties.GetFaculty(facultyIds[groupInFaculty.Faculty.FacultyId])
+                    };
+
+                    repo.GroupsInFaculties.AddGroupsInFaculty(newGroupInFaculty);
+                }
+
+                // 16 Exams
+                var examIds = new Dictionary<int, int>();
+                for (int j = 0; j < exams.Count; j++)
+                {
+                    var exam = exams[j];
+
+                    global::Schedule.DomainClasses.Session.Exam newExam;
+
+                    if (disciplineIds.ContainsKey(exam.DisciplineId))
+                    {
+                        newExam = new global::Schedule.DomainClasses.Session.Exam()
+                        {
+                            DisciplineId = disciplineIds[exam.DisciplineId],
+                            ConsultationAuditoriumId = exam.ConsultationAuditoriumId,
+                            ConsultationDateTime = exam.ConsultationDateTime,
+                            ExamAuditoriumId = exam.ExamAuditoriumId,
+                            ExamDateTime = exam.ExamDateTime,
+                            IsActive = exam.IsActive
+                        };
+
+                        repo.Exams.AddExam(newExam);
+
+                        examIds.Add(exam.ExamId, newExam.ExamId);
+                    }
+                }
+
+                // 17 ExamLogEvents
+                for (int j = 0; j < logEvents.Count; j++)
+                {
+                    var logEvent = logEvents[j];
+
+                    if ((logEvent.OldExam != null && examIds.ContainsKey(logEvent.OldExam.ExamId)) &&
+                        (logEvent.NewExam != null && examIds.ContainsKey(logEvent.NewExam.ExamId)))
+                    {
+                        var newLogEvent = new global::Schedule.DomainClasses.Session.LogEvent()
+                        {
+                            DateTime = logEvent.DateTime,
+                            OldExam = (logEvent.OldExam != null)
+                                ? (repo.Exams.GetExam(examIds[logEvent.OldExam.ExamId]))
+                                : null,
+                            NewExam = (logEvent.NewExam != null)
+                                ? (repo.Exams.GetExam(examIds[logEvent.NewExam.ExamId]))
+                                : null
+                        };
+
+                        repo.LogEvents.Add(newLogEvent);
+                    }
+                }
+
 
                 sr.Close();
 
