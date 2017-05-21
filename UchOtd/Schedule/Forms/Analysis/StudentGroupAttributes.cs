@@ -80,8 +80,8 @@ namespace UchOtd.Schedule.Forms.Analysis
         {
             itemsListView.Columns["StudentGroupId"].Visible = false;
 
-            itemsListView.Columns["StudentGroup"].Width = 70;
-            itemsListView.Columns["StudentGroup"].HeaderText = "Группа";
+            itemsListView.Columns["StudentGroupName"].Width = 70;
+            itemsListView.Columns["StudentGroupName"].HeaderText = "Группа";
 
             itemsListView.Columns["Building"].Width = 250;
             itemsListView.Columns["Building"].HeaderText = "Корпус";

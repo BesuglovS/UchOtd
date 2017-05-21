@@ -415,6 +415,12 @@
     <Compile Include="Schedule\Forms\LessonListByTFD.Designer.cs">
       <DependentUpon>LessonListByTFD.cs</DependentUpon>
     </Compile>
+    <Compile Include="Schedule\Forms\Merge\MergeStudents.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\Merge\MergeStudents.Designer.cs">
+      <DependentUpon>MergeStudents.cs</DependentUpon>
+    </Compile>
     <Compile Include="Schedule\Forms\MultipleView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -668,6 +674,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\LessonListByTFD.resx">
       <DependentUpon>LessonListByTFD.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\Merge\MergeStudents.resx">
+      <DependentUpon>MergeStudents.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\MultipleView.resx">
       <DependentUpon>MultipleView.cs</DependentUpon>

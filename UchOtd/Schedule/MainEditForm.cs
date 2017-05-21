@@ -22,6 +22,7 @@ using UchOtd.Schedule.Forms;
 using UchOtd.Schedule.Forms.Analysis;
 using UchOtd.Schedule.Forms.DBLists;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
+using UchOtd.Schedule.Forms.Merge;
 using UchOtd.Schedule.Views.DBListViews;
 using UchOtd.Schedule.wnu;
 using StudentList = UchOtd.Schedule.Forms.DBLists.StudentList;
@@ -2940,6 +2941,12 @@ namespace UchOtd.Schedule
             {
                 Core.MainImport.Execute(Repo, status, this);
             }, _cToken);
+        }
+
+        private void объединить2ЗаписиСтудентаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var mergeStudentsForm = new MergeStudents(Repo);
+            mergeStudentsForm.Show();
         }
     }
 }

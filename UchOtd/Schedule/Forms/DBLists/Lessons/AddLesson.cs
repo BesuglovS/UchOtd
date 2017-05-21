@@ -91,7 +91,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             var allTfdList = _repo.TeacherForDisciplines.GetAllTeacherForDiscipline();
             var tfdList = (
                     from tfd in allTfdList
-                    let partBuildingName = DetectBuildingByGroupName(tfd.Discipline.StudentGroup.Name)
+                    let partBuildingName = DetectBuildingByGroupName(tfd.Discipline.StudentGroupName.Name)
                     let building = _repo.Buildings.GetFirstFiltredBuilding(b => b.Name.Contains(partBuildingName))
                     where building != null && building.BuildingId == _selectedBuildingId
                     select tfd)

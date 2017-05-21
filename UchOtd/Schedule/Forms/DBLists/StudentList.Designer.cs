@@ -64,6 +64,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.label1 = new System.Windows.Forms.Label();
             this.ListPanel = new System.Windows.Forms.Panel();
             this.StudentListView = new System.Windows.Forms.DataGridView();
+            this.saveToJson = new System.Windows.Forms.Button();
             this.ControlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudentListView)).BeginInit();
@@ -71,6 +72,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // ControlsPanel
             // 
+            this.ControlsPanel.Controls.Add(this.saveToJson);
             this.ControlsPanel.Controls.Add(this.ImportStudentListFromJson);
             this.ControlsPanel.Controls.Add(this.Filter);
             this.ControlsPanel.Controls.Add(this.showAll);
@@ -404,6 +406,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentListView.TabIndex = 1;
             this.StudentListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.StudentListView_CellClick);
             // 
+            // saveToJson
+            // 
+            this.saveToJson.Location = new System.Drawing.Point(14, 714);
+            this.saveToJson.Name = "saveToJson";
+            this.saveToJson.Size = new System.Drawing.Size(206, 23);
+            this.saveToJson.TabIndex = 67;
+            this.saveToJson.Text = "Сохранить в JSON";
+            this.saveToJson.UseVisualStyleBackColor = true;
+            this.saveToJson.Click += new System.EventHandler(this.saveToJson_Click);
+            // 
             // StudentList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -457,5 +469,6 @@ namespace UchOtd.Schedule.Forms.DBLists
         private Button showAll;
         private Button Filter;
         private Button ImportStudentListFromJson;
+        private Button saveToJson;
     }
 }

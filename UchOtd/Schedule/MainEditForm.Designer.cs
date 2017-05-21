@@ -118,11 +118,12 @@ namespace UchOtd.Schedule
             this.экспортСпискаПреподавателейНа308ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.спискиПреподавателейПоКорпусамToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.экспортАудиторийДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.импортИзБазРасписанийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.импортИзБазРасписанийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.объединить2ЗаписиСтудентаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -870,7 +871,8 @@ namespace UchOtd.Schedule
             this.экспортСпискаПреподавателейНа308ToolStripMenuItem,
             this.спискиПреподавателейПоКорпусамToolStripMenuItem,
             this.экспортАудиторийДисциплинToolStripMenuItem,
-            this.импортИзБазРасписанийToolStripMenuItem});
+            this.импортИзБазРасписанийToolStripMenuItem,
+            this.объединить2ЗаписиСтудентаToolStripMenuItem});
             this.bigRedButtonToolStripMenuItem.Name = "bigRedButtonToolStripMenuItem";
             this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
             this.bigRedButtonToolStripMenuItem.Text = "BIG RED BUTTON";
@@ -924,6 +926,13 @@ namespace UchOtd.Schedule
             this.экспортАудиторийДисциплинToolStripMenuItem.Text = "Экспорт аудиторий дисциплин";
             this.экспортАудиторийДисциплинToolStripMenuItem.Click += new System.EventHandler(this.экспортАудиторийДисциплинToolStripMenuItem_Click);
             // 
+            // импортИзБазРасписанийToolStripMenuItem
+            // 
+            this.импортИзБазРасписанийToolStripMenuItem.Name = "импортИзБазРасписанийToolStripMenuItem";
+            this.импортИзБазРасписанийToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.импортИзБазРасписанийToolStripMenuItem.Text = "Импорт из баз расписаний";
+            this.импортИзБазРасписанийToolStripMenuItem.Click += new System.EventHandler(this.импортИзБазРасписанийToolStripMenuItem_Click);
+            // 
             // viewPanel
             // 
             this.viewPanel.Controls.Add(this.statusStrip1);
@@ -964,12 +973,12 @@ namespace UchOtd.Schedule
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // импортИзБазРасписанийToolStripMenuItem
+            // объединить2ЗаписиСтудентаToolStripMenuItem
             // 
-            this.импортИзБазРасписанийToolStripMenuItem.Name = "импортИзБазРасписанийToolStripMenuItem";
-            this.импортИзБазРасписанийToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
-            this.импортИзБазРасписанийToolStripMenuItem.Text = "Импорт из баз расписаний";
-            this.импортИзБазРасписанийToolStripMenuItem.Click += new System.EventHandler(this.импортИзБазРасписанийToolStripMenuItem_Click);
+            this.объединить2ЗаписиСтудентаToolStripMenuItem.Name = "объединить2ЗаписиСтудентаToolStripMenuItem";
+            this.объединить2ЗаписиСтудентаToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.объединить2ЗаписиСтудентаToolStripMenuItem.Text = "Объединить 2 записи студента";
+            this.объединить2ЗаписиСтудентаToolStripMenuItem.Click += new System.EventHandler(this.объединить2ЗаписиСтудентаToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -1091,6 +1100,7 @@ namespace UchOtd.Schedule
         private ComboBox semesterList;
         private ToolStripMenuItem семестрыToolStripMenuItem;
         private ToolStripMenuItem импортИзБазРасписанийToolStripMenuItem;
+        private ToolStripMenuItem объединить2ЗаписиСтудентаToolStripMenuItem;
     }
 }
 

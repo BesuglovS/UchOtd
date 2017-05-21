@@ -35,6 +35,9 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.GroupListPanel = new System.Windows.Forms.Panel();
             this.StudentGroupListView = new System.Windows.Forms.DataGridView();
             this.ControlsPanel = new System.Windows.Forms.Panel();
+            this.studentFilterRefresh = new System.Windows.Forms.Button();
+            this.studentFiltered = new System.Windows.Forms.CheckBox();
+            this.studentFilter = new System.Windows.Forms.ComboBox();
             this.updateSig = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.PeriodEnd = new System.Windows.Forms.DateTimePicker();
@@ -58,6 +61,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.label1 = new System.Windows.Forms.Label();
             this.StudentListPanel = new System.Windows.Forms.Panel();
             this.StudentsInGroupListView = new System.Windows.Forms.DataGridView();
+            this.removeAllSig = new System.Windows.Forms.Button();
             this.LeftPanel.SuspendLayout();
             this.GroupListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudentGroupListView)).BeginInit();
@@ -80,9 +84,9 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             this.GroupListPanel.Controls.Add(this.StudentGroupListView);
             this.GroupListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GroupListPanel.Location = new System.Drawing.Point(0, 454);
+            this.GroupListPanel.Location = new System.Drawing.Point(0, 503);
             this.GroupListPanel.Name = "GroupListPanel";
-            this.GroupListPanel.Size = new System.Drawing.Size(281, 256);
+            this.GroupListPanel.Size = new System.Drawing.Size(281, 207);
             this.GroupListPanel.TabIndex = 23;
             // 
             // StudentGroupListView
@@ -98,12 +102,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentGroupListView.Name = "StudentGroupListView";
             this.StudentGroupListView.ReadOnly = true;
             this.StudentGroupListView.RowHeadersVisible = false;
-            this.StudentGroupListView.Size = new System.Drawing.Size(281, 256);
+            this.StudentGroupListView.Size = new System.Drawing.Size(281, 207);
             this.StudentGroupListView.TabIndex = 1;
             this.StudentGroupListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.StudentGroupListView_CellClick);
             // 
             // ControlsPanel
             // 
+            this.ControlsPanel.Controls.Add(this.removeAllSig);
+            this.ControlsPanel.Controls.Add(this.studentFilterRefresh);
+            this.ControlsPanel.Controls.Add(this.studentFiltered);
+            this.ControlsPanel.Controls.Add(this.studentFilter);
             this.ControlsPanel.Controls.Add(this.updateSig);
             this.ControlsPanel.Controls.Add(this.label5);
             this.ControlsPanel.Controls.Add(this.PeriodEnd);
@@ -128,8 +136,36 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ControlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.ControlsPanel.Location = new System.Drawing.Point(0, 0);
             this.ControlsPanel.Name = "ControlsPanel";
-            this.ControlsPanel.Size = new System.Drawing.Size(281, 454);
+            this.ControlsPanel.Size = new System.Drawing.Size(281, 503);
             this.ControlsPanel.TabIndex = 22;
+            // 
+            // studentFilterRefresh
+            // 
+            this.studentFilterRefresh.Location = new System.Drawing.Point(153, 439);
+            this.studentFilterRefresh.Name = "studentFilterRefresh";
+            this.studentFilterRefresh.Size = new System.Drawing.Size(100, 23);
+            this.studentFilterRefresh.TabIndex = 48;
+            this.studentFilterRefresh.Text = "Обновить";
+            this.studentFilterRefresh.UseVisualStyleBackColor = true;
+            this.studentFilterRefresh.Click += new System.EventHandler(this.studentFilterRefresh_Click);
+            // 
+            // studentFiltered
+            // 
+            this.studentFiltered.AutoSize = true;
+            this.studentFiltered.Location = new System.Drawing.Point(15, 443);
+            this.studentFiltered.Name = "studentFiltered";
+            this.studentFiltered.Size = new System.Drawing.Size(128, 17);
+            this.studentFiltered.TabIndex = 47;
+            this.studentFiltered.Text = "Фильтр по студенту";
+            this.studentFiltered.UseVisualStyleBackColor = true;
+            // 
+            // studentFilter
+            // 
+            this.studentFilter.FormattingEnabled = true;
+            this.studentFilter.Location = new System.Drawing.Point(16, 466);
+            this.studentFilter.Name = "studentFilter";
+            this.studentFilter.Size = new System.Drawing.Size(238, 21);
+            this.studentFilter.TabIndex = 46;
             // 
             // updateSig
             // 
@@ -346,6 +382,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentsInGroupListView.TabIndex = 2;
             this.StudentsInGroupListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.StudentsInGroupListView_CellClick);
             // 
+            // removeAllSig
+            // 
+            this.removeAllSig.Location = new System.Drawing.Point(66, 144);
+            this.removeAllSig.Name = "removeAllSig";
+            this.removeAllSig.Size = new System.Drawing.Size(187, 26);
+            this.removeAllSig.TabIndex = 49;
+            this.removeAllSig.Text = "Удалить все включения в группы";
+            this.removeAllSig.UseVisualStyleBackColor = true;
+            this.removeAllSig.Click += new System.EventHandler(this.removeAllSig_Click);
+            // 
             // StudentGroupList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -396,5 +442,9 @@ namespace UchOtd.Schedule.Forms.DBLists
         private Label label4;
         private DateTimePicker PeriodStart;
         private Button updateSig;
+        private CheckBox studentFiltered;
+        private ComboBox studentFilter;
+        private Button studentFilterRefresh;
+        private Button removeAllSig;
     }
 }

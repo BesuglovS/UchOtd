@@ -92,7 +92,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             PeriodsListView.Columns["CustomStudentGroupAttributeId"].Visible = false;
 
             PeriodsListView.Columns["Name"].Width = 250;
-            PeriodsListView.Columns["StudentGroup"].Width = 80;
+            PeriodsListView.Columns["StudentGroupName"].Width = 80;
             PeriodsListView.Columns["Start"].Width = 100;
             PeriodsListView.Columns["End"].Width = 100;
         }

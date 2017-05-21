@@ -13,7 +13,8 @@ namespace UchOtd.Schedule.Views.DBListViews
         public int StudentId { get; set; }
         public int StudentGroupId { get; set; }
         public string StudentFioZachNum { get; set; }
-        public string StudentGroup { get; set; }
+        public string StudentGroupName { get; set; }
+        public string StudentGroupSemester { get; set; }
         public DateTime PeriodFrom { get; set; }
         public DateTime PeriodTo { get; set; }
 
@@ -27,7 +28,8 @@ namespace UchOtd.Schedule.Views.DBListViews
             StudentId = sig.Student.StudentId;
             StudentGroupId = sig.StudentGroup.StudentGroupId;
             StudentFioZachNum = sig.Student.F + " " + sig.Student.I + " " + sig.Student.O + " " + sig.Student.ZachNumber;
-            StudentGroup = sig.StudentGroup.Name + " " + sig.StudentGroup.Semester.DisplayName;
+            StudentGroupName = sig.StudentGroup.Name;
+            StudentGroupSemester = sig.StudentGroup.Semester.DisplayName;
             PeriodFrom = sig.PeriodFrom;
             PeriodTo = sig.PeriodTo;
         }

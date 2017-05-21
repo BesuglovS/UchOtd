@@ -142,6 +142,14 @@ namespace UchOtd.Schedule.Core
                 line = sr.ReadLine(); // 18 StudentsInGroups
                 List<StudentsInGroups> studentsInGroups = JsonConvert.DeserializeObject<List<StudentsInGroups>>(line);
 
+                line = sr.ReadLine(); // 19 ScheduleNotes
+                List<ScheduleNote> scheduleNotes = JsonConvert.DeserializeObject<List<ScheduleNote>>(line);
+
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " reading done";
+                }));
+
                 // 3  Calendars
                 for (int j = 0; j < calendars.Count; j++)
                 {
@@ -165,6 +173,10 @@ namespace UchOtd.Schedule.Core
                         calendarIds.Add(newCalendar.Date.Date, newCalendar.CalendarId);
                     }
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " Calendars 1/19 done";
+                }));
 
                 // 2  Buildings
                 var BuildingIds = new Dictionary<int, int>();
@@ -190,7 +202,11 @@ namespace UchOtd.Schedule.Core
                         BuildingIds.Add(building.BuildingId, searchBuilding.BuildingId);
                     }
                 }
-                
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " Buildings 2/19 done";
+                }));
+
                 // 1  Auditoriums
                 var auditoriumIds = new Dictionary<int, int>();
                 for (int j = 0; j < auditoriums.Count; j++)
@@ -215,6 +231,10 @@ namespace UchOtd.Schedule.Core
                         auditoriumIds.Add(auditorium.AuditoriumId, searchAuditorium.AuditoriumId);
                     }
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " Auditoriums 3/19 done";
+                }));
 
                 // 4  Rings
                 var ringIds = new Dictionary<int, int>();
@@ -239,6 +259,10 @@ namespace UchOtd.Schedule.Core
                         ringIds.Add(ring.RingId, searchRing.RingId);
                     }
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " Rings 4/19 done";
+                }));
 
                 // 5  Students
                 var studentIds = new Dictionary<int, int>();
@@ -279,6 +303,10 @@ namespace UchOtd.Schedule.Core
                         studentIds.Add(student.StudentId, searchStudent.StudentId);
                     }
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " Students 5/19 done";
+                }));
 
                 // 6  StudentGroups
                 var studentGroupIds = new Dictionary<int, int>();
@@ -296,6 +324,10 @@ namespace UchOtd.Schedule.Core
 
                     studentGroupIds.Add(studentGroup.StudentGroupId, newStudentGroup.StudentGroupId);
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " StudentGroups 6/19 done";
+                }));
 
                 // 18 StudentsInGroups
                 var studentInGroupIds = new Dictionary<int, int>();
@@ -315,6 +347,10 @@ namespace UchOtd.Schedule.Core
 
                     studentInGroupIds.Add(studentInGroup.StudentsInGroupsId, newStudentInGroups.StudentsInGroupsId);
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " StudentsInGroups 7/19 done";
+                }));
 
                 // 7  Teachers
                 var teacherIds = new Dictionary<int, int>();
@@ -340,6 +376,10 @@ namespace UchOtd.Schedule.Core
                         teacherIds.Add(teacher.TeacherId, searchTeacher.TeacherId);
                     }
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " Teachers 8/19 done";
+                }));
 
                 // 8  Disciplines
                 var disciplineIds = new Dictionary<int, int>();
@@ -369,6 +409,10 @@ namespace UchOtd.Schedule.Core
                     
                     disciplineIds.Add(discipline.DisciplineId, newDiscipline.DisciplineId);
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " Disciplines 9/19 done";
+                }));
 
                 // 9  TeacherForDisciplines
                 var teacherForDisciplineIds = new Dictionary<int, int>();
@@ -386,6 +430,10 @@ namespace UchOtd.Schedule.Core
 
                     teacherForDisciplineIds.Add(teacherForDiscipline.TeacherForDisciplineId, newtfd.TeacherForDisciplineId);
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " TeacherForDisciplines 10/19 done";
+                }));
 
                 // 10 Lessons
                 var lessonIds = new Dictionary<int, int>();
@@ -406,6 +454,10 @@ namespace UchOtd.Schedule.Core
 
                     lessonIds.Add(lesson.LessonId, newLesson.LessonId);
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " Lessons 11/19 done";
+                }));
 
                 // 11 ConfigOptions
                 for (int j = 0; j < configOptions.Count; j++)
@@ -421,6 +473,10 @@ namespace UchOtd.Schedule.Core
 
                     repo.ConfigOptions.AddConfigOption(newConfigOption);
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " ConfigOptions 12/19 done";
+                }));
 
                 // 12 LessonLogEvents
                 var lessonLogEventIds = new Dictionary<int, int>();
@@ -441,6 +497,10 @@ namespace UchOtd.Schedule.Core
 
                     lessonLogEventIds.Add(lessonLogEvent.LessonLogEventId, newLessonLogEvent.LessonLogEventId);
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " LessonLogEvents 13/19 done";
+                }));
 
                 // 13 AuditoriumEvents
                 for (int j = 0; j < auditoriumsEvents.Count; j++)
@@ -457,6 +517,10 @@ namespace UchOtd.Schedule.Core
 
                     repo.AuditoriumEvents.AddAuditoriumEvent(newAuditoriumEvents);
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " AuditoriumEvents 14/19 done";
+                }));
 
 
                 // 14 Faculties
@@ -487,8 +551,11 @@ namespace UchOtd.Schedule.Core
                     {
                         facultyIds.Add(faculty.FacultyId, searchFaculty.FacultyId);
                     }
-
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " Faculties 15/19 done";
+                }));
 
                 // 15 GroupsInFaculties
                 for (int j = 0; j < groupsInFaculties.Count; j++)
@@ -503,6 +570,10 @@ namespace UchOtd.Schedule.Core
 
                     repo.GroupsInFaculties.AddGroupsInFaculty(newGroupInFaculty);
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " GroupsInFaculties 16/19 done";
+                }));
 
                 // 16 Exams
                 var examIds = new Dictionary<int, int>();
@@ -529,6 +600,10 @@ namespace UchOtd.Schedule.Core
                         examIds.Add(exam.ExamId, newExam.ExamId);
                     }
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " Exams 17/19 done";
+                }));
 
                 // 17 ExamLogEvents
                 for (int j = 0; j < logEvents.Count; j++)
@@ -552,6 +627,30 @@ namespace UchOtd.Schedule.Core
                         repo.LogEvents.Add(newLogEvent);
                     }
                 }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " ExamLogEvents 18/19 done";
+                }));
+
+                // 19 ScheduleNote
+                for (int j = 0; j < scheduleNotes.Count; j++)
+                {
+                    var scheduleNote = scheduleNotes[j];
+
+                    var newScheduleNote = new ScheduleNote()
+                    {
+                        Text = scheduleNote.Text,
+                        IsLesson = scheduleNote.IsLesson,
+                        LateAmount = scheduleNote.LateAmount,
+                        Lesson = (scheduleNote.Lesson != null) ? repo.Lessons.GetLesson(lessonIds[scheduleNote.Lesson.LessonId]) : null
+                    };
+
+                    repo.ScheduleNotes.AddScheduleNote(newScheduleNote);
+                }
+                form.Invoke(new Action(() =>
+                {
+                    status.Text = filesToImport[i] + " ScheduleNote 19/19 done";
+                }));
 
 
                 sr.Close();

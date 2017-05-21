@@ -52,12 +52,21 @@ namespace UchOtd.Schedule.Forms.DBLists
                 .OrderBy(st => st.F)
                 .ThenBy(st => st.I)
                 .ToList();
-
             var studentView = StudentView.StudentsToView(studentList);
-
             StudentList.DataSource = studentView;
             StudentList.ValueMember = "StudentId";
             StudentList.DisplayMember = "Summary";
+
+            var studentList2 = _repo
+                .Students
+                .GetAllStudents()
+                .OrderBy(st => st.F)
+                .ThenBy(st => st.I)
+                .ToList();
+            var studentView2 = StudentView.StudentsToView(studentList2);
+            studentFilter.DataSource = studentView2;
+            studentFilter.ValueMember = "StudentId";
+            studentFilter.DisplayMember = "Summary";
 
             var studentGroupList = _repo.StudentGroups
                 .GetAllStudentGroups()
@@ -74,20 +83,25 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void StudentGroupListLoad(object sender, EventArgs e)
         {
-            RefreshView((int)RefreshType.FullRefresh);
+            RefreshView(RefreshType.FullRefresh);
             
             LoadLists();
         }
 
         
 
-        private void RefreshView(int refreshType)
+        private void RefreshView(RefreshType refreshType)
         {
             // 1 - groups only
             // 2 - students only
             // 3 - full refresh
+            if ((refreshType == RefreshType.StudentsOnly) && (studentFiltered.Checked))
+            {
+                StudentFilteredRefresh();
+                return;
+            }
             
-            if ((refreshType == 1) || (refreshType == 3))
+            if ((refreshType == RefreshType.GroupsOnly) || (refreshType == RefreshType.FullRefresh))
             {
                 var studentGroupList = _repo.StudentGroups.GetAllStudentGroups();
 
@@ -117,7 +131,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             //StudentGroupListView.ClearSelection();
 
-            if ((refreshType == 2) || (refreshType == 3))
+            if ((refreshType == RefreshType.StudentsOnly) || (refreshType == RefreshType.FullRefresh))
             {
                 var studentGroupView = ((List<StudentGroupView>)StudentGroupListView.DataSource)[StudentGroupListView.SelectedCells[0].RowIndex];
                 var studentGroup = _repo.StudentGroups.GetStudentGroup(studentGroupView.StudentGroupId);
@@ -171,14 +185,14 @@ namespace UchOtd.Schedule.Forms.DBLists
             StudentsInGroupListView.Columns["StudentFioZachNum"].Width = 200;
             StudentsInGroupListView.Columns["StudentFioZachNum"].HeaderText = "Ф.И.О. + № зачётки";
 
-            StudentsInGroupListView.Columns["StudentGroup"].Width = 200;
-            StudentsInGroupListView.Columns["StudentGroup"].HeaderText = "Группа";
+            StudentsInGroupListView.Columns["StudentGroupName"].Width = 80;
+            StudentsInGroupListView.Columns["StudentGroupName"].HeaderText = "Группа";
 
-            StudentsInGroupListView.Columns["PeriodFrom"].Width = 200;
+            StudentsInGroupListView.Columns["PeriodFrom"].Width = 100;
             StudentsInGroupListView.Columns["PeriodFrom"].HeaderText = "Начало периода";
             StudentsInGroupListView.Columns["PeriodFrom"].DefaultCellStyle.Format = "dd.MM.yyyy";
 
-            StudentsInGroupListView.Columns["PeriodTo"].Width = 200;
+            StudentsInGroupListView.Columns["PeriodTo"].Width = 100;
             StudentsInGroupListView.Columns["PeriodTo"].HeaderText = "Конец периода";
             StudentsInGroupListView.Columns["PeriodTo"].DefaultCellStyle.Format = "dd.MM.yyyy";
         }
@@ -201,7 +215,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             _repo.StudentGroups.AddStudentGroup(newStudentGroup);
 
-            RefreshView((int)RefreshType.GroupsOnly);
+            RefreshView(RefreshType.GroupsOnly);
         }
 
         private void update_Click(object sender, EventArgs e)
@@ -215,7 +229,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 _repo.StudentGroups.UpdateStudentGroup(studentGroup);
 
-                RefreshView((int)RefreshType.GroupsOnly);
+                RefreshView(RefreshType.GroupsOnly);
             }
         }
 
@@ -247,7 +261,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 _repo.StudentGroups.RemoveStudentGroup(studentGroup.StudentGroupId);
 
-                RefreshView((int)RefreshType.GroupsOnly);
+                RefreshView(RefreshType.GroupsOnly);
             }
         }
         
@@ -258,7 +272,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 return;
             }
 
-            var studentToAdd = _repo.Students.GetStudent((int)StudentList.SelectedValue);            
+            var studentToAdd = _repo.Students.GetStudent((int)StudentList.SelectedValue);
 
             if (StudentGroupListView.SelectedCells.Count > 0)
             {
@@ -275,7 +289,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 _repo.StudentsInGroups.AddStudentsInGroups(sig);
 
-                RefreshView((int)RefreshType.StudentsOnly);
+                RefreshView(RefreshType.StudentsOnly);
             }
             else
             {
@@ -292,7 +306,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 
                 _repo.StudentsInGroups.RemoveStudentsInGroups(sigId);
 
-                RefreshView((int)RefreshType.StudentsOnly);
+                RefreshView(RefreshType.StudentsOnly);
             }           
         }
 
@@ -323,7 +337,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                     _repo.StudentsInGroups.AddStudentsInGroups(sig);
                 }                
 
-                RefreshView((int)RefreshType.StudentsOnly);
+                RefreshView(RefreshType.StudentsOnly);
             }
             else
             {
@@ -349,17 +363,21 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void refresh_Click(object sender, EventArgs e)
         {
-            RefreshView((int)RefreshType.GroupsOnly);
+            RefreshView(RefreshType.GroupsOnly);
         }
 
         private void updateSig_Click(object sender, EventArgs e)
         {
-            if (StudentsInGroupListView.SelectedCells.Count > 0)
+            if (StudentsInGroupListView.SelectedCells.Count == 1)
             {
                 var sigView = ((List<StudentsInGroupsView>)StudentsInGroupListView.DataSource)[StudentsInGroupListView.SelectedCells[0].RowIndex];
                 var sig = _repo.StudentsInGroups.GetStudentsInGroups(sigView.StudentsInGroupsId);
+
+                var sgView =
+                    ((List<StudentGroupView>) StudentGroupListView.DataSource)[
+                        StudentGroupListView.SelectedCells[0].RowIndex];
                 
-                sig.StudentGroup = ((List<StudentGroup>)StudentGroupListView.DataSource)[StudentGroupListView.SelectedCells[0].RowIndex];
+                sig.StudentGroup = _repo.StudentGroups.GetStudentGroup(sgView.StudentGroupId);
                 sig.Student = _repo.Students.GetStudent((int)StudentList.SelectedValue);
 
                 sig.PeriodFrom = PeriodStart.Value.Date;
@@ -367,23 +385,101 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 _repo.StudentsInGroups.UpdateStudentsInGroups(sig);
 
-                RefreshView((int)RefreshType.StudentsOnly);
+                RefreshView(RefreshType.StudentsOnly);
+            }
+
+            if (StudentsInGroupListView.SelectedCells.Count > 1)
+            {
+                var rowIndexes = new List<int>();
+
+                for (int i = 0; i < StudentsInGroupListView.SelectedCells.Count; i++)
+                {
+                    var cell = StudentsInGroupListView.SelectedCells[i];
+                    if (!rowIndexes.Contains(cell.RowIndex))
+                    {
+                        rowIndexes.Add(cell.RowIndex);
+                    }
+                }
+
+                foreach (var rowIndex in rowIndexes)
+                {
+                    var sigView = ((List<StudentsInGroupsView>)StudentsInGroupListView.DataSource)[rowIndex];
+                    var sig = _repo.StudentsInGroups.GetStudentsInGroups(sigView.StudentsInGroupsId);
+                    
+                    sig.PeriodFrom = PeriodStart.Value.Date;
+                    sig.PeriodTo = PeriodEnd.Value.Date;
+
+                    _repo.StudentsInGroups.UpdateStudentsInGroups(sig);
+
+                    RefreshView(RefreshType.StudentsOnly);
+                }
             }
         }
 
         private void StudentsInGroupListView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex == -1)
+            {
+                return;
+            }
+
             var sigView = ((List<StudentsInGroupsView>)StudentsInGroupListView.DataSource)[e.RowIndex];
             var sig = _repo.StudentsInGroups.GetStudentsInGroups(sigView.StudentsInGroupsId);
 
             var studentGroup = sig.StudentGroup;
             StudentGroupName.Text = studentGroup.Name;
+
+            var sgViews = ((List<StudentGroupView>)StudentGroupListView.DataSource).Select(sgv => sgv.StudentGroupId).ToList();
+            if (sgViews.Contains(studentGroup.StudentGroupId))
+            {
+                StudentGroupListView.CurrentCell = StudentGroupListView[1, sgViews.IndexOf(studentGroup.StudentGroupId)];
+            }
+
+            
+
             SemesterList.SelectedValue = studentGroup.Semester.SemesterId;
 
             StudentList.SelectedValue = sig.Student.StudentId;
 
             PeriodStart.Value = sig.PeriodFrom;
             PeriodEnd.Value = sig.PeriodTo;
+        }
+
+        private void studentFilterRefresh_Click(object sender, EventArgs e)
+        {
+            StudentFilteredRefresh();
+        }
+
+        private void StudentFilteredRefresh()
+        {
+            if (StudentList.SelectedValue == null)
+            {
+                return;
+            }
+            var studentId = (int) studentFilter.SelectedValue;
+
+            var studentSigs = _repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.Student.StudentId == studentId);
+
+            var sigView = StudentsInGroupsView.SigToView(studentSigs)
+                .OrderBy(sig => sig.PeriodFrom)
+                .ToList();
+
+            StudentsInGroupListView.DataSource = sigView;
+
+            FormatView();
+        }
+
+        private void removeAllSig_Click(object sender, EventArgs e)
+        {
+            var student = _repo.Students.GetStudent((int)StudentList.SelectedValue);
+
+            var sigs =
+                _repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.Student.StudentId == student.StudentId);
+
+            foreach (var studentInGroup in sigs)
+            {
+                _repo.StudentsInGroups.RemoveStudentsInGroups(studentInGroup.StudentsInGroupsId);
+            }
         }
     }
 }
