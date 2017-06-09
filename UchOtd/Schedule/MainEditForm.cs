@@ -25,23 +25,27 @@ using UchOtd.Schedule.Views.DBListViews;
 using UchOtd.Schedule.wnu;
 using StudentList = UchOtd.Schedule.Forms.DBLists.StudentList;
 using Utilities = UchOtd.Core.Utilities;
+using Newtonsoft.Json;
+using Schedule.DomainClasses.Logs;
 
 namespace UchOtd.Schedule
 {
     public partial class MainEditForm : Form
     {
         public ScheduleRepository Repo;
+        private readonly StartupForm _startupForm;
 
         public static bool SchoolHeader = false;
 
         CancellationTokenSource _tokenSource;
         CancellationToken _cToken;
 
-        public MainEditForm(ScheduleRepository repo)
+        public MainEditForm(ScheduleRepository repo, StartupForm startupForm)
         {
             InitializeComponent();
 
             Repo = repo;
+            _startupForm = startupForm;
         }
 
         private void MainFormLoad(object sender, EventArgs e)
@@ -63,6 +67,41 @@ namespace UchOtd.Schedule
 
         private void LoadLists()
         {
+            var sList = new List<string>
+            {
+                "Schedule13141",
+                "Schedule13142",
+                "Schedule14151",
+                "Schedule15161",
+                "Schedule15162",
+                "Schedule16171",
+                "Schedule16172",
+                "S12131A",
+                "S12132A",
+                "S13141A",
+                "S13142A",
+                "S14151A",
+                "S14152A",
+                "S15161A",
+                "S15162A",
+                "S12131AA",
+                "S12132AA",
+                "S13141AA",
+                "S13142AA",
+                "S14151AA",
+                "S14152AA",
+                "S15161AA",
+                "S15162AA",
+                "S16171AA",
+                "S16172AA"
+            };
+
+            semester.Items.Clear();
+            for (int i = 0; i < sList.Count; i++)
+            {
+                semester.Items.Add(sList[i]);
+            }
+
             var groups = Repo
                 .StudentGroups
                 .GetAllStudentGroups()
@@ -217,7 +256,7 @@ namespace UchOtd.Schedule
                 ScheduleView.Columns[i].HeaderText = Constants.DowLocal[i];
                 if (i < 7)
                 {
-                    ScheduleView.Columns[i].Width = (ScheduleView.Width - ScheduleView.Columns[0].Width - 20)/6;
+                    ScheduleView.Columns[i].Width = (ScheduleView.Width - ScheduleView.Columns[0].Width - 20) / 6;
                 }
 
             }
@@ -369,32 +408,7 @@ namespace UchOtd.Schedule
                         proposedLessonEndToken);
                     eventString += Environment.NewLine;
 
-                    var audStrings = "";
-                    var audWeekList =
-                        item.Value.Item2.ToDictionary(l => Repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date),
-                            l => l.Auditorium.Name);
-                    var grouped = audWeekList.GroupBy(a => a.Value);
-
-                    var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
-                    var gcount = enumerable.Count();
-                    if (gcount == 1)
-                    {
-                        audStrings += enumerable.ElementAt(0).Key;
-                    }
-                    else
-                    {
-                        for (int j = 0; j < gcount; j++)
-                        {
-                            var jItem = enumerable.ElementAt(j);
-                            audStrings += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " +
-                                          jItem.Key;
-
-                            if (j != gcount - 1)
-                            {
-                                audStrings += Environment.NewLine;
-                            }
-                        }
-                    }
+                    var audStrings = AudStringsFromLessonList(item.Value.Item2);
 
                     eventString += IfProposed(audStrings, state, proposedLessonStartToken, proposedLessonEndToken);
 
@@ -409,6 +423,39 @@ namespace UchOtd.Schedule
             }
 
             return result;
+        }
+
+        private string AudStringsFromLessonList(List<Lesson> lessons)
+        {
+            KeyValuePair<string, Tuple<string, List<Lesson>>> item;
+            var audStrings = "";
+            Dictionary<string, List<int>> AudWeeks = new Dictionary<string, List<int>>();
+            for (int j = 0; j < lessons.Count; j++)
+            {
+                var lesson = lessons[j];
+                if (!AudWeeks.ContainsKey(lesson.Auditorium.Name))
+                {
+                    AudWeeks.Add(lesson.Auditorium.Name, new List<int>());
+                }
+
+                AudWeeks[lesson.Auditorium.Name].Add(Repo.CommonFunctions.CalculateWeekNumber(lesson.Calendar.Date));
+            }
+
+            if (AudWeeks.Count == 1)
+            {
+                audStrings += AudWeeks.Keys.First();
+            }
+            else
+            {
+                var l = new List<string>();
+                foreach (KeyValuePair<string, List<int>> audWeek in AudWeeks.OrderBy(aw => aw.Value.Min()))
+                {
+                    l.Add(CommonFunctions.CombineWeeks(audWeek.Value) + " - " + audWeek.Key);
+                }
+
+                audStrings += l.Aggregate((a, b) => a + Environment.NewLine + b);
+            }
+            return audStrings;
         }
 
         private string IfProposed(string text, int state, string startToken, string endToken)
@@ -454,7 +501,7 @@ namespace UchOtd.Schedule
                             Repo.CommonFunctions.GetTfdHours(tfd.TeacherForDisciplineId)
                             /*tfd.Discipline.AuditoriumHours + '\t' +
                             Constants.Constants.Attestation[tfd.Discipline.Attestation]*/
-                            );
+                        );
                     }
                 }
             }
@@ -465,7 +512,7 @@ namespace UchOtd.Schedule
             //var sw = new StreamWriter(filename);
             var groupsId =
                 Repo.StudentGroups.GetFiltredStudentGroups(
-                    sg => sg.Name == "12 Д (+Н)" || sg.Name == "13 Д (+Н)" || sg.Name == "14 Д")
+                        sg => sg.Name == "12 Д (+Н)" || sg.Name == "13 Д (+Н)" || sg.Name == "14 Д")
                     .Select(sg => sg.StudentGroupId)
                     .ToList();
 
@@ -477,7 +524,7 @@ namespace UchOtd.Schedule
 
             foreach (
                 var tfd in Repo.TeacherForDisciplines.GetAllTeacherForDiscipline().OrderBy(tefd => tefd.Discipline.Name)
-                )
+            )
             {
                 if (tfd.Discipline.StudentGroup.Name == "12 И")
                 {
@@ -505,8 +552,8 @@ namespace UchOtd.Schedule
                 sb.Append(tfd.Discipline.Name + '\t' + tfd.Discipline.StudentGroup.Name + '\t');
 
                 var auds = Repo.Lessons.GetFiltredLessons(l =>
-                    (l.State == 1) &&
-                    l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
+                        (l.State == 1) &&
+                        l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
                     .ToList()
                     .Select(l => l.Auditorium.Name)
                     .Distinct()
@@ -617,7 +664,7 @@ namespace UchOtd.Schedule
                         tfd.Discipline.Name + '\t' +
                         tfd.Discipline.AuditoriumHours + '\t' +
                         tfd.Teacher.FIO + '\n'
-                        );
+                    );
 
 
                     var lessons =
@@ -784,7 +831,7 @@ namespace UchOtd.Schedule
                     student.F + "@" +
                     student.I + "@" +
                     student.O
-                    );
+                );
             }
 
             sw.WriteLine("StudentGroups");
@@ -1026,7 +1073,7 @@ namespace UchOtd.Schedule
                             (l.State == 1) &&
                             l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId).ToList();
 
-                var hoursDiff = disc.AuditoriumHours - tfdLessons.Count*2;
+                var hoursDiff = disc.AuditoriumHours - tfdLessons.Count * 2;
 
                 result.Add(
                     tfd.TeacherForDisciplineId + "\t" + tfd.Discipline.StudentGroup.Name + "\t" + disc.Name + "\t" +
@@ -1132,21 +1179,21 @@ namespace UchOtd.Schedule
             cToken.ThrowIfCancellationRequested();
 
             var allDiscLessonCount = (int) Math.Ceiling((double) Repo.Disciplines.GetAllDisciplines()
-                .Where(
-                    d =>
-                        (!d.Name.ToLower().Contains("физическая культ")) &&
-                        (!d.Name.ToLower().Contains("физической культ")))
-                .Select(d => d.AuditoriumHours).Sum()/2);
+                                                            .Where(
+                                                                d =>
+                                                                    (!d.Name.ToLower().Contains("физическая культ")) &&
+                                                                    (!d.Name.ToLower().Contains("физической культ")))
+                                                            .Select(d => d.AuditoriumHours).Sum() / 2);
             var activeLessonsCount = Repo.Lessons.GetAllActiveLessons()
                 .Count(l => (!l.TeacherForDiscipline.Discipline.Name.ToLower().Contains("физическая культ") &&
                              (!l.TeacherForDiscipline.Discipline.Name.ToLower().Contains("физической культ"))));
 
             var diff = allDiscLessonCount - activeLessonsCount;
             String message = activeLessonsCount + " (" +
-                             $"{(double) activeLessonsCount*100/allDiscLessonCount:0.00}%" + ") / " +
+                             $"{(double) activeLessonsCount * 100 / allDiscLessonCount:0.00}%" + ") / " +
                              allDiscLessonCount
                              + " =>  " + diff + " (" +
-                             $"{(double) diff*100/allDiscLessonCount:0.00}%" + ")";
+                             $"{(double) diff * 100 / allDiscLessonCount:0.00}%" + ")";
 
             cToken.ThrowIfCancellationRequested();
 
@@ -1156,10 +1203,10 @@ namespace UchOtd.Schedule
                 .GetFiltredDisciplines(d =>
                     (d.AuditoriumHours == 0) ||
                     (Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
-                        tfd => tfd.Discipline.DisciplineId == d.DisciplineId) == null) ||
+                         tfd => tfd.Discipline.DisciplineId == d.DisciplineId) == null) ||
                     (Repo.CommonFunctions.GetTfdHours(
-                        Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
-                            tfd => tfd.Discipline.DisciplineId == d.DisciplineId).TeacherForDisciplineId) != 0))
+                         Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
+                             tfd => tfd.Discipline.DisciplineId == d.DisciplineId).TeacherForDisciplineId) != 0))
 
                 .Count;
             var diff2 = discCount - touchedDiscs;
@@ -1167,8 +1214,8 @@ namespace UchOtd.Schedule
             cToken.ThrowIfCancellationRequested();
 
             message += Environment.NewLine + touchedDiscs + " (" +
-                       $"{(double) touchedDiscs*100/discCount:0.00}%" + ") / " + discCount
-                       + " =>  " + diff2 + " (" + $"{(double) diff2*100/discCount:0.00}%" + ")";
+                       $"{(double) touchedDiscs * 100 / discCount:0.00}%" + ") / " + discCount
+                       + " =>  " + diff2 + " (" + $"{(double) diff2 * 100 / discCount:0.00}%" + ")";
 
             MessageBox.Show(message, "В парах / В дисциплинах");
         }
@@ -1284,13 +1331,13 @@ namespace UchOtd.Schedule
                             .ToList();
 
                         var facultyScheduleChanged = (
-                            from faculty in fg
-                            where Repo
-                                .StudentsInGroups
-                                .GetFiltredStudentsInGroups(sig =>
-                                    studentIds.Contains(sig.Student.StudentId) &&
-                                    faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
-                            select faculty.Key)
+                                from faculty in fg
+                                where Repo
+                                    .StudentsInGroups
+                                    .GetFiltredStudentsInGroups(sig =>
+                                        studentIds.Contains(sig.Student.StudentId) &&
+                                        faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
+                                select faculty.Key)
                             .ToList();
 
                         var localEvent = ev;
@@ -1318,13 +1365,13 @@ namespace UchOtd.Schedule
                             .ToList();
 
                         var facultyScheduleChanged = (
-                            from faculty in fg
-                            where Repo
-                                .StudentsInGroups
-                                .GetFiltredStudentsInGroups(sig =>
-                                    studentIds.Contains(sig.Student.StudentId) &&
-                                    faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
-                            select faculty.Key)
+                                from faculty in fg
+                                where Repo
+                                    .StudentsInGroups
+                                    .GetFiltredStudentsInGroups(sig =>
+                                        studentIds.Contains(sig.Student.StudentId) &&
+                                        faculty.Contains(sig.StudentGroup.StudentGroupId)).Any()
+                                select faculty.Key)
                             .ToList();
 
                         var localEvent = ev;
@@ -1341,7 +1388,7 @@ namespace UchOtd.Schedule
                     Invoke((MethodInvoker) delegate
                     {
                         status.Text = (index + 1) + " / " + evts.Count;
-                            // runs on UI thread
+                        // runs on UI thread
                     });
                 }
 
@@ -1421,29 +1468,29 @@ namespace UchOtd.Schedule
 
             Top = 0;
             Left = 0;
-            Width = width/2;
-            Height = height/2;
+            Width = width / 2;
+            Height = height / 2;
 
             var allAudsForm = new Auditoriums(Repo);
             allAudsForm.Show();
             allAudsForm.Left = 0;
-            allAudsForm.Top = height/2;
-            allAudsForm.Width = width/2;
-            allAudsForm.Height = height/2;
+            allAudsForm.Top = height / 2;
+            allAudsForm.Width = width / 2;
+            allAudsForm.Height = height / 2;
 
             var discListForm = new DisciplineList(Repo);
             discListForm.Show();
-            discListForm.Left = width/2;
+            discListForm.Left = width / 2;
             discListForm.Top = 0;
-            discListForm.Width = width/2;
-            discListForm.Height = height/2;
+            discListForm.Width = width / 2;
+            discListForm.Height = height / 2;
 
             var teachersSchedule = new TeacherSchedule(Repo);
             teachersSchedule.Show();
-            teachersSchedule.Left = width/2;
-            teachersSchedule.Top = height/2;
-            teachersSchedule.Width = width/2;
-            teachersSchedule.Height = height/2;
+            teachersSchedule.Left = width / 2;
+            teachersSchedule.Top = height / 2;
+            teachersSchedule.Width = width / 2;
+            teachersSchedule.Height = height / 2;
         }
 
         private void setLayout2_Click(object sender, EventArgs e)
@@ -1454,9 +1501,9 @@ namespace UchOtd.Schedule
             var disciplineForm = new DisciplineList(Repo);
             disciplineForm.Show();
             disciplineForm.Top = 0;
-            disciplineForm.Left = width/2;
-            disciplineForm.Width = width/2;
-            disciplineForm.Height = (int) Math.Round(height*0.42);
+            disciplineForm.Left = width / 2;
+            disciplineForm.Width = width / 2;
+            disciplineForm.Height = (int) Math.Round(height * 0.42);
         }
 
         private async void CreatePDF_Click(object sender, EventArgs e)
@@ -1541,7 +1588,8 @@ namespace UchOtd.Schedule
                 .StudentGroups
                 .GetFiltredStudentGroups(
                     sg =>
-                        !(sg.Name.Contains("-") || sg.Name.Contains("+") || sg.Name.Contains("I") || sg.Name.Length == 1 ||
+                        !(sg.Name.Contains("-") || sg.Name.Contains("+") || sg.Name.Contains("I") ||
+                          sg.Name.Length == 1 ||
                           sg.Name.Contains("(Н)") || sg.Name.Contains(".")))
                 .ToList();
 
@@ -1567,7 +1615,8 @@ namespace UchOtd.Schedule
 
                 var tfds = Repo
                     .TeacherForDisciplines
-                    .GetFiltredTeacherForDiscipline(tfd => groupIds.Contains(tfd.Discipline.StudentGroup.StudentGroupId))
+                    .GetFiltredTeacherForDiscipline(
+                        tfd => groupIds.Contains(tfd.Discipline.StudentGroup.StudentGroupId))
                     .ToList();
 
                 foreach (var tfd in tfds)
@@ -1787,142 +1836,525 @@ namespace UchOtd.Schedule
 
         private async void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
-            
-            /*
             await Task.Run(() =>
             {
-                var Repo2 = new ScheduleRepository("Server=UCH-OTD-DISP\\SQLEXPRESS,1433;Database=Schedule16171-old; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True");
+                CorrectAuditoriums("D:\\Github\\AudCorrection.txt", "D:\\Github\\CorrectionLog.txt");
+            });
+        }
 
-                var disciplinesFrom = Repo2.Disciplines.GetAllDisciplines();
-
-                var disciplinesTo = Repo.Disciplines.GetAllDisciplines();
-
-                foreach (var discipline in disciplinesTo)
+        private void CorrectAuditoriums(string inputDataFilename, string logFilename)
+        {
+            int state = 0;
+            var sr = new StreamReader(inputDataFilename);
+            var dbNames = new List<string>();
+            var groupNamesList = new List<List<string>>();
+            var groupNamesIndex = -1;
+            var audsList = new List<Dictionary<string, List<string>>>();
+            var audsIndex = -1;
+            var excludeGroupNames = new List<string>();
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                if (line == "==========")
                 {
-                    var find = disciplinesFrom.FirstOrDefault(d => d.DisciplineId == discipline.DisciplineId);
-                    string sequence = "";
-                    if (find != null)
+                    state++;
+                    continue;
+                }
+
+                if (line == "==========Группы")
+                {
+                    groupNamesIndex++;
+                    groupNamesList.Add(new List<string>());
+                    state = 1;
+                    continue;
+                }
+
+                if (line == "==========Аудитории")
+                {
+                    audsIndex++;
+                    audsList.Add(new Dictionary<string, List<string>>());
+                    state = 2;
+                    continue;
+                }
+
+                switch (state)
+                {
+                    case 0:
+                        dbNames.Add(line);
+                        break;
+                    case 1:
+                        groupNamesList[groupNamesIndex].Add(line);
+                        break;
+                    case 2:
+                        var audits = sr.ReadLine()?.Split('@').ToList();
+                        if (!audsList[audsIndex].ContainsKey(line))
+                        {
+                            audsList[audsIndex].Add(line, new List<string>());
+                        }
+
+                        foreach (var auditorium in audits)
+                        {
+                            audsList[audsIndex][line].Add(auditorium);
+                        }
+                        break;
+                    case 3:
+                        excludeGroupNames.Add(line);
+                        break;
+                }
+            }
+            sr.Close();
+
+
+            for (int i = 0; i < dbNames.Count; i++)
+            {
+                var dbName = dbNames[i];
+
+                LogInFile(logFilename, "Database: " + dbName);
+
+                var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                       dbName +
+                                       "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+                Repo.SetConnectionString(connectionString);
+
+                var disciplinesList = new List<List<Discipline>>();
+
+                var groupIds = new List<List<int>>();
+                var newGroupIdsList = new List<List<int>>();
+                var excludeGroupTfds = new List<int>();
+
+                for (int f = 0; f < groupNamesList.Count; f++)
+                {
+                    var idsList = new List<int>();
+                    for (int j = 0; j < groupNamesList[f].Count; j++)
                     {
-                        sequence = find.TypeSequence;
+                        var gr = Repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupNamesList[f][j]);
+
+                        if (gr != null)
+                        {
+                            idsList.Add(gr.StudentGroupId);
+                        }
                     }
 
-                    discipline.TypeSequence = sequence;
-                    Repo.Disciplines.UpdateDiscipline(discipline);
+                    groupIds.Add(idsList);
+
+                    var studentIds =
+                        Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                                sig => groupIds[f].Contains(sig.StudentGroup.StudentGroupId))
+                            .Select(sig => sig.Student.StudentId)
+                            .ToList();
+                    var newGroupIds =
+                        Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                                sig => studentIds.Contains(sig.Student.StudentId))
+                            .Select(sig => sig.StudentGroup.StudentGroupId)
+                            .ToList();
+                    newGroupIdsList.Add(newGroupIds);
+                    var disciplines = Repo.Disciplines
+                        .GetFiltredDisciplines(d => newGroupIds.Contains(d.StudentGroup.StudentGroupId))
+                        .ToList();
+
+                    disciplinesList.Add(disciplines);
                 }
-            });*/
-            /*
-             await Task.Run(() =>
-             {
-                 var events = Repo.LessonLogEvents.GetAllLessonLogEvents();
 
-                 var addEvents = new Dictionary<DateTime, int>();
-                 var remEvents = new Dictionary<DateTime, int>();
-                 var audEvents = new Dictionary<DateTime, int>();
+                var excludeGroupIds = new List<int>();
 
-                 for (int i = 0; i < events.Count; i++)
-                 {
-                     if (events[i].OldLesson == null)
-                     {
-                         if (!addEvents.ContainsKey(events[i].DateTime.Date))
-                         {
-                             addEvents.Add(events[i].DateTime.Date, 0);
-                         }
+                for (int j = 0; j < excludeGroupNames.Count; j++)
+                {
+                    var gr =
+                        Repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == excludeGroupNames[j]);
 
-                         addEvents[events[i].DateTime.Date]++;
+                    if (gr != null)
+                    {
+                        excludeGroupIds.Add(gr.StudentGroupId);
+                    }
+                }
+                var studentIds2 =
+                    Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                            sig => excludeGroupIds.Contains(sig.StudentGroup.StudentGroupId))
+                        .Select(sig => sig.Student.StudentId)
+                        .ToList();
+                var newGroupIds2 =
+                    Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                            sig => studentIds2.Contains(sig.Student.StudentId))
+                        .Select(sig => sig.StudentGroup.StudentGroupId)
+                        .ToList();
+                var disciplines2 = Repo.Disciplines
+                    .GetFiltredDisciplines(d => newGroupIds2.Contains(d.StudentGroup.StudentGroupId))
+                    .ToList();
+                for (int j = 0; j < disciplines2.Count; j++)
+                {
+                    var tefd = Repo.TeacherForDisciplines
+                        .GetFirstFiltredTeacherForDiscipline(tfd =>
+                            tfd.Discipline.DisciplineId == disciplines2[j].DisciplineId);
+                    if (tefd != null)
+                    {
+                        excludeGroupTfds.Add(tefd.TeacherForDisciplineId);
+                    }
+                }
 
-                         continue;
-                     }
+                var audIdsDictionary = Repo.Auditoriums.GetAll().ToDictionary(a => a.Name, a => a.AuditoriumId);
+                var audIdsDictionaryReverse = Repo.Auditoriums.GetAll()
+                    .ToDictionary(a => a.AuditoriumId, a => a.Name);
 
-                     if (events[i].NewLesson == null)
-                     {
-                         if (!remEvents.ContainsKey(events[i].DateTime.Date))
-                         {
-                             remEvents.Add(events[i].DateTime.Date, 0);
-                         }
+                for (int grIndex = 1 - 1;
+                    grIndex < groupNamesList.Count;
+                    grIndex++) // TODO: Вернуть начальный индекс = 0
+                {
+                    LogInFile(logFilename,
+                        "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" + groupNamesList.Count + " ");
+                    var auds = audsList[grIndex];
 
-                         remEvents[events[i].DateTime.Date]++;
+                    int discCounter = 0;
+                    foreach (KeyValuePair<string, List<string>> discAuds in auds)
+                    {
+                        var discName = discAuds.Key;
 
-                         continue;
-                     }
+                        //if (discCounter < 8 - 1) // TODO: Удалить после отладки
+                        //{
+                        //    discCounter++;
+                        //    continue;
+                        //}
 
-                     if (!audEvents.ContainsKey(events[i].DateTime.Date))
-                     {
-                         audEvents.Add(events[i].DateTime.Date, 0);
-                     }
+                        LogInFile(logFilename, "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
+                                               groupNamesList.Count + " " +
+                                               " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count);
 
-                     audEvents[events[i].DateTime.Date]++;
-                 }
+                        var discs = disciplinesList[grIndex].Where(d => d.Name == discName).ToList();
 
-                 var addCount = addEvents.Sum(ev => ev.Value);
-                 var remCount = remEvents.Sum(ev => ev.Value);
-                 var audCount = audEvents.Sum(ev => ev.Value);
-                 var totalCount = events.Count;
+                        for (int k = 0; k < discs.Count; k++)
+                        {
+                            var d = discs[k];
+                            var newTfd = Repo.TeacherForDisciplines
+                                .GetFirstFiltredTeacherForDiscipline(
+                                    tfd => tfd.Discipline.DisciplineId == d.DisciplineId);
+                            if (newTfd != null)
+                            {
+                                var lessons = Repo.Lessons
+                                    .GetFiltredLessons(l =>
+                                        l.State == 1 &&
+                                        l.TeacherForDiscipline.TeacherForDisciplineId == newTfd.TeacherForDisciplineId);
 
-                 MessageBox.Show(
-                     "Add (min = " + addEvents.Select(ae => ae.Value).Min() + "; max = " + addEvents.Select(ae => ae.Value).Max() + ") = " + 
-                     addEvents.Count + " / " + addCount + "(" + string.Format("{0:0.00}", (addCount * 100.0 / totalCount)) + "%)" + "\n" + 
-                     "Rem (min = " + remEvents.Select(ae => ae.Value).Min() + "; max = " + remEvents.Select(ae => ae.Value).Max() + ") = " + 
-                     remEvents.Count + " / " + remCount + "(" + string.Format("{0:0.00}", (remCount * 100.0 / totalCount)) + "%)" + "\n" +
-                     "Aud (min = " + audEvents.Select(ae => ae.Value).Min() + "; max = " + audEvents.Select(ae => ae.Value).Max() + ") = " + 
-                     audEvents.Count + " / " + audCount + "(" + string.Format("{0:0.00}", (audCount * 100.0 / totalCount)) + "%)"
-                     );
-             });*/
+                                var disciplineAudNames = discAuds.Value;
 
-            /*
-             await Task.Run(() =>
-             {
-                 var compAuds = new List<string> {"Ауд. 307", "Ауд. 308", "Корп № 3 Ауд. 20"};
-                 ExportCompAudTeachers(compAuds);
-             });*/
+                                var disciplineCorrectAudIds = new List<int>();
+                                for (int l = 0; l < disciplineAudNames.Count; l++)
+                                {
+                                    var aName = disciplineAudNames[l];
+                                    if (audIdsDictionary.ContainsKey(aName))
+                                    {
+                                        disciplineCorrectAudIds.Add(audIdsDictionary[aName]);
+                                    }
+                                }
 
-            /*
-             await Task.Run(() =>
-             {
-                 var facIds = new List<int> {1, 2, 3, 4, 5, 9, 10, 11};
-                 ExportZachDates(facIds, "ZachDates.txt");
-             });
-             */
+                                for (int h = 0; h < lessons.Count; h++)
+                                {
+                                    var lesson = lessons[h];
 
+                                    LogInFile(logFilename, "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() +
+                                                           "/" + groupNamesList.Count + " " +
+                                                           " Disc " + (discCounter + 1).ToString() + " / " +
+                                                           auds.Keys.Count + " " + "Less " + (h + 1).ToString() +
+                                                           " / " + lessons.Count);
 
+                                    if (!disciplineCorrectAudIds.Contains(lesson.Auditorium.AuditoriumId)
+                                    ) // Lesson is in the wrong auditorium
+                                    {
+                                        var initialDepth = 3;
+                                        var result = TryAndMoveLesson(lesson, disciplineCorrectAudIds, logFilename,
+                                            audIdsDictionaryReverse, excludeGroupTfds, audsList, initialDepth,
+                                            initialDepth, false);
 
+                                        if (result == 0)
+                                        {
+                                            LogInFile(logFilename, "Вариантов не найдено.");
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
-            /*
-             await Task.Run(() =>
-             {
-                 var sw = new StreamWriter("AudPercentage.txt");
+                        discCounter++;
+                    }
+                }
+            }
+        }
 
-                 sw.WriteLine("buildingId = 2");
-                 WriteBuildingAuditoriumsBusyPercentage(sw, 2);
-                 sw.WriteLine();
+        private int TryAndMoveLesson(Lesson lesson, List<int> disciplineCorrectAudIds, string logFilename,
+                Dictionary<int, string> audIdsDictionaryReverse,
+                List<int> excludeGroupTfds, List<Dictionary<string, List<string>>> audsList, int initialDepth,
+                int depth, bool excludeCurrentAud)
+            // 0 - не получилось; 1 - простой перенос; 2 - обемн аудиториями
+        {
+            LogInFile(logFilename,
+                "Неверная аудитория " + "\t" +
+                lesson.TeacherForDiscipline.Discipline.StudentGroup.Name + "\t" +
+                lesson.TeacherForDiscipline.Discipline.Name + "\t" +
+                lesson.TeacherForDiscipline.Teacher.FIO + "\t" +
+                lesson.Calendar.Date.ToString("dd.MM.yyyy") + "\t" +
+                lesson.Ring.Time.ToString("HH:mm") + "\t" +
+                lesson.Auditorium.Name);
+            LogInFile(logFilename,
+                "Правильные аудитории" + "\t" + string.Join("\t",
+                    disciplineCorrectAudIds.Select(id => audIdsDictionaryReverse[id])));
 
-                 sw.WriteLine("buildingId = 3");
-                 WriteBuildingAuditoriumsBusyPercentage(sw, 3);
-                 sw.Close();
-                 var eprst = 999;
-             });*/
+            var lessonsInCorrectAudsPre = Repo.Lessons.GetFiltredLessons(l => // AudId - Lesson
+                l.State == 1 &&
+                l.Calendar.CalendarId == lesson.Calendar.CalendarId &&
+                l.Ring.RingId == lesson.Ring.RingId &&
+                disciplineCorrectAudIds.Contains(l.Auditorium.AuditoriumId));
+            var lessonsInCorrectAuds = new Dictionary<int, Lesson>();
+            for (int j = 0; j < lessonsInCorrectAudsPre.Count; j++)
+            {
+                if (!lessonsInCorrectAuds.ContainsKey(lessonsInCorrectAudsPre[j].Auditorium
+                    .AuditoriumId))
+                {
+                    lessonsInCorrectAuds.Add(lessonsInCorrectAudsPre[j].Auditorium.AuditoriumId,
+                        lessonsInCorrectAudsPre[j]);
+                }
+            }
 
+            foreach (var audId in disciplineCorrectAudIds)
+            {
+                if (!lessonsInCorrectAuds.ContainsKey(audId))
+                {
+                    lessonsInCorrectAuds.Add(audId, null);
+                }
+            }
 
-            // Oops
-            // ExportStudentsData("StudentsExport-1sem.txt");
-            // ImportStudentData("StudentsExport-1sem.txt");
-            // CopyINOGroupLessonsFromRealSchedule();
-            // ExportScheduleDates("Oops\\stat.txt");
-            // ExportFacultyGroups();
-            // ExportDiscAuds("Auds.txt");
-            // ExportGroupDisciplines("Oops\\Discs.txt");
-            dayDelta_Click();
-            // setLayout_Click(sender, e);
-            // ExportGroupDisciplines("Oops\\Discs.txt");
+            var empty = lessonsInCorrectAuds
+                .Where(kvp => kvp.Value == null)
+                .Select(kvp => kvp.Key)
+                .OrderBy(a => a)
+                .ToList();
 
+            if (empty.Count > 0)
+            {
+                var auditoriumId = empty[0];
 
-            //Task.Run(new Action(() => DetectWindows("windows.txt")));
+                MoveLessonToNewAuditorium(lesson, auditoriumId, logFilename);
 
-            //Task.Run(() => CopyDBEssentials("Schedule15161", "Schedule15162"));
+                return 1;
+            }
 
-            //await Task.Run(() => CheckAudHoursSum());
-            MessageBox.Show("Done!");
+            var lessonsCorrectForSwap = new List<Lesson>();
+            var swapStatusShift = 0;
 
+            foreach (var audIdWithLesson in lessonsInCorrectAuds)
+            {
+                if (!excludeGroupTfds.Contains(audIdWithLesson.Value
+                    .TeacherForDiscipline
+                    .TeacherForDisciplineId))
+                {
+                    lessonsCorrectForSwap.Add(audIdWithLesson.Value);
+                }
+                else
+                {
+                    if (depth == initialDepth)
+                    {
+                        var audList = FindAudList(audIdWithLesson.Value.TeacherForDiscipline.Discipline.Name, audsList);
+                        var audIds = new List<int>();
+                        foreach (var audName in audList)
+                        {
+                            var auditorium = Repo.Auditoriums.Find(a => a.Name == audName);
+                            if (auditorium != null)
+                                audIds.Add(auditorium.AuditoriumId);
+                        }
 
+                        if (audIds.Contains(lesson.Auditorium.AuditoriumId))
+                        {
+                            lessonsCorrectForSwap.Add(audIdWithLesson.Value);
+                            swapStatusShift = 1;
+                        }
+                    }
+                }
+            }
+
+            if (lessonsCorrectForSwap.Count > 0)
+            {
+                var lessonToSwap = lessonsCorrectForSwap[0];
+
+                LogInFile(logFilename,
+                    "Возможен обмен аудиториями с уроком из " + ((swapStatusShift == 1) ? "" : "не") +
+                    "аккредитуемых групп: " + lessonToSwap.Auditorium.Name);
+
+                SwapLessons(lesson, lessonToSwap);
+
+                return 2 + swapStatusShift;
+            }
+
+            // Все правильные аудитории заняты группами проходящими аккредитацию
+            // Нужно попробовать перенести любую из этих пар в корректные аудитории
+            LogInFile(logFilename, "Прямые перенос или обмен невозможны.");
+
+            foreach (var audIdWithLesson in lessonsInCorrectAuds)
+            {
+                var audList = FindAudList(audIdWithLesson.Value.TeacherForDiscipline.Discipline.Name, audsList);
+
+                if (audList == null)
+                {
+                    return 0;
+                }
+
+                if (excludeCurrentAud)
+                {
+                    if (audList.Contains(lesson.Auditorium.Name))
+                    {
+                        audList.Remove(lesson.Auditorium.Name);
+                    }
+                }
+
+                var audIds = new List<int>();
+                foreach (var audName in audList)
+                {
+                    var auditorium = Repo.Auditoriums.Find(a => a.Name == audName);
+                    if (auditorium != null)
+                        audIds.Add(auditorium.AuditoriumId);
+                }
+
+                var result = -1;
+                if (depth == 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    result = TryAndMoveLesson(audIdWithLesson.Value, audIds, logFilename, audIdsDictionaryReverse,
+                        excludeGroupTfds, audsList, initialDepth, depth - 1, true);
+                }
+
+                if (result != 0)
+                {
+                    switch (result)
+                    {
+                        case 1:
+                            MoveLessonToNewAuditorium(lesson, audIdWithLesson.Key, logFilename);
+                            break;
+                        case 2:
+                            SwapLessons(lesson, audIdWithLesson.Value);
+                            break;
+                    }
+                    return result;
+                }
+            }
+
+            return 0;
+
+        }
+
+        private static List<string> FindAudList(string discName, List<Dictionary<string, List<string>>> audsList)
+        {
+            if (discName.Contains("-А-") || discName.Contains("-Н-") || discName.Contains("-Ф-"))
+            {
+                discName = discName.Substring(0, discName.LastIndexOf('(') - 1);
+            }
+
+            List<string> audList = null;
+            var found = false;
+            for (int j = 0; j < audsList.Count; j++)
+            {
+                foreach (KeyValuePair<string, List<string>> disciplineAuds in audsList[j])
+                {
+                    if (new List<string> {discName, discName.Replace("е", "ё"), discName.Replace("ё", "е")}
+                        .Contains(disciplineAuds.Key))
+                    {
+                        audList = disciplineAuds.Value;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found)
+                {
+                    break;
+                }
+            }
+            return audList;
+        }
+
+        private void SwapLessons(Lesson lesson, Lesson lessonToSwap)
+        {
+            var newLesson = new Lesson
+            {
+                Auditorium = Repo.Auditoriums.Get(lessonToSwap.Auditorium.AuditoriumId),
+                Calendar = Repo.Calendars.GetCalendar(lesson.Calendar.CalendarId),
+                Ring = Repo.Rings.GetRing(lesson.Ring.RingId),
+                State = 1,
+                TeacherForDiscipline =
+                    Repo.TeacherForDisciplines
+                        .GetTeacherForDiscipline(lesson.TeacherForDiscipline
+                            .TeacherForDisciplineId)
+            };
+            Repo.Lessons.AddLessonWoLog(newLesson);
+
+            Repo.Lessons.RemoveLessonActiveStateWoLog(lesson.LessonId);
+
+            var newlle = new LessonLogEvent
+            {
+                OldLesson = lesson,
+                NewLesson = newLesson,
+                DateTime = DateTime.Now,
+                PublicComment = "",
+                HiddenComment = ""
+            };
+            Repo.LessonLogEvents.AddLessonLogEvent(newlle);
+
+            var newLesson2 = new Lesson
+            {
+                Auditorium = Repo.Auditoriums.Get(lesson.Auditorium.AuditoriumId),
+                Calendar = Repo.Calendars.GetCalendar(lessonToSwap.Calendar.CalendarId),
+                Ring = Repo.Rings.GetRing(lessonToSwap.Ring.RingId),
+                State = 1,
+                TeacherForDiscipline =
+                    Repo.TeacherForDisciplines
+                        .GetTeacherForDiscipline(lessonToSwap.TeacherForDiscipline
+                            .TeacherForDisciplineId)
+            };
+            Repo.Lessons.AddLessonWoLog(newLesson2);
+
+            Repo.Lessons.RemoveLessonActiveStateWoLog(lessonToSwap.LessonId);
+
+            var newlle2 = new LessonLogEvent
+            {
+                OldLesson = lessonToSwap,
+                NewLesson = newLesson2,
+                DateTime = DateTime.Now,
+                PublicComment = "",
+                HiddenComment = ""
+            };
+            Repo.LessonLogEvents.AddLessonLogEvent(newlle2);
+        }
+
+        private void MoveLessonToNewAuditorium(Lesson lesson, int auditoriumId, string logFilename = null)
+        {
+            var newAud = Repo.Auditoriums.Get(auditoriumId);
+
+            if (logFilename != null)
+            {
+                LogInFile(logFilename, "Возможен простой перенос. Правильная аудитория пустая: " + newAud.Name);
+            }
+
+            var newLesson = new Lesson
+            {
+                Auditorium = newAud,
+                Calendar = Repo.Calendars.GetCalendar(lesson.Calendar.CalendarId),
+                Ring = Repo.Rings.GetRing(lesson.Ring.RingId),
+                State = 1,
+                TeacherForDiscipline =
+                    Repo.TeacherForDisciplines
+                        .GetTeacherForDiscipline(lesson.TeacherForDiscipline.TeacherForDisciplineId)
+            };
+            Repo.Lessons.AddLessonWoLog(newLesson);
+
+            Repo.Lessons.RemoveLessonActiveStateWoLog(lesson.LessonId);
+
+            var newlle = new LessonLogEvent
+            {
+                OldLesson = lesson,
+                NewLesson = newLesson,
+                DateTime = DateTime.Now,
+                PublicComment = "",
+                HiddenComment = ""
+            };
+            Repo.LessonLogEvents.AddLessonLogEvent(newlle);
         }
 
         private void ExportZachDates(List<int> facIds, string filename)
@@ -1936,7 +2368,7 @@ namespace UchOtd.Schedule
 
                 var facultyGroups =
                     Repo.GroupsInFaculties.GetFiltredGroupsInFaculty(
-                        gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                            gif => gif.Faculty.FacultyId == faculty.FacultyId)
                         .Select(gif => gif.StudentGroup);
 
                 foreach (var facultyGroup in facultyGroups)
@@ -1956,17 +2388,17 @@ namespace UchOtd.Schedule
                         .ToList();
 
                     var discList = Repo.Disciplines.GetFiltredDisciplines(
-                        d => groupsListIds.Contains(d.StudentGroup.StudentGroupId) &&
-                             ((d.Attestation == 1) || (d.Attestation == 3) || (d.Attestation == 4)))
+                            d => groupsListIds.Contains(d.StudentGroup.StudentGroupId) &&
+                                 ((d.Attestation == 1) || (d.Attestation == 3) || (d.Attestation == 4)))
                         .ToList();
 
                     foreach (var discipline in discList)
                     {
                         var lastLesson =
                             Repo.Lessons.GetFiltredLessons(
-                                l =>
-                                    (l.State == 1) &&
-                                    (l.TeacherForDiscipline.Discipline.DisciplineId == discipline.DisciplineId))
+                                    l =>
+                                        (l.State == 1) &&
+                                        (l.TeacherForDiscipline.Discipline.DisciplineId == discipline.DisciplineId))
                                 .OrderBy(l => l.Calendar.Date).LastOrDefault();
 
                         if (lastLesson != null)
@@ -2034,10 +2466,11 @@ namespace UchOtd.Schedule
         {
             var repoFrom =
                 new ScheduleRepository("data source=tcp:" + StartupForm.CurrentServerName + ",1433;Database=" +
-                                       dbFromName + "; Integrated Security=SSPI;multipleactiveresultsets=True");
+                                       dbFromName + "; User ID=sa;Password=ghjuhfvvf;multipleactiveresultsets=True");
             var repoTo =
-                new ScheduleRepository("data source=tcp:" + StartupForm.CurrentServerName + ",1433;Database=" + dbToName +
-                                       "; Integrated Security=SSPI;multipleactiveresultsets=True");
+                new ScheduleRepository("data source=tcp:" + StartupForm.CurrentServerName + ",1433;Database=" +
+                                       dbToName +
+                                       "; User ID=sa;Password=ghjuhfvvf;multipleactiveresultsets=True");
 
             Dictionary<int, int> studentsDic = new Dictionary<int, int>();
             var students = repoFrom.Students.GetAllStudents();
@@ -2177,7 +2610,8 @@ namespace UchOtd.Schedule
                         var studentLessons = Repo
                             .Lessons
                             .GetFiltredLessons(l =>
-                                studentGroupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) &&
+                                studentGroupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup
+                                    .StudentGroupId) &&
                                 l.Calendar.CalendarId == calendar.CalendarId &&
                                 l.State == 1)
                             .OrderBy(l => l.Ring.Time.TimeOfDay)
@@ -2194,7 +2628,7 @@ namespace UchOtd.Schedule
                                                     studentLessons[i - 1].TeacherForDiscipline.Discipline.Name + ") " +
                                                     studentLessons[i].Ring.Time.ToString("H:mm") + " (" +
                                                     studentLessons[i].TeacherForDiscipline.Discipline.Name + ") "
-                                    );
+                                );
                             }
                         }
                     }
@@ -2205,8 +2639,14 @@ namespace UchOtd.Schedule
         public void LogInFile(string filename, string message)
         {
             var sw = new StreamWriter(filename, true);
-            sw.WriteLine(message);
+            var logString = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + "\t" + message;
+            sw.WriteLine(logString);
             sw.Close();
+
+            this.Invoke(new Action(() =>
+            {
+                status.Text = logString;
+            }));
         }
 
         private async void WordSchool_Click_1(object sender, EventArgs e)
@@ -2610,9 +3050,11 @@ namespace UchOtd.Schedule
             await Task.Run(() =>
             {
                 var allDiscLessonCount = (int) Math.Ceiling((double) Repo.Disciplines.GetAllDisciplines()
-                    .Where(
-                        d => (d.Name != "Физическая культура") && (d.Name != "Элективные курсы по физической культуре"))
-                    .Select(d => d.AuditoriumHours).Sum()/2);
+                                                                .Where(
+                                                                    d => (d.Name != "Физическая культура") &&
+                                                                         (d.Name !=
+                                                                          "Элективные курсы по физической культуре"))
+                                                                .Select(d => d.AuditoriumHours).Sum() / 2);
 
                 var currentLessonCount = 0;
 
@@ -2655,7 +3097,7 @@ namespace UchOtd.Schedule
                 var keys = percentageByDateTime.Keys.OrderBy(d => d).ToList();
                 for (int i = 0; i < keys.Count; i++)
                 {
-                    double percent = (double) percentageByDateTime[keys[i]].Item1/allDiscLessonCount;
+                    double percent = (double) percentageByDateTime[keys[i]].Item1 / allDiscLessonCount;
                     total += percent;
                     percentageByDateTime[keys[i]] = new Tuple<int, double>(percentageByDateTime[keys[i]].Item1, total);
 
@@ -2716,7 +3158,8 @@ namespace UchOtd.Schedule
 
                     var disciplines =
                         Repo.Disciplines.GetFiltredDisciplines(
-                            d => d.AuditoriumHours > 0 && groupIdsList.Contains(d.StudentGroup.StudentGroupId)).ToList();
+                                d => d.AuditoriumHours > 0 && groupIdsList.Contains(d.StudentGroup.StudentGroupId))
+                            .ToList();
 
                     foreach (var discipline in disciplines)
                     {
@@ -2753,23 +3196,23 @@ namespace UchOtd.Schedule
                             }
 
                             var lec1 = discipline.LectureHours;
-                            var lec2 = lessonsCountByType[1]*2 + lessonsCountByType[3] + lessonsCountByType[4];
+                            var lec2 = lessonsCountByType[1] * 2 + lessonsCountByType[3] + lessonsCountByType[4];
                             if (lec1 != lec2)
                             {
                                 buffer.Add(discipline.Name + "\t" + discipline.StudentGroup.Name + "\t" +
-                                             "Не совпадает количество лекций. По плану / В последовательности = " + lec1 +
-                                             " / " + lec2);
+                                           "Не совпадает количество лекций. По плану / В последовательности = " + lec1 +
+                                           " / " + lec2);
                                 bufferPristine = false;
                             }
 
                             var prac1 = discipline.PracticalHours;
-                            var prac2 = lessonsCountByType[2]*2 + lessonsCountByType[3] + lessonsCountByType[4] +
-                                        lessonsCountByType[5]*2;
+                            var prac2 = lessonsCountByType[2] * 2 + lessonsCountByType[3] + lessonsCountByType[4] +
+                                        lessonsCountByType[5] * 2;
                             if (prac1 != prac2)
                             {
                                 buffer.Add(discipline.Name + "\t" + discipline.StudentGroup.Name + "\t" +
-                                             "Не совпадает количество практик. По плану / В последовательности = " +
-                                             prac1 + " / " + prac2);
+                                           "Не совпадает количество практик. По плану / В последовательности = " +
+                                           prac1 + " / " + prac2);
                                 bufferPristine = false;
                             }
                         }
@@ -2781,7 +3224,7 @@ namespace UchOtd.Schedule
                     TextFileUtilities.WriteStringList("TypeSequenceCheck.txt", buffer);
                 }
             }
-           
+
         }
 
         private async void экспортСпискаПреподавателейНа308ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2841,7 +3284,7 @@ namespace UchOtd.Schedule
                 var buildings = Repo.Buildings.GetAllBuildings();
 
                 var result = buildings.ToDictionary(building => building.BuildingId, building => new List<int>());
-                    // BuildingId, List TeacherId
+                // BuildingId, List TeacherId
 
                 foreach (var lesson in lessons)
                 {
@@ -2849,7 +3292,8 @@ namespace UchOtd.Schedule
                         !result[lesson.Auditorium.Building.BuildingId].Contains(
                             lesson.TeacherForDiscipline.Teacher.TeacherId))
                     {
-                        result[lesson.Auditorium.Building.BuildingId].Add(lesson.TeacherForDiscipline.Teacher.TeacherId);
+                        result[lesson.Auditorium.Building.BuildingId]
+                            .Add(lesson.TeacherForDiscipline.Teacher.TeacherId);
                     }
                 }
 
@@ -2888,7 +3332,343 @@ namespace UchOtd.Schedule
 
         private async void ExportDisciplineAuditoriums(string filename)
         {
-            
+
+        }
+
+        private void экспортБазыДанныхВТекстовыйФайлToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dbNames = new List<string>
+            {
+                "Schedule13141",
+                "Schedule13142",
+                "Schedule14151",
+                "Schedule14152",
+                "Schedule15161",
+                "Schedule15162",
+                "Schedule16171",
+                "Schedule16172"
+            };
+
+            for (int i = 0; i < dbNames.Count; i++)
+            {
+                var dbName = dbNames[i];
+                Repo = new ScheduleRepository("data source=tcp:127.0.0.1,1433;Database=" + dbName +
+                                              "; User ID=sa;Password=ghjuhfvvf;multipleactiveresultsets=True");
+                ExportDBtoTxt(Repo, dbName + ".txt");
+
+                status.Text = dbName + " exported " + (i + 1) + " / " + dbNames.Count + " = " +
+                              ((i + 1) / dbNames.Count).ToString("0.##");
+            }
+        }
+
+        private void ExportDBtoTxt(ScheduleRepository repo, string filename)
+        {
+            var sw = new StreamWriter(filename);
+
+            var allAuditoriums = repo.Auditoriums.GetAll();
+            var output = JsonConvert.SerializeObject(allAuditoriums);
+            sw.WriteLine(output);
+
+
+            var allBuildings = repo.Buildings.GetAllBuildings();
+            output = JsonConvert.SerializeObject(allBuildings);
+            sw.WriteLine(output);
+
+            var calendars = repo.Calendars.GetAllCalendars();
+            output = JsonConvert.SerializeObject(calendars);
+            sw.WriteLine(output);
+
+            var rings = repo.Rings.GetAllRings();
+            output = JsonConvert.SerializeObject(rings);
+            sw.WriteLine(output);
+
+            var students = repo.Students.GetAllStudents();
+            output = JsonConvert.SerializeObject(students);
+            sw.WriteLine(output);
+
+            var studentGroups = repo.StudentGroups.GetAllStudentGroups();
+            output = JsonConvert.SerializeObject(studentGroups);
+            sw.WriteLine(output);
+
+            var teachers = repo.Teachers.GetAllTeachers();
+            output = JsonConvert.SerializeObject(teachers);
+            sw.WriteLine(output);
+
+            var disciplines = repo.Disciplines.GetAllDisciplines();
+            output = JsonConvert.SerializeObject(disciplines);
+            sw.WriteLine(output);
+
+            var teacherForDisciplines = repo.TeacherForDisciplines.GetAllTeacherForDiscipline();
+            output = JsonConvert.SerializeObject(teacherForDisciplines);
+            sw.WriteLine(output);
+
+            var lessons = repo.Lessons.GetFiltredLessons(l => l.State == 0 || l.State == 1);
+            output = JsonConvert.SerializeObject(lessons);
+            sw.WriteLine(output);
+
+            var configs = repo.ConfigOptions.GetAllConfigOptions();
+            output = JsonConvert.SerializeObject(configs);
+            sw.WriteLine(output);
+
+            var lessonsLogEvents = repo.LessonLogEvents.GetAllLessonLogEvents();
+            output = JsonConvert.SerializeObject(lessonsLogEvents);
+            sw.WriteLine(output);
+
+            var auditoriumEvents = repo.AuditoriumEvents.GetAllAuditoriumEvents();
+            output = JsonConvert.SerializeObject(auditoriumEvents);
+            sw.WriteLine(output);
+
+            var faculties = repo.Faculties.GetAllFaculties();
+            output = JsonConvert.SerializeObject(faculties);
+            sw.WriteLine(output);
+
+            var gifs = repo.GroupsInFaculties.GetAllGroupsInFaculty();
+            output = JsonConvert.SerializeObject(gifs);
+            sw.WriteLine(output);
+
+            var exams = repo.Exams.GetAllExamRecords();
+            output = JsonConvert.SerializeObject(exams);
+            sw.WriteLine(output);
+
+            var examLogEvents = repo.Exams.GetAllLogEvents();
+            output = JsonConvert.SerializeObject(examLogEvents);
+            sw.WriteLine(output);
+
+            var sigs = repo.StudentsInGroups.GetAllStudentsInGroups();
+            output = JsonConvert.SerializeObject(sigs);
+            sw.WriteLine(output);
+
+            var notes = repo.ScheduleNotes.GetAllScheduleNotes();
+            output = JsonConvert.SerializeObject(notes);
+            sw.WriteLine(output);
+
+            sw.Close();
+        }
+
+        private void changeSemesterDb_Click(object sender, EventArgs e)
+        {
+            var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                   semester.Text +
+                                   "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+            Repo.SetConnectionString(connectionString);
+
+            MainFormLoad(this, null);
+
+            /*
+             * var editForm = new MainEditForm(Repo, _startupForm);
+            editForm.Show();
+
+            Close();*/
+        }
+
+        private async void датыЗанятийФилологовToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA"};
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Философский факультет (магистратура)"),
+                    _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void датыЗанятийЭкономистовмагистратураToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA"};
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Экономический факультет (магистратура)"),
+                    _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void датыЗанятийЮристовмагистратураToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA"};
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Юридический факультет (магистратура)"),
+                    _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void датыЗанятийМатематиковToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S12131AA",
+                    "S12132AA",
+                    "S13141AA",
+                    "S13142AA",
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA"
+                };
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Факультет математики"), _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private void backup10AAToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dbNames = new List<string>
+            {
+                "S12131AA",
+                "S12132AA",
+                "S13141AA",
+                "S13142AA",
+                "S14151AA",
+                "S14152AA",
+                "S15161AA",
+                "S15162AA",
+                "S16171AA",
+                "S16172AA"
+            };
+
+            for (int i = 0; i < dbNames.Count; i++)
+            {
+                Repo.BackupDb(@"D:\GitHub\10AA\" + dbNames[i] + ".bak", dbNames[i]);
+            }
+        }
+
+        private void restore10AAToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dbNames = new List<string>
+            {
+                "S12131AA",
+                "S12132AA",
+                //"S13141AA",
+                //"S13142AA",
+                //"S14151AA",
+                //"S14152AA",
+                //"S15161AA",
+                //"S15162AA",
+                //"S16171AA",
+                //"S16172AA"
+            };
+
+            for (int i = 0; i < dbNames.Count; i++)
+            {
+                Repo.RestoreDb(dbNames[i], @"D:\GitHub\10AA\" + dbNames[i] + ".bak");
+            }
+        }
+
+        private async void вставитьПоследовательностиТиповЗанятияИзФайлаToolStripMenuItem_Click(object sender,
+            EventArgs e)
+        {
+            var seq = new Dictionary<string, string>();
+            var sr = new StreamReader(@"D:\GitHub\ЛП А+.txt");
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                var split = line.Split('\t').ToList();
+                if (!seq.ContainsKey(split[0]))
+                {
+                    seq.Add(split[0], split[2]);
+                }
+            }
+            sr.Close();
+
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S12131AA",
+                    "S12132AA",
+                    "S13141AA",
+                    "S13142AA",
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA"
+                };
+
+                await Task.Run(() =>
+                {
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        var faculty =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
+
+                        var groups = (faculty != null)
+                            ? repo
+                                .GroupsInFaculties
+                                .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                                .Select(gif => gif.StudentGroup)
+                                .ToList()
+                            : new List<StudentGroup>();
+
+                        for (int i = 0; i < groups.Count; i++)
+                        {
+                            var studentGroup = groups[i];
+
+                            var studentIds = repo.StudentsInGroups
+                                .GetFiltredStudentsInGroups(
+                                    sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId &&
+                                           !sig.Student.Expelled)
+                                .Select(stig => stig.Student.StudentId);
+
+                            var groupsListIds = repo.StudentsInGroups
+                                .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                                .Select(stig => stig.StudentGroup.StudentGroupId);
+
+                            var discs = repo.Disciplines
+                                .GetFiltredDisciplines(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId))
+                                .ToList();
+
+                            for (int j = 0; j < discs.Count; j++)
+                            {
+                                var disc = discs[j];
+                                if (seq.ContainsKey(disc.Name))
+                                {
+                                    disc.TypeSequence = seq[disc.Name];
+                                    repo.Disciplines.UpdateDiscipline(disc);
+                                }
+                            }
+                        }
+
+                    }
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
     }
 }
+
+
+
+
+
+
+

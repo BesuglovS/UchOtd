@@ -180,9 +180,18 @@ namespace Schedule.Repositories
             return connectionString.Substring(startIndex, endIndex - startIndex);
         }
 
-        public void BackupDb(string filename)
+        public void BackupDb(string filename, string databaseName = null)
         {
-            var dbName = ExtractDbName(GetConnectionString());
+            string dbName;
+
+            if (databaseName == null)
+            {
+                dbName = ExtractDbName(GetConnectionString());
+            }
+            else
+            {
+                dbName = databaseName;
+            }
 
             if (dbName == "")
             {

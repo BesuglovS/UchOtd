@@ -472,7 +472,7 @@ namespace Schedule.Repositories.Repositories.Main
             }
         }
 
-        private int GetLessonType(Lesson lesson)
+        public int GetLessonType(Lesson lesson, bool includePlannedLessons = false)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -484,7 +484,9 @@ namespace Schedule.Repositories.Repositories.Main
                 }
 
                 var lessonsList = context.Lessons
-                    .Where(l => (l.TeacherForDiscipline.TeacherForDisciplineId == lesson.TeacherForDiscipline.TeacherForDisciplineId) && (l.State == 1))
+                    .Where(l => 
+                        (l.TeacherForDiscipline.TeacherForDisciplineId == lesson.TeacherForDiscipline.TeacherForDisciplineId) &&
+                        (includePlannedLessons ? ((l.State == 1) || (l.State == 2)) : (l.State == 1)))
                     .Include(l => l.Calendar)
                     .Include(l => l.Ring)
                     .ToList();

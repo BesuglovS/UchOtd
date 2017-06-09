@@ -304,5 +304,49 @@ namespace UchOtd.Schedule.Forms.DBLists
                 _repo.Students.AddStudent(student);
             }
         }
+
+        private void jsonExport_Click(object sender, EventArgs e)
+        {
+            var studentList = new List<Student>();
+
+            if (StudentListView.SelectedCells.Count > 0)
+            {
+                var rowList = new List<int>();
+                var cells = (List<StudentView>) StudentListView.DataSource;
+
+                for (int i = 0; i < StudentListView.SelectedCells.Count; i++)
+                {
+                    var cell = StudentListView.SelectedCells[i];
+
+                    if (!rowList.Contains(cell.RowIndex))
+                    {
+                        var studentView = ((List<StudentView>) StudentListView.DataSource)[cell.RowIndex];
+                        var student = _repo.Students.GetStudent(studentView.StudentId);
+                        studentList.Add(student);
+
+                        rowList.Add(cell.RowIndex);
+                    }
+                }
+            }
+            else
+            {
+                studentList = _repo.Students.GetAllStudents();
+            }
+
+            SaveFileDialog dialog = new SaveFileDialog
+            {
+                Filter = "Json files|*.json",
+                Title = "Save student list"
+            };
+            dialog.ShowDialog();
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                var sw = new StreamWriter(dialog.FileName);
+                var output = JsonConvert.SerializeObject(studentList);
+                sw.WriteLine(output);
+                sw.Close();
+            }
+        }
     }
 }

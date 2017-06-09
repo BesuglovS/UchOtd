@@ -32,6 +32,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void InitializeComponent()
         {
             this.ControlsPanel = new System.Windows.Forms.Panel();
+            this.ImportStudentListFromJson = new System.Windows.Forms.Button();
             this.Filter = new System.Windows.Forms.Button();
             this.showAll = new System.Windows.Forms.Button();
             this.checkZachNumberDistinction = new System.Windows.Forms.CheckBox();
@@ -64,7 +65,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.label1 = new System.Windows.Forms.Label();
             this.ListPanel = new System.Windows.Forms.Panel();
             this.StudentListView = new System.Windows.Forms.DataGridView();
-            this.ImportStudentListFromJson = new System.Windows.Forms.Button();
+            this.jsonExport = new System.Windows.Forms.Button();
             this.ControlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudentListView)).BeginInit();
@@ -72,6 +73,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // ControlsPanel
             // 
+            this.ControlsPanel.Controls.Add(this.jsonExport);
             this.ControlsPanel.Controls.Add(this.ImportStudentListFromJson);
             this.ControlsPanel.Controls.Add(this.Filter);
             this.ControlsPanel.Controls.Add(this.showAll);
@@ -108,6 +110,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ControlsPanel.Name = "ControlsPanel";
             this.ControlsPanel.Size = new System.Drawing.Size(230, 821);
             this.ControlsPanel.TabIndex = 10;
+            // 
+            // ImportStudentListFromJson
+            // 
+            this.ImportStudentListFromJson.Location = new System.Drawing.Point(14, 685);
+            this.ImportStudentListFromJson.Name = "ImportStudentListFromJson";
+            this.ImportStudentListFromJson.Size = new System.Drawing.Size(206, 23);
+            this.ImportStudentListFromJson.TabIndex = 66;
+            this.ImportStudentListFromJson.Text = "Импортировать из JSON";
+            this.ImportStudentListFromJson.UseVisualStyleBackColor = true;
+            this.ImportStudentListFromJson.Click += new System.EventHandler(this.ImportStudentListFromJson_Click);
             // 
             // Filter
             // 
@@ -406,15 +418,15 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentListView.TabIndex = 1;
             this.StudentListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.StudentListView_CellClick);
             // 
-            // ImportStudentListFromJson
+            // jsonExport
             // 
-            this.ImportStudentListFromJson.Location = new System.Drawing.Point(14, 685);
-            this.ImportStudentListFromJson.Name = "ImportStudentListFromJson";
-            this.ImportStudentListFromJson.Size = new System.Drawing.Size(206, 23);
-            this.ImportStudentListFromJson.TabIndex = 66;
-            this.ImportStudentListFromJson.Text = "Импортировать из JSON";
-            this.ImportStudentListFromJson.UseVisualStyleBackColor = true;
-            this.ImportStudentListFromJson.Click += new System.EventHandler(this.ImportStudentListFromJson_Click);
+            this.jsonExport.Location = new System.Drawing.Point(14, 714);
+            this.jsonExport.Name = "jsonExport";
+            this.jsonExport.Size = new System.Drawing.Size(206, 23);
+            this.jsonExport.TabIndex = 67;
+            this.jsonExport.Text = "Экспортировать в JSON";
+            this.jsonExport.UseVisualStyleBackColor = true;
+            this.jsonExport.Click += new System.EventHandler(this.jsonExport_Click);
             // 
             // StudentList
             // 
@@ -470,5 +482,6 @@ namespace UchOtd.Schedule.Forms.DBLists
         private Button showAll;
         private Button Filter;
         private Button ImportStudentListFromJson;
+        private Button jsonExport;
     }
 }

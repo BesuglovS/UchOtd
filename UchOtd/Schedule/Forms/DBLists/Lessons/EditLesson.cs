@@ -75,32 +75,10 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
             // Weeks
             lessonWeeks.Text = _curLessons[curTfd].Item1;
-            
+
             // Auds
-            string audString = "";
-            var audWeekList = _curLessons[curTfd].Item2.ToDictionary(l => _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
-            var grouped = audWeekList.GroupBy(a => a.Value);
-
-            var enumerable = grouped as IList<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
-            var gcount = enumerable.Count();
-            if (gcount == 1)
-            {
-                audString += enumerable.ElementAt(0).Key;
-            }
-            else
-            {
-                for (int j = 0; j < gcount; j++)
-                {
-                    var jItem = enumerable.ElementAt(j);
-                    audString += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
-
-                    if (j != gcount - 1)
-                    {
-                        audString += Environment.NewLine;
-                    }
-                }
-            }
-            auditoriums.Text = audString;            
+            
+            auditoriums.Text = AudStringsFromLessonList(_curLessons[curTfd].Item2);
 
             // isProposed
             if (_curLessons[curTfd].Item2[0].State == 2)
@@ -116,6 +94,39 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 saveChanges.Enabled = true;
             }
 
+        }
+
+        private string AudStringsFromLessonList(List<Lesson> lessons)
+        {
+            KeyValuePair<string, Tuple<string, List<Lesson>>> item;
+            var audStrings = "";
+            Dictionary<string, List<int>> AudWeeks = new Dictionary<string, List<int>>();
+            for (int j = 0; j < lessons.Count; j++)
+            {
+                var lesson = lessons[j];
+                if (!AudWeeks.ContainsKey(lesson.Auditorium.Name))
+                {
+                    AudWeeks.Add(lesson.Auditorium.Name, new List<int>());
+                }
+
+                AudWeeks[lesson.Auditorium.Name].Add(_repo.CommonFunctions.CalculateWeekNumber(lesson.Calendar.Date));
+            }
+
+            if (AudWeeks.Count == 1)
+            {
+                audStrings += AudWeeks.Keys.First();
+            }
+            else
+            {
+                var l = new List<string>();
+                foreach (KeyValuePair<string, List<int>> audWeek in AudWeeks.OrderBy(aw => aw.Value.Min()))
+                {
+                    l.Add(CommonFunctions.CombineWeeks(audWeek.Value) + " - " + audWeek.Key);
+                }
+
+                audStrings += l.Aggregate((a, b) => a + Environment.NewLine + b);
+            }
+            return audStrings;
         }
 
         private void NextTfdClick(object sender, EventArgs e)

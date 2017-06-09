@@ -595,6 +595,15 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 foreach (var lessonId in lessonIds)
                 {
+                    var noteIds = _repo.ScheduleNotes.GetFiltredScheduleNotes(n => n.Lesson.LessonId == lessonId)
+                        .Select(n => n.ScheduleNoteId)
+                        .ToList();
+
+                    foreach (var noteId in noteIds)
+                    {
+                        _repo.ScheduleNotes.RemoveScheduleNote(noteId);
+                    }
+
                     _repo.Lessons.RemoveLessonWoLog(lessonId);
                 }
 

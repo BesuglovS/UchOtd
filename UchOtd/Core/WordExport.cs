@@ -3443,6 +3443,168 @@ namespace UchOtd.Core
 
         }
 
+        public static void ExportFacultyDates(List<string> dbNames, string facultyName)
+        {
+            object oMissing = Missing.Value;
+            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+            //Start Word and create a new document.
+            _Application oWord = new Application { Visible = true };
+            _Document oDoc = oWord.Documents.Add();
+
+            oDoc.PageSetup.Orientation = WdOrientation.wdOrientPortrait;
+            oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
+
+            for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+            {
+                var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                       dbNames[semIndex] +
+                                       "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                var repo = new ScheduleRepository(connectionString);
+                
+                var faculty = repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains(facultyName));
+
+                var groups = (faculty != null) ? repo
+                    .GroupsInFaculties
+                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                    .Select(gif => gif.StudentGroup)
+                    .ToList() : new List<StudentGroup>();
+
+                for (int i = 0; i < groups.Count; i++)
+                {
+                    var studentGroup = groups[i];
+                    
+                    var studentIds = repo.StudentsInGroups
+                        .GetFiltredStudentsInGroups(
+                            sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId &&
+                                   !sig.Student.Expelled)
+                        .Select(stig => stig.Student.StudentId);
+
+                    var groupsListIds = repo.StudentsInGroups
+                        .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                        .Select(stig => stig.StudentGroup.StudentGroupId);
+
+                    var discs = repo.Disciplines
+                        .GetFiltredDisciplines(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId)).ToList();
+
+                    var tfds = new List<TeacherForDiscipline>();
+                    foreach (var discipline in discs)
+                    {
+                        var tefd = repo.TeacherForDisciplines
+                            .GetFirstFiltredTeacherForDiscipline(
+                                tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
+                        if (tefd != null)
+                        {
+                            tfds.Add(tefd);
+                        }
+                    }
+
+                    var eprst = 999;
+
+                    foreach (var teacherForDiscipline in tfds.OrderBy(tefd => tefd.Discipline.Name)
+                        .ThenBy(tefd => tefd.Teacher.FIO))
+                    {
+                        Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
+                        oPara1.Range.Text = "Семестр " + dbNames[semIndex] + "\t" + studentGroup.Name;
+                        oPara1.Range.Font.Bold = 0;
+                        oPara1.Range.Font.Size = 14;
+                        oPara1.Range.ParagraphFormat.LineSpacingRule =
+                            WdLineSpacing.wdLineSpaceSingle;
+                        oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                        oPara1.SpaceAfter = 0;
+                        oPara1.Range.InsertParagraphAfter();
+
+                        oPara1 = oDoc.Content.Paragraphs.Add();
+                        oPara1.Range.Text = teacherForDiscipline.Discipline.StudentGroup.Name + "\t" +
+                                            teacherForDiscipline.Discipline.Name + "\t" +
+                                            teacherForDiscipline.Teacher.FIO + "\t" +
+                                            teacherForDiscipline.Discipline.AuditoriumHours + "\t" +
+                                            teacherForDiscipline.Discipline.LectureHours + "\t" +
+                                            teacherForDiscipline.Discipline.PracticalHours + "\t" +
+                                            Constants.Attestation[teacherForDiscipline.Discipline.Attestation];
+                        oPara1.Range.Font.Bold = 0;
+                        oPara1.Range.Font.Size = 10;
+                        oPara1.Range.ParagraphFormat.LineSpacingRule =
+                            WdLineSpacing.wdLineSpaceSingle;
+                        oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                        oPara1.SpaceAfter = 0;
+                        oPara1.Range.InsertParagraphAfter();
+
+                        var lessons = repo
+                            .Lessons
+                            .GetFiltredLessons(l =>
+                                l.TeacherForDiscipline.TeacherForDisciplineId ==
+                                teacherForDiscipline.TeacherForDisciplineId &&
+                                (l.State == 1 || l.State == 2))
+                            .OrderBy(l => l.Calendar.Date.Date)
+                            .ThenBy(l => l.Ring.Time.TimeOfDay)
+                            .ToList();
+
+                        Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                        Table oTable = oDoc.Tables.Add(wrdRng, lessons.Count + 1, 5);
+                        oTable.Borders.Enable = 1;
+                        oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+                        oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                        oTable.Range.Font.Size = 14;
+                        oTable.Range.Font.Bold = 0;
+
+                        oTable.Cell(1, 1).Range.Text = "№";
+                        oTable.Cell(1, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Cell(1, 2).Range.Text = "Дата";
+                        oTable.Cell(1, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Cell(1, 3).Range.Text = "Время";
+                        oTable.Cell(1, 3).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Cell(1, 4).Range.Text = "Аудитория";
+                        oTable.Cell(1, 4).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Cell(1, 5).Range.Text = "Тип занятия";
+                        oTable.Cell(1, 5).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+
+
+                        for (int j = 0; j < lessons.Count; j++)
+                        {
+                            oTable.Cell(j + 2, 1).Range.Text = (j + 1).ToString();
+                            oTable.Cell(j + 2, 1).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+
+                            oTable.Cell(j + 2, 2).Range.Text = lessons[j].Calendar.Date.ToString("dd.MM.yyyy");
+                            oTable.Cell(j + 2, 2).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+
+                            oTable.Cell(j + 2, 3).Range.Text = lessons[j].Ring.Time.ToString("HH:mm");
+                            oTable.Cell(j + 2, 3).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+
+                            oTable.Cell(j + 2, 4).Range.Text = lessons[j].Auditorium.Name;
+                            oTable.Cell(j + 2, 4).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+
+                            var lType = repo.Lessons.GetLessonType(lessons[j], true);
+                            oTable.Cell(j + 2, 5).Range.Text =
+                                (Constants.LessonTypeLongAbbreviation.ContainsKey(lType))
+                                    ? Constants.LessonTypeLongAbbreviation[lType]
+                                    : "";
+                            oTable.Cell(j + 2, 5).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+
+                        }
+
+                        var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                        endOfDoc.Font.Size = 1;
+                        endOfDoc.InsertBreak(WdBreakType.wdSectionBreakNextPage);
+                    }
+                }
+            }
+
+            oDoc.Undo();
+
+            Marshal.ReleaseComObject(oWord);
+
+        }
+
         public static void ExportTypeSequenceInfoByFaculty(ScheduleRepository repo)
         {
             var faculties = repo.Faculties.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
