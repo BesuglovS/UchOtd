@@ -146,6 +146,16 @@ namespace UchOtd.Schedule.Forms.DBLists
                     }                    
                 }
 
+                var ringEvents = _repo.AuditoriumEvents.GetFiltredAuditoriumEvents(evt => evt.Ring.RingId == ringView.RingId);
+                if (ringEvents.Count > 0)
+                {
+                    foreach (var ringEvent in ringEvents)
+                    {
+                        ringEvent.Ring = replaceRing;
+                        _repo.AuditoriumEvents.UpdateAuditoriumEvent(ringEvent);
+                    }
+                }
+
                 _repo.Rings.RemoveRing(ringView.RingId);
 
                 RefreshView();

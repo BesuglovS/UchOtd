@@ -1842,6 +1842,7 @@ namespace UchOtd.Schedule
             });
         }
 
+
         private void CorrectAuditoriums(string inputDataFilename, string logFilename)
         {
             int state = 0;
@@ -3557,14 +3558,14 @@ namespace UchOtd.Schedule
             {
                 "S12131AA",
                 "S12132AA",
-                //"S13141AA",
-                //"S13142AA",
-                //"S14151AA",
-                //"S14152AA",
-                //"S15161AA",
-                //"S15162AA",
-                //"S16171AA",
-                //"S16172AA"
+                "S13141AA",
+                "S13142AA",
+                "S14151AA",
+                "S14152AA",
+                "S15161AA",
+                "S15162AA",
+                "S16171AA",
+                "S16172AA"
             };
 
             for (int i = 0; i < dbNames.Count; i++)
@@ -3654,6 +3655,511 @@ namespace UchOtd.Schedule
                                 }
                             }
                         }
+
+                    }
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+        
+        private async void exportMathDiscs10AAToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var logFilename = "D:\\Github\\MathDiscs10AA.txt";
+
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S12131AA",
+                    "S12132AA",
+                    "S13141AA",
+                    "S13142AA",
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA"
+                };
+
+                await Task.Run(() =>
+                {
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var startingYear = "20" + dbNames[semIndex].Substring(1, 2);
+                        var semester = dbNames[semIndex].Substring(5, 1);
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        var faculty =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
+
+                        var groups = (faculty != null)
+                            ? repo
+                                .GroupsInFaculties
+                                .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                                .Select(gif => gif.StudentGroup)
+                                .ToList()
+                            : new List<StudentGroup>();
+
+                        for (int i = 0; i < groups.Count; i++)
+                        {
+                            var studentGroup = groups[i];
+
+                            var studentIds = repo.StudentsInGroups
+                                .GetFiltredStudentsInGroups(
+                                    sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId &&
+                                           !sig.Student.Expelled)
+                                .Select(stig => stig.Student.StudentId);
+
+                            var groupsListIds = repo.StudentsInGroups
+                                .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                                .Select(stig => stig.StudentGroup.StudentGroupId);
+                            
+                            var discs = repo.Disciplines
+                                .GetFiltredDisciplines(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId))
+                                .ToList();
+
+                            for (int j = 0; j < discs.Count; j++)
+                            {
+                                var disc = discs[j];
+
+                                var tfd = repo.TeacherForDisciplines
+                                    .GetFirstFiltredTeacherForDiscipline(tefd =>
+                                        tefd.Discipline.DisciplineId == disc.DisciplineId);
+
+                                var teachername = (tfd != null) ? tfd.Teacher.FIO : "";
+                                var split = teachername.Split(' ');
+
+                                teachername = split[0] + " " + split[1].Substring(0, 1).ToUpper() + "." +
+                                              split[2].Substring(0, 1).ToUpper() + ".";
+
+                                TextFileUtilities.WriteString(logFilename,
+                                    startingYear + "\t" +
+                                    disc.Name + "\t" +
+                                    semester + "\t" +
+                                    disc.AuditoriumHours + "\t" +
+                                    disc.LectureHours + "\t" +
+                                    disc.PracticalHours + "\t" +
+                                    Constants.Attestation[disc.Attestation] + "\t" +
+                                    disc.StudentGroup.Name + "\t" +
+                                    teachername);
+                            }
+                        }
+                    }
+
+                    MessageBox.Show("done");
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            
+        }
+
+        private async void расписаниеToolStripMenuItem3_Click(object sender, EventArgs e) // Математики
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S12131AA",
+                    "S12132AA",
+                    "S13141AA",
+                    "S13142AA",
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA"
+                };
+
+                await Task.Run(() =>
+                {
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        var facultyMath =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
+                        //var facultyPhil =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
+                        //var facultyEconM =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
+                        //var facultyLawM =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
+
+                        _cToken = this._tokenSource.Token;
+
+                        var choice = new Dictionary<int, List<int>>
+                        {
+                            { facultyMath.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
+                            //{ facultyPhil.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
+                            //{ facultyEconM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
+                            //{ facultyLawM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                        };
+
+                        WordExport.ExportCustomSchedule(choice, repo, @"D:\GitHub\Export\" + "Export АА А " + dbNames[semIndex] + ".docx", true, true, 90, 6, false, false, false, 0, _cToken);
+
+                    }
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void расписаниеToolStripMenuItem_Click(object sender, EventArgs e) // Филологи
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA"
+                };
+
+                await Task.Run(() =>
+                {
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        //var facultyMath =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
+                        var facultyPhil =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
+                        //var facultyEconM =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
+                        //var facultyLawM =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
+
+                        _cToken = this._tokenSource.Token;
+
+                        var choice = new Dictionary<int, List<int>>
+                        {
+                            //{ facultyMath.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
+                            { facultyPhil.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
+                            //{ facultyEconM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
+                            //{ facultyLawM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                        };
+
+                        WordExport.ExportCustomSchedule(choice, repo, @"D:\GitHub\Export\" + "Export АА БМ " + dbNames[semIndex] + ".docx", true, true, 90, 6, false, false, false, 0, _cToken);
+
+                    }
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void расписаниеToolStripMenuItem1_Click(object sender, EventArgs e) // Экономи
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA"
+                };
+
+                await Task.Run(() =>
+                {
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        //var facultyMath =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
+                        //var facultyPhil =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
+                        var facultyEconM =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
+                        //var facultyLawM =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
+
+                        _cToken = this._tokenSource.Token;
+
+                        var choice = new Dictionary<int, List<int>>
+                        {
+                            //{ facultyMath.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
+                            //{ facultyPhil.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
+                            { facultyEconM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
+                            //{ facultyLawM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                        };
+
+                        WordExport.ExportCustomSchedule(choice, repo, @"D:\GitHub\Export\" + "Export АА ГМ " + dbNames[semIndex] + ".docx", true, true, 90, 6, false, false, false, 0, _cToken);
+
+                    }
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void расписаниеToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA"
+                };
+
+                await Task.Run(() =>
+                {
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        //var facultyMath =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
+                        //var facultyPhil =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
+                        //var facultyEconM =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
+                        var facultyLawM =
+                           repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
+
+                        _cToken = this._tokenSource.Token;
+
+                        var choice = new Dictionary<int, List<int>>
+                        {
+                            //{ facultyMath.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
+                            //{ facultyPhil.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
+                            //{ facultyEconM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
+                            { facultyLawM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                        };
+
+                        WordExport.ExportCustomSchedule(choice, repo, @"D:\GitHub\Export\" + "Export АА ДМ " + dbNames[semIndex] + ".docx", true, true, 90, 6, false, false, false, 0, _cToken);
+
+                    }
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void расписаниеСессииToolStripMenuItem_Click(object sender, EventArgs e) // Математики
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S12131AA",
+                    "S12132AA",
+                    "S13141AA",
+                    "S13142AA",
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA"
+                };
+
+                await Task.Run(() =>
+                {
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        var facultyMath =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
+                        //var facultyPhil =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
+                        //var facultyEconM =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
+                        //var facultyLawM =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
+
+                        _cToken = this._tokenSource.Token;
+                        
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyMath.FacultyId}, @"D:\GitHub\Export\" + "Export АА Сессия А " + dbNames[semIndex] + ".docx", true, true);
+                        
+
+                    }
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void расписаниеСессииToolStripMenuItem1_Click(object sender, EventArgs e) // Филологи
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA"
+                };
+
+                await Task.Run(() =>
+                {
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        //var facultyMath =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
+                        var facultyPhil =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
+                        //var facultyEconM =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
+                        //var facultyLawM =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
+
+                        _cToken = this._tokenSource.Token;
+
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyPhil.FacultyId }, @"D:\GitHub\Export\" + "Export АА Сессия БМ " + dbNames[semIndex] + ".docx", true, true);
+
+
+                    }
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void расписаниеСессииToolStripMenuItem2_Click(object sender, EventArgs e) // Экономисты
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA"
+                };
+
+                await Task.Run(() =>
+                {
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        //var facultyMath =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
+                        //var facultyPhil =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
+                        var facultyEconM =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
+                        //var facultyLawM =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
+
+                        _cToken = this._tokenSource.Token;
+
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyEconM.FacultyId }, @"D:\GitHub\Export\" + "Export АА Сессия ГМ " + dbNames[semIndex] + ".docx", true, true);
+
+
+                    }
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void расписаниеСессииToolStripMenuItem3_Click(object sender, EventArgs e) // Юристы
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA"
+                };
+
+                await Task.Run(() =>
+                {
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        //var facultyMath =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
+                        //var facultyPhil =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
+                        //var facultyEconM =
+                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
+                        var facultyLawM =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
+
+                        _cToken = this._tokenSource.Token;
+
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyLawM.FacultyId }, @"D:\GitHub\Export\" + "Export АА Сессия ДМ " + dbNames[semIndex] + ".docx", true, true);
 
                     }
 
