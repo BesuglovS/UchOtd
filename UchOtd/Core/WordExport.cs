@@ -3728,7 +3728,7 @@ namespace UchOtd.Core
 
         }
 
-        public static void ExportFacultyDates(List<string> dbNames, string facultyName)
+        public static void ExportFacultyDates(List<string> dbNames, string facultyName, string filename, bool save, bool quit)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
@@ -3886,6 +3886,17 @@ namespace UchOtd.Core
 
             oDoc.Undo();
 
+            if (save)
+            {
+                object fileName = filename;
+                oDoc.SaveAs(ref fileName);
+            }
+
+            if (quit)
+            {
+                oWord.Quit();
+            }
+
             Marshal.ReleaseComObject(oWord);
 
         }
@@ -4036,6 +4047,238 @@ namespace UchOtd.Core
             oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
             oPara1.SpaceAfter = 0;
             oPara1.Range.InsertParagraphAfter();
+        }
+
+        public static void ExportAADisciplineList(List<string> dbNames, string facultyString, string filename, bool save, bool quit)
+        {
+            object oMissing = Missing.Value;
+            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+            //Start Word and create a new document.
+            _Application oWord = new Application { Visible = true };
+            _Document oDoc = oWord.Documents.Add();
+
+            oDoc.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+            oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
+
+            for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+            {
+                var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                       dbNames[semIndex] +
+                                       "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                var repo = new ScheduleRepository(connectionString);
+
+                var faculty = repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains(facultyString));
+
+                var groups = (faculty != null) ? repo
+                    .GroupsInFaculties
+                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                    .Select(gif => gif.StudentGroup)
+                    .ToList() : new List<StudentGroup>();
+
+                for (int i = 0; i < groups.Count; i++)
+                {
+                    var studentGroup = groups[i];
+
+                    var studentIds = repo.StudentsInGroups
+                        .GetFiltredStudentsInGroups(
+                            sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId &&
+                                   !sig.Student.Expelled)
+                        .Select(stig => stig.Student.StudentId);
+
+                    var groupsListIds = repo.StudentsInGroups
+                        .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                        .Select(stig => stig.StudentGroup.StudentGroupId);
+
+                    var discs = repo.Disciplines
+                        .GetFiltredDisciplines(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId)).ToList();
+
+                    var tfds = new List<TeacherForDiscipline>();
+                    foreach (var discipline in discs)
+                    {
+                        var tefd = repo.TeacherForDisciplines
+                            .GetFirstFiltredTeacherForDiscipline(
+                                tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
+                        if (tefd != null)
+                        {
+                            tfds.Add(tefd);
+                        }
+                    }
+
+                    Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
+                    oPara1.Range.Text = "Семестр " + dbNames[semIndex] + "\t" + studentGroup.Name;
+                    oPara1.Range.Font.Bold = 0;
+                    oPara1.Range.Font.Size = 14;
+                    oPara1.Range.ParagraphFormat.LineSpacingRule =
+                        WdLineSpacing.wdLineSpaceSingle;
+                    oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                    oPara1.SpaceAfter = 0;
+                    oPara1.Range.InsertParagraphAfter();
+
+                    Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                    Table oTable = oDoc.Tables.Add(wrdRng, tfds.Count + 1, 10);
+                    oTable.Borders.Enable = 1;
+                    oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+                    oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                    oTable.Range.Font.Size = 14;
+                    oTable.Range.Font.Bold = 0;
+                    
+                    oTable.Cell(1, 1).Range.Text = "Год";
+                    oTable.Cell(1, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                    oTable.Columns[1].Width = oWord.CentimetersToPoints(1.5f);
+                    oTable.Cell(1, 2).Range.Text = "Дисциплина";
+                    oTable.Cell(1, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                    oTable.Columns[2].Width = oWord.CentimetersToPoints(5.75f);
+                    oTable.Cell(1, 3).Range.Text = "Семестр";
+                    oTable.Cell(1, 3).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                    oTable.Columns[3].Width = oWord.CentimetersToPoints(1.25f);
+                    oTable.Cell(1, 4).Range.Text = "Часы";
+                    oTable.Cell(1, 4).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                    oTable.Columns[4].Width = oWord.CentimetersToPoints(1.5f);
+                    oTable.Cell(1, 5).Range.Text = "Лекции";
+                    oTable.Cell(1, 5).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                    oTable.Columns[5].Width = oWord.CentimetersToPoints(1.5f);
+                    oTable.Cell(1, 6).Range.Text = "Практика";
+                    oTable.Cell(1, 6).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                    oTable.Columns[6].Width = oWord.CentimetersToPoints(1.5f);
+                    oTable.Cell(1, 7).Range.Text = "Отчётность";
+                    oTable.Cell(1, 7).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                    oTable.Columns[7].Width = oWord.CentimetersToPoints(2.5f);
+                    oTable.Cell(1, 8).Range.Text = "Группа";
+                    oTable.Cell(1, 8).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                    oTable.Columns[8].Width = oWord.CentimetersToPoints(1.5f);
+                    oTable.Cell(1, 9).Range.Text = "ФИО преподавателя";
+                    oTable.Cell(1, 9).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                    oTable.Columns[9].Width = oWord.CentimetersToPoints(7.75f);
+                    oTable.Cell(1, 10).Range.Text = "Группа дисциплины";
+                    oTable.Cell(1, 10).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                    oTable.Columns[10].Width = oWord.CentimetersToPoints(3.25f);
+
+                    oTable.Rows[1].HeadingFormat = -1;
+                    oTable.ApplyStyleHeadingRows = true;
+
+                    tfds = tfds
+                        .OrderBy(tefd => tefd.Teacher.FIO)
+                        .ThenBy(tefd => tefd.Discipline.Name)
+                        .ToList();
+
+                    var yearsString = dbNames[semIndex].Substring(1, 2) + " / " + dbNames[semIndex].Substring(3, 2);
+
+                    for (int j = 0; j < tfds.Count; j++)
+                    {
+                        var currentTfd = tfds[j];
+                        oTable.Cell(j + 2, 1).Range.Text = yearsString;
+                        oTable.Cell(j + 2, 1).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Cell(j + 2, 2).Range.Text = currentTfd.Discipline.Name;
+                        oTable.Cell(j + 2, 2).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphLeft;
+                        oTable.Cell(j + 2, 3).Range.Text = dbNames[semIndex].Substring(5, 1);
+                        oTable.Cell(j + 2, 3).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Cell(j + 2, 4).Range.Text = currentTfd.Discipline.AuditoriumHours.ToString();
+                        oTable.Cell(j + 2, 4).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Cell(j + 2, 5).Range.Text = currentTfd.Discipline.LectureHours.ToString();
+                        oTable.Cell(j + 2, 5).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Cell(j + 2, 6).Range.Text = currentTfd.Discipline.PracticalHours.ToString();
+                        oTable.Cell(j + 2, 6).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Cell(j + 2, 7).Range.Text = Constants.Attestation[currentTfd.Discipline.Attestation];
+                        oTable.Cell(j + 2, 7).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Cell(j + 2, 8).Range.Text = studentGroup.Name;
+                        oTable.Cell(j + 2, 8).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Cell(j + 2, 9).Range.Text = currentTfd.Teacher.FIO;
+                        oTable.Cell(j + 2, 9).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphLeft;
+                        oTable.Cell(j + 2, 10).Range.Text = currentTfd.Discipline.StudentGroup.Name;
+                        oTable.Cell(j + 2, 10).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphCenter;
+                    }
+
+                    var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                    endOfDoc.Font.Size = 1;
+                    endOfDoc.InsertBreak(WdBreakType.wdSectionBreakNextPage);
+                }
+            }
+
+            oDoc.Undo();
+
+            if (save)
+            {
+                object fileName = filename;
+                oDoc.SaveAs(ref fileName);
+            }
+
+            if (quit)
+            {
+                oWord.Quit();
+            }
+
+            Marshal.ReleaseComObject(oWord);
+        }
+
+        public static void MergeDocuments(List<string> filenames, string resultFilename)
+        {
+            // Set up the word object
+            object fname = resultFilename;
+
+            // Create Word application
+            _Application oWord = new Application();
+            
+            try
+            {
+                var orientation = WdOrientation.wdOrientPortrait;
+                if (filenames.Count > 0)
+                {
+                    object firstFileName = filenames[0];
+                    var firstDoc = oWord.Documents.Open(firstFileName);
+                    orientation = firstDoc.PageSetup.Orientation;
+                    firstDoc.Close();
+                }
+
+                // Create new file
+                _Document oDoc = oWord.Documents.Add();
+
+                oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
+                oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
+                oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
+                oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
+
+                oDoc.PageSetup.Orientation = orientation;
+
+                Selection selection = oWord.Selection;
+                
+                // Insert file
+                for (int i = 0; i < filenames.Count; i++)
+                {
+                    selection.InsertFile(filenames[i]);
+
+                    var pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
+
+                    if ((i != filenames.Count - 1) && (pageCount % 6 == 0))
+                    {
+                        selection.InsertBreak(WdBreakType.wdPageBreak);
+                    }
+                }
+
+                // SaveAs
+                oDoc.SaveAs(ref fname);
+            }
+            finally
+            {
+                // Close Word application
+                oWord.Quit();
+            }
+
+            Marshal.ReleaseComObject(oWord);
         }
     }
 }

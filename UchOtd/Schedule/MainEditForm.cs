@@ -3469,7 +3469,8 @@ namespace UchOtd.Schedule
             {
                 var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA"};
 
-                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Философский факультет (магистратура)"),
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Философский факультет (магистратура)",
+                    @"D:\GitHub\Export\Export АА Журналы БМ.docx", true, true),
                     _cToken);
             }
             catch (OperationCanceledException)
@@ -3483,7 +3484,8 @@ namespace UchOtd.Schedule
             {
                 var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA"};
 
-                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Экономический факультет (магистратура)"),
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Экономический факультет (магистратура)",
+                        @"D:\GitHub\Export\Export АА Журналы ГМ.docx", true, true),
                     _cToken);
             }
             catch (OperationCanceledException)
@@ -3497,7 +3499,8 @@ namespace UchOtd.Schedule
             {
                 var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA"};
 
-                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Юридический факультет (магистратура)"),
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Юридический факультет (магистратура)",
+                        @"D:\GitHub\Export\Export АА Журналы ДМ.docx", true, true),
                     _cToken);
             }
             catch (OperationCanceledException)
@@ -3523,7 +3526,8 @@ namespace UchOtd.Schedule
                     "S16172AA"
                 };
 
-                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Факультет математики"), _cToken);
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Факультет математики",
+                    @"D:\GitHub\Export\Export АА Журналы А.docx", true, true), _cToken);
             }
             catch (OperationCanceledException)
             {
@@ -3785,6 +3789,7 @@ namespace UchOtd.Schedule
 
                 await Task.Run(() =>
                 {
+                    var scheduleFilenames = new List<string>();
                     for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
                     {
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
@@ -3795,26 +3800,22 @@ namespace UchOtd.Schedule
 
                         var facultyMath =
                             repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
-                        //var facultyPhil =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
-                        //var facultyEconM =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
-                        //var facultyLawM =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
 
                         _cToken = this._tokenSource.Token;
 
                         var choice = new Dictionary<int, List<int>>
                         {
-                            { facultyMath.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
-                            //{ facultyPhil.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
-                            //{ facultyEconM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
-                            //{ facultyLawM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                            { facultyMath.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
                         };
 
-                        WordExport.ExportCustomSchedule(choice, repo, @"D:\GitHub\Export\" + "Export АА А " + dbNames[semIndex] + ".docx", true, true, 90, 6, false, false, false, 0, _cToken);
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА А " + dbNames[semIndex] + ".docx";
 
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, _cToken);
+
+                        scheduleFilenames.Add(filename);
                     }
+
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание А.docx");
 
                 }, _cToken);
             }
@@ -3838,6 +3839,7 @@ namespace UchOtd.Schedule
 
                 await Task.Run(() =>
                 {
+                    var scheduleFilenames = new List<string>();
                     for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
                     {
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
@@ -3846,28 +3848,24 @@ namespace UchOtd.Schedule
 
                         var repo = new ScheduleRepository(connectionString);
 
-                        //var facultyMath =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
                         var facultyPhil =
                             repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
-                        //var facultyEconM =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
-                        //var facultyLawM =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
-
+                        
                         _cToken = this._tokenSource.Token;
 
                         var choice = new Dictionary<int, List<int>>
                         {
-                            //{ facultyMath.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
-                            { facultyPhil.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
-                            //{ facultyEconM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
-                            //{ facultyLawM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                            { facultyPhil.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
                         };
 
-                        WordExport.ExportCustomSchedule(choice, repo, @"D:\GitHub\Export\" + "Export АА БМ " + dbNames[semIndex] + ".docx", true, true, 90, 6, false, false, false, 0, _cToken);
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА БМ " + dbNames[semIndex] + ".docx";
 
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, _cToken);
+
+                        scheduleFilenames.Add(filename);
                     }
+                    
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание БМ.docx");
 
                 }, _cToken);
             }
@@ -3891,6 +3889,7 @@ namespace UchOtd.Schedule
 
                 await Task.Run(() =>
                 {
+                    var scheduleFilenames = new List<string>();
                     for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
                     {
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
@@ -3899,28 +3898,24 @@ namespace UchOtd.Schedule
 
                         var repo = new ScheduleRepository(connectionString);
 
-                        //var facultyMath =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
-                        //var facultyPhil =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
                         var facultyEconM =
                             repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
-                        //var facultyLawM =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
 
                         _cToken = this._tokenSource.Token;
 
                         var choice = new Dictionary<int, List<int>>
                         {
-                            //{ facultyMath.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
-                            //{ facultyPhil.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
-                            { facultyEconM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
-                            //{ facultyLawM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                            { facultyEconM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
                         };
 
-                        WordExport.ExportCustomSchedule(choice, repo, @"D:\GitHub\Export\" + "Export АА ГМ " + dbNames[semIndex] + ".docx", true, true, 90, 6, false, false, false, 0, _cToken);
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА ГМ " + dbNames[semIndex] + ".docx";
 
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, _cToken);
+
+                        scheduleFilenames.Add(filename);
                     }
+
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание ГМ.docx");
 
                 }, _cToken);
             }
@@ -3929,7 +3924,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private async void расписаниеToolStripMenuItem2_Click(object sender, EventArgs e)
+        private async void расписаниеToolStripMenuItem2_Click(object sender, EventArgs e) // Юричты
         {
             try
             {
@@ -3944,6 +3939,7 @@ namespace UchOtd.Schedule
 
                 await Task.Run(() =>
                 {
+                    var scheduleFilenames = new List<string>();
                     for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
                     {
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
@@ -3952,12 +3948,6 @@ namespace UchOtd.Schedule
 
                         var repo = new ScheduleRepository(connectionString);
 
-                        //var facultyMath =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
-                        //var facultyPhil =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
-                        //var facultyEconM =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
                         var facultyLawM =
                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
 
@@ -3965,15 +3955,17 @@ namespace UchOtd.Schedule
 
                         var choice = new Dictionary<int, List<int>>
                         {
-                            //{ facultyMath.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
-                            //{ facultyPhil.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
-                            //{ facultyEconM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} },
                             { facultyLawM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
                         };
 
-                        WordExport.ExportCustomSchedule(choice, repo, @"D:\GitHub\Export\" + "Export АА ДМ " + dbNames[semIndex] + ".docx", true, true, 90, 6, false, false, false, 0, _cToken);
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА ДМ " + dbNames[semIndex] + ".docx";
 
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, _cToken);
+
+                        scheduleFilenames.Add(filename);
                     }
+
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание ДМ.docx");
 
                 }, _cToken);
             }
@@ -4002,6 +3994,7 @@ namespace UchOtd.Schedule
 
                 await Task.Run(() =>
                 {
+                    var scheduleFilenames = new List<string>();
                     for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
                     {
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
@@ -4012,19 +4005,17 @@ namespace UchOtd.Schedule
 
                         var facultyMath =
                             repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
-                        //var facultyPhil =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
-                        //var facultyEconM =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
-                        //var facultyLawM =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
 
                         _cToken = this._tokenSource.Token;
-                        
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyMath.FacultyId}, @"D:\GitHub\Export\" + "Export АА Сессия А " + dbNames[semIndex] + ".docx", true, true);
-                        
 
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия А " + dbNames[semIndex] + ".docx";
+
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyMath.FacultyId}, filename, true, true);
+
+                        scheduleFilenames.Add(filename);
                     }
+
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия А.docx");
 
                 }, _cToken);
             }
@@ -4048,6 +4039,7 @@ namespace UchOtd.Schedule
 
                 await Task.Run(() =>
                 {
+                    var scheduleFilenames = new List<string>();
                     for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
                     {
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
@@ -4056,21 +4048,19 @@ namespace UchOtd.Schedule
 
                         var repo = new ScheduleRepository(connectionString);
 
-                        //var facultyMath =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
                         var facultyPhil =
                             repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
-                        //var facultyEconM =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
-                        //var facultyLawM =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
-
+                        
                         _cToken = this._tokenSource.Token;
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyPhil.FacultyId }, @"D:\GitHub\Export\" + "Export АА Сессия БМ " + dbNames[semIndex] + ".docx", true, true);
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия БМ " + dbNames[semIndex] + ".docx";
 
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyPhil.FacultyId }, filename, true, true);
 
+                        scheduleFilenames.Add(filename);
                     }
+
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия БМ.docx");
 
                 }, _cToken);
             }
@@ -4094,6 +4084,7 @@ namespace UchOtd.Schedule
 
                 await Task.Run(() =>
                 {
+                    var scheduleFilenames = new List<string>();
                     for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
                     {
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
@@ -4102,21 +4093,19 @@ namespace UchOtd.Schedule
 
                         var repo = new ScheduleRepository(connectionString);
 
-                        //var facultyMath =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
-                        //var facultyPhil =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
                         var facultyEconM =
                             repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
-                        //var facultyLawM =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
 
                         _cToken = this._tokenSource.Token;
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyEconM.FacultyId }, @"D:\GitHub\Export\" + "Export АА Сессия ГМ " + dbNames[semIndex] + ".docx", true, true);
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия ГМ " + dbNames[semIndex] + ".docx";
 
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyEconM.FacultyId }, filename, true, true);
 
+                        scheduleFilenames.Add(filename);
                     }
+
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия ГМ.docx");
 
                 }, _cToken);
             }
@@ -4140,6 +4129,7 @@ namespace UchOtd.Schedule
 
                 await Task.Run(() =>
                 {
+                    var scheduleFilenames = new List<string>();
                     for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
                     {
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
@@ -4148,26 +4138,102 @@ namespace UchOtd.Schedule
 
                         var repo = new ScheduleRepository(connectionString);
 
-                        //var facultyMath =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
-                        //var facultyPhil =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
-                        //var facultyEconM =
-                        //    repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
                         var facultyLawM =
                             repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
 
                         _cToken = this._tokenSource.Token;
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyLawM.FacultyId }, @"D:\GitHub\Export\" + "Export АА Сессия ДМ " + dbNames[semIndex] + ".docx", true, true);
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия ДМ " + dbNames[semIndex] + ".docx";
 
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyLawM.FacultyId }, filename, true, true);
+
+                        scheduleFilenames.Add(filename);
                     }
+
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия ДМ.docx");
 
                 }, _cToken);
             }
             catch (OperationCanceledException)
             {
             }
+        }
+
+        private async void дисциплиныРасписанияToolStripMenuItem_Click(object sender, EventArgs e) // Математики
+        {
+            var dbNames = new List<string>
+            {
+                "S12131AA",
+                "S12132AA",
+                "S13141AA",
+                "S13142AA",
+                "S14151AA",
+                "S14152AA",
+                "S15161AA",
+                "S15162AA",
+                "S16171AA",
+                "S16172AA"
+            };
+
+            await Task.Run(() =>
+            {
+                WordExport.ExportAADisciplineList(dbNames, "Факультет математики и компьютерных наук",
+                    @"D:\GitHub\Export\Export AA Дисциплины А.docx", true, true);
+            });
+        }
+
+        private async void дисциплиныРасписанияToolStripMenuItem1_Click(object sender, EventArgs e) // Филологи
+        {
+            var dbNames = new List<string>
+            {
+                "S14151AA",
+                "S14152AA",
+                "S15161AA",
+                "S15162AA",
+                "S16171AA"
+            };
+
+            await Task.Run(() =>
+            {
+                WordExport.ExportAADisciplineList(dbNames, "Философский факультет (магистратура)",
+                    @"D:\GitHub\Export\Export AA Дисциплины БМ.docx", true, true);
+            });
+        }
+
+        private async void дисциплиныРасписанияToolStripMenuItem2_Click(object sender, EventArgs e) // Экономисты
+        {
+            var dbNames = new List<string>
+            {
+                "S14151AA",
+                "S14152AA",
+                "S15161AA",
+                "S15162AA",
+                "S16171AA"
+            };
+
+            await Task.Run(() =>
+            {
+                WordExport.ExportAADisciplineList(dbNames, "Экономический факультет (магистратура)",
+                    @"D:\GitHub\Export\Export AA Дисциплины ГМ.docx", true, true);
+            });
+        }
+
+        private async void дисциплиныРасписанияToolStripMenuItem3_Click(object sender, EventArgs e) // Юристы
+        {
+            var dbNames = new List<string>
+            {
+                "S14151AA",
+                "S14152AA",
+                "S15161AA",
+                "S15162AA",
+                "S16171AA"
+            };
+
+            await Task.Run(() =>
+            {
+                WordExport.ExportAADisciplineList(dbNames, "Юридический факультет (магистратура)", 
+                    @"D:\GitHub\Export\Export AA Дисциплины ДМ.docx", true, true);
+            });
         }
     }
 }
