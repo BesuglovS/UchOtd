@@ -1067,9 +1067,8 @@ namespace UchOtd.Core
 
         public static void ExportCustomSchedule(
             // facultyId, List of DOW
-            Dictionary<int, List<int>> facultyDow, ScheduleRepository repo, string filename, bool save, bool quit,
-            int lessonLength, int daysOfWeek, bool schoolHeader, bool onlyFutureDates,
-            bool weekFiltered, int weekFilter, CancellationToken cToken)
+            Dictionary<int, List<int>> facultyDow, ScheduleRepository repo, string filename, bool save, bool quit, int lessonLength, int daysOfWeek,
+            bool schoolHeader, bool onlyFutureDates, bool weekFiltered, int weekFilter, bool appVisible, CancellationToken cToken)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
@@ -1077,7 +1076,11 @@ namespace UchOtd.Core
             cToken.ThrowIfCancellationRequested();
 
             //Start Word and create a new document.
-            _Application oWord = new Application { Visible = true };
+            _Application oWord = new Application();
+            if (appVisible)
+            {
+                oWord.Visible = true;
+            }
             _Document oDoc = oWord.Documents.Add();
 
             oDoc.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
@@ -1517,7 +1520,7 @@ namespace UchOtd.Core
             endSessionDate = (maxConsDate <= maxExamDate) ? maxConsDate : maxExamDate;
         }
 
-        public static void ExportCustomSessionSchedule(ScheduleRepository repo, List<int> facultyFilter, string filename, bool save, bool quit)
+        public static void ExportCustomSessionSchedule(ScheduleRepository repo, List<int> facultyFilter, string filename, bool save, bool quit, bool appVisible)
         {
             DateTime beginSessionDate, endSessionDate;
             DetectSessionDates(repo, out beginSessionDate, out endSessionDate);
@@ -1528,7 +1531,11 @@ namespace UchOtd.Core
             //Start Word and create a new document.
 
             _Application oWord = new Application();
-            oWord.Visible = true;
+            if (appVisible)
+            {
+                oWord.Visible = true;
+            }
+            
             _Document oDoc =
                 oWord.Documents.Add(ref oMissing, ref oMissing, ref oMissing, ref oMissing);
 
@@ -3734,7 +3741,7 @@ namespace UchOtd.Core
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             //Start Word and create a new document.
-            _Application oWord = new Application { Visible = true };
+            _Application oWord = new Application();
             _Document oDoc = oWord.Documents.Add();
 
             oDoc.PageSetup.Orientation = WdOrientation.wdOrientPortrait;
@@ -4049,13 +4056,17 @@ namespace UchOtd.Core
             oPara1.Range.InsertParagraphAfter();
         }
 
-        public static void ExportAADisciplineList(List<string> dbNames, string facultyString, string filename, bool save, bool quit)
+        public static void ExportAADisciplineList(List<string> dbNames, string facultyString, string filename, bool save, bool quit, bool appVisible, bool appendGroupStudents)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             //Start Word and create a new document.
-            _Application oWord = new Application { Visible = true };
+            _Application oWord = new Application();
+            if (appVisible)
+            {
+                oWord.Visible = true;
+            }
             _Document oDoc = oWord.Documents.Add();
 
             oDoc.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
@@ -4108,7 +4119,7 @@ namespace UchOtd.Core
                             tfds.Add(tefd);
                         }
                     }
-
+                    
                     Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
                     oPara1.Range.Text = "Семестр " + dbNames[semIndex] + "\t" + studentGroup.Name;
                     oPara1.Range.Font.Bold = 0;
@@ -4120,7 +4131,7 @@ namespace UchOtd.Core
                     oPara1.Range.InsertParagraphAfter();
 
                     Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
-                    Table oTable = oDoc.Tables.Add(wrdRng, tfds.Count + 1, 10);
+                    Table oTable = oDoc.Tables.Add(wrdRng, tfds.Count + 1, 10 + ((appendGroupStudents) ? 2 : 0));
                     oTable.Borders.Enable = 1;
                     oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
                     oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
@@ -4132,7 +4143,7 @@ namespace UchOtd.Core
                     oTable.Columns[1].Width = oWord.CentimetersToPoints(1.5f);
                     oTable.Cell(1, 2).Range.Text = "Дисциплина";
                     oTable.Cell(1, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
-                    oTable.Columns[2].Width = oWord.CentimetersToPoints(5.75f);
+                    oTable.Columns[2].Width = oWord.CentimetersToPoints(5.75f - ((appendGroupStudents) ? 2f : 0f));
                     oTable.Cell(1, 3).Range.Text = "Семестр";
                     oTable.Cell(1, 3).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
                     oTable.Columns[3].Width = oWord.CentimetersToPoints(1.25f);
@@ -4153,10 +4164,20 @@ namespace UchOtd.Core
                     oTable.Columns[8].Width = oWord.CentimetersToPoints(1.5f);
                     oTable.Cell(1, 9).Range.Text = "ФИО преподавателя";
                     oTable.Cell(1, 9).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
-                    oTable.Columns[9].Width = oWord.CentimetersToPoints(7.75f);
+                    oTable.Columns[9].Width = oWord.CentimetersToPoints(7.75f - ((appendGroupStudents) ? 4f : 0f));
                     oTable.Cell(1, 10).Range.Text = "Группа дисциплины";
                     oTable.Cell(1, 10).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
-                    oTable.Columns[10].Width = oWord.CentimetersToPoints(3.25f);
+                    oTable.Columns[10].Width = oWord.CentimetersToPoints(3.25f - ((appendGroupStudents) ? 1.5f : 0f));
+                    if (appendGroupStudents)
+                    {
+                        oTable.Cell(1, 11).Range.Text = "К-во ст";
+                        oTable.Cell(1, 11).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Columns[11].Width = oWord.CentimetersToPoints(1f);
+
+                        oTable.Cell(1, 12).Range.Text = "Студенты";
+                        oTable.Cell(1, 12).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                        oTable.Columns[12].Width = oWord.CentimetersToPoints(6.5f);
+                    }
 
                     oTable.Rows[1].HeadingFormat = -1;
                     oTable.ApplyStyleHeadingRows = true;
@@ -4171,6 +4192,32 @@ namespace UchOtd.Core
                     for (int j = 0; j < tfds.Count; j++)
                     {
                         var currentTfd = tfds[j];
+
+                        string studentsString = "";
+                        var studentsCount = 0;
+                        if (appendGroupStudents)
+                        {
+                            var studentsList = repo.StudentsInGroups
+                                .GetFiltredStudentsInGroups(
+                                    sig => sig.StudentGroup.StudentGroupId ==
+                                           currentTfd.Discipline.StudentGroup.StudentGroupId &&
+                                           !sig.Student.Expelled)
+                                .ToList()
+                                .Select(sig => sig.Student.F + " " + sig.Student.I + " " + sig.Student.O)
+                                .OrderBy(a => a)
+                                .ToList();
+                            studentsCount = studentsList.Count;
+
+                            for (int k = 0; k < studentsList.Count; k++)
+                            {
+                                studentsString += (k+1).ToString() + ") " + studentsList[k];
+                                if (k != studentsList.Count - 1)
+                                {
+                                    studentsString += Environment.NewLine;
+                                }
+                            }
+                        }
+
                         oTable.Cell(j + 2, 1).Range.Text = yearsString;
                         oTable.Cell(j + 2, 1).Range.ParagraphFormat.Alignment =
                             WdParagraphAlignment.wdAlignParagraphCenter;
@@ -4201,6 +4248,16 @@ namespace UchOtd.Core
                         oTable.Cell(j + 2, 10).Range.Text = currentTfd.Discipline.StudentGroup.Name;
                         oTable.Cell(j + 2, 10).Range.ParagraphFormat.Alignment =
                             WdParagraphAlignment.wdAlignParagraphCenter;
+
+                        if (appendGroupStudents)
+                        {
+                            oTable.Cell(j + 2, 11).Range.Text = studentsCount.ToString();
+                            oTable.Cell(j + 2, 11).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+                            oTable.Cell(j + 2, 12).Range.Text = studentsString;
+                            oTable.Cell(j + 2, 12).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphLeft;
+                        }
                     }
 
                     var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;

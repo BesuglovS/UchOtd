@@ -208,11 +208,11 @@ namespace UchOtd.Forms.Session
         {
             if (oneFaculty.Checked)
             {
-                WordExport.ExportCustomSessionSchedule(_repo, new List<int> { (int)FacultyList.SelectedValue }, "", false, false);
+                WordExport.ExportCustomSessionSchedule(_repo, new List<int> { (int)FacultyList.SelectedValue }, "", false, false, true);
             }
             else
             {
-                WordExport.ExportCustomSessionSchedule(_repo, null, "", false, false);
+                WordExport.ExportCustomSessionSchedule(_repo, null, "", false, false, true);
             }
             
         }

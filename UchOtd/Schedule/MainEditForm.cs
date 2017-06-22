@@ -3463,7 +3463,7 @@ namespace UchOtd.Schedule
             Close();*/
         }
 
-        private async void датыЗанятийФилологовToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void PhilJournalDates(object sender, EventArgs e)
         {
             try
             {
@@ -3478,7 +3478,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private async void датыЗанятийЭкономистовмагистратураToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void EconMJournalDates(object sender, EventArgs e)
         {
             try
             {
@@ -3493,7 +3493,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private async void датыЗанятийЮристовмагистратураToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void LawMJournalDates(object sender, EventArgs e)
         {
             try
             {
@@ -3508,7 +3508,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private async void датыЗанятийМатематиковToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void MathJournalDates(object sender, EventArgs e)
         {
             try
             {
@@ -3769,7 +3769,7 @@ namespace UchOtd.Schedule
             
         }
 
-        private async void расписаниеToolStripMenuItem3_Click(object sender, EventArgs e) // Математики
+        private async void MathSchedule(object sender, EventArgs e) // Математики
         {
             try
             {
@@ -3810,7 +3810,7 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА А " + dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, _cToken);
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -3824,7 +3824,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private async void расписаниеToolStripMenuItem_Click(object sender, EventArgs e) // Филологи
+        private async void PhilSchedule(object sender, EventArgs e) // Филологи
         {
             try
             {
@@ -3860,7 +3860,7 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА БМ " + dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, _cToken);
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -3874,7 +3874,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private async void расписаниеToolStripMenuItem1_Click(object sender, EventArgs e) // Экономи
+        private async void EconMSchedule(object sender, EventArgs e) // Экономи
         {
             try
             {
@@ -3910,7 +3910,7 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА ГМ " + dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, _cToken);
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -3924,7 +3924,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private async void расписаниеToolStripMenuItem2_Click(object sender, EventArgs e) // Юричты
+        private async void LawMSchedule(object sender, EventArgs e) // Юричты
         {
             try
             {
@@ -3960,7 +3960,7 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА ДМ " + dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, _cToken);
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -3974,7 +3974,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private async void расписаниеСессииToolStripMenuItem_Click(object sender, EventArgs e) // Математики
+        private async void MathSessionSchedule(object sender, EventArgs e) // Математики
         {
             try
             {
@@ -4010,7 +4010,7 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия А " + dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyMath.FacultyId}, filename, true, true);
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyMath.FacultyId}, filename, true, true, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4024,7 +4024,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private async void расписаниеСессииToolStripMenuItem1_Click(object sender, EventArgs e) // Филологи
+        private async void PhilSessionSchedule(object sender, EventArgs e) // Филологи
         {
             try
             {
@@ -4055,7 +4055,7 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия БМ " + dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyPhil.FacultyId }, filename, true, true);
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyPhil.FacultyId }, filename, true, true, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4069,7 +4069,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private async void расписаниеСессииToolStripMenuItem2_Click(object sender, EventArgs e) // Экономисты
+        private async void EconMSessionSchedule(object sender, EventArgs e) // Экономисты
         {
             try
             {
@@ -4100,7 +4100,7 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия ГМ " + dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyEconM.FacultyId }, filename, true, true);
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyEconM.FacultyId }, filename, true, true, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4114,7 +4114,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private async void расписаниеСессииToolStripMenuItem3_Click(object sender, EventArgs e) // Юристы
+        private async void LawMSessionSchedule(object sender, EventArgs e) // Юристы
         {
             try
             {
@@ -4145,7 +4145,7 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия ДМ " + dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyLawM.FacultyId }, filename, true, true);
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyLawM.FacultyId }, filename, true, true, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4159,7 +4159,7 @@ namespace UchOtd.Schedule
             }
         }
 
-        private async void дисциплиныРасписанияToolStripMenuItem_Click(object sender, EventArgs e) // Математики
+        private async void MathDisciplines(object sender, EventArgs e) // Математики
         {
             var dbNames = new List<string>
             {
@@ -4178,11 +4178,11 @@ namespace UchOtd.Schedule
             await Task.Run(() =>
             {
                 WordExport.ExportAADisciplineList(dbNames, "Факультет математики и компьютерных наук",
-                    @"D:\GitHub\Export\Export AA Дисциплины А.docx", true, true);
+                    @"D:\GitHub\Export\Export AA Дисциплины А.docx", true, true, true, true);
             });
         }
 
-        private async void дисциплиныРасписанияToolStripMenuItem1_Click(object sender, EventArgs e) // Филологи
+        private async void PhilDisciplines(object sender, EventArgs e) // Филологи
         {
             var dbNames = new List<string>
             {
@@ -4196,11 +4196,11 @@ namespace UchOtd.Schedule
             await Task.Run(() =>
             {
                 WordExport.ExportAADisciplineList(dbNames, "Философский факультет (магистратура)",
-                    @"D:\GitHub\Export\Export AA Дисциплины БМ.docx", true, true);
+                    @"D:\GitHub\Export\Export AA Дисциплины БМ.docx", true, true, false, false);
             });
         }
 
-        private async void дисциплиныРасписанияToolStripMenuItem2_Click(object sender, EventArgs e) // Экономисты
+        private async void EconMDisciplines(object sender, EventArgs e) // Экономисты
         {
             var dbNames = new List<string>
             {
@@ -4214,11 +4214,11 @@ namespace UchOtd.Schedule
             await Task.Run(() =>
             {
                 WordExport.ExportAADisciplineList(dbNames, "Экономический факультет (магистратура)",
-                    @"D:\GitHub\Export\Export AA Дисциплины ГМ.docx", true, true);
+                    @"D:\GitHub\Export\Export AA Дисциплины ГМ.docx", true, true, false, false);
             });
         }
 
-        private async void дисциплиныРасписанияToolStripMenuItem3_Click(object sender, EventArgs e) // Юристы
+        private async void LawMDisciplines(object sender, EventArgs e) // Юристы
         {
             var dbNames = new List<string>
             {
@@ -4232,8 +4232,48 @@ namespace UchOtd.Schedule
             await Task.Run(() =>
             {
                 WordExport.ExportAADisciplineList(dbNames, "Юридический факультет (магистратура)", 
-                    @"D:\GitHub\Export\Export AA Дисциплины ДМ.docx", true, true);
+                    @"D:\GitHub\Export\Export AA Дисциплины ДМ.docx", true, true, false, false);
             });
+        }
+
+        private void Math4Files(object sender, EventArgs e)
+        {
+            MathJournalDates(sender, e);
+            MathSchedule(sender, e);
+            MathSessionSchedule(sender, e);
+            MathDisciplines(sender, e);
+        }
+
+        private void Phil4Files(object sender, EventArgs e)
+        {
+            PhilJournalDates(sender, e);
+            PhilSchedule(sender, e);
+            PhilSessionSchedule(sender, e);
+            PhilDisciplines(sender, e);
+        }
+
+        private void EconM4Files(object sender, EventArgs e)
+        {
+            EconMJournalDates(sender, e);
+            EconMSchedule(sender, e);
+            EconMSessionSchedule(sender, e);
+            EconMDisciplines(sender, e);
+        }
+
+        private void LawM4Files(object sender, EventArgs e)
+        {
+            LawMJournalDates(sender, e);
+            LawMSchedule(sender, e);
+            LawMSessionSchedule(sender, e);
+            LawMDisciplines(sender, e);
+        }
+
+        private void All4Files(object sender, EventArgs e)
+        {
+            Math4Files(sender, e);
+            Phil4Files(sender, e);
+            EconM4Files(sender, e);
+            LawM4Files(sender, e);
         }
     }
 }

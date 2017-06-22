@@ -163,7 +163,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     await Task.Run(() => WordExport.ExportCustomSchedule(
                                 _choice, _repo, "Расписание.docx", false, false,
-                                lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, weekFilteredF, weekFilterF, _cToken), _cToken);
+                                lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, weekFilteredF, weekFilterF, true, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
