@@ -72,6 +72,7 @@ namespace UchOtd.Schedule
                 "Schedule13141",
                 "Schedule13142",
                 "Schedule14151",
+                "Schedule14152",
                 "Schedule15161",
                 "Schedule15162",
                 "Schedule16171",
@@ -2008,13 +2009,7 @@ namespace UchOtd.Schedule
                     foreach (KeyValuePair<string, List<string>> discAuds in auds)
                     {
                         var discName = discAuds.Key;
-
-                        //if (discCounter < 8 - 1) // TODO: Удалить после отладки
-                        //{
-                        //    discCounter++;
-                        //    continue;
-                        //}
-
+                        
                         LogInFile(logFilename, "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
                                                groupNamesList.Count + " " +
                                                " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count);
@@ -3815,7 +3810,7 @@ namespace UchOtd.Schedule
                         scheduleFilenames.Add(filename);
                     }
 
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание А.docx");
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание А.docx", true);
 
                 }, _cToken);
             }
@@ -3865,7 +3860,7 @@ namespace UchOtd.Schedule
                         scheduleFilenames.Add(filename);
                     }
                     
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание БМ.docx");
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание БМ.docx", true);
 
                 }, _cToken);
             }
@@ -3915,7 +3910,7 @@ namespace UchOtd.Schedule
                         scheduleFilenames.Add(filename);
                     }
 
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание ГМ.docx");
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание ГМ.docx", true);
 
                 }, _cToken);
             }
@@ -3965,7 +3960,7 @@ namespace UchOtd.Schedule
                         scheduleFilenames.Add(filename);
                     }
 
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание ДМ.docx");
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание ДМ.docx", true);
 
                 }, _cToken);
             }
@@ -4015,7 +4010,7 @@ namespace UchOtd.Schedule
                         scheduleFilenames.Add(filename);
                     }
 
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия А.docx");
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия А.docx", false);
 
                 }, _cToken);
             }
@@ -4060,7 +4055,7 @@ namespace UchOtd.Schedule
                         scheduleFilenames.Add(filename);
                     }
 
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия БМ.docx");
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия БМ.docx", false);
 
                 }, _cToken);
             }
@@ -4105,7 +4100,7 @@ namespace UchOtd.Schedule
                         scheduleFilenames.Add(filename);
                     }
 
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия ГМ.docx");
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия ГМ.docx", false);
 
                 }, _cToken);
             }
@@ -4150,7 +4145,7 @@ namespace UchOtd.Schedule
                         scheduleFilenames.Add(filename);
                     }
 
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия ДМ.docx");
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия ДМ.docx", false);
 
                 }, _cToken);
             }
@@ -4237,6 +4232,11 @@ namespace UchOtd.Schedule
         }
 
         private void Math4Files(object sender, EventArgs e)
+
+
+
+
+
         {
             MathJournalDates(sender, e);
             MathSchedule(sender, e);
@@ -4268,12 +4268,534 @@ namespace UchOtd.Schedule
             LawMDisciplines(sender, e);
         }
 
-        private void All4Files(object sender, EventArgs e)
+        private async void ArtJournalDates(object sender, EventArgs e)
         {
-            Math4Files(sender, e);
-            Phil4Files(sender, e);
-            EconM4Files(sender, e);
-            LawM4Files(sender, e);
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "Schedule13141",
+                    "Schedule13142",
+                    "Schedule14151",
+                    "Schedule14152",
+                    "Schedule15161",
+                    "Schedule15162",
+                    "Schedule16171",
+                    "Schedule16172",
+                };
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Факультет искусств",
+                    @"D:\GitHub\Export\Export АА Журналы И.docx", true, true), _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void ArtSchedule(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "Schedule13141",
+                    "Schedule13142",
+                    "Schedule14151",
+                    "Schedule14152",
+                    "Schedule15161",
+                    "Schedule15162",
+                    "Schedule16171",
+                    "Schedule16172",
+                };
+
+                await Task.Run(() =>
+                {
+                    var scheduleFilenames = new List<string>();
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        var facultyArt =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет искусств"));
+
+                        _cToken = this._tokenSource.Token;
+
+                        var choice = new Dictionary<int, List<int>>
+                        {
+                            { facultyArt.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                        };
+
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА И " + dbNames[semIndex] + ".docx";
+
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, false, _cToken);
+
+                        scheduleFilenames.Add(filename);
+                    }
+
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание И.docx", true);
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void ArtSessionSchedule(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "Schedule13141",
+                    "Schedule13142",
+                    "Schedule14151",
+                    "Schedule14152",
+                    "Schedule15161",
+                    "Schedule15162",
+                    "Schedule16171",
+                    "Schedule16172",
+                };
+
+                await Task.Run(() =>
+                {
+                    var scheduleFilenames = new List<string>();
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        var facultyArt =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет искусств"));
+
+                        _cToken = this._tokenSource.Token;
+
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия И " + dbNames[semIndex] + ".docx";
+
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyArt.FacultyId }, filename, true, true, false);
+
+                        scheduleFilenames.Add(filename);
+                    }
+
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия И.docx", false);
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void ArtDisciplines(object sender, EventArgs e)
+        {
+            var dbNames = new List<string>
+            {
+                "Schedule13141",
+                "Schedule13142",
+                "Schedule14151",
+                "Schedule14152",
+                "Schedule15161",
+                "Schedule15162",
+                "Schedule16171",
+                "Schedule16172",
+            };
+
+            await Task.Run(() =>
+            {
+                WordExport.ExportAADisciplineList(dbNames, "Факультет искусств",
+                    @"D:\GitHub\Export\Export AA Дисциплины И.docx", true, true, false, false);
+            });
+        }
+
+        private async void Art4Files(object sender, EventArgs e)
+        {
+            ArtJournalDates(sender, e);
+            ArtSchedule(sender, e);
+            ArtSessionSchedule(sender, e);
+            ArtDisciplines(sender, e);
+        }
+
+        private void Gor4Files(object sender, EventArgs e)
+        {
+            GorJournalDates(sender, e);
+            GorSchedule(sender, e);
+            GorSessionSchedule(sender, e);
+            GorDisciplines(sender, e);
+        }
+
+        private async void GorJournalDates(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA",
+                };
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Горюшкин (факультет искусств)",
+                    @"D:\GitHub\Export\Export АА Журналы Горюшкин.docx", true, true), _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void GorSchedule(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA",
+                };
+
+                await Task.Run(() =>
+                {
+                    var scheduleFilenames = new List<string>();
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        var facultyArt =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Горюшкин (факультет искусств)"));
+
+                        _cToken = this._tokenSource.Token;
+
+                        var choice = new Dictionary<int, List<int>>
+                        {
+                            { facultyArt.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                        };
+
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Горюшкин " + dbNames[semIndex] + ".docx";
+
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, false, _cToken);
+
+                        scheduleFilenames.Add(filename);
+                    }
+
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание Горюшкин.docx", true);
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void GorSessionSchedule(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA",
+                };
+
+                await Task.Run(() =>
+                {
+                    var scheduleFilenames = new List<string>();
+                    for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                    {
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[semIndex] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        var repo = new ScheduleRepository(connectionString);
+
+                        var facultyArt =
+                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Горюшкин (факультет искусств)"));
+
+                        _cToken = this._tokenSource.Token;
+
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия Горюшкин " + dbNames[semIndex] + ".docx";
+
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyArt.FacultyId }, filename, true, true, false);
+
+                        scheduleFilenames.Add(filename);
+                    }
+
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия Горюшкин.docx", false);
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void GorDisciplines(object sender, EventArgs e)
+        {
+            var dbNames = new List<string>
+            {
+                "S15161AA",
+                "S15162AA",
+                "S16171AA",
+                "S16172AA",
+            };
+
+            await Task.Run(() =>
+            {
+                WordExport.ExportAADisciplineList(dbNames, "Горюшкин (факультет искусств)",
+                    @"D:\GitHub\Export\Export AA Дисциплины Горюшкин.docx", true, true, false, false);
+            });
+        }
+
+        private async void поправитьАудиторииToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                CorrectAuditoriums("D:\\Github\\AudCorrection.txt", "D:\\Github\\CorrectionLog.txt");
+            });
+        }
+
+        private async void поправитьАудиторииФакультетаИскусствToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                CorrectAuditoriumsArt("D:\\Github\\AudCorrectionArt.txt", "D:\\Github\\CorrectionLogArt.txt");
+            });
+        }
+
+        private void CorrectAuditoriumsArt(string inputDataFilename, string logFilename)
+        {
+            int state = 0;
+            var sr = new StreamReader(inputDataFilename);
+            var dbNames = new List<string>();
+            var groupNamesList = new List<List<string>>();
+            var groupNamesIndex = -1;
+            var audsList = new List<Dictionary<string, List<string>>>();
+            var audsIndex = -1;
+            var excludeGroupNames = new List<string>();
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                if (line == "==========")
+                {
+                    state++;
+                    continue;
+                }
+
+                if (line == "==========Группы")
+                {
+                    groupNamesIndex++;
+                    groupNamesList.Add(new List<string>());
+                    state = 1;
+                    continue;
+                }
+
+                if (line == "==========Аудитории")
+                {
+                    audsIndex++;
+                    audsList.Add(new Dictionary<string, List<string>>());
+                    state = 2;
+                    continue;
+                }
+
+                switch (state)
+                {
+                    case 0:
+                        dbNames.Add(line);
+                        break;
+                    case 1:
+                        groupNamesList[groupNamesIndex].Add(line);
+                        break;
+                    case 2:
+                        var audits = sr.ReadLine()?.Split('@').ToList();
+                        if (!audsList[audsIndex].ContainsKey(line))
+                        {
+                            audsList[audsIndex].Add(line, new List<string>());
+                        }
+
+                        foreach (var auditorium in audits)
+                        {
+                            audsList[audsIndex][line].Add(auditorium);
+                        }
+                        break;
+                    case 3:
+                        excludeGroupNames.Add(line);
+                        break;
+                }
+            }
+            sr.Close();
+
+
+            for (int i = 0; i < dbNames.Count; i++)
+            {
+                var dbName = dbNames[i];
+
+                LogInFile(logFilename, "Database: " + dbName);
+
+                var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                       dbName +
+                                       "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+                Repo.SetConnectionString(connectionString);
+
+                var disciplinesList = new List<List<Discipline>>();
+
+                var groupIds = new List<List<int>>();
+                var newGroupIdsList = new List<List<int>>();
+                var excludeGroupTfds = new List<int>();
+
+                for (int f = 0; f < groupNamesList.Count; f++)
+                {
+                    var idsList = new List<int>();
+                    for (int j = 0; j < groupNamesList[f].Count; j++)
+                    {
+                        var gr = Repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupNamesList[f][j]);
+
+                        if (gr != null)
+                        {
+                            idsList.Add(gr.StudentGroupId);
+                        }
+                    }
+
+                    groupIds.Add(idsList);
+
+                    var studentIds =
+                        Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                                sig => groupIds[f].Contains(sig.StudentGroup.StudentGroupId))
+                            .Select(sig => sig.Student.StudentId)
+                            .ToList();
+                    var newGroupIds =
+                        Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                                sig => studentIds.Contains(sig.Student.StudentId))
+                            .Select(sig => sig.StudentGroup.StudentGroupId)
+                            .ToList();
+                    newGroupIdsList.Add(newGroupIds);
+                    var disciplines = Repo.Disciplines
+                        .GetFiltredDisciplines(d => newGroupIds.Contains(d.StudentGroup.StudentGroupId))
+                        .ToList();
+
+                    disciplinesList.Add(disciplines);
+                }
+
+                var excludeGroupIds = new List<int>();
+
+                for (int j = 0; j < excludeGroupNames.Count; j++)
+                {
+                    var gr =
+                        Repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == excludeGroupNames[j]);
+
+                    if (gr != null)
+                    {
+                        excludeGroupIds.Add(gr.StudentGroupId);
+                    }
+                }
+                var studentIds2 =
+                    Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                            sig => excludeGroupIds.Contains(sig.StudentGroup.StudentGroupId))
+                        .Select(sig => sig.Student.StudentId)
+                        .ToList();
+                var newGroupIds2 =
+                    Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                            sig => studentIds2.Contains(sig.Student.StudentId))
+                        .Select(sig => sig.StudentGroup.StudentGroupId)
+                        .ToList();
+                var disciplines2 = Repo.Disciplines
+                    .GetFiltredDisciplines(d => newGroupIds2.Contains(d.StudentGroup.StudentGroupId))
+                    .ToList();
+                for (int j = 0; j < disciplines2.Count; j++)
+                {
+                    var tefd = Repo.TeacherForDisciplines
+                        .GetFirstFiltredTeacherForDiscipline(tfd =>
+                            tfd.Discipline.DisciplineId == disciplines2[j].DisciplineId);
+                    if (tefd != null)
+                    {
+                        excludeGroupTfds.Add(tefd.TeacherForDisciplineId);
+                    }
+                }
+
+                var audIdsDictionary = Repo.Auditoriums.GetAll().ToDictionary(a => a.Name, a => a.AuditoriumId);
+                var audIdsDictionaryReverse = Repo.Auditoriums.GetAll()
+                    .ToDictionary(a => a.AuditoriumId, a => a.Name);
+
+                for (int grIndex = 1 - 1;
+                    grIndex < groupNamesList.Count;
+                    grIndex++) // TODO: Вернуть начальный индекс = 0
+                {
+                    LogInFile(logFilename,
+                        "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" + groupNamesList.Count + " ");
+                    var auds = audsList[grIndex];
+
+                    int discCounter = 0;
+                    foreach (KeyValuePair<string, List<string>> discAuds in auds)
+                    {
+                        var discName = discAuds.Key;
+
+                        LogInFile(logFilename, "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
+                                               groupNamesList.Count + " " +
+                                               " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count);
+
+                        var discs = disciplinesList[grIndex].Where(d => d.Name == discName).ToList();
+
+                        for (int k = 0; k < discs.Count; k++)
+                        {
+                            var d = discs[k];
+                            var newTfd = Repo.TeacherForDisciplines
+                                .GetFirstFiltredTeacherForDiscipline(
+                                    tfd => tfd.Discipline.DisciplineId == d.DisciplineId);
+                            if (newTfd != null)
+                            {
+                                var lessons = Repo.Lessons
+                                    .GetFiltredLessons(l =>
+                                        l.State == 1 &&
+                                        l.TeacherForDiscipline.TeacherForDisciplineId == newTfd.TeacherForDisciplineId);
+
+                                var disciplineAudNames = discAuds.Value;
+
+                                var disciplineCorrectAudIds = new List<int>();
+                                for (int l = 0; l < disciplineAudNames.Count; l++)
+                                {
+                                    var aName = disciplineAudNames[l];
+                                    if (audIdsDictionary.ContainsKey(aName))
+                                    {
+                                        disciplineCorrectAudIds.Add(audIdsDictionary[aName]);
+                                    }
+                                }
+
+                                for (int h = 0; h < lessons.Count; h++)
+                                {
+                                    var lesson = lessons[h];
+
+                                    LogInFile(logFilename, "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() +
+                                                           "/" + groupNamesList.Count + " " +
+                                                           " Disc " + (discCounter + 1).ToString() + " / " +
+                                                           auds.Keys.Count + " " + "Less " + (h + 1).ToString() +
+                                                           " / " + lessons.Count);
+
+                                    if (!disciplineCorrectAudIds.Contains(lesson.Auditorium.AuditoriumId)
+                                    ) // Lesson is in the wrong auditorium
+                                    {
+                                        MoveLessonToNewAuditorium(lesson, disciplineCorrectAudIds[0], logFilename);
+                                    }
+                                }
+                            }
+                        }
+
+                        discCounter++;
+                    }
+                }
+            }
         }
     }
 }

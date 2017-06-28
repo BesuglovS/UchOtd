@@ -4083,6 +4083,31 @@ namespace UchOtd.Core
 
                 var repo = new ScheduleRepository(connectionString);
 
+                var coSemesterStarts =
+                    repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts");
+
+                DateTime dtss = DateTime.Now;
+                if (coSemesterStarts != null)
+                {
+                    dtss = DateTime.ParseExact(coSemesterStarts.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                }
+                
+                var yearsString = "";
+                var semesterString = "";
+
+                if (dtss.Month > 6)
+                {
+                    var y = dtss.Year - 2000;
+                    yearsString = y.ToString() + " / " + (y+1).ToString();
+                    semesterString = "1";
+                }
+                else
+                {
+                    var y = dtss.Year - 1 - 2000;
+                    yearsString = y.ToString() + " / " + (y + 1).ToString();
+                    semesterString = "2";
+                }
+
                 var faculty = repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains(facultyString));
 
                 var groups = (faculty != null) ? repo
@@ -4187,7 +4212,7 @@ namespace UchOtd.Core
                         .ThenBy(tefd => tefd.Discipline.Name)
                         .ToList();
 
-                    var yearsString = dbNames[semIndex].Substring(1, 2) + " / " + dbNames[semIndex].Substring(3, 2);
+                    
 
                     for (int j = 0; j < tfds.Count; j++)
                     {
@@ -4224,7 +4249,7 @@ namespace UchOtd.Core
                         oTable.Cell(j + 2, 2).Range.Text = currentTfd.Discipline.Name;
                         oTable.Cell(j + 2, 2).Range.ParagraphFormat.Alignment =
                             WdParagraphAlignment.wdAlignParagraphLeft;
-                        oTable.Cell(j + 2, 3).Range.Text = dbNames[semIndex].Substring(5, 1);
+                        oTable.Cell(j + 2, 3).Range.Text = semesterString;
                         oTable.Cell(j + 2, 3).Range.ParagraphFormat.Alignment =
                             WdParagraphAlignment.wdAlignParagraphCenter;
                         oTable.Cell(j + 2, 4).Range.Text = currentTfd.Discipline.AuditoriumHours.ToString();
@@ -4282,7 +4307,7 @@ namespace UchOtd.Core
             Marshal.ReleaseComObject(oWord);
         }
 
-        public static void MergeDocuments(List<string> filenames, string resultFilename)
+        public static void MergeDocuments(List<string> filenames, string resultFilename, bool ScheduleSixPagesBreakCorrection)
         {
             // Set up the word object
             object fname = resultFilename;
@@ -4320,7 +4345,7 @@ namespace UchOtd.Core
 
                     var pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
 
-                    if ((i != filenames.Count - 1) && (pageCount % 6 == 0))
+                    if ((i != filenames.Count - 1) && (pageCount % 6 == 0 || !ScheduleSixPagesBreakCorrection))
                     {
                         selection.InsertBreak(WdBreakType.wdPageBreak);
                     }
