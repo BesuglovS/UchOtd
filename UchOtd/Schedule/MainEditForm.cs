@@ -1784,47 +1784,7 @@ namespace UchOtd.Schedule
 
         private async void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
-            await Task.Run(() =>
-            {
-                var sw = new StreamWriter("AuditoriumTeachers.txt");
-
-                var buildings = Repo.Buildings.GetAllBuildings();
-
-                for (int i = 0; i < buildings.Count; i++)
-                {
-                    var building = buildings[i];
-
-                    sw.WriteLine("Корпус - " + building.Name);
-
-                    var buildingAuditoriums =
-                        Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList();
-
-                    for (int j = 0; j < buildingAuditoriums.Count; j++)
-                    {
-                        var auditorium = buildingAuditoriums[j];
-
-                        sw.WriteLine(auditorium.Name);
-
-                        var auditoriumTeachers = Repo.Lessons
-                            .GetFiltredLessons(l =>
-                                l.State == 1 &&
-                                l.Auditorium.AuditoriumId == auditorium.AuditoriumId)
-                            .Select(l => l.TeacherForDiscipline.Teacher.FIO)
-                            .Distinct()
-                            .OrderBy(fio => fio)
-                            .ToList();
-
-                        for (int k = 0; k < auditoriumTeachers.Count; k++)
-                        {
-                            sw.WriteLine(auditoriumTeachers[k]);
-                        }
-                        
-                        sw.WriteLine();
-                    }
-                }
-
-                sw.Close();
-            });
+            
                 /*
                 await Task.Run(() =>
                 {
@@ -2948,5 +2908,17 @@ namespace UchOtd.Schedule
             var mergeStudentsForm = new MergeStudents(Repo);
             mergeStudentsForm.Show();
         }
+
+        private async void спискиГруппСтудентовНа20162017ГодToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                const string logFilename = "Cont16-17.txt";
+                TextFileUtilities.CreateOrEmptyFile(logFilename);
+
+                WordExport.GroupsListOneYear(Repo, logFilename, 2016, true, "StudentGroups.docx", true, true);
+            });
+        }
     }
 }
+

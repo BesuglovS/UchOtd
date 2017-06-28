@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using UchOtd.Core;
 using UchOtd.Properties;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
 using UchOtd.Schedule.Views.DBListViews;
@@ -138,7 +139,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                         if (groupNameF)
                         {
-                            var groupsListIds = StudentGroupIdsFromGroupId(groupId);
+                            var groupsListIds = Utilities.StudentGroupIdsFromGroupId(groupId, _repo);
 
                             discList = discList
                                 .Where(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId))
@@ -274,26 +275,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             DisciplinesList.ClearSelection();
         }
-
-        private List<int> StudentGroupIdsFromGroupId(int groupId)
-        {
-            var group = _repo.StudentGroups.GetStudentGroup(groupId);
-
-            var studentIds = _repo
-                .StudentsInGroups
-                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
-                .Select(stig => stig.Student.StudentId)
-                .ToList();
-
-            var groupsListIds = _repo
-                .StudentsInGroups
-                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.Semester.SemesterId == group.Semester.SemesterId && studentIds.Contains(sig.Student.StudentId))
-                .Select(stig => stig.StudentGroup.StudentGroupId)
-                .Distinct()
-                .ToList();
-            return groupsListIds;
-        }
-
+        
         private void FormatView()
         {
             DisciplinesList.Columns["DisciplineId"].Visible = false;

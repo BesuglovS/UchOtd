@@ -91,7 +91,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 option.Key = optionKey.Text;
                 option.Value = optionValue.Text;
-                option.Semester = _repo.Semesters.GetSemester((int)semesterList.SelectedItem);
+                option.Semester = (Semester)semesterList.SelectedItem;
 
                 _repo.ConfigOptions.UpdateConfigOption(option);
 

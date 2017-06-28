@@ -119,11 +119,12 @@ namespace UchOtd.Schedule
             this.спискиПреподавателейПоКорпусамToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.экспортАудиторийДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.импортИзБазРасписанийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.объединить2ЗаписиСтудентаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.объединить2ЗаписиСтудентаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.спискиГруппСтудентовНа20162017ГодToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -842,7 +843,8 @@ namespace UchOtd.Schedule
             // 
             this.экспортВWordToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.датыПоФизическойКультуреToolStripMenuItem,
-            this.последовательностьТиповЗанятийЛППоФакультетамToolStripMenuItem});
+            this.последовательностьТиповЗанятийЛППоФакультетамToolStripMenuItem,
+            this.спискиГруппСтудентовНа20162017ГодToolStripMenuItem});
             this.экспортВWordToolStripMenuItem.Name = "экспортВWordToolStripMenuItem";
             this.экспортВWordToolStripMenuItem.Size = new System.Drawing.Size(108, 20);
             this.экспортВWordToolStripMenuItem.Text = "Экспорт в Word ";
@@ -933,6 +935,13 @@ namespace UchOtd.Schedule
             this.импортИзБазРасписанийToolStripMenuItem.Text = "Импорт из баз расписаний";
             this.импортИзБазРасписанийToolStripMenuItem.Click += new System.EventHandler(this.импортИзБазРасписанийToolStripMenuItem_Click);
             // 
+            // объединить2ЗаписиСтудентаToolStripMenuItem
+            // 
+            this.объединить2ЗаписиСтудентаToolStripMenuItem.Name = "объединить2ЗаписиСтудентаToolStripMenuItem";
+            this.объединить2ЗаписиСтудентаToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.объединить2ЗаписиСтудентаToolStripMenuItem.Text = "Объединить 2 записи студента";
+            this.объединить2ЗаписиСтудентаToolStripMenuItem.Click += new System.EventHandler(this.объединить2ЗаписиСтудентаToolStripMenuItem_Click);
+            // 
             // viewPanel
             // 
             this.viewPanel.Controls.Add(this.statusStrip1);
@@ -973,12 +982,12 @@ namespace UchOtd.Schedule
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // объединить2ЗаписиСтудентаToolStripMenuItem
+            // спискиГруппСтудентовНа20162017ГодToolStripMenuItem
             // 
-            this.объединить2ЗаписиСтудентаToolStripMenuItem.Name = "объединить2ЗаписиСтудентаToolStripMenuItem";
-            this.объединить2ЗаписиСтудентаToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
-            this.объединить2ЗаписиСтудентаToolStripMenuItem.Text = "Объединить 2 записи студента";
-            this.объединить2ЗаписиСтудентаToolStripMenuItem.Click += new System.EventHandler(this.объединить2ЗаписиСтудентаToolStripMenuItem_Click);
+            this.спискиГруппСтудентовНа20162017ГодToolStripMenuItem.Name = "спискиГруппСтудентовНа20162017ГодToolStripMenuItem";
+            this.спискиГруппСтудентовНа20162017ГодToolStripMenuItem.Size = new System.Drawing.Size(394, 22);
+            this.спискиГруппСтудентовНа20162017ГодToolStripMenuItem.Text = "Списки групп студентов на 2016/2017 год";
+            this.спискиГруппСтудентовНа20162017ГодToolStripMenuItem.Click += new System.EventHandler(this.спискиГруппСтудентовНа20162017ГодToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -1101,6 +1110,7 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem семестрыToolStripMenuItem;
         private ToolStripMenuItem импортИзБазРасписанийToolStripMenuItem;
         private ToolStripMenuItem объединить2ЗаписиСтудентаToolStripMenuItem;
+        private ToolStripMenuItem спискиГруппСтудентовНа20162017ГодToolStripMenuItem;
     }
 }
 

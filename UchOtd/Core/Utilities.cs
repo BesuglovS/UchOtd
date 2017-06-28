@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Schedule.Repositories;
 
 namespace UchOtd.Core
 {
@@ -44,6 +45,114 @@ namespace UchOtd.Core
             }
 
             return connectionString.Substring(startIndex, endIndex - startIndex);
+        }
+
+        public static List<int> StudentGroupIdsFromGroupId(int groupId, ScheduleRepository repo)
+        {
+            var group = repo.StudentGroups.GetStudentGroup(groupId);
+
+            var studentIdAndPeriods = repo
+                .StudentsInGroups
+                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
+                .ToDictionary(stig => stig.Student.StudentId, stig => new Tuple<DateTime, DateTime>(stig.PeriodFrom, stig.PeriodTo));
+
+            var groupsListIds = repo
+                .StudentsInGroups
+                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.Semester.SemesterId == group.Semester.SemesterId &&
+                                                   studentIdAndPeriods.ContainsKey(sig.Student.StudentId) &&
+                                                   PeriodsIntersects(new Tuple<DateTime, DateTime>(sig.PeriodFrom, sig.PeriodTo), studentIdAndPeriods[sig.Student.StudentId]))
+                .Select(stig => stig.StudentGroup.StudentGroupId)
+                .Distinct()
+                .ToList();
+
+            return groupsListIds;
+        }
+
+        public static bool DateInRange(DateTime date, DateTime startOfThePeriod, DateTime endOfThePeriod)
+        {
+            var date1 = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0);
+            var atart1 = new DateTime(startOfThePeriod.Year, startOfThePeriod.Month, startOfThePeriod.Day, 0, 0, 0);
+            var end1 = new DateTime(endOfThePeriod.Year, endOfThePeriod.Month, endOfThePeriod.Day, 0, 0, 0);
+
+            return ((date1 >= atart1) && (date1 <= end1));
+        }
+
+        public static bool PeriodsIntersects(Tuple<DateTime, DateTime> period1, Tuple<DateTime, DateTime> period2)
+        {
+            return period1.Item1 <= period2.Item2 && period2.Item1 <= period1.Item2;
+        }
+
+        public static List<string> DatesToTimeSpans(List<DateTime> span)
+        {
+            var result = new List<string>();
+
+            DateTime baseDate = new DateTime(1900, 1, 1);
+            DateTime lastDate = baseDate;
+            int spanLength = 0;
+            for (int i = 0; i < span.Count; i++)
+            {
+                var dt = span[i];
+
+                if (DateTime.Compare(dt, lastDate.AddDays(1)) == 0) // Next date is next day
+                {
+                    spanLength++;
+                }
+                else
+                {
+                    if (spanLength != 0)
+                    {
+                        if (spanLength > 2)
+                        {
+                            result.Add(baseDate.ToString("dd.MM.yyyy") + " - " + span[i - 1].ToString("dd.MM.yyyy"));
+                        }
+                        else
+                        {
+                            if (spanLength == 1)
+                            {
+                                result.Add(baseDate.ToString("dd.MM.yyyy"));
+                            }
+                            else // spanLength == 2
+                            {
+                                result.Add(baseDate.ToString("dd.MM.yyyy"));
+                                result.Add(span[i - 1].ToString("dd.MM.yyyy"));
+                            }
+                        }
+                    }
+
+                    baseDate = dt;
+                    spanLength = 1;
+                }
+
+                lastDate = dt;
+            }
+
+            if (spanLength > 2)
+            {
+                result.Add(baseDate.ToString("dd.MM.yyyy") + " - " + span[span.Count - 1].ToString("dd.MM.yyyy"));
+            }
+            else
+            {
+                if (spanLength == 1)
+                {
+                    result.Add(baseDate.ToString("dd.MM.yyyy"));
+                }
+                else // spanLength == 2
+                {
+                    result.Add(baseDate.ToString("dd.MM.yyyy"));
+                    result.Add(span[span.Count - 1].ToString("dd.MM.yyyy"));
+                }
+            }
+
+            return result;
+        }
+
+        public static List<string> StudentsFioListFromIds(List<int> studentIds, ScheduleRepository repo)
+        {
+            return repo.Students
+                .GetFiltredStudents(st => studentIds.Contains(st.StudentId))
+                .Select(s => s.F + " " + s.I + " " + s.O)
+                .OrderBy(a => a)
+                .ToList();
         }
     }
 }

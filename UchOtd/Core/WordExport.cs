@@ -3590,5 +3590,259 @@ namespace UchOtd.Core
             oPara1.SpaceAfter = 0;
             oPara1.Range.InsertParagraphAfter();
         }
+
+        public static void GroupsListOneYear(ScheduleRepository Repo, string logFilename, int startingYear, bool appVisible, string filename, bool save, bool quit)
+        {
+            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+            //Start Word and create a new document.
+            _Application oWord = new Application();
+            if (appVisible)
+            {
+                oWord.Visible = true;
+            }
+            _Document oDoc = oWord.Documents.Add();
+
+            oDoc.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+            oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
+
+            Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+            Table oTable = oDoc.Tables.Add(wrdRng, 2, 5);
+            oTable.Borders.Enable = 1;
+            oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+            oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+            oTable.Range.Font.Size = 14;
+            oTable.Range.Font.Bold = 0;
+
+            oTable.Cell(1, 1).Range.Text = "Факультет / группа";
+            oTable.Cell(1, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Columns[1].Width = oWord.CentimetersToPoints(4.0f);
+
+            oTable.Cell(1, 2).Range.Text = "Конкретная группа";
+            oTable.Cell(1, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Columns[2].Width = oWord.CentimetersToPoints(3.0f);
+
+            oTable.Cell(1, 3).Range.Text = "Период";
+            oTable.Cell(1, 3).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Columns[3].Width = oWord.CentimetersToPoints(3.25f);
+
+            oTable.Cell(1, 4).Range.Text = "Список студентов";
+            oTable.Cell(1, 4).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Columns[4].Width = oWord.CentimetersToPoints(9.75f);
+
+            oTable.Cell(1, 5).Range.Text = "Изменения списка";
+            oTable.Cell(1, 5).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Columns[5].Width = oWord.CentimetersToPoints(7.75f);
+
+            int rowIndex = 2;
+
+            var studentGroupsById = Repo.StudentGroups.GetAllStudentGroups()
+                .ToDictionary(sg => sg.StudentGroupId, sg => sg);
+
+            var semester1 =
+                Repo.Semesters.GetFirstFiltredSemester(s => s.StartingYear == startingYear && s.SemesterInYear == 1);
+            var semester2 =
+                Repo.Semesters.GetFirstFiltredSemester(s => s.StartingYear == startingYear && s.SemesterInYear == 2);
+            var semIdsList = new List<int> { semester1.SemesterId, semester2.SemesterId };
+
+            var faculties = Repo.Faculties.GetAllFaculties();
+
+            for (int i = 0; i < faculties.Count; i++)
+            {
+                var faculty = faculties[i];
+
+                // TextFileUtilities.WriteString(logFilename, "Факультет: " + faculty.Name);
+
+                var facultyGroups = Repo.GroupsInFaculties.GetFiltredGroupsInFaculty(gif =>
+                        gif.Faculty.FacultyId == faculty.FacultyId &&
+                        semIdsList.Contains(gif.StudentGroup.Semester.SemesterId))
+                    .Select(gif => gif.StudentGroup)
+                    .OrderBy(sg => sg.Semester.StartingYear)
+                    .ThenBy(sg => sg.Semester.SemesterInYear)
+                    .ThenBy(sg => sg.Name)
+                    .ToList();
+
+                for (int j = 0; j < facultyGroups.Count; j++)
+                {
+                    var group = facultyGroups[j];
+                    var semesterInYear = group.Semester.SemesterInYear;
+
+                    // TextFileUtilities.WriteString(logFilename, "Группа" + "\t" + group.Name + "\t" + "Семестр" + "\t" + group.Semester.DisplayName);
+
+                    var groupIds = Utilities.StudentGroupIdsFromGroupId(group.StudentGroupId, Repo);
+
+                    for (int k = 0; k < groupIds.Count; k++)
+                    {
+                        var innerGroup = studentGroupsById[groupIds[k]];
+
+                        DateTime startingDate = new DateTime(), finishDate = new DateTime(), finishDatePlusOne = new DateTime();
+                        if (semesterInYear == 1)
+                        {
+                            startingDate = new DateTime(2016, 9, 1, 0, 0, 0);
+                            finishDate = new DateTime(2017, 1, 31, 0, 0, 0);
+                        }
+
+                        if (semesterInYear == 2)
+                        {
+                            startingDate = new DateTime(2017, 2, 1, 0, 0, 0);
+                            finishDate = new DateTime(2017, 8, 31, 0, 0, 0);
+                        }
+
+                        finishDatePlusOne = finishDate.AddDays(1);
+
+                        var currentDate = startingDate;
+
+                        var calendarIdByDate = Repo.Calendars.GetAllCalendars()
+                            .ToDictionary(c => c.Date.Date, c => c.CalendarId);
+
+                        var studentsInInnerGroup =
+                            Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                                sig => sig.StudentGroup.StudentGroupId == innerGroup.StudentGroupId);
+
+                        var result = new Dictionary<List<int>, List<DateTime>>(); // List<StudentId> - List<Calendar DateTime>
+
+                        do
+                        {
+                            var studentIds = new List<int>();
+                            for (int l = 0; l < studentsInInnerGroup.Count; l++)
+                            {
+                                var currentSig = studentsInInnerGroup[l];
+                                if (Utilities.DateInRange(currentDate, currentSig.PeriodFrom, currentSig.PeriodTo))
+                                {
+                                    studentIds.Add(currentSig.Student.StudentId);
+                                }
+                            }
+                            studentIds = studentIds.OrderBy(a => a).ToList();
+
+                            var dictKeys = result.Keys.ToList();
+                            bool found = false;
+                            for (int l = 0; l < dictKeys.Count; l++)
+                            {
+                                var dictKey = dictKeys[l];
+
+                                if (studentIds.SequenceEqual(dictKey))
+                                {
+                                    result[dictKey].Add(currentDate);
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if (!found)
+                            {
+                                result.Add(studentIds, new List<DateTime> { currentDate });
+                            }
+
+                            currentDate = currentDate.AddDays(1);
+                        } while (!((currentDate.Year == finishDatePlusOne.Year) && (currentDate.Month == finishDatePlusOne.Month) && (currentDate.Day == finishDatePlusOne.Day)));
+
+                        var periods = result.ToDictionary(dd => dd.Value, dd => dd.Key);
+                        var periodKeys = periods.Keys.ToList().OrderBy(p => p.Min()).ToList();
+
+                        TextFileUtilities.WriteString(logFilename, faculty.Name + "\t" + group.Name + "\t" + group.Semester.DisplayName + "\t" + innerGroup.Name);
+
+                        List<string> oldStudentsList = new List<string>();
+
+                        for (int l = 0; l < periodKeys.Count; l++)
+                        {
+                            var span = periodKeys[l];
+
+                            var dates = Utilities.DatesToTimeSpans(span);
+                            var studentsList = Utilities.StudentsFioListFromIds(periods[span], Repo);
+
+                            var studentsString = "";
+                            for (int n = 0; n < studentsList.Count; n++)
+                            {
+                                studentsString += (n + 1).ToString() + ") " + studentsList[n];
+                                if (n != studentsList.Count - 1)
+                                {
+                                    studentsString += Environment.NewLine;
+                                }
+                            }
+
+                            var datesString = "";
+                            for (int m = 0; m < dates.Count; m++)
+                            {
+                                datesString += dates[m];
+
+                                if (m != dates.Count - 1)
+                                {
+                                    datesString += Environment.NewLine;
+                                }
+                            }
+
+                            var changesString = "";
+                            if (l != 0)
+                            {
+                                var addition = studentsList.Except(oldStudentsList).OrderBy(a => a).ToList();
+                                var subtraction = oldStudentsList.Except(studentsList).OrderBy(a => a).ToList();
+
+                                for (int m = 0; m < addition.Count; m++)
+                                {
+                                    changesString += "+ " + addition[m];
+
+                                    if (m != addition.Count - 1)
+                                    {
+                                        changesString += Environment.NewLine;
+                                    }
+                                }
+
+                                if (subtraction.Count > 0)
+                                {
+                                    changesString += Environment.NewLine;
+                                }
+
+                                for (int m = 0; m < subtraction.Count; m++)
+                                {
+                                    changesString += "- " + subtraction[m];
+
+                                    if (m != subtraction.Count - 1)
+                                    {
+                                        changesString += Environment.NewLine;
+                                    }
+                                }
+                            }
+
+
+                            oldStudentsList = studentsList;
+
+                            oTable.Cell(rowIndex, 1).Range.Text = faculty.Name + Environment.NewLine + group.Name + Environment.NewLine + group.Semester.DisplayName;
+                            oTable.Cell(rowIndex, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
+                            oTable.Cell(rowIndex, 2).Range.Text = innerGroup.Name;
+                            oTable.Cell(rowIndex, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+
+                            oTable.Cell(rowIndex, 3).Range.Text = datesString;
+                            oTable.Cell(rowIndex, 3).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+
+                            oTable.Cell(rowIndex, 4).Range.Text = studentsString;
+                            oTable.Cell(rowIndex, 4).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
+                            oTable.Cell(rowIndex, 5).Range.Text = changesString;
+                            oTable.Cell(rowIndex, 5).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
+                            oTable.Rows.Add();
+                            rowIndex++;
+                        }
+                    }
+                }
+            }
+
+            if (save)
+            {
+                object fileName = filename;
+                oDoc.SaveAs(ref fileName);
+            }
+
+            if (quit)
+            {
+                oWord.Quit();
+            }
+
+            Marshal.ReleaseComObject(oWord);
+        }
     }
 }

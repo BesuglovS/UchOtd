@@ -143,6 +143,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var sigView = StudentsInGroupsView.SigToView(groupSigs)
                     .OrderBy(sig => sig.PeriodFrom)
                     .ThenBy(sig => sig.StudentFioZachNum)
+                    .ThenBy(sig => sig.StudentGroupName)
                     .ToList();
 
                 StudentsInGroupListView.DataSource = sigView;
@@ -185,7 +186,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             StudentsInGroupListView.Columns["StudentFioZachNum"].Width = 200;
             StudentsInGroupListView.Columns["StudentFioZachNum"].HeaderText = "Ф.И.О. + № зачётки";
 
-            StudentsInGroupListView.Columns["StudentGroupName"].Width = 80;
+            StudentsInGroupListView.Columns["StudentGroupName"].Width = 120;
             StudentsInGroupListView.Columns["StudentGroupName"].HeaderText = "Группа";
 
             StudentsInGroupListView.Columns["PeriodFrom"].Width = 100;
@@ -299,7 +300,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void removeStudentFrunGroup_Click(object sender, EventArgs e)
         {
-            if (StudentsInGroupListView.SelectedCells.Count > 0)
+            if (StudentsInGroupListView.SelectedCells.Count == 1)
             {
                 var sigView = ((List<StudentsInGroupsView>)StudentsInGroupListView.DataSource)[StudentsInGroupListView.SelectedCells[0].RowIndex];
                 var sigId = sigView.StudentsInGroupsId;
@@ -307,7 +308,31 @@ namespace UchOtd.Schedule.Forms.DBLists
                 _repo.StudentsInGroups.RemoveStudentsInGroups(sigId);
 
                 RefreshView(RefreshType.StudentsOnly);
-            }           
+            }
+
+            if (StudentsInGroupListView.SelectedCells.Count > 1)
+            {
+                var rowIndexes = new List<int>();
+
+                for (int i = 0; i < StudentsInGroupListView.SelectedCells.Count; i++)
+                {
+                    var cell = StudentsInGroupListView.SelectedCells[i];
+                    if (!rowIndexes.Contains(cell.RowIndex))
+                    {
+                        rowIndexes.Add(cell.RowIndex);
+                    }
+                }
+
+                foreach (var rowIndex in rowIndexes)
+                {
+                    var sigView = ((List<StudentsInGroupsView>)StudentsInGroupListView.DataSource)[rowIndex];
+                    var sigId = sigView.StudentsInGroupsId;
+
+                    _repo.StudentsInGroups.RemoveStudentsInGroups(sigId);
+                }
+
+                RefreshView(RefreshType.StudentsOnly);
+            }
         }
 
         private void addFromGroup_Click(object sender, EventArgs e)
@@ -410,9 +435,9 @@ namespace UchOtd.Schedule.Forms.DBLists
                     sig.PeriodTo = PeriodEnd.Value.Date;
 
                     _repo.StudentsInGroups.UpdateStudentsInGroups(sig);
-
-                    RefreshView(RefreshType.StudentsOnly);
                 }
+
+                RefreshView(RefreshType.StudentsOnly);
             }
         }
 
@@ -462,6 +487,8 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             var sigView = StudentsInGroupsView.SigToView(studentSigs)
                 .OrderBy(sig => sig.PeriodFrom)
+                .ThenBy(sig => sig.StudentFioZachNum)
+                .ThenBy(sig => sig.StudentGroupName)
                 .ToList();
 
             StudentsInGroupListView.DataSource = sigView;
