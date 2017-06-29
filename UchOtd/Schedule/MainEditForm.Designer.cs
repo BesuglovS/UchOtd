@@ -160,12 +160,15 @@ namespace UchOtd.Schedule
             this.backup10AAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.restore10AAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportMathDiscs100AAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.поправитьАудиторииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.поправитьАудиторииФакультетаИскусствToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.поправитьАудиторииСессииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.поправитьАудиторииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.поправитьАудиторииФакультетаИскусствToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.графикПроцессаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -1228,7 +1231,10 @@ namespace UchOtd.Schedule
             this.restore10AAToolStripMenuItem,
             this.exportMathDiscs100AAToolStripMenuItem,
             this.поправитьАудиторииToolStripMenuItem,
-            this.поправитьАудиторииФакультетаИскусствToolStripMenuItem});
+            this.поправитьАудиторииФакультетаИскусствToolStripMenuItem,
+            this.поправитьАудиторииСессииToolStripMenuItem,
+            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem,
+            this.графикПроцессаToolStripMenuItem});
             this.bigRedButtonToolStripMenuItem.Name = "bigRedButtonToolStripMenuItem";
             this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
             this.bigRedButtonToolStripMenuItem.Text = "BIG RED BUTTON";
@@ -1310,6 +1316,27 @@ namespace UchOtd.Schedule
             this.exportMathDiscs100AAToolStripMenuItem.Text = "Export Math Discs 10AA";
             this.exportMathDiscs100AAToolStripMenuItem.Click += new System.EventHandler(this.exportMathDiscs10AAToolStripMenuItem_Click);
             // 
+            // поправитьАудиторииToolStripMenuItem
+            // 
+            this.поправитьАудиторииToolStripMenuItem.Name = "поправитьАудиторииToolStripMenuItem";
+            this.поправитьАудиторииToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.поправитьАудиторииToolStripMenuItem.Text = "Поправить аудитории";
+            this.поправитьАудиторииToolStripMenuItem.Click += new System.EventHandler(this.поправитьАудиторииToolStripMenuItem_Click);
+            // 
+            // поправитьАудиторииФакультетаИскусствToolStripMenuItem
+            // 
+            this.поправитьАудиторииФакультетаИскусствToolStripMenuItem.Name = "поправитьАудиторииФакультетаИскусствToolStripMenuItem";
+            this.поправитьАудиторииФакультетаИскусствToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.поправитьАудиторииФакультетаИскусствToolStripMenuItem.Text = "Поправить аудитории факультета искусств";
+            this.поправитьАудиторииФакультетаИскусствToolStripMenuItem.Click += new System.EventHandler(this.поправитьАудиторииФакультетаИскусствToolStripMenuItem_Click);
+            // 
+            // поправитьАудиторииСессииToolStripMenuItem
+            // 
+            this.поправитьАудиторииСессииToolStripMenuItem.Name = "поправитьАудиторииСессииToolStripMenuItem";
+            this.поправитьАудиторииСессииToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.поправитьАудиторииСессииToolStripMenuItem.Text = "Поправить аудитории сессии";
+            this.поправитьАудиторииСессииToolStripMenuItem.Click += new System.EventHandler(this.поправитьАудиторииСессииToolStripMenuItem_Click);
+            // 
             // viewPanel
             // 
             this.viewPanel.Controls.Add(this.statusStrip1);
@@ -1350,19 +1377,19 @@ namespace UchOtd.Schedule
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             // 
-            // поправитьАудиторииToolStripMenuItem
+            // убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem
             // 
-            this.поправитьАудиторииToolStripMenuItem.Name = "поправитьАудиторииToolStripMenuItem";
-            this.поправитьАудиторииToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
-            this.поправитьАудиторииToolStripMenuItem.Text = "Поправить аудитории";
-            this.поправитьАудиторииToolStripMenuItem.Click += new System.EventHandler(this.поправитьАудиторииToolStripMenuItem_Click);
+            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem.Name = "убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem";
+            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem.Text = "Убрать группы иностранных языков из названий дисциплин";
+            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem.Click += new System.EventHandler(this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem_Click);
             // 
-            // поправитьАудиторииФакультетаИскусствToolStripMenuItem
+            // графикПроцессаToolStripMenuItem
             // 
-            this.поправитьАудиторииФакультетаИскусствToolStripMenuItem.Name = "поправитьАудиторииФакультетаИскусствToolStripMenuItem";
-            this.поправитьАудиторииФакультетаИскусствToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
-            this.поправитьАудиторииФакультетаИскусствToolStripMenuItem.Text = "Поправить аудитории факультета искусств";
-            this.поправитьАудиторииФакультетаИскусствToolStripMenuItem.Click += new System.EventHandler(this.поправитьАудиторииФакультетаИскусствToolStripMenuItem_Click);
+            this.графикПроцессаToolStripMenuItem.Name = "графикПроцессаToolStripMenuItem";
+            this.графикПроцессаToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.графикПроцессаToolStripMenuItem.Text = "График процесса";
+            this.графикПроцессаToolStripMenuItem.Click += new System.EventHandler(this.графикПроцессаToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -1528,6 +1555,9 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem дисциплиныРасписанияToolStripMenuItem4;
         private ToolStripMenuItem поправитьАудиторииToolStripMenuItem;
         private ToolStripMenuItem поправитьАудиторииФакультетаИскусствToolStripMenuItem;
+        private ToolStripMenuItem поправитьАудиторииСессииToolStripMenuItem;
+        private ToolStripMenuItem убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem;
+        private ToolStripMenuItem графикПроцессаToolStripMenuItem;
     }
 }
 

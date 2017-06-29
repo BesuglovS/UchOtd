@@ -499,5 +499,99 @@ namespace Schedule.Repositories.Repositories.Session
             public DateTime Time { get; set; }
             public string Auditorium { get; set; }
         }
+
+        public void MoveConsultation(Exam exam, int auditoriumId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var oldExam = context.Exams.FirstOrDefault(e => e.ExamId == exam.ExamId);
+                if (oldExam != null)
+                {
+                    oldExam.IsActive = false;
+
+                    exam.ExamId = 0;
+                    exam.ConsultationAuditoriumId = auditoriumId;
+
+                    context.Exams.Add(exam);
+                    context.SaveChanges();
+
+                    var logEntry = new LogEvent { OldExam = oldExam, NewExam = exam, DateTime = DateTime.Now };
+
+                    context.EventLog.Add(logEntry);
+                }
+                context.SaveChanges();
+            }
+        }
+
+        public void MoveConsultationWithNewTime(Exam exam, int auditoriumId, TimeSpan newTime)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var oldExam = context.Exams.FirstOrDefault(e => e.ExamId == exam.ExamId);
+                if (oldExam != null)
+                {
+                    oldExam.IsActive = false;
+
+                    exam.ExamId = 0;
+                    exam.ConsultationAuditoriumId = auditoriumId;
+                    exam.ConsultationDateTime = exam.ConsultationDateTime.Date + newTime;
+
+                    context.Exams.Add(exam);
+                    context.SaveChanges();
+
+                    var logEntry = new LogEvent { OldExam = oldExam, NewExam = exam, DateTime = DateTime.Now };
+
+                    context.EventLog.Add(logEntry);
+                }
+                context.SaveChanges();
+            }
+        }
+
+        public void MoveExam(Exam exam, int auditoriumId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var oldExam = context.Exams.FirstOrDefault(e => e.ExamId == exam.ExamId);
+                if (oldExam != null)
+                {
+                    oldExam.IsActive = false;
+
+                    exam.ExamId = 0;
+                    exam.ExamAuditoriumId = auditoriumId;
+
+                    context.Exams.Add(exam);
+                    context.SaveChanges();
+
+                    var logEntry = new LogEvent { OldExam = oldExam, NewExam = exam, DateTime = DateTime.Now };
+
+                    context.EventLog.Add(logEntry);
+                }
+                context.SaveChanges();
+            }
+        }
+
+        public void MoveExamWithNewTime(Exam exam, int auditoriumId, TimeSpan newTime)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var oldExam = context.Exams.FirstOrDefault(e => e.ExamId == exam.ExamId);
+                if (oldExam != null)
+                {
+                    oldExam.IsActive = false;
+
+                    exam.ExamId = 0;
+                    exam.ExamAuditoriumId = auditoriumId;
+                    exam.ExamDateTime = exam.ExamDateTime + newTime;
+
+                    context.Exams.Add(exam);
+                    context.SaveChanges();
+
+                    var logEntry = new LogEvent { OldExam = oldExam, NewExam = exam, DateTime = DateTime.Now };
+
+                    context.EventLog.Add(logEntry);
+                }
+                context.SaveChanges();
+            }
+        }
     }
 }

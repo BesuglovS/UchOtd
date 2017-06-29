@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -27,6 +28,7 @@ using StudentList = UchOtd.Schedule.Forms.DBLists.StudentList;
 using Utilities = UchOtd.Core.Utilities;
 using Newtonsoft.Json;
 using Schedule.DomainClasses.Logs;
+using Schedule.DomainClasses.Session;
 
 namespace UchOtd.Schedule
 {
@@ -1837,10 +1839,7 @@ namespace UchOtd.Schedule
 
         private async void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
-            await Task.Run(() =>
-            {
-                CorrectAuditoriums("D:\\Github\\AudCorrection.txt", "D:\\Github\\CorrectionLog.txt");
-            });
+            MessageBox.Show("Пусто тут, барин!)");
         }
 
 
@@ -1997,7 +1996,7 @@ namespace UchOtd.Schedule
                 var audIdsDictionaryReverse = Repo.Auditoriums.GetAll()
                     .ToDictionary(a => a.AuditoriumId, a => a.Name);
 
-                for (int grIndex = 1 - 1;
+                for (int grIndex = 4 - 1;
                     grIndex < groupNamesList.Count;
                     grIndex++) // TODO: Вернуть начальный индекс = 0
                 {
@@ -2009,12 +2008,15 @@ namespace UchOtd.Schedule
                     foreach (KeyValuePair<string, List<string>> discAuds in auds)
                     {
                         var discName = discAuds.Key;
-                        
+
                         LogInFile(logFilename, "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
                                                groupNamesList.Count + " " +
                                                " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count);
 
-                        var discs = disciplinesList[grIndex].Where(d => d.Name == discName).ToList();
+                        var discNameVariations =
+                            new List<string> {discName, discName.Replace("е", "ё"), discName.Replace("ё", "е")};
+
+                        var discs = disciplinesList[grIndex].Where(d => discNameVariations.Contains(d.Name)).ToList();
 
                         for (int k = 0; k < discs.Count; k++)
                         {
@@ -3465,7 +3467,7 @@ namespace UchOtd.Schedule
                 var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA"};
 
                 await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Философский факультет (магистратура)",
-                    @"D:\GitHub\Export\Export АА Журналы БМ.docx", true, true),
+                        @"D:\GitHub\Export\Export АА Журналы БМ.docx", true, true),
                     _cToken);
             }
             catch (OperationCanceledException)
@@ -3663,7 +3665,7 @@ namespace UchOtd.Schedule
             {
             }
         }
-        
+
         private async void exportMathDiscs10AAToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var logFilename = "D:\\Github\\MathDiscs10AA.txt";
@@ -3721,7 +3723,7 @@ namespace UchOtd.Schedule
                             var groupsListIds = repo.StudentsInGroups
                                 .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
                                 .Select(stig => stig.StudentGroup.StudentGroupId);
-                            
+
                             var discs = repo.Disciplines
                                 .GetFiltredDisciplines(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId))
                                 .ToList();
@@ -3761,7 +3763,7 @@ namespace UchOtd.Schedule
             catch (OperationCanceledException)
             {
             }
-            
+
         }
 
         private async void MathSchedule(object sender, EventArgs e) // Математики
@@ -3800,12 +3802,13 @@ namespace UchOtd.Schedule
 
                         var choice = new Dictionary<int, List<int>>
                         {
-                            { facultyMath.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                            {facultyMath.FacultyId, new List<int> {1, 2, 3, 4, 5, 6}}
                         };
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА А " + dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, false, _cToken);
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
+                            0, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -3844,23 +3847,27 @@ namespace UchOtd.Schedule
                         var repo = new ScheduleRepository(connectionString);
 
                         var facultyPhil =
-                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
-                        
+                            repo.Faculties.GetFirstFiltredFaculty(
+                                f => f.Name.Contains("Философский факультет (магистратура)"));
+
                         _cToken = this._tokenSource.Token;
 
                         var choice = new Dictionary<int, List<int>>
                         {
-                            { facultyPhil.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                            {facultyPhil.FacultyId, new List<int> {1, 2, 3, 4, 5, 6}}
                         };
 
-                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА БМ " + dbNames[semIndex] + ".docx";
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА БМ " + dbNames[semIndex] +
+                                       ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, false, _cToken);
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
+                            0, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
-                    
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание БМ.docx", true);
+
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание БМ.docx",
+                        true);
 
                 }, _cToken);
             }
@@ -3894,23 +3901,27 @@ namespace UchOtd.Schedule
                         var repo = new ScheduleRepository(connectionString);
 
                         var facultyEconM =
-                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
+                            repo.Faculties.GetFirstFiltredFaculty(
+                                f => f.Name.Contains("Экономический факультет (магистратура)"));
 
                         _cToken = this._tokenSource.Token;
 
                         var choice = new Dictionary<int, List<int>>
                         {
-                            { facultyEconM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                            {facultyEconM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6}}
                         };
 
-                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА ГМ " + dbNames[semIndex] + ".docx";
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА ГМ " + dbNames[semIndex] +
+                                       ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, false, _cToken);
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
+                            0, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
 
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание ГМ.docx", true);
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание ГМ.docx",
+                        true);
 
                 }, _cToken);
             }
@@ -3944,23 +3955,27 @@ namespace UchOtd.Schedule
                         var repo = new ScheduleRepository(connectionString);
 
                         var facultyLawM =
-                           repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
+                            repo.Faculties.GetFirstFiltredFaculty(
+                                f => f.Name.Contains("Юридический факультет (магистратура)"));
 
                         _cToken = this._tokenSource.Token;
 
                         var choice = new Dictionary<int, List<int>>
                         {
-                            { facultyLawM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                            {facultyLawM.FacultyId, new List<int> {1, 2, 3, 4, 5, 6}}
                         };
 
-                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА ДМ " + dbNames[semIndex] + ".docx";
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА ДМ " + dbNames[semIndex] +
+                                       ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, false, _cToken);
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
+                            0, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
 
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание ДМ.docx", true);
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание ДМ.docx",
+                        true);
 
                 }, _cToken);
             }
@@ -4003,9 +4018,11 @@ namespace UchOtd.Schedule
 
                         _cToken = this._tokenSource.Token;
 
-                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия А " + dbNames[semIndex] + ".docx";
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия А " + dbNames[semIndex] +
+                                       ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyMath.FacultyId}, filename, true, true, false);
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyMath.FacultyId}, filename,
+                            true, true, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4044,13 +4061,16 @@ namespace UchOtd.Schedule
                         var repo = new ScheduleRepository(connectionString);
 
                         var facultyPhil =
-                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
-                        
+                            repo.Faculties.GetFirstFiltredFaculty(
+                                f => f.Name.Contains("Философский факультет (магистратура)"));
+
                         _cToken = this._tokenSource.Token;
 
-                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия БМ " + dbNames[semIndex] + ".docx";
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия БМ " + dbNames[semIndex] +
+                                       ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyPhil.FacultyId }, filename, true, true, false);
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyPhil.FacultyId}, filename,
+                            true, true, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4089,13 +4109,16 @@ namespace UchOtd.Schedule
                         var repo = new ScheduleRepository(connectionString);
 
                         var facultyEconM =
-                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
+                            repo.Faculties.GetFirstFiltredFaculty(
+                                f => f.Name.Contains("Экономический факультет (магистратура)"));
 
                         _cToken = this._tokenSource.Token;
 
-                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия ГМ " + dbNames[semIndex] + ".docx";
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия ГМ " + dbNames[semIndex] +
+                                       ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyEconM.FacultyId }, filename, true, true, false);
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyEconM.FacultyId}, filename,
+                            true, true, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4134,13 +4157,16 @@ namespace UchOtd.Schedule
                         var repo = new ScheduleRepository(connectionString);
 
                         var facultyLawM =
-                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
+                            repo.Faculties.GetFirstFiltredFaculty(
+                                f => f.Name.Contains("Юридический факультет (магистратура)"));
 
                         _cToken = this._tokenSource.Token;
 
-                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия ДМ " + dbNames[semIndex] + ".docx";
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия ДМ " + dbNames[semIndex] +
+                                       ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyLawM.FacultyId }, filename, true, true, false);
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyLawM.FacultyId}, filename,
+                            true, true, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4226,7 +4252,7 @@ namespace UchOtd.Schedule
 
             await Task.Run(() =>
             {
-                WordExport.ExportAADisciplineList(dbNames, "Юридический факультет (магистратура)", 
+                WordExport.ExportAADisciplineList(dbNames, "Юридический факультет (магистратура)",
                     @"D:\GitHub\Export\Export AA Дисциплины ДМ.docx", true, true, false, false);
             });
         }
@@ -4326,12 +4352,13 @@ namespace UchOtd.Schedule
 
                         var choice = new Dictionary<int, List<int>>
                         {
-                            { facultyArt.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                            {facultyArt.FacultyId, new List<int> {1, 2, 3, 4, 5, 6}}
                         };
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА И " + dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, false, _cToken);
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
+                            0, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4377,9 +4404,11 @@ namespace UchOtd.Schedule
 
                         _cToken = this._tokenSource.Token;
 
-                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия И " + dbNames[semIndex] + ".docx";
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия И " + dbNames[semIndex] +
+                                       ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyArt.FacultyId }, filename, true, true, false);
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyArt.FacultyId}, filename,
+                            true, true, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4474,23 +4503,27 @@ namespace UchOtd.Schedule
                         var repo = new ScheduleRepository(connectionString);
 
                         var facultyArt =
-                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Горюшкин (факультет искусств)"));
+                            repo.Faculties.GetFirstFiltredFaculty(
+                                f => f.Name.Contains("Горюшкин (факультет искусств)"));
 
                         _cToken = this._tokenSource.Token;
 
                         var choice = new Dictionary<int, List<int>>
                         {
-                            { facultyArt.FacultyId, new List<int> {1, 2, 3, 4, 5, 6} }
+                            {facultyArt.FacultyId, new List<int> {1, 2, 3, 4, 5, 6}}
                         };
 
-                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Горюшкин " + dbNames[semIndex] + ".docx";
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Горюшкин " + dbNames[semIndex] +
+                                       ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false, 0, false, _cToken);
+                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
+                            0, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
 
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание Горюшкин.docx", true);
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание Горюшкин.docx",
+                        true);
 
                 }, _cToken);
             }
@@ -4523,18 +4556,22 @@ namespace UchOtd.Schedule
                         var repo = new ScheduleRepository(connectionString);
 
                         var facultyArt =
-                            repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Горюшкин (факультет искусств)"));
+                            repo.Faculties.GetFirstFiltredFaculty(
+                                f => f.Name.Contains("Горюшкин (факультет искусств)"));
 
                         _cToken = this._tokenSource.Token;
 
-                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия Горюшкин " + dbNames[semIndex] + ".docx";
+                        var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия Горюшкин " +
+                                       dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyArt.FacultyId }, filename, true, true, false);
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyArt.FacultyId}, filename,
+                            true, true, false);
 
                         scheduleFilenames.Add(filename);
                     }
 
-                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия Горюшкин.docx", false);
+                    WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия Горюшкин.docx",
+                        false);
 
                 }, _cToken);
             }
@@ -4797,8 +4834,653 @@ namespace UchOtd.Schedule
                 }
             }
         }
+
+        private async void поправитьАудиторииСессииToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                CorrectExamAuditoriums("D:\\Github\\AudCorrection.txt", "D:\\Github\\CorrectionLogExams.txt");
+            });
+        }
+
+        private void CorrectExamAuditoriums(string inputDataFilename, string logFilename)
+        {
+            int state = 0;
+            var sr = new StreamReader(inputDataFilename);
+            var dbNames = new List<string>();
+            var groupNamesList = new List<List<string>>();
+            var groupNamesIndex = -1;
+            var audsList = new List<Dictionary<string, List<string>>>();
+            var audsIndex = -1;
+            var excludeGroupNames = new List<string>();
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                if (line == "==========")
+                {
+                    state++;
+                    continue;
+                }
+
+                if (line == "==========Группы")
+                {
+                    groupNamesIndex++;
+                    groupNamesList.Add(new List<string>());
+                    state = 1;
+                    continue;
+                }
+
+                if (line == "==========Аудитории")
+                {
+                    audsIndex++;
+                    audsList.Add(new Dictionary<string, List<string>>());
+                    state = 2;
+                    continue;
+                }
+
+                switch (state)
+                {
+                    case 0:
+                        dbNames.Add(line);
+                        break;
+                    case 1:
+                        groupNamesList[groupNamesIndex].Add(line);
+                        break;
+                    case 2:
+                        var audits = sr.ReadLine()?.Split('@').ToList();
+                        if (!audsList[audsIndex].ContainsKey(line))
+                        {
+                            audsList[audsIndex].Add(line, new List<string>());
+                        }
+
+                        foreach (var auditorium in audits)
+                        {
+                            audsList[audsIndex][line].Add(auditorium);
+                        }
+                        break;
+                    case 3:
+                        excludeGroupNames.Add(line);
+                        break;
+                }
+            }
+            sr.Close();
+
+
+            for (int i = 0; i < dbNames.Count; i++)
+            {
+                var dbName = dbNames[i];
+
+                LogInFile(logFilename, "Database: " + dbName);
+
+                var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                       dbName +
+                                       "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+                Repo.SetConnectionString(connectionString);
+
+                var disciplinesList = new List<List<Discipline>>();
+
+                var groupIds = new List<List<int>>();
+                var newGroupIdsList = new List<List<int>>();
+                var excludeGroupTfds = new List<int>();
+
+                for (int f = 0; f < groupNamesList.Count; f++)
+                {
+                    var idsList = new List<int>();
+                    for (int j = 0; j < groupNamesList[f].Count; j++)
+                    {
+                        var gr = Repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupNamesList[f][j]);
+
+                        if (gr != null)
+                        {
+                            idsList.Add(gr.StudentGroupId);
+                        }
+                    }
+
+                    groupIds.Add(idsList);
+
+                    var studentIds =
+                        Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                                sig => groupIds[f].Contains(sig.StudentGroup.StudentGroupId))
+                            .Select(sig => sig.Student.StudentId)
+                            .ToList();
+                    var newGroupIds =
+                        Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                                sig => studentIds.Contains(sig.Student.StudentId))
+                            .Select(sig => sig.StudentGroup.StudentGroupId)
+                            .ToList();
+                    newGroupIdsList.Add(newGroupIds);
+                    var disciplines = Repo.Disciplines
+                        .GetFiltredDisciplines(d => newGroupIds.Contains(d.StudentGroup.StudentGroupId))
+                        .ToList();
+
+                    disciplinesList.Add(disciplines);
+                }
+
+                var excludeGroupIds = new List<int>();
+
+                for (int j = 0; j < excludeGroupNames.Count; j++)
+                {
+                    var gr =
+                        Repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == excludeGroupNames[j]);
+
+                    if (gr != null)
+                    {
+                        excludeGroupIds.Add(gr.StudentGroupId);
+                    }
+                }
+                var studentIds2 =
+                    Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                            sig => excludeGroupIds.Contains(sig.StudentGroup.StudentGroupId))
+                        .Select(sig => sig.Student.StudentId)
+                        .ToList();
+                var newGroupIds2 =
+                    Repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                            sig => studentIds2.Contains(sig.Student.StudentId))
+                        .Select(sig => sig.StudentGroup.StudentGroupId)
+                        .ToList();
+                var disciplines2 = Repo.Disciplines
+                    .GetFiltredDisciplines(d => newGroupIds2.Contains(d.StudentGroup.StudentGroupId))
+                    .ToList();
+                for (int j = 0; j < disciplines2.Count; j++)
+                {
+                    var tefd = Repo.TeacherForDisciplines
+                        .GetFirstFiltredTeacherForDiscipline(tfd =>
+                            tfd.Discipline.DisciplineId == disciplines2[j].DisciplineId);
+                    if (tefd != null)
+                    {
+                        excludeGroupTfds.Add(tefd.TeacherForDisciplineId);
+                    }
+                }
+
+                var audIdsDictionary = Repo.Auditoriums.GetAll().ToDictionary(a => a.Name, a => a.AuditoriumId);
+                var audIdsDictionaryReverse = Repo.Auditoriums.GetAll()
+                    .ToDictionary(a => a.AuditoriumId, a => a.Name);
+
+                var SessionEvents = new Dictionary<DateTime, Dictionary<int, List<TimeSpan>>>();
+                var exams = Repo.Exams.GetFiltredExams(ex => ex.IsActive);
+                for (int j = 0; j < exams.Count; j++)
+                {
+                    var exam = exams[j];
+
+                    // Consultation
+                    if (!SessionEvents.ContainsKey(exam.ConsultationDateTime.Date))
+                    {
+                        SessionEvents.Add(exam.ConsultationDateTime.Date, new Dictionary<int, List<TimeSpan>>());
+                    }
+
+                    if (!SessionEvents[exam.ConsultationDateTime.Date].ContainsKey(exam.ConsultationAuditoriumId))
+                    {
+                        SessionEvents[exam.ConsultationDateTime.Date]
+                            .Add(exam.ConsultationAuditoriumId, new List<TimeSpan>());
+                    }
+
+                    SessionEvents[exam.ConsultationDateTime.Date][exam.ConsultationAuditoriumId]
+                        .Add(exam.ConsultationDateTime.TimeOfDay);
+
+                    // Exam
+                    if (!SessionEvents.ContainsKey(exam.ExamDateTime.Date))
+                    {
+                        SessionEvents.Add(exam.ExamDateTime.Date, new Dictionary<int, List<TimeSpan>>());
+                    }
+
+                    if (!SessionEvents[exam.ExamDateTime.Date].ContainsKey(exam.ExamAuditoriumId))
+                    {
+                        SessionEvents[exam.ExamDateTime.Date].Add(exam.ExamAuditoriumId, new List<TimeSpan>());
+                    }
+
+                    SessionEvents[exam.ExamDateTime.Date][exam.ExamAuditoriumId].Add(exam.ExamDateTime.TimeOfDay);
+                }
+
+                for (int grIndex = 0;
+                    grIndex < groupNamesList.Count;
+                    grIndex++)
+                {
+                    LogInFile(logFilename,
+                        "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" + groupNamesList.Count + " ");
+                    var auds = audsList[grIndex];
+
+                    var examsCounter = 0;
+
+                    int discCounter = 0;
+                    foreach (KeyValuePair<string, List<string>> discAuds in auds)
+                    {
+                        var discName = discAuds.Key;
+
+                        LogInFile(logFilename, "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
+                                               groupNamesList.Count + " " +
+                                               " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count + " " +
+                                               discName);
+
+                        var discNameVariations =
+                            new List<string> {discName, discName.Replace("е", "ё"), discName.Replace("ё", "е")};
+
+                        var discs = disciplinesList[grIndex].Where(d => discNameVariations.Contains(d.Name)).ToList();
+
+                        for (int k = 0; k < discs.Count; k++)
+                        {
+                            var d = discs[k];
+                            var newTfd = Repo.TeacherForDisciplines
+                                .GetFirstFiltredTeacherForDiscipline(
+                                    tfd => tfd.Discipline.DisciplineId == d.DisciplineId);
+
+                            var disciplineAudNames = discAuds.Value;
+                            var disciplineCorrectAudIds = new List<int>();
+                            for (int l = 0; l < disciplineAudNames.Count; l++)
+                            {
+                                var aName = disciplineAudNames[l];
+                                if (audIdsDictionary.ContainsKey(aName))
+                                {
+                                    disciplineCorrectAudIds.Add(audIdsDictionary[aName]);
+                                }
+                            }
+
+                            if (newTfd != null)
+                            {
+                                var exam = Repo.Exams.GetFirstFiltredExam(
+                                    ex => ex.DisciplineId == d.DisciplineId && ex.IsActive);
+
+                                if (exam != null)
+                                {
+                                    examsCounter++;
+
+                                    // Consultation Aud
+                                    if (!disciplineCorrectAudIds.Contains(exam.ConsultationAuditoriumId))
+                                    {
+                                        LogInFile(logFilename,
+                                            "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
+                                            groupNamesList.Count + " " +
+                                            " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count +
+                                            " неверная аудитория консультации = " +
+                                            audIdsDictionaryReverse[exam.ConsultationAuditoriumId]);
+
+                                        var foundEmpty = false;
+                                        var emptyAudId = -1;
+                                        for (int j = 0; j < disciplineCorrectAudIds.Count; j++)
+                                        {
+                                            if (!SessionEvents[exam.ConsultationDateTime.Date]
+                                                .ContainsKey(disciplineCorrectAudIds[j]))
+                                            {
+                                                emptyAudId = disciplineCorrectAudIds[j];
+                                                foundEmpty = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (foundEmpty)
+                                        {
+                                            LogInFile(logFilename,
+                                                "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
+                                                groupNamesList.Count + " " +
+                                                " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count +
+                                                " консультация перенесена в пустую аудиторию = " +
+                                                audIdsDictionaryReverse[emptyAudId]);
+                                            // Repo.Exams.MoveConsultation(exam, emptyAudId);
+                                        }
+                                        else
+                                        {
+                                            var transferDone = false;
+                                            for (int j = 0; j < disciplineCorrectAudIds.Count; j++)
+                                            {
+                                                var dateAudEvents =
+                                                    SessionEvents[exam.ConsultationDateTime.Date][
+                                                        disciplineCorrectAudIds[j]];
+
+                                                for (int l = 8; l <= 18; l++)
+                                                {
+                                                    var timeIsOk = true;
+                                                    for (int m = 0; m < dateAudEvents.Count; m++)
+                                                    {
+                                                        if ((dateAudEvents[m] - new TimeSpan(l, 0, 0)).TotalMinutes <
+                                                            120)
+                                                        {
+                                                            timeIsOk = false;
+                                                        }
+                                                    }
+
+                                                    if (timeIsOk)
+                                                    {
+                                                        LogInFile(logFilename,
+                                                            "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() +
+                                                            "/" +
+                                                            groupNamesList.Count + " " +
+                                                            " Disc " + (discCounter + 1).ToString() + " / " +
+                                                            auds.Keys.Count +
+                                                            " консультация перенесёна в аудиторию = " +
+                                                            audIdsDictionaryReverse[disciplineCorrectAudIds[j]] +
+                                                            " и по времени = " + l + ":00");
+                                                        //Repo.Exams.MoveConsultationWithNewTime(exam, disciplineCorrectAudIds[j], new TimeSpan(l, 0, 0));
+                                                        transferDone = true;
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (transferDone)
+                                                {
+                                                    break;
+                                                }
+                                            }
+
+                                            if (!transferDone)
+                                            {
+                                                LogInFile(logFilename,
+                                                    "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
+                                                    groupNamesList.Count + " " +
+                                                    " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count +
+                                                    " перенос не удался");
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        LogInFile(logFilename,
+                                            "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
+                                            groupNamesList.Count + " " +
+                                            " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count +
+                                            " + Консультация ОК " +
+                                            audIdsDictionaryReverse[exam.ConsultationAuditoriumId]);
+                                    }
+
+                                    // Exam Aud
+                                    if (!disciplineCorrectAudIds.Contains(exam.ExamAuditoriumId))
+                                    {
+                                        LogInFile(logFilename,
+                                            "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
+                                            groupNamesList.Count + " " +
+                                            " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count +
+                                            " неверная аудитория экзамена = " +
+                                            audIdsDictionaryReverse[exam.ExamAuditoriumId]);
+
+                                        var foundEmpty = false;
+                                        var emptyAudId = -1;
+                                        for (int j = 0; j < disciplineCorrectAudIds.Count; j++)
+                                        {
+                                            if (!SessionEvents[exam.ExamDateTime.Date]
+                                                .ContainsKey(disciplineCorrectAudIds[j]))
+                                            {
+                                                emptyAudId = disciplineCorrectAudIds[j];
+                                                foundEmpty = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (foundEmpty)
+                                        {
+                                            LogInFile(logFilename,
+                                                "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
+                                                groupNamesList.Count + " " +
+                                                " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count +
+                                                " экзамен перенесён в пустую аудиторию = " +
+                                                audIdsDictionaryReverse[emptyAudId]);
+                                            // Repo.Exams.MoveExam(exam, emptyAudId);
+                                        }
+                                        else
+                                        {
+                                            var transferDone = false;
+                                            for (int j = 0; j < disciplineCorrectAudIds.Count; j++)
+                                            {
+                                                var dateAudEvents =
+                                                    SessionEvents[exam.ExamDateTime.Date][
+                                                        disciplineCorrectAudIds[j]];
+
+                                                for (int l = 8; l <= 18; l++)
+                                                {
+                                                    var timeIsOk = true;
+                                                    for (int m = 0; m < dateAudEvents.Count; m++)
+                                                    {
+                                                        if ((dateAudEvents[m] - new TimeSpan(l, 0, 0)).TotalMinutes <
+                                                            120)
+                                                        {
+                                                            timeIsOk = false;
+                                                        }
+                                                    }
+
+                                                    if (timeIsOk)
+                                                    {
+                                                        LogInFile(logFilename,
+                                                            "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() +
+                                                            "/" +
+                                                            groupNamesList.Count + " " +
+                                                            " Disc " + (discCounter + 1).ToString() + " / " +
+                                                            auds.Keys.Count +
+                                                            " экзамен перенесён в аудиторию = " +
+                                                            audIdsDictionaryReverse[disciplineCorrectAudIds[j]] +
+                                                            " и по времени = " + l + ":00");
+                                                        // Repo.Exams.MoveExamWithNewTime(exam, disciplineCorrectAudIds[j], new TimeSpan(l, 0, 0));
+                                                        transferDone = true;
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (transferDone)
+                                                {
+                                                    break;
+                                                }
+                                            }
+
+                                            if (!transferDone)
+                                            {
+                                                LogInFile(logFilename,
+                                                    "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
+                                                    groupNamesList.Count + " " +
+                                                    " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count +
+                                                    " перенос не удался");
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        LogInFile(logFilename,
+                                            "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
+                                            groupNamesList.Count + " " +
+                                            " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count +
+                                            " + Экзамен ОК " + audIdsDictionaryReverse[exam.ExamAuditoriumId]);
+                                    }
+                                }
+                            }
+                        }
+
+                        discCounter++;
+                    }
+
+                    LogInFile(logFilename,
+                        "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" + groupNamesList.Count +
+                        " Exams = " + examsCounter);
+                }
+            }
+        }
+
+        private async void убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem_Click(object sender,
+            EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                var dbNames = new List<string>
+                {
+                    "S12131AA",
+                    "S12132AA",
+                    "S13141AA",
+                    "S13142AA",
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA"
+                };
+
+                CorrectInoDiscNames(dbNames);
+            });
+        }
+
+        private void CorrectInoDiscNames(List<string> dbNames)
+        {
+            for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+            {
+                var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                       dbNames[semIndex] +
+                                       "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                LogInFile(@"d:\Github\InoChanges.txt", dbNames[semIndex]);
+
+                var repo = new ScheduleRepository(connectionString);
+
+                var discs = repo.Disciplines.GetAllDisciplines();
+
+                for (int i = 0; i < discs.Count; i++)
+                {
+                    var disc = discs[i];
+
+                    if (disc.Name.Contains("-А-") || disc.Name.Contains("-Н-") || disc.Name.Contains("-Ф-") || disc.Name.Contains("-A-") || disc.Name.Contains("-H-"))
+                    {
+                        LogInFile(@"d:\Github\InoChanges.txt", dbNames[semIndex] + "\t" + " old: " + disc.Name + " new: " + disc.Name.Substring(0, disc.Name.LastIndexOf('(') - 1));
+                        disc.Name = disc.Name.Substring(0, disc.Name.LastIndexOf('(') - 1);
+                        repo.Disciplines.UpdateDiscipline(disc);
+                    }
+
+                }
+            }
+
+            LogInFile(@"d:\Github\InoChanges.txt", "Done");
+        }
+
+        private async void графикПроцессаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                var dbNames = new List<string>
+                {
+                    "S12131AA",
+                    "S12132AA",
+                    "S13141AA",
+                    "S13142AA",
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA"
+                };
+
+                CountRanges(dbNames);
+            });
+        }
+
+        private void CountRanges(List<string> dbNames)
+        {
+            for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+            {
+                var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                       dbNames[semIndex] +
+                                       "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex]);
+
+                var repo = new ScheduleRepository(connectionString);
+
+                var facMath = repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет математики"));
+                var facPhil = repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Философский факультет (магистратура)"));
+                var facEconM = repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Экономический факультет (магистратура)"));
+                var facLawM = repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Юридический факультет (магистратура)"));
+                var facArt = repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains("Факультет искусств"));
+
+                var fIds = new List<int>();
+                if (facMath != null) fIds.Add(facMath.FacultyId);
+                if (facPhil != null) fIds.Add(facPhil.FacultyId);
+                if (facEconM != null) fIds.Add(facEconM.FacultyId);
+                if (facLawM != null) fIds.Add(facLawM.FacultyId);
+                if (facArt != null) fIds.Add(facArt.FacultyId);
+
+                DateTime semesterMin = new DateTime(2100, 1, 1), 
+                    semesterMax = new DateTime(1900, 1, 1), 
+                    sessionMin = new DateTime(2100, 1, 1), 
+                    sessionMax = new DateTime(1900, 1, 1);
+
+                for (int i = 0; i < fIds.Count; i++)
+                {
+                    var facultyId = fIds[i];
+                    var groupIds = repo.GroupsInFaculties
+                        .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == facultyId)
+                        .Select(gif => gif.StudentGroup.StudentGroupId)
+                        .ToList();
+
+                    var studentIds =
+                        repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                                sig => groupIds.Contains(sig.StudentGroup.StudentGroupId) && !sig.Student.Expelled)
+                            .Select(sig => sig.Student.StudentId)
+                            .ToList();
+                    var newGroupIds =
+                        repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                                sig => studentIds.Contains(sig.Student.StudentId))
+                            .Select(sig => sig.StudentGroup.StudentGroupId)
+                            .ToList();
+                    
+                    var disciplineIds = repo.Disciplines
+                        .GetFiltredDisciplines(d => newGroupIds.Contains(d.StudentGroup.StudentGroupId))
+                        .Select(d => d.DisciplineId)
+                        .ToList();
+
+                    var lessonDates = repo.Lessons
+                        .GetFiltredLessons(l => l.State == 1 && disciplineIds.Contains(l.TeacherForDiscipline.Discipline.DisciplineId))
+                        .Select(l => l.Calendar.Date.Date)
+                        .Distinct()
+                        .OrderBy(a => a)
+                        .ToList();
+
+                    var exams = repo.Exams.GetFiltredExams(ex => ex.IsActive && disciplineIds.Contains(ex.DisciplineId));
+
+                    var eventDates = exams.Select(ex => ex.ConsultationDateTime.Date).ToList();
+                    var examDates = exams.Select(ex => ex.ExamDateTime.Date).ToList();
+                    eventDates.AddRange(examDates);
+
+                    if (lessonDates.Count > 0)
+                    {
+                        var min = lessonDates.Min();
+                        if (min < semesterMin)
+                        {
+                            semesterMin = min;
+                        }
+                        var max = lessonDates.Max();
+                        if (max > semesterMax)
+                        {
+                            semesterMax = max;
+                        }
+                    }
+
+                    if (eventDates.Count > 0)
+                    {
+                        var sesMin = eventDates.Min();
+                        var sesMax = eventDates.Max();
+                        if (sesMin < sessionMin)
+                        {
+                            sessionMin = sesMin;
+                        }
+                        if (sesMax > sessionMax)
+                        {
+                            sessionMax = sesMax;
+                        }
+                    }
+                    
+                }
+
+                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t Начало семестра \t" + semesterMin.ToString("dd.MM.yyyy"));
+                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t Конец семестра \t" + semesterMax.ToString("dd.MM.yyyy"));
+                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t Начало сессии \t" + sessionMin.ToString("dd.MM.yyyy"));
+                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t Конец сессии \t" + sessionMax.ToString("dd.MM.yyyy"));
+
+            }
+
+            LogInFile(@"d:\Github\SemRanges.txt", "Done");
+        }
     }
 }
+
+
+
+
+
+
+
+
 
 
 
