@@ -1996,7 +1996,7 @@ namespace UchOtd.Schedule
                 var audIdsDictionaryReverse = Repo.Auditoriums.GetAll()
                     .ToDictionary(a => a.AuditoriumId, a => a.Name);
 
-                for (int grIndex = 4 - 1;
+                for (int grIndex = 1 - 1;
                     grIndex < groupNamesList.Count;
                     grIndex++) // TODO: Вернуть начальный индекс = 0
                 {
@@ -5114,7 +5114,7 @@ namespace UchOtd.Schedule
                                                 " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count +
                                                 " консультация перенесена в пустую аудиторию = " +
                                                 audIdsDictionaryReverse[emptyAudId]);
-                                            // Repo.Exams.MoveConsultation(exam, emptyAudId);
+                                            Repo.Exams.MoveConsultation(exam, emptyAudId);
                                         }
                                         else
                                         {
@@ -5130,8 +5130,7 @@ namespace UchOtd.Schedule
                                                     var timeIsOk = true;
                                                     for (int m = 0; m < dateAudEvents.Count; m++)
                                                     {
-                                                        if ((dateAudEvents[m] - new TimeSpan(l, 0, 0)).TotalMinutes <
-                                                            120)
+                                                        if (Math.Abs((dateAudEvents[m] - new TimeSpan(l, 0, 0)).TotalMinutes) < 120)
                                                         {
                                                             timeIsOk = false;
                                                         }
@@ -5148,7 +5147,7 @@ namespace UchOtd.Schedule
                                                             " консультация перенесёна в аудиторию = " +
                                                             audIdsDictionaryReverse[disciplineCorrectAudIds[j]] +
                                                             " и по времени = " + l + ":00");
-                                                        //Repo.Exams.MoveConsultationWithNewTime(exam, disciplineCorrectAudIds[j], new TimeSpan(l, 0, 0));
+                                                        Repo.Exams.MoveConsultationWithNewTime(exam, disciplineCorrectAudIds[j], new TimeSpan(l, 0, 0));
                                                         transferDone = true;
                                                         break;
                                                     }
@@ -5211,7 +5210,7 @@ namespace UchOtd.Schedule
                                                 " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count +
                                                 " экзамен перенесён в пустую аудиторию = " +
                                                 audIdsDictionaryReverse[emptyAudId]);
-                                            // Repo.Exams.MoveExam(exam, emptyAudId);
+                                            Repo.Exams.MoveExam(exam, emptyAudId);
                                         }
                                         else
                                         {
@@ -5227,8 +5226,7 @@ namespace UchOtd.Schedule
                                                     var timeIsOk = true;
                                                     for (int m = 0; m < dateAudEvents.Count; m++)
                                                     {
-                                                        if ((dateAudEvents[m] - new TimeSpan(l, 0, 0)).TotalMinutes <
-                                                            120)
+                                                        if (Math.Abs((dateAudEvents[m] - new TimeSpan(l, 0, 0)).TotalMinutes) < 120)
                                                         {
                                                             timeIsOk = false;
                                                         }
@@ -5245,7 +5243,7 @@ namespace UchOtd.Schedule
                                                             " экзамен перенесён в аудиторию = " +
                                                             audIdsDictionaryReverse[disciplineCorrectAudIds[j]] +
                                                             " и по времени = " + l + ":00");
-                                                        // Repo.Exams.MoveExamWithNewTime(exam, disciplineCorrectAudIds[j], new TimeSpan(l, 0, 0));
+                                                        Repo.Exams.MoveExamWithNewTime(exam, disciplineCorrectAudIds[j], new TimeSpan(l, 0, 0));
                                                         transferDone = true;
                                                         break;
                                                     }
@@ -5397,75 +5395,136 @@ namespace UchOtd.Schedule
 
                 for (int i = 0; i < fIds.Count; i++)
                 {
+                    var facultyName = repo.Faculties.GetFirstFiltredFaculty(f => f.FacultyId == fIds[i]).Name;
+
+                    DateTime facultySemesterMin = new DateTime(2100, 1, 1),
+                        facultySemesterMax = new DateTime(1900, 1, 1),
+                        facultySessionMin = new DateTime(2100, 1, 1),
+                        facultySessionMax = new DateTime(1900, 1, 1);
+
                     var facultyId = fIds[i];
-                    var groupIds = repo.GroupsInFaculties
+                    var groups = repo.GroupsInFaculties
                         .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == facultyId)
-                        .Select(gif => gif.StudentGroup.StudentGroupId)
+                        .Select(gif => gif.StudentGroup)
                         .ToList();
 
-                    var studentIds =
-                        repo.StudentsInGroups.GetFiltredStudentsInGroups(
-                                sig => groupIds.Contains(sig.StudentGroup.StudentGroupId) && !sig.Student.Expelled)
-                            .Select(sig => sig.Student.StudentId)
-                            .ToList();
-                    var newGroupIds =
-                        repo.StudentsInGroups.GetFiltredStudentsInGroups(
-                                sig => studentIds.Contains(sig.Student.StudentId))
-                            .Select(sig => sig.StudentGroup.StudentGroupId)
-                            .ToList();
-                    
-                    var disciplineIds = repo.Disciplines
-                        .GetFiltredDisciplines(d => newGroupIds.Contains(d.StudentGroup.StudentGroupId))
-                        .Select(d => d.DisciplineId)
-                        .ToList();
-
-                    var lessonDates = repo.Lessons
-                        .GetFiltredLessons(l => l.State == 1 && disciplineIds.Contains(l.TeacherForDiscipline.Discipline.DisciplineId))
-                        .Select(l => l.Calendar.Date.Date)
-                        .Distinct()
-                        .OrderBy(a => a)
-                        .ToList();
-
-                    var exams = repo.Exams.GetFiltredExams(ex => ex.IsActive && disciplineIds.Contains(ex.DisciplineId));
-
-                    var eventDates = exams.Select(ex => ex.ConsultationDateTime.Date).ToList();
-                    var examDates = exams.Select(ex => ex.ExamDateTime.Date).ToList();
-                    eventDates.AddRange(examDates);
-
-                    if (lessonDates.Count > 0)
+                    for (int j = 0; j < groups.Count; j++)
                     {
-                        var min = lessonDates.Min();
-                        if (min < semesterMin)
+                        var group = groups[j];
+
+                        DateTime groupSemesterMin = new DateTime(2100, 1, 1),
+                            groupSemesterMax = new DateTime(1900, 1, 1),
+                            groupSessionMin = new DateTime(2100, 1, 1),
+                            groupSessionMax = new DateTime(1900, 1, 1);
+
+                        var studentIds =
+                            repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                                    sig => group.StudentGroupId == sig.StudentGroup.StudentGroupId && !sig.Student.Expelled)
+                                .Select(sig => sig.Student.StudentId)
+                                .ToList();
+                        var newGroupIds =
+                            repo.StudentsInGroups.GetFiltredStudentsInGroups(
+                                    sig => studentIds.Contains(sig.Student.StudentId))
+                                .Select(sig => sig.StudentGroup.StudentGroupId)
+                                .ToList();
+
+                        var disciplineIds = repo.Disciplines
+                            .GetFiltredDisciplines(d => newGroupIds.Contains(d.StudentGroup.StudentGroupId))
+                            .Select(d => d.DisciplineId)
+                            .ToList();
+
+                        var lessonDates = repo.Lessons
+                            .GetFiltredLessons(l => l.State == 1 && disciplineIds.Contains(l.TeacherForDiscipline.Discipline.DisciplineId))
+                            .Select(l => l.Calendar.Date.Date)
+                            .Distinct()
+                            .OrderBy(a => a)
+                            .ToList();
+
+                        var exams = repo.Exams.GetFiltredExams(ex => ex.IsActive && disciplineIds.Contains(ex.DisciplineId));
+
+                        var eventDates = exams.Select(ex => ex.ConsultationDateTime.Date).ToList();
+                        var examDates = exams.Select(ex => ex.ExamDateTime.Date).ToList();
+                        eventDates.AddRange(examDates);
+
+                        if (lessonDates.Count > 0)
                         {
-                            semesterMin = min;
+                            var min = lessonDates.Min();
+                            if (min < groupSemesterMin)
+                            {
+                                groupSemesterMin = min;
+                            }
+                            if (min < facultySemesterMin)
+                            {
+                                facultySemesterMin = min;
+                            }
+                            if (min < semesterMin)
+                            {
+                                semesterMin = min;
+                            }
+                            var max = lessonDates.Max();
+                            if (max > groupSemesterMax)
+                            {
+                                groupSemesterMax = max;
+                            }
+                            if (max > facultySemesterMax)
+                            {
+                                facultySemesterMax = max;
+                            }
+                            if (max > semesterMax)
+                            {
+                                semesterMax = max;
+                            }
                         }
-                        var max = lessonDates.Max();
-                        if (max > semesterMax)
+
+                        if (eventDates.Count > 0)
                         {
-                            semesterMax = max;
+                            var sesMin = eventDates.Min();
+                            var sesMax = eventDates.Max();
+                            if (sesMin < groupSessionMin)
+                            {
+                                groupSessionMin = sesMin;
+                            }
+                            if (sesMin < facultySessionMin)
+                            {
+                                facultySessionMin = sesMin;
+                            }
+                            if (sesMin < sessionMin)
+                            {
+                                sessionMin = sesMin;
+                            }
+                            if (sesMax > groupSessionMax)
+                            {
+                                groupSessionMax = sesMax;
+                            }
+                            if (sesMax > facultySessionMax)
+                            {
+                                facultySessionMax = sesMax;
+                            }
+                            if (sesMax > sessionMax)
+                            {
+                                sessionMax = sesMax;
+                            }
                         }
+
+                        LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t" + facultyName + " \t " + group.Name + " Начало семестра \t" + groupSemesterMin.ToString("dd.MM.yyyy"));
+                        LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t" + facultyName + " \t " + group.Name + " Конец семестра \t" + groupSemesterMax.ToString("dd.MM.yyyy"));
+                        LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t" + facultyName + " \t " + group.Name + " Начало сессии \t" + groupSessionMin.ToString("dd.MM.yyyy"));
+                        LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t" + facultyName + " \t " + group.Name + " Конец сессии \t" + groupSessionMax.ToString("dd.MM.yyyy"));
+
+
                     }
 
-                    if (eventDates.Count > 0)
-                    {
-                        var sesMin = eventDates.Min();
-                        var sesMax = eventDates.Max();
-                        if (sesMin < sessionMin)
-                        {
-                            sessionMin = sesMin;
-                        }
-                        if (sesMax > sessionMax)
-                        {
-                            sessionMax = sesMax;
-                        }
-                    }
-                    
+                    LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t" + facultyName + " \t Начало семестра \t" + facultySemesterMin.ToString("dd.MM.yyyy"));
+                    LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t" + facultyName + " \t Конец семестра \t" + facultySemesterMax.ToString("dd.MM.yyyy"));
+                    LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t" + facultyName + " \t Начало сессии \t" + facultySessionMin.ToString("dd.MM.yyyy"));
+                    LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t" + facultyName + " \t Конец сессии \t" + facultySessionMax.ToString("dd.MM.yyyy"));
+
                 }
 
-                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t Начало семестра \t" + semesterMin.ToString("dd.MM.yyyy"));
-                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t Конец семестра \t" + semesterMax.ToString("dd.MM.yyyy"));
-                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t Начало сессии \t" + sessionMin.ToString("dd.MM.yyyy"));
-                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t Конец сессии \t" + sessionMax.ToString("dd.MM.yyyy"));
+                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t\t Начало семестра \t" + semesterMin.ToString("dd.MM.yyyy"));
+                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t\t Конец семестра \t" + semesterMax.ToString("dd.MM.yyyy"));
+                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t\t Начало сессии \t" + sessionMin.ToString("dd.MM.yyyy"));
+                LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t\t Конец сессии \t" + sessionMax.ToString("dd.MM.yyyy"));
 
             }
 
