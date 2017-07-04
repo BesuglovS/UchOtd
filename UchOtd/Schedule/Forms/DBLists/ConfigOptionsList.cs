@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Schedule.DomainClasses.Config;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using UchOtd.Schedule.Views;
 
 namespace UchOtd.Schedule.Forms.DBLists
 {
@@ -46,20 +47,29 @@ namespace UchOtd.Schedule.Forms.DBLists
                     .ToList();
             }
 
-            OptionsListView.DataSource = optList;
+            optList = optList
+                .OrderBy(co => co.Semester.StartingYear)
+                .ThenBy(co => co.Semester.SemesterInYear)
+                .ThenBy(co => co.Key)
+                .ToList();
+
+            var optView = ConfigOptionView.ListToView(optList);
+
+            OptionsListView.DataSource = optView;
 
             OptionsListView.Columns["ConfigOptionId"].Visible = false;
-            OptionsListView.Columns["Key"].Width = 100;
-            OptionsListView.Columns["Value"].Width = 170;
+            OptionsListView.Columns["Key"].Width = 80;
+            OptionsListView.Columns["Value"].Width = 80;
+            OptionsListView.Columns["SemesterDisplayName"].Width = 80;
         }
 
         private void OptionsListView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            var option = ((List<ConfigOption>)OptionsListView.DataSource)[e.RowIndex];
+            var option = _repo.ConfigOptions.GetConfigOption(((List<ConfigOptionView>)OptionsListView.DataSource)[e.RowIndex].ConfigOptionId);
 
             optionKey.Text = option.Key;
             optionValue.Text = option.Value;
-
+            semesterList.SelectedValue = option.Semester.SemesterId;
         }
 
         private void add_Click(object sender, EventArgs e)

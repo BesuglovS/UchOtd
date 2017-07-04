@@ -21,6 +21,7 @@ namespace UchOtd.Schedule.Views
             DisciplineId = discipline.DisciplineId;
 
             DisciplineSummary = "";
+            DisciplineSummary += discipline.Semester.DisplayName + separator;
             DisciplineSummary += discipline.StudentGroup.Name + separator;
             DisciplineSummary += discipline.Name + separator;
             DisciplineSummary += (Constants.Attestation.ContainsKey(discipline.Attestation) ? Constants.Attestation[discipline.Attestation] : "") + separator;
@@ -33,6 +34,7 @@ namespace UchOtd.Schedule.Views
                 .Select(disc => new DisciplineTextView(disc))
                 .OrderBy(d => d.DisciplineSummary.Split('@')[0])
                 .ThenBy(d => d.DisciplineSummary.Split('@')[1])
+                .ThenBy(d => d.DisciplineSummary.Split('@')[2])
                 .ToList();
         }
     }

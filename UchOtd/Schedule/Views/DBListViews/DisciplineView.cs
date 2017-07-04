@@ -10,6 +10,7 @@ namespace UchOtd.Schedule.Views.DBListViews
     {
         public int DisciplineId { get; set; }
         public string Name { get; set; }
+        public string SemesterDisplayName { get; set; }
         public string StudentGroupName { get; set; }
         public string TeacherFio { get; set; }
         public int ScheduleHours { get; set; }
@@ -32,6 +33,7 @@ namespace UchOtd.Schedule.Views.DBListViews
         {
             DisciplineId = discipline.DisciplineId;
             Name = discipline.Name;
+            SemesterDisplayName = discipline.Semester.DisplayName;
             Attestation = Constants.Attestation.ContainsKey(discipline.Attestation) ? Constants.Attestation[discipline.Attestation] : "";
             AuditoriumHours = discipline.AuditoriumHours;
             AuditoriumHoursPerWeek = discipline.AuditoriumHoursPerWeek;

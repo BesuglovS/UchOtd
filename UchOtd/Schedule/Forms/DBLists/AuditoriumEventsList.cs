@@ -86,6 +86,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 {
                     date = eventsDate.Value;
                 }
+
                 eventsList = _repo
                     .AuditoriumEvents
                     .GetAllAuditoriumEvents()
@@ -96,8 +97,13 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 eventsList = _repo
                     .AuditoriumEvents
-                    .GetAllAuditoriumEvents();                
+                    .GetAllAuditoriumEvents();
             }
+
+            eventsList = eventsList.OrderBy(ev => ev.Calendar.Date.Date)
+                .ThenBy(ev => ev.Ring.Time.TimeOfDay)
+                .ThenBy(ev => ev.Name)
+                .ToList();
 
             eventsView.DataSource = AuditoriumEventView.AuditoriumEventsToView(eventsList);
 

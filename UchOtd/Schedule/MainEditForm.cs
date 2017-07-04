@@ -2916,7 +2916,7 @@ namespace UchOtd.Schedule
                 const string logFilename = "Cont16-17.txt";
                 TextFileUtilities.CreateOrEmptyFile(logFilename);
 
-                WordExport.GroupsListOneYear(Repo, logFilename, 2016, true, "StudentGroups.docx", true, true);
+                WordExport.GroupsListOneYear(Repo, logFilename, 2016, true, @"D:\Github\StudentGroups.docx", true, true);
             });
         }
     }

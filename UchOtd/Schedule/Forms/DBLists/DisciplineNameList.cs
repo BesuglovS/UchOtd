@@ -43,12 +43,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             DisciplinesList.DataSource = discsViewList;
 
             var groups = _repo.StudentGroups.GetAllStudentGroups()
-                .OrderBy(g => g.Name)
+                .OrderBy(g => g.Semester.StartingYear)
+                .ThenBy(g => g.Semester.SemesterInYear)
+                .ThenBy(g => g.Name)
                 .ToList();
 
+            var sgView = StudentGroupView.ViewFromList(groups);
+
             StudentGroupList.ValueMember = "StudentGroupId";
-            StudentGroupList.DisplayMember = "Name";
-            StudentGroupList.DataSource = groups;
+            StudentGroupList.DisplayMember = "NameWithSemester";
+            StudentGroupList.DataSource = sgView;
 
             var groups2 = _repo.StudentGroups.GetAllStudentGroups()
                 .OrderBy(g => g.Name)

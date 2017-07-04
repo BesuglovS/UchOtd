@@ -76,7 +76,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             }
             if ((refreshType == 2) || (refreshType == 3))
             {
-                FillDicsiplinesList(true);
+                FillDicsiplinesList(useFilter: true);
             }
             
         }
@@ -95,7 +95,14 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             var teacherDisciplines = _repo.Disciplines.GetTeacherDisciplines(teacher);
 
+            teacherDisciplines = teacherDisciplines
+                .OrderBy(d => d.Semester.StartingYear)
+                .ThenBy(d => d.Semester.SemesterInYear)
+                .ThenBy(d => d.Name)
+                .ToList();
+
             var discView = DisciplineView.DisciplinesToView(_repo, teacherDisciplines);
+            
 
             TFDListView.DataSource = discView;
 

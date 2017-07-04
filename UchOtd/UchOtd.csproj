@@ -487,6 +487,7 @@
     <Compile Include="Schedule\MainImport\StudentsInGroups.cs" />
     <Compile Include="Schedule\MainImport\Teacher.cs" />
     <Compile Include="Schedule\MainImport\TeacherForDiscipline.cs" />
+    <Compile Include="Schedule\Views\ConfigOptionView.cs" />
     <Compile Include="Schedule\Views\DBListViews\AuditoriumEventView.cs" />
     <Compile Include="Schedule\Views\DBListViews\AuditoriumView.cs" />
     <Compile Include="Schedule\Views\DBListViews\CalendarView.cs" />

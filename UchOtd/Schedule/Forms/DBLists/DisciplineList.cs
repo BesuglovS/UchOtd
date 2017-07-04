@@ -359,7 +359,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 Attestation.SelectedIndex = Constants.Attestation.FirstOrDefault(a => a.Value == "-").Key;
             }
 
-            var disciplineGroup = _repo.StudentGroups.GetStudentGroup((int)Group.SelectedItem);
+            var disciplineGroup = _repo.StudentGroups.GetStudentGroup(((StudentGroupView)Group.SelectedItem).StudentGroupId);
             var semester = (Semester) semesterList.SelectedItem;
 
             var newDiscipline = new Discipline
@@ -528,7 +528,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void DiscipineListView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.ColumnIndex == 4)
+            if (e.ColumnIndex == 5)
             {
                 var discView = ((List<DisciplineView>)DisciplinesList.DataSource)[e.RowIndex];
 
