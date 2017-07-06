@@ -2908,15 +2908,36 @@ namespace UchOtd.Schedule
             var mergeStudentsForm = new MergeStudents(Repo);
             mergeStudentsForm.Show();
         }
-
-        private async void спискиГруппСтудентовНа20162017ГодToolStripMenuItem_Click(object sender, EventArgs e)
+        
+        private async void groups1314_Click(object sender, EventArgs e)
         {
             await Task.Run(() =>
             {
-                const string logFilename = "Cont16-17.txt";
-                TextFileUtilities.CreateOrEmptyFile(logFilename);
+                WordExport.GroupsListOneYear(Repo, 2013, true, @"D:\Github\StudentGroups1314.docx", true, true);
+            });
+        }
 
-                WordExport.GroupsListOneYear(Repo, logFilename, 2016, true, @"D:\Github\StudentGroups.docx", true, true);
+        private async void groups1415_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                WordExport.GroupsListOneYear(Repo, 2014, true, @"D:\Github\StudentGroups1415.docx", true, true);
+            });
+        }
+
+        private async void groups1516_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                WordExport.GroupsListOneYear(Repo, 2015, true, @"D:\Github\StudentGroups1516.docx", true, true);
+            });
+        }
+
+        private async void groups1617_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                WordExport.GroupsListOneYear(Repo, 2016, true, @"D:\Github\StudentGroups1617.docx", true, true);
             });
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -3591,7 +3592,7 @@ namespace UchOtd.Core
             oPara1.Range.InsertParagraphAfter();
         }
 
-        public static void GroupsListOneYear(ScheduleRepository Repo, string logFilename, int startingYear, bool appVisible, string filename, bool save, bool quit)
+        public static void GroupsListOneYear(ScheduleRepository Repo, int startingYear, bool appVisible, string filename, bool save, bool quit)
         {
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
@@ -3644,8 +3645,22 @@ namespace UchOtd.Core
 
             var semester1 =
                 Repo.Semesters.GetFirstFiltredSemester(s => s.StartingYear == startingYear && s.SemesterInYear == 1);
+            var sem1Start = Repo.ConfigOptions
+                .GetFirstFiltredConfigOption(co => co.Semester.SemesterId == semester1.SemesterId &&
+                                                   co.Key == "Semester Starts").Value;
+            var sem1End = Repo.ConfigOptions
+                .GetFirstFiltredConfigOption(co => co.Semester.SemesterId == semester1.SemesterId &&
+                                                   co.Key == "Semester Ends").Value;
+            
             var semester2 =
                 Repo.Semesters.GetFirstFiltredSemester(s => s.StartingYear == startingYear && s.SemesterInYear == 2);
+            var sem2Start = Repo.ConfigOptions
+                .GetFirstFiltredConfigOption(co => co.Semester.SemesterId == semester2.SemesterId &&
+                                                   co.Key == "Semester Starts").Value;
+            var sem2End = Repo.ConfigOptions
+                .GetFirstFiltredConfigOption(co => co.Semester.SemesterId == semester2.SemesterId &&
+                                                   co.Key == "Semester Ends").Value;
+
             var semIdsList = new List<int> { semester1.SemesterId, semester2.SemesterId };
 
             var faculties = Repo.Faculties.GetAllFaculties();
@@ -3653,9 +3668,7 @@ namespace UchOtd.Core
             for (int i = 0; i < faculties.Count; i++)
             {
                 var faculty = faculties[i];
-
-                // TextFileUtilities.WriteString(logFilename, "Факультет: " + faculty.Name);
-
+                
                 var facultyGroups = Repo.GroupsInFaculties.GetFiltredGroupsInFaculty(gif =>
                         gif.Faculty.FacultyId == faculty.FacultyId &&
                         semIdsList.Contains(gif.StudentGroup.Semester.SemesterId))
@@ -3669,9 +3682,7 @@ namespace UchOtd.Core
                 {
                     var group = facultyGroups[j];
                     var semesterInYear = group.Semester.SemesterInYear;
-
-                    // TextFileUtilities.WriteString(logFilename, "Группа" + "\t" + group.Name + "\t" + "Семестр" + "\t" + group.Semester.DisplayName);
-
+                    
                     var groupIds = Utilities.StudentGroupIdsFromGroupId(group.StudentGroupId, Repo);
 
                     for (int k = 0; k < groupIds.Count; k++)
@@ -3681,14 +3692,14 @@ namespace UchOtd.Core
                         DateTime startingDate = new DateTime(), finishDate = new DateTime(), finishDatePlusOne = new DateTime();
                         if (semesterInYear == 1)
                         {
-                            startingDate = new DateTime(2016, 9, 1, 0, 0, 0);
-                            finishDate = new DateTime(2017, 1, 31, 0, 0, 0);
+                            startingDate = new DateTime(startingYear, 9, 1);
+                            finishDate = DateTime.ParseExact(sem2Start, "yyyy-MM-dd", CultureInfo.InvariantCulture).AddDays(-1);
                         }
 
                         if (semesterInYear == 2)
                         {
-                            startingDate = new DateTime(2017, 2, 1, 0, 0, 0);
-                            finishDate = new DateTime(2017, 8, 31, 0, 0, 0);
+                            startingDate = DateTime.ParseExact(sem2Start, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                            finishDate = new DateTime(startingYear+1, 8, 31);
                         }
 
                         finishDatePlusOne = finishDate.AddDays(1);
@@ -3741,9 +3752,7 @@ namespace UchOtd.Core
 
                         var periods = result.ToDictionary(dd => dd.Value, dd => dd.Key);
                         var periodKeys = periods.Keys.ToList().OrderBy(p => p.Min()).ToList();
-
-                        TextFileUtilities.WriteString(logFilename, faculty.Name + "\t" + group.Name + "\t" + group.Semester.DisplayName + "\t" + innerGroup.Name);
-
+                        
                         List<string> oldStudentsList = new List<string>();
 
                         for (int l = 0; l < periodKeys.Count; l++)
