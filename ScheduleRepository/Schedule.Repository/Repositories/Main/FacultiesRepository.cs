@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using Schedule.DataLayer;
 using Schedule.DomainClasses.Main;
@@ -114,6 +115,7 @@ namespace Schedule.Repositories.Repositories.Main
                 return context.GroupsInFaculties
                     .Where(gif => gif.Faculty.FacultyId == facultyId)
                     .Select(gif => gif.StudentGroup)
+                    .Include(sg => sg.Semester)
                     .ToList();
             }
         }

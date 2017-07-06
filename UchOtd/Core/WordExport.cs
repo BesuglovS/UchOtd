@@ -3759,7 +3759,7 @@ namespace UchOtd.Core
                         {
                             var span = periodKeys[l];
 
-                            var dates = Utilities.DatesToTimeSpans(span);
+                            var dates = Utilities.DatesToStringTimeSpans(span);
                             var studentsList = Utilities.StudentsFioListFromIds(periods[span], Repo);
 
                             var studentsString = "";

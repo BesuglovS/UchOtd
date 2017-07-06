@@ -51,16 +51,29 @@ namespace UchOtd.Core
         {
             var group = repo.StudentGroups.GetStudentGroup(groupId);
 
-            var studentIdAndPeriods = repo
+            var studentInGroups = repo
                 .StudentsInGroups
-                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
-                .ToDictionary(stig => stig.Student.StudentId, stig => new Tuple<DateTime, DateTime>(stig.PeriodFrom, stig.PeriodTo));
+                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId);
+
+            var studentIdAndPeriods = new Dictionary<int, List<Tuple<DateTime, DateTime>>>();
+            for (int i = 0; i < studentInGroups.Count; i++)
+            {
+                var sig = studentInGroups[i];
+
+                if (!studentIdAndPeriods.ContainsKey(sig.Student.StudentId))
+                {
+                    studentIdAndPeriods.Add(sig.Student.StudentId, new List<Tuple<DateTime, DateTime>>());
+                }
+
+                studentIdAndPeriods[sig.Student.StudentId].Add(new Tuple<DateTime, DateTime>(sig.PeriodFrom, sig.PeriodTo));
+            }
+
 
             var groupsListIds = repo
                 .StudentsInGroups
                 .GetFiltredStudentsInGroups(sig => sig.StudentGroup.Semester.SemesterId == group.Semester.SemesterId &&
                                                    studentIdAndPeriods.ContainsKey(sig.Student.StudentId) &&
-                                                   PeriodsIntersects(new Tuple<DateTime, DateTime>(sig.PeriodFrom, sig.PeriodTo), studentIdAndPeriods[sig.Student.StudentId]))
+                                                   PeriodIntersectsWithGroup(new Tuple<DateTime, DateTime>(sig.PeriodFrom, sig.PeriodTo), studentIdAndPeriods[sig.Student.StudentId]))
                 .Select(stig => stig.StudentGroup.StudentGroupId)
                 .Distinct()
                 .ToList();
@@ -82,16 +95,21 @@ namespace UchOtd.Core
             return period1.Item1 <= period2.Item2 && period2.Item1 <= period1.Item2;
         }
 
-        public static List<string> DatesToTimeSpans(List<DateTime> span)
+        public static bool PeriodIntersectsWithGroup(Tuple<DateTime, DateTime> period1, List<Tuple<DateTime, DateTime>> periodList)
+        {
+            return periodList.Any(period2 => period1.Item1 <= period2.Item2 && period2.Item1 <= period1.Item2);
+        }
+
+        public static List<string> DatesToStringTimeSpans(List<DateTime> dates)
         {
             var result = new List<string>();
 
             DateTime baseDate = new DateTime(1900, 1, 1);
             DateTime lastDate = baseDate;
             int spanLength = 0;
-            for (int i = 0; i < span.Count; i++)
+            for (int i = 0; i < dates.Count; i++)
             {
-                var dt = span[i];
+                var dt = dates[i];
 
                 if (DateTime.Compare(dt, lastDate.AddDays(1)) == 0) // Next date is next day
                 {
@@ -103,7 +121,7 @@ namespace UchOtd.Core
                     {
                         if (spanLength > 2)
                         {
-                            result.Add(baseDate.ToString("dd.MM.yyyy") + " - " + span[i - 1].ToString("dd.MM.yyyy"));
+                            result.Add(baseDate.ToString("dd.MM.yyyy") + " - " + dates[i - 1].ToString("dd.MM.yyyy"));
                         }
                         else
                         {
@@ -114,7 +132,7 @@ namespace UchOtd.Core
                             else // spanLength == 2
                             {
                                 result.Add(baseDate.ToString("dd.MM.yyyy"));
-                                result.Add(span[i - 1].ToString("dd.MM.yyyy"));
+                                result.Add(dates[i - 1].ToString("dd.MM.yyyy"));
                             }
                         }
                     }
@@ -128,7 +146,7 @@ namespace UchOtd.Core
 
             if (spanLength > 2)
             {
-                result.Add(baseDate.ToString("dd.MM.yyyy") + " - " + span[span.Count - 1].ToString("dd.MM.yyyy"));
+                result.Add(baseDate.ToString("dd.MM.yyyy") + " - " + dates[dates.Count - 1].ToString("dd.MM.yyyy"));
             }
             else
             {
@@ -139,7 +157,71 @@ namespace UchOtd.Core
                 else // spanLength == 2
                 {
                     result.Add(baseDate.ToString("dd.MM.yyyy"));
-                    result.Add(span[span.Count - 1].ToString("dd.MM.yyyy"));
+                    result.Add(dates[dates.Count - 1].ToString("dd.MM.yyyy"));
+                }
+            }
+
+            return result;
+        }
+
+        public static List<Tuple<DateTime, DateTime>> DatesToTimeSpans(List<DateTime> dates)
+        {
+            var result = new List<Tuple<DateTime, DateTime>>();
+
+            DateTime baseDate = new DateTime(1900, 1, 1);
+            DateTime lastDate = baseDate;
+            int spanLength = 0;
+            for (int i = 0; i < dates.Count; i++)
+            {
+                var dt = dates[i];
+
+                if (DateTime.Compare(dt, lastDate.AddDays(1)) == 0) // Next date is next day
+                {
+                    spanLength++;
+                }
+                else
+                {
+                    if (spanLength != 0)
+                    {
+                        if (spanLength > 2)
+                        {
+                            result.Add(new Tuple<DateTime, DateTime>(baseDate, dates[i - 1]));
+                        }
+                        else
+                        {
+                            if (spanLength == 1)
+                            {
+                                result.Add(new Tuple <DateTime, DateTime> (baseDate, baseDate));
+                            }
+                            else // spanLength == 2
+                            {
+                                result.Add(new Tuple<DateTime, DateTime>(baseDate, baseDate));
+                                result.Add(new Tuple<DateTime, DateTime>(dates[i - 1], dates[i - 1]));
+                            }
+                        }
+                    }
+
+                    baseDate = dt;
+                    spanLength = 1;
+                }
+
+                lastDate = dt;
+            }
+
+            if (spanLength > 2)
+            {
+                result.Add(new Tuple<DateTime, DateTime>(baseDate, dates[dates.Count - 1]));
+            }
+            else
+            {
+                if (spanLength == 1)
+                {
+                    result.Add(new Tuple<DateTime, DateTime>(baseDate, baseDate));
+                }
+                else // spanLength == 2
+                {
+                    result.Add(new Tuple<DateTime, DateTime>(baseDate, baseDate));
+                    result.Add(new Tuple<DateTime, DateTime>(dates[dates.Count - 1], dates[dates.Count - 1]));
                 }
             }
 

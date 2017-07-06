@@ -14,7 +14,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.GroupsInFaculties
-                    .Include(gif => gif.StudentGroup)
+                    .Include(gif => gif.StudentGroup.Semester)
                     .Include(gif => gif.Faculty)
                     .ToList();
             }
@@ -25,7 +25,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.GroupsInFaculties
-                    .Include(gif => gif.StudentGroup)
+                    .Include(gif => gif.StudentGroup.Semester)
                     .Include(gif => gif.Faculty)
                     .ToList().Where(condition).ToList();
             }
@@ -36,7 +36,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.GroupsInFaculties
-                    .Include(gif => gif.StudentGroup)
+                    .Include(gif => gif.StudentGroup.Semester)
                     .Include(gif => gif.Faculty)
                     .ToList().FirstOrDefault(condition);
             }
@@ -47,7 +47,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.GroupsInFaculties
-                    .Include(gif => gif.StudentGroup)
+                    .Include(gif => gif.StudentGroup.Semester)
                     .Include(gif => gif.Faculty)
                     .FirstOrDefault(gif => gif.GroupsInFacultyId == groupsInFaculty);
             }
@@ -58,7 +58,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.GroupsInFaculties
-                    .Include(gif => gif.StudentGroup)
+                    .Include(gif => gif.StudentGroup.Semester)
                     .Include(gif => gif.Faculty)
                     .FirstOrDefault(gif => gif.StudentGroup.StudentGroupId == sg.StudentGroupId &&
                                            gif.Faculty.FacultyId == f.FacultyId);
@@ -70,7 +70,7 @@ namespace Schedule.Repositories.Repositories.Main
             using (var context = new ScheduleContext(ConnectionString))
             {
                 return context.GroupsInFaculties
-                    .Include(gif => gif.StudentGroup)
+                    .Include(gif => gif.StudentGroup.Semester)
                     .Include(gif => gif.Faculty)
                     .FirstOrDefault(gif => gif.StudentGroup.Name == studentGroupName &&
                                            gif.Faculty.Name == facultyName);

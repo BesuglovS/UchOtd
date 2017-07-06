@@ -223,10 +223,12 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             if (StudentGroupListView.SelectedCells.Count > 0)
             {
-                var studentGroup = ((List<StudentGroup>)StudentGroupListView.DataSource)[StudentGroupListView.SelectedCells[0].RowIndex];
+                var studentGroupId = ((List<StudentGroupView>)StudentGroupListView.DataSource)[StudentGroupListView.SelectedCells[0].RowIndex].StudentGroupId;
+                var studentGroup =
+                    _repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.StudentGroupId == studentGroupId);
 
                 studentGroup.Name = StudentGroupName.Text;
-                studentGroup.Semester = _repo.Semesters.GetSemester((int)SemesterList.SelectedItem);
+                studentGroup.Semester = (Semester)SemesterList.SelectedItem;
 
                 _repo.StudentGroups.UpdateStudentGroup(studentGroup);
 
@@ -238,7 +240,9 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             if (StudentGroupListView.SelectedCells.Count > 0)
             {
-                var studentGroup = ((List<StudentGroup>)StudentGroupListView.DataSource)[StudentGroupListView.SelectedCells[0].RowIndex];
+                var studentGroupId = ((List<StudentGroupView>)StudentGroupListView.DataSource)[StudentGroupListView.SelectedCells[0].RowIndex].StudentGroupId;
+                var studentGroup =
+                    _repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.StudentGroupId == studentGroupId);
 
                 if (_repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId).Count > 0)
                 {
