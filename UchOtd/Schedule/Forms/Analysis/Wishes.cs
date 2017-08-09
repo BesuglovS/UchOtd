@@ -18,6 +18,7 @@ namespace UchOtd.Schedule.Forms.Analysis
     public partial class Wishes : Form
     {
         private readonly ScheduleRepository _repo;
+        private readonly Semester _semester;
 
         CancellationTokenSource _tokenSource;
         CancellationToken _cToken;
@@ -26,16 +27,30 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         public static bool NeedsUpdateAfterChoosingRings = false;
                 
-        public Wishes(ScheduleRepository repo)
+        public Wishes(ScheduleRepository repo, Semester semester)
         {
             InitializeComponent();
 
             _repo = repo;
+            _semester = semester;
         }
 
         private void Wishes_Load(object sender, EventArgs e)
         {
             _tokenSource = new CancellationTokenSource();
+
+            var semesters = _repo
+                .Semesters
+                .GetAllSemesters()
+                .OrderBy(s => s.StartingYear)
+                .ThenBy(s => s.SemesterInYear)
+                .ToList();
+
+            semesterList.ValueMember = "SemesterId";
+            semesterList.DisplayMember = "DisplayName";
+            semesterList.DataSource = semesters;
+
+            semesterList.SelectedItem = _semester;
 
             _listBoxInitialization = true;
             var teachers = _repo
@@ -55,7 +70,10 @@ namespace UchOtd.Schedule.Forms.Analysis
         private async void refreshButton_Click(object sender, EventArgs e)
         {           
             var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
-            
+
+            Semester semester;
+            if (getSemester(out semester)) return;
+
             if (refreshButton.Text == "Обновить")
             {
                 _cToken = _tokenSource.Token;
@@ -67,7 +85,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 {
                     var wishView = await Task.Run(() => {
                         RefreshRings(teacher, _cToken);
-                        return RefreshWishes(teacher, _cToken);
+                        return RefreshWishes(semester, teacher, _cToken);
                     }, _cToken);
 
                     ShowWishes(wishView, teacher);
@@ -84,6 +102,24 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             refreshButton.Image = null;
             refreshButton.Text = "Обновить";
+        }
+
+        private bool getSemester(out Semester semester)
+        {
+            semester = null;
+
+            if (semesterList.SelectedValue == null)
+            {
+                return true;
+            }
+
+            semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int) semesterList.SelectedValue);
+
+            if (semester == null)
+            {
+                return true;
+            }
+            return false;
         }
 
         private void RefreshRings(Teacher teacher, CancellationToken cToken)
@@ -119,9 +155,9 @@ namespace UchOtd.Schedule.Forms.Analysis
             _listBoxInitialization = false;
         }
 
-        private List<RingWeekView> RefreshWishes(Teacher teacher, CancellationToken cToken)
+        private List<RingWeekView> RefreshWishes(Semester semester, Teacher teacher, CancellationToken cToken)
         {
-            return RingWeekView.GetRingWeekView(_repo, teacher, cToken);
+            return RingWeekView.GetRingWeekView(_repo, semester, teacher, cToken);
         }
 
         private void ShowWishes(List<RingWeekView> wishView, Teacher teacher)
@@ -172,6 +208,9 @@ namespace UchOtd.Schedule.Forms.Analysis
             {
                 _cToken = _tokenSource.Token;
 
+                Semester semester;
+                if (getSemester(out semester)) return;
+
                 Yes.Text = "";
                 Yes.Image = Resources.Loading;
                 
@@ -181,7 +220,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 {
                     var wishView = await Task.Run(() => {
                         SetTeacherWishesForTeacherRings(teacher, 100, _cToken); 
-                        return RefreshWishes(teacher, _cToken);
+                        return RefreshWishes(semester, teacher, _cToken);
                     }, _cToken);
 
                     ShowWishes(wishView, teacher);
@@ -209,6 +248,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                 No.Text = "";
                 No.Image = Resources.Loading;
 
+                Semester semester;
+                if (getSemester(out semester)) return;
+
                 var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
 
                 try
@@ -216,7 +258,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                     var wishView = await Task.Run(() =>
                     {
                         SetTeacherWishesForTeacherRings(teacher, 0, _cToken);
-                        return RefreshWishes(teacher, _cToken);
+                        return RefreshWishes(semester, teacher, _cToken);
                     }, _cToken);
 
                     ShowWishes(wishView, teacher);
@@ -266,6 +308,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                 Clear.Text = "";
                 Clear.Image = Resources.Loading;
 
+                Semester semester;
+                if (getSemester(out semester)) return;
+
                 try
                 {
                     var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
@@ -282,7 +327,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                             _repo.TeacherWishes.RemoveTeacherWish(teacherWishId);
                         }
 
-                        RefreshWishes(teacher, _cToken);
+                        RefreshWishes(semester, teacher, _cToken);
                     }, _cToken);
                 }
                 catch (OperationCanceledException)
@@ -327,6 +372,9 @@ namespace UchOtd.Schedule.Forms.Analysis
 
             bool correct = true;
 
+            Semester semester;
+            if (getSemester(out semester)) return;
+
             int simpleWish;
             if (int.TryParse(cell.Value.ToString(), out simpleWish))
             {
@@ -342,7 +390,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 }
 
                 var cToken = _tokenSource.Token;
-                Task.Run(new Action(() => RefreshWishes(teacher, cToken)));
+                Task.Run(new Action(() => RefreshWishes(semester, teacher, cToken)));
 
                 return;
             }
@@ -368,7 +416,7 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                     foreach (var week in weeks)
                     {
-                        var calendar = _repo.CommonFunctions.GetCalendarFromDowAndWeek(dow, week);
+                        var calendar = _repo.CommonFunctions.GetCalendarFromDowAndWeek(_semester, dow, week);
                         var ring = _repo.Rings.GetRing(((List<RingWeekView>)wishesView.DataSource)[e.RowIndex].RingId);
 
                         var teacherWish = new TeacherWish(teacher, calendar, ring, wish);
@@ -387,7 +435,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             if (correct)
             {
                 var cToken = _tokenSource.Token;
-                Task.Run(new Action(() => RefreshWishes(teacher, cToken)));
+                Task.Run(new Action(() => RefreshWishes(semester, teacher, cToken)));
             }
             else
             {
@@ -405,6 +453,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                 MaxSelected.Text = "";
                 MaxSelected.Image = Resources.Loading;
 
+                Semester semester;
+                if (getSemester(out semester)) return;
+
                 var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
                 var selectedCells = wishesView.SelectedCells;
 
@@ -412,7 +463,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                 {
                     await Task.Run(() => {
                         SetSelectionWish(teacher, 100, selectedCells, _cToken);
-                        RefreshWishes(teacher, _cToken);
+                        RefreshWishes(semester, teacher, _cToken);
                     }, _cToken);
                 }
                 catch (OperationCanceledException)
@@ -468,6 +519,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                 MinSelected.Text = "";
                 MinSelected.Image = Resources.Loading;
 
+                Semester semester;
+                if (getSemester(out semester)) return;
+
                 var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
                 var selectedCells = wishesView.SelectedCells;
 
@@ -476,7 +530,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                     await Task.Run(() =>
                     {
                         SetSelectionWish(teacher, 100, selectedCells, _cToken);
-                        RefreshWishes(teacher, _cToken);
+                        RefreshWishes(semester, teacher, _cToken);
                     }, _cToken);
                 }
                 catch (OperationCanceledException)
@@ -502,6 +556,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                 ValueSelected.Text = "";
                 ValueSelected.Image = Resources.Loading;
 
+                Semester semester;
+                if (getSemester(out semester)) return;
+
                 var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
                 var selectedCells = wishesView.SelectedCells;
 
@@ -513,7 +570,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                         if (int.TryParse(wishToSetValue.Text, out simpleWish))
                         {
                             SetSelectionWish(teacher, simpleWish, selectedCells, _cToken);
-                            RefreshWishes(teacher, _cToken);
+                            RefreshWishes(semester, teacher, _cToken);
                         }
                         else
                         {
@@ -542,7 +599,10 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                 OneValue.Text = "";
                 OneValue.Image = Resources.Loading;
-                
+
+                Semester semester;
+                if (getSemester(out semester)) return;
+
                 try
                 {
                     var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
@@ -553,7 +613,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                         {
                             SetTeacherWishesForTeacherRings(teacher, simpleWish, _cToken);
 
-                            RefreshWishes(teacher, _cToken);
+                            RefreshWishes(semester, teacher, _cToken);
                         }
                         else
                         {
@@ -700,9 +760,11 @@ namespace UchOtd.Schedule.Forms.Analysis
 
                     _repo.TeacherWishes.AddTeacherWishRange(newTeacherWishList);
 
+                    Semester semester;
+                    if (getSemester(out semester)) return;
 
                     var cToken = _tokenSource.Token;
-                    Task.Run(new Action(() => RefreshWishes(teacher, cToken)));
+                    Task.Run(new Action(() => RefreshWishes(semester, teacher, cToken)));
 
                     break;
                 }
@@ -729,8 +791,11 @@ namespace UchOtd.Schedule.Forms.Analysis
                         _repo.TeacherWishes.RemoveTeacherWish(wish.TeacherWishId);
                     }
 
+                    Semester semester;
+                    if (getSemester(out semester)) return;
+
                     var cToken = _tokenSource.Token;
-                    Task.Run(new Action(() => RefreshWishes(teacher, cToken)));
+                    Task.Run(new Action(() => RefreshWishes(semester, teacher, cToken)));
 
                     break;
                 }
@@ -740,6 +805,9 @@ namespace UchOtd.Schedule.Forms.Analysis
 
         private async void chooseRings_Click(object sender, EventArgs e)
         {
+            Semester semester;
+            if (getSemester(out semester)) return;
+
             var teacher = ((List<Teacher>)teacherList.DataSource)[teacherList.SelectedIndex];
 
             var chooseRingsForm = new ChooseRings(_repo, teacher);
@@ -752,7 +820,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                     var wishView = await Task.Run(() =>
                     {
                         RefreshRings(teacher, _cToken);
-                        return RefreshWishes(teacher, _cToken);
+                        return RefreshWishes(semester, teacher, _cToken);
                     }, _cToken);
 
                     ShowWishes(wishView, teacher);

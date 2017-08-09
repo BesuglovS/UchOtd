@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Constants;
+using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 
 namespace UchOtd.Schedule.Forms
@@ -25,6 +26,17 @@ namespace UchOtd.Schedule.Forms
 
         private void OneAuditorium_Load(object sender, EventArgs e)
         {
+            var semesters = _repo
+                .Semesters
+                .GetAllSemesters()
+                .OrderBy(s => s.StartingYear)
+                .ThenBy(s => s.SemesterInYear)
+                .ToList();
+
+            semesterList.ValueMember = "SemesterId";
+            semesterList.DisplayMember = "DisplayName";
+            semesterList.DataSource = semesters;
+
             var auds = _repo
                 .Auditoriums
                 .GetAll()
@@ -38,10 +50,7 @@ namespace UchOtd.Schedule.Forms
 
         private async void auditoriumList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_tokenSource != null)
-            {
-                _tokenSource.Cancel();
-            }
+            _tokenSource?.Cancel();
 
             _tokenSource = new CancellationTokenSource();
             _cToken = _tokenSource.Token;
@@ -51,10 +60,24 @@ namespace UchOtd.Schedule.Forms
             var auditoriumId = (int) auditoriumList.SelectedValue;
             var isShowProposed = showProposed.Checked;
 
+            Semester semester = null;
+
+            if (semesterList.SelectedValue == null)
+            {
+                return;
+            }
+
+            semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+            if (semester == null)
+            {
+                return;
+            }
+
             try
             {
                 data = await Task.Run(() => 
-                    _repo.CommonFunctions.GetAud(auditoriumId, isShowProposed, _cToken), _cToken);
+                    _repo.CommonFunctions.GetAud(semester, auditoriumId, isShowProposed, _cToken), _cToken);
             }
             catch (OperationCanceledException)
             {

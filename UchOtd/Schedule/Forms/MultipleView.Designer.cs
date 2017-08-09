@@ -32,6 +32,9 @@ namespace UchOtd.Schedule.Forms
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.semesterList = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.update = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -45,7 +48,6 @@ namespace UchOtd.Schedule.Forms
             this.group1 = new System.Windows.Forms.ComboBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.view = new System.Windows.Forms.DataGridView();
-            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view)).BeginInit();
@@ -53,6 +55,8 @@ namespace UchOtd.Schedule.Forms
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.semesterList);
+            this.controlsPanel.Controls.Add(this.label6);
             this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.update);
             this.controlsPanel.Controls.Add(this.label5);
@@ -70,6 +74,33 @@ namespace UchOtd.Schedule.Forms
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(1217, 64);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // semesterList
+            // 
+            this.semesterList.FormattingEnabled = true;
+            this.semesterList.Location = new System.Drawing.Point(1007, 21);
+            this.semesterList.Name = "semesterList";
+            this.semesterList.Size = new System.Drawing.Size(121, 21);
+            this.semesterList.TabIndex = 13;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(950, 24);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(51, 13);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "Семестр";
+            // 
+            // showProposed
+            // 
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(735, 23);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(205, 17);
+            this.showProposed.TabIndex = 11;
+            this.showProposed.Text = "Показывать преполагаемые уроки";
+            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // update
             // 
@@ -194,16 +225,6 @@ namespace UchOtd.Schedule.Forms
             this.view.Size = new System.Drawing.Size(1217, 635);
             this.view.TabIndex = 0;
             // 
-            // showProposed
-            // 
-            this.showProposed.AutoSize = true;
-            this.showProposed.Location = new System.Drawing.Point(735, 23);
-            this.showProposed.Name = "showProposed";
-            this.showProposed.Size = new System.Drawing.Size(205, 17);
-            this.showProposed.TabIndex = 11;
-            this.showProposed.Text = "Показывать преполагаемые уроки";
-            this.showProposed.UseVisualStyleBackColor = true;
-            // 
             // MultipleView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -239,5 +260,7 @@ namespace UchOtd.Schedule.Forms
         private Panel viewPanel;
         private DataGridView view;
         private CheckBox showProposed;
+        private ComboBox semesterList;
+        private Label label6;
     }
 }

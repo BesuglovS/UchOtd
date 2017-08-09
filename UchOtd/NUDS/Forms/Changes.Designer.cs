@@ -41,6 +41,8 @@ namespace UchOtd.NUDS.Forms
             this.viewPanel = new System.Windows.Forms.Panel();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.changesView = new System.Windows.Forms.DataGridView();
+            this.label2 = new System.Windows.Forms.Label();
+            this.semesterList = new System.Windows.Forms.ComboBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.changesView)).BeginInit();
@@ -48,6 +50,8 @@ namespace UchOtd.NUDS.Forms
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.semesterList);
+            this.controlsPanel.Controls.Add(this.label2);
             this.controlsPanel.Controls.Add(this.datePicker);
             this.controlsPanel.Controls.Add(this.allChanges);
             this.controlsPanel.Controls.Add(this.todaysChanges);
@@ -103,7 +107,7 @@ namespace UchOtd.NUDS.Forms
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 26);
+            this.label1.Location = new System.Drawing.Point(14, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(42, 13);
             this.label1.TabIndex = 4;
@@ -113,7 +117,7 @@ namespace UchOtd.NUDS.Forms
             // 
             this.groupList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.groupList.FormattingEnabled = true;
-            this.groupList.Location = new System.Drawing.Point(60, 23);
+            this.groupList.Location = new System.Drawing.Point(60, 11);
             this.groupList.Name = "groupList";
             this.groupList.Size = new System.Drawing.Size(150, 21);
             this.groupList.TabIndex = 3;
@@ -156,6 +160,25 @@ namespace UchOtd.NUDS.Forms
             this.changesView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.ChangesViewCellFormatting);
             this.changesView.SelectionChanged += new System.EventHandler(this.ChangesViewSelectionChanged);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 43);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(51, 13);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "Семестр";
+            // 
+            // semesterList
+            // 
+            this.semesterList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.semesterList.FormattingEnabled = true;
+            this.semesterList.Location = new System.Drawing.Point(60, 38);
+            this.semesterList.Name = "semesterList";
+            this.semesterList.Size = new System.Drawing.Size(150, 21);
+            this.semesterList.TabIndex = 10;
+            this.semesterList.UseWaitCursor = true;
+            // 
             // Changes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -188,5 +211,7 @@ namespace UchOtd.NUDS.Forms
         private Panel viewPanel;
         private DataGridView changesView;
         private Label loadingLabel;
+        private ComboBox semesterList;
+        private Label label2;
     }
 }

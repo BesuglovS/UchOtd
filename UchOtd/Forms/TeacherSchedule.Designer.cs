@@ -33,6 +33,7 @@ namespace UchOtd.Forms
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TeacherSchedule));
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.OnlyFutureDatesExportInWord = new System.Windows.Forms.CheckBox();
             this.ExportAllTeachersInWord = new System.Windows.Forms.Button();
             this.showProposed = new System.Windows.Forms.CheckBox();
             this.ExportInWordLandscape = new System.Windows.Forms.Button();
@@ -43,7 +44,8 @@ namespace UchOtd.Forms
             this.teacherList = new System.Windows.Forms.ComboBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.scheduleView = new System.Windows.Forms.DataGridView();
-            this.OnlyFutureDatesExportInWord = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.semesterList = new System.Windows.Forms.ComboBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scheduleView)).BeginInit();
@@ -51,6 +53,8 @@ namespace UchOtd.Forms
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.semesterList);
+            this.controlsPanel.Controls.Add(this.label1);
             this.controlsPanel.Controls.Add(this.OnlyFutureDatesExportInWord);
             this.controlsPanel.Controls.Add(this.ExportAllTeachersInWord);
             this.controlsPanel.Controls.Add(this.showProposed);
@@ -65,6 +69,16 @@ namespace UchOtd.Forms
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(1085, 77);
             this.controlsPanel.TabIndex = 2;
+            // 
+            // OnlyFutureDatesExportInWord
+            // 
+            this.OnlyFutureDatesExportInWord.AutoSize = true;
+            this.OnlyFutureDatesExportInWord.Location = new System.Drawing.Point(460, 53);
+            this.OnlyFutureDatesExportInWord.Name = "OnlyFutureDatesExportInWord";
+            this.OnlyFutureDatesExportInWord.Size = new System.Drawing.Size(155, 17);
+            this.OnlyFutureDatesExportInWord.TabIndex = 68;
+            this.OnlyFutureDatesExportInWord.Text = "только последующие дни";
+            this.OnlyFutureDatesExportInWord.UseVisualStyleBackColor = true;
             // 
             // ExportAllTeachersInWord
             // 
@@ -138,7 +152,7 @@ namespace UchOtd.Forms
             // 
             this.teacherList.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.teacherList.FormattingEnabled = true;
-            this.teacherList.Location = new System.Drawing.Point(12, 18);
+            this.teacherList.Location = new System.Drawing.Point(12, 15);
             this.teacherList.Name = "teacherList";
             this.teacherList.Size = new System.Drawing.Size(438, 21);
             this.teacherList.TabIndex = 0;
@@ -168,15 +182,22 @@ namespace UchOtd.Forms
             this.scheduleView.TabStop = false;
             this.scheduleView.SelectionChanged += new System.EventHandler(this.ScheduleViewSelectionChanged);
             // 
-            // OnlyFutureDatesExportInWord
+            // label1
             // 
-            this.OnlyFutureDatesExportInWord.AutoSize = true;
-            this.OnlyFutureDatesExportInWord.Location = new System.Drawing.Point(460, 53);
-            this.OnlyFutureDatesExportInWord.Name = "OnlyFutureDatesExportInWord";
-            this.OnlyFutureDatesExportInWord.Size = new System.Drawing.Size(155, 17);
-            this.OnlyFutureDatesExportInWord.TabIndex = 68;
-            this.OnlyFutureDatesExportInWord.Text = "только последующие дни";
-            this.OnlyFutureDatesExportInWord.UseVisualStyleBackColor = true;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 48);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(51, 13);
+            this.label1.TabIndex = 69;
+            this.label1.Text = "Семестр";
+            // 
+            // semesterList
+            // 
+            this.semesterList.FormattingEnabled = true;
+            this.semesterList.Location = new System.Drawing.Point(69, 45);
+            this.semesterList.Name = "semesterList";
+            this.semesterList.Size = new System.Drawing.Size(137, 21);
+            this.semesterList.TabIndex = 70;
             // 
             // TeacherSchedule
             // 
@@ -212,5 +233,7 @@ namespace UchOtd.Forms
         private CheckBox showProposed;
         private Button ExportAllTeachersInWord;
         private CheckBox OnlyFutureDatesExportInWord;
+        private ComboBox semesterList;
+        private Label label1;
     }
 }

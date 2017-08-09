@@ -47,7 +47,7 @@ namespace UchOtd.Core
             return connectionString.Substring(startIndex, endIndex - startIndex);
         }
 
-        public static List<int> StudentGroupIdsFromGroupId(int groupId, ScheduleRepository repo)
+        public static List<int> StudentGroupIdsFromGroupId(ScheduleRepository repo, int groupId)
         {
             var group = repo.StudentGroups.GetStudentGroup(groupId);
 

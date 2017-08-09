@@ -17,7 +17,8 @@ namespace UchOtd.NUDS.Forms
         readonly ScheduleRepository _repo;
         private int _groupId;
         private readonly int _initialGroupId;
-        private int _calendarId = -1;        
+        private int _calendarId = -1;
+        private Semester _semester;
 
 
         private readonly TaskScheduler _uiScheduler;
@@ -40,10 +41,31 @@ namespace UchOtd.NUDS.Forms
             Left = (Screen.PrimaryScreen.Bounds.Width - Width) / 2;
             Top = (Screen.PrimaryScreen.Bounds.Height - Height) / 2;
 
+            var semesters = _repo
+                .Semesters
+                .GetAllSemesters()
+                .OrderBy(s => s.StartingYear)
+                .ThenBy(s => s.SemesterInYear)
+                .ToList();
+
+            semesterList.ValueMember = "SemesterId";
+            semesterList.DisplayMember = "DisplayName";
+            semesterList.DataSource = semesters;
+            _semester = null;
+
+            if (semesters.Count == 0)
+            {
+                return;
+            }
+
+            _semester = semesters[semesters.Count - 1];
+
             var initialCalendar = _repo.Calendars.GetFirstFiltredCalendar(c => c.Date.Date == DateTime.Now.Date);
             if (initialCalendar == null)
             {
-                var ss = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts");
+                var ss = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => 
+                    co.Key == "Semester Starts" &&
+                    co.Semester.SemesterId == _semester.SemesterId);
                 initialCalendar = _repo.Calendars.GetFirstFiltredCalendar(c => c.Date == DateTime.ParseExact(ss.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture));
             }
 

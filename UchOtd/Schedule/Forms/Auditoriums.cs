@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Core;
 using UchOtd.Properties;
@@ -39,6 +40,9 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
+            Semester semester;
+            if (getSemester(out semester)) return;
+
             Dictionary<int, Dictionary<int, List<string>>> auds = null;
 
             if (Mon.Text == "Понедельник")
@@ -52,7 +56,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Monday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(semester, DayOfWeek.Monday, weekNum, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -82,6 +86,24 @@ namespace UchOtd.Schedule.Forms
             }
         }
 
+        private bool getSemester(out Semester semester)
+        {
+            semester = null;
+
+            if (semesterList.SelectedValue == null)
+            {
+                return true;
+            }
+
+            semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int) semesterList.SelectedValue);
+
+            if (semester == null)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private async void Tue_Click(object sender, EventArgs e)
         {
             int weekNum = -1;
@@ -99,6 +121,9 @@ namespace UchOtd.Schedule.Forms
 
             Dictionary<int, Dictionary<int, List<string>>> auds = null;
 
+            Semester semester;
+            if (getSemester(out semester)) return;
+
             if (Tue.Text == "Вторник")
             {
                 _cToken = _tokenSource.Token;
@@ -110,7 +135,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Tuesday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(semester, DayOfWeek.Tuesday, weekNum, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -157,6 +182,9 @@ namespace UchOtd.Schedule.Forms
 
             Dictionary<int, Dictionary<int, List<string>>> auds = null;
 
+            Semester semester;
+            if (getSemester(out semester)) return;
+
             if (Wed.Text == "Среда")
             {
                 _cToken = _tokenSource.Token;
@@ -168,7 +196,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Wednesday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(semester, DayOfWeek.Wednesday, weekNum, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -215,6 +243,9 @@ namespace UchOtd.Schedule.Forms
 
             Dictionary<int, Dictionary<int, List<string>>> auds = null;
 
+            Semester semester;
+            if (getSemester(out semester)) return;
+
             if (Thu.Text == "Четверг")
             {
                 _cToken = _tokenSource.Token;
@@ -226,7 +257,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Thursday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(semester, DayOfWeek.Thursday, weekNum, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -273,6 +304,9 @@ namespace UchOtd.Schedule.Forms
 
             Dictionary<int, Dictionary<int, List<string>>> auds = null;
 
+            Semester semester;
+            if (getSemester(out semester)) return;
+
             if (Fri.Text == "Пятница")
             {
                 _cToken = _tokenSource.Token;
@@ -284,7 +318,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Friday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(semester, DayOfWeek.Friday, weekNum, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -331,6 +365,9 @@ namespace UchOtd.Schedule.Forms
 
             Dictionary<int, Dictionary<int, List<string>>> auds = null;
 
+            Semester semester;
+            if (getSemester(out semester)) return;
+
             if (Sat.Text == "Суббота")
             {
                 _cToken = _tokenSource.Token;
@@ -342,7 +379,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Saturday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(semester, DayOfWeek.Saturday, weekNum, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -464,6 +501,17 @@ namespace UchOtd.Schedule.Forms
         private void Auditoriums_Load(object sender, EventArgs e)
         {
             _tokenSource = new CancellationTokenSource();
+
+            var semesters = _repo
+                .Semesters
+                .GetAllSemesters()
+                .OrderBy(s => s.StartingYear)
+                .ThenBy(s => s.SemesterInYear)
+                .ToList();
+
+            semesterList.ValueMember = "SemesterId";
+            semesterList.DisplayMember = "DisplayName";
+            semesterList.DataSource = semesters;
 
             var buildings = _repo.Buildings.GetAllBuildings()
                 .OrderBy(b => b.Name)

@@ -32,6 +32,11 @@ namespace UchOtd.Schedule.Forms.Analysis
         private void InitializeComponent()
         {
             this.mainSplit = new System.Windows.Forms.SplitContainer();
+            this.semesterList = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.progress = new System.Windows.Forms.Label();
+            this.FillAllWishesAsEmpty = new System.Windows.Forms.Button();
+            this.removeAllWishes = new System.Windows.Forms.Button();
             this.chooseRings = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.FitAllLessonsDaysCount = new System.Windows.Forms.TextBox();
@@ -56,9 +61,6 @@ namespace UchOtd.Schedule.Forms.Analysis
             this.wishesView = new System.Windows.Forms.DataGridView();
             this.ringsPanel = new System.Windows.Forms.Panel();
             this.RingsList = new System.Windows.Forms.ListBox();
-            this.removeAllWishes = new System.Windows.Forms.Button();
-            this.FillAllWishesAsEmpty = new System.Windows.Forms.Button();
-            this.progress = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplit)).BeginInit();
             this.mainSplit.Panel1.SuspendLayout();
             this.mainSplit.Panel2.SuspendLayout();
@@ -77,6 +79,8 @@ namespace UchOtd.Schedule.Forms.Analysis
             // 
             // mainSplit.Panel1
             // 
+            this.mainSplit.Panel1.Controls.Add(this.semesterList);
+            this.mainSplit.Panel1.Controls.Add(this.label4);
             this.mainSplit.Panel1.Controls.Add(this.progress);
             this.mainSplit.Panel1.Controls.Add(this.FillAllWishesAsEmpty);
             this.mainSplit.Panel1.Controls.Add(this.removeAllWishes);
@@ -108,6 +112,51 @@ namespace UchOtd.Schedule.Forms.Analysis
             this.mainSplit.Size = new System.Drawing.Size(976, 654);
             this.mainSplit.SplitterDistance = 101;
             this.mainSplit.TabIndex = 0;
+            // 
+            // semesterList
+            // 
+            this.semesterList.FormattingEnabled = true;
+            this.semesterList.Location = new System.Drawing.Point(843, 66);
+            this.semesterList.Name = "semesterList";
+            this.semesterList.Size = new System.Drawing.Size(121, 21);
+            this.semesterList.TabIndex = 25;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(782, 69);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(51, 13);
+            this.label4.TabIndex = 24;
+            this.label4.Text = "Семестр";
+            // 
+            // progress
+            // 
+            this.progress.AutoSize = true;
+            this.progress.Location = new System.Drawing.Point(782, 77);
+            this.progress.Name = "progress";
+            this.progress.Size = new System.Drawing.Size(0, 13);
+            this.progress.TabIndex = 23;
+            // 
+            // FillAllWishesAsEmpty
+            // 
+            this.FillAllWishesAsEmpty.Location = new System.Drawing.Point(208, 69);
+            this.FillAllWishesAsEmpty.Name = "FillAllWishesAsEmpty";
+            this.FillAllWishesAsEmpty.Size = new System.Drawing.Size(195, 23);
+            this.FillAllWishesAsEmpty.TabIndex = 22;
+            this.FillAllWishesAsEmpty.Text = "Записать все желания пустыми";
+            this.FillAllWishesAsEmpty.UseVisualStyleBackColor = true;
+            this.FillAllWishesAsEmpty.Click += new System.EventHandler(this.FillAllWishesAsEmpty_Click);
+            // 
+            // removeAllWishes
+            // 
+            this.removeAllWishes.Location = new System.Drawing.Point(12, 69);
+            this.removeAllWishes.Name = "removeAllWishes";
+            this.removeAllWishes.Size = new System.Drawing.Size(171, 23);
+            this.removeAllWishes.TabIndex = 21;
+            this.removeAllWishes.Text = "Удалить все пожелания";
+            this.removeAllWishes.UseVisualStyleBackColor = true;
+            this.removeAllWishes.Click += new System.EventHandler(this.removeAllWishes_Click);
             // 
             // chooseRings
             // 
@@ -340,34 +389,6 @@ namespace UchOtd.Schedule.Forms.Analysis
             this.RingsList.TabIndex = 0;
             this.RingsList.SelectedIndexChanged += new System.EventHandler(this.RingsList_SelectedIndexChanged);
             // 
-            // removeAllWishes
-            // 
-            this.removeAllWishes.Location = new System.Drawing.Point(12, 69);
-            this.removeAllWishes.Name = "removeAllWishes";
-            this.removeAllWishes.Size = new System.Drawing.Size(171, 23);
-            this.removeAllWishes.TabIndex = 21;
-            this.removeAllWishes.Text = "Удалить все пожелания";
-            this.removeAllWishes.UseVisualStyleBackColor = true;
-            this.removeAllWishes.Click += new System.EventHandler(this.removeAllWishes_Click);
-            // 
-            // FillAllWishesAsEmpty
-            // 
-            this.FillAllWishesAsEmpty.Location = new System.Drawing.Point(208, 69);
-            this.FillAllWishesAsEmpty.Name = "FillAllWishesAsEmpty";
-            this.FillAllWishesAsEmpty.Size = new System.Drawing.Size(195, 23);
-            this.FillAllWishesAsEmpty.TabIndex = 22;
-            this.FillAllWishesAsEmpty.Text = "Записать все желания пустыми";
-            this.FillAllWishesAsEmpty.UseVisualStyleBackColor = true;
-            this.FillAllWishesAsEmpty.Click += new System.EventHandler(this.FillAllWishesAsEmpty_Click);
-            // 
-            // progress
-            // 
-            this.progress.AutoSize = true;
-            this.progress.Location = new System.Drawing.Point(782, 77);
-            this.progress.Name = "progress";
-            this.progress.Size = new System.Drawing.Size(0, 13);
-            this.progress.TabIndex = 23;
-            // 
             // Wishes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -419,5 +440,7 @@ namespace UchOtd.Schedule.Forms.Analysis
         private Button FillAllWishesAsEmpty;
         private Button removeAllWishes;
         private Label progress;
+        private ComboBox semesterList;
+        private Label label4;
     }
 }

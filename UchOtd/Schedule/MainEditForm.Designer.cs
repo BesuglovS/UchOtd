@@ -194,6 +194,7 @@ namespace UchOtd.Schedule
             this.semesterList.Name = "semesterList";
             this.semesterList.Size = new System.Drawing.Size(58, 21);
             this.semesterList.TabIndex = 70;
+            this.semesterList.SelectedValueChanged += new System.EventHandler(this.semesterList_SelectedValueChanged);
             // 
             // siteToUpload
             // 
@@ -881,28 +882,28 @@ namespace UchOtd.Schedule
             // groups1314
             // 
             this.groups1314.Name = "groups1314";
-            this.groups1314.Size = new System.Drawing.Size(152, 22);
+            this.groups1314.Size = new System.Drawing.Size(133, 22);
             this.groups1314.Text = "2013 / 2014";
             this.groups1314.Click += new System.EventHandler(this.groups1314_Click);
             // 
             // groups1415
             // 
             this.groups1415.Name = "groups1415";
-            this.groups1415.Size = new System.Drawing.Size(152, 22);
+            this.groups1415.Size = new System.Drawing.Size(133, 22);
             this.groups1415.Text = "2014 / 2015";
             this.groups1415.Click += new System.EventHandler(this.groups1415_Click);
             // 
             // groups1516
             // 
             this.groups1516.Name = "groups1516";
-            this.groups1516.Size = new System.Drawing.Size(152, 22);
+            this.groups1516.Size = new System.Drawing.Size(133, 22);
             this.groups1516.Text = "2015 / 2016";
             this.groups1516.Click += new System.EventHandler(this.groups1516_Click);
             // 
             // groups1617
             // 
             this.groups1617.Name = "groups1617";
-            this.groups1617.Size = new System.Drawing.Size(152, 22);
+            this.groups1617.Size = new System.Drawing.Size(133, 22);
             this.groups1617.Text = "2016 / 2017";
             this.groups1617.Click += new System.EventHandler(this.groups1617_Click);
             // 

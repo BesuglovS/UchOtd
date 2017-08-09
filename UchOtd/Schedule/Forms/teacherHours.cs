@@ -117,10 +117,11 @@ namespace UchOtd.Schedule.Forms
         private void view_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             var discId = ((List<TeacherForDisciplineView>)view.DataSource)[e.RowIndex].DisciplineId;
+            var disc = _repo.Disciplines.GetFirstFiltredDisciplines(d => d.DisciplineId == discId);
             var tefd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
             if (tefd != null)
             {
-                var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId);
+                var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId, disc.Semester);
                 addLessonForm.Show();
             }
             else

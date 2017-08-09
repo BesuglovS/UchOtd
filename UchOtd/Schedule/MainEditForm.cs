@@ -76,15 +76,7 @@ namespace UchOtd.Schedule
             semesterList.DisplayMember = "DisplayName";
             semesterList.DataSource = semesters;
 
-            var groups = Repo
-                .StudentGroups
-                .GetAllStudentGroups()
-                .OrderBy(g => g.Name)
-                .ToList();
-
-            groupList.ValueMember = "StudentGroupId";
-            groupList.DisplayMember = "Name";
-            groupList.DataSource = groups;
+            LoadStudentGroupsForSelectedSemester();
 
             var faculties = Repo
                 .Faculties
@@ -150,11 +142,9 @@ namespace UchOtd.Schedule
             }
         }
 
-        public List<GroupTableView> GetGroupSchedule(int groupId, bool showProposed, CancellationToken cToken,
+        public List<GroupTableView> GetGroupSchedule(Semester semester, int groupId, bool showProposed, CancellationToken cToken,
             bool isWeekFilered, int weekFilterNum, bool onlyFutureDates)
         {
-            var sStarts = Repo.CommonFunctions.GetSemesterStarts();
-
             int weekNum = -1;
             if (isWeekFilered)
             {
@@ -163,12 +153,12 @@ namespace UchOtd.Schedule
 
             cToken.ThrowIfCancellationRequested();
 
-            var groupLessons = Repo.Lessons.GetGroupedGroupLessons(groupId, sStarts, weekNum, showProposed,
+            var groupLessons = Repo.Lessons.GetGroupedGroupLessons(semester, groupId, weekNum, showProposed,
                 onlyFutureDates);
 
             cToken.ThrowIfCancellationRequested();
 
-            return CreateGroupTableView(groupId, groupLessons, showProposed);
+            return CreateGroupTableView(semester, groupId, groupLessons, showProposed);
         }
 
         private async void ShowGroupLessonsClick(object sender, EventArgs e)
@@ -189,13 +179,27 @@ namespace UchOtd.Schedule
                 int.TryParse(WeekFilter.Text, out weekFilterNum);
                 var onlyFutureDates = OnlyFutureDatesExportInWord.Checked;
 
+                Semester semester = null;
+
+                if (semesterList.SelectedValue == null)
+                {
+                    return;
+                }
+
+                semester = Repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+                if (semester == null)
+                {
+                    return;
+                }
+
                 try
                 {
                     ScheduleView.DataSource =
                         await
                             Task.Run(
                                 () =>
-                                    GetGroupSchedule(groupId, showProposed, _cToken, isWeekFilered, weekFilterNum,
+                                    GetGroupSchedule(semester, groupId, showProposed, _cToken, isWeekFilered, weekFilterNum,
                                         onlyFutureDates), _cToken);
                 }
                 catch (OperationCanceledException)
@@ -237,12 +241,14 @@ namespace UchOtd.Schedule
         }
 
         public List<GroupTableView> CreateGroupTableView(
-            int groupId, Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>> groupLessons,
+            Semester semester, 
+            int groupId, 
+            Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>> groupLessons,
             bool putProposedLessons)
         {
             var result = new List<GroupTableView>();
 
-            var groupView = CreateGroupView(groupId, groupLessons);
+            var groupView = CreateGroupView(semester, groupId, groupLessons);
             foreach (var gv in groupView)
             {
                 var time = gv.Datetime.Substring(2, gv.Datetime.Length - 2);
@@ -335,11 +341,11 @@ namespace UchOtd.Schedule
         }
 
         private IEnumerable<GroupView> CreateGroupView(
-            int groupId, Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>> data)
+            Semester semester, int groupId, Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>> data)
         {
             const string proposedLessonStartToken = "[";
             const string proposedLessonEndToken = "]";
-
+            
             var result = new List<GroupView>();
 
             var group = Repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.StudentGroupId == groupId);
@@ -384,7 +390,8 @@ namespace UchOtd.Schedule
 
                     var audStrings = "";
                     var audWeekList =
-                        item.Value.Item2.ToDictionary(l => Repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date),
+                        item.Value.Item2.ToDictionary(l => 
+                            Repo.CommonFunctions.CalculateWeekNumber(semester, l.Calendar.Date),
                             l => l.Auditorium.Name);
                     var grouped = audWeekList.GroupBy(a => a.Value);
 
@@ -431,7 +438,21 @@ namespace UchOtd.Schedule
 
         private void ExportGroupDisciplines(string filename)
         {
-            String semesterString = (Repo.CommonFunctions.GetSemesterStarts().Month > 6)
+            Semester semester = null;
+
+            if (semesterList.SelectedValue == null)
+            {
+                return;
+            }
+
+            semester = Repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+            if (semester == null)
+            {
+                return;
+            }
+
+            String semesterString = (semester.SemesterInYear == 1)
                 ? " (1 семестр)"
                 : " (2 семестр)";
 
@@ -589,7 +610,21 @@ namespace UchOtd.Schedule
 
         private void ExportScheduleDates(string filename)
         {
-            String semesterString = (Repo.CommonFunctions.GetSemesterStarts().Month > 6)
+            Semester semester = null;
+
+            if (semesterList.SelectedValue == null)
+            {
+                return;
+            }
+
+            semester = Repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+            if (semester == null)
+            {
+                return;
+            }
+
+            String semesterString = (semester.SemesterInYear == 1)
                 ? " (1 семестр)"
                 : " (2 семестр)";
 
@@ -962,7 +997,21 @@ namespace UchOtd.Schedule
 
         private void Button1Click(object sender, EventArgs e)
         {
-            var addLessonForm = new AddLesson(Repo);
+            Semester semester = null;
+
+            if (semesterList.SelectedValue == null)
+            {
+                return;
+            }
+
+            semester = Repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int) semesterList.SelectedValue);
+
+            if (semester == null)
+            {
+                return;
+            }
+            
+            var addLessonForm = new AddLesson(Repo, semester);
             addLessonForm.Show();
         }
 
@@ -1000,11 +1049,25 @@ namespace UchOtd.Schedule
 
         private void MainViewCellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
+            Semester semester = null;
+
+            if (semesterList.SelectedValue == null)
+            {
+                return;
+            }
+
+            semester = Repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+            if (semester == null)
+            {
+                return;
+            }
+
             var source = (List<GroupTableView>) ScheduleView.DataSource;
             var time = source[e.RowIndex].Time;
 
             var editLessonForm = new EditLesson(Repo, (int) groupList.SelectedValue, e.ColumnIndex, time,
-                showProposedLessons.Checked);
+                showProposedLessons.Checked, semester);
             editLessonForm.ShowDialog();
         }
 
@@ -2320,12 +2383,26 @@ namespace UchOtd.Schedule
 
                 var groupId = (int) groupList.SelectedValue;
 
+                Semester semester = null;
+
+                if (semesterList.SelectedValue == null)
+                {
+                    return;
+                }
+
+                semester = Repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+                if (semester == null)
+                {
+                    return;
+                }
+
                 try
                 {
                     await
                         Task.Run(
                             () =>
-                                WordExport.ExportGroupSchedulePage(Repo, this, groupId, weekFilteredF, weekFilterNum,
+                                WordExport.ExportGroupSchedulePage(Repo, this, semester, groupId, weekFilteredF, weekFilterNum,
                                     onlyFutureDatesF, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
@@ -2351,12 +2428,26 @@ namespace UchOtd.Schedule
             {
                 _cToken = _tokenSource.Token;
 
+                Semester semester = null;
+
+                if (semesterList.SelectedValue == null)
+                {
+                    return;
+                }
+
+                semester = Repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+                if (semester == null)
+                {
+                    return;
+                }
+
                 WordWholeScheduleOneGroupOnePage.Text = "";
                 WordWholeScheduleOneGroupOnePage.Image = Resources.Loading;
 
                 try
                 {
-                    await Task.Run(() => WordExport.ExportWholeScheduleOneGroupPerPage(Repo, this, _cToken), _cToken);
+                    await Task.Run(() => WordExport.ExportWholeScheduleOneGroupPerPage(Repo, this, semester, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -2428,9 +2519,22 @@ namespace UchOtd.Schedule
 
         private void пожеланияToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var wishesForm = new Wishes(Repo);
-            wishesForm.Show();
+            Semester semester = null;
 
+            if (semesterList.SelectedValue == null)
+            {
+                return;
+            }
+
+            semester = Repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+            if (semester == null)
+            {
+                return;
+            }
+
+            var wishesForm = new Wishes(Repo, semester);
+            wishesForm.Show();
         }
 
         private void аудиторииДисциплинToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2939,6 +3043,29 @@ namespace UchOtd.Schedule
             {
                 WordExport.GroupsListOneYear(Repo, 2016, true, @"D:\Github\StudentGroups1617.docx", true, true);
             });
+        }
+
+        private void semesterList_SelectedValueChanged(object sender, EventArgs e)
+        {
+            LoadStudentGroupsForSelectedSemester();
+        }
+
+        private void LoadStudentGroupsForSelectedSemester()
+        {
+            if (semesterList.SelectedValue == null) return;
+
+            int semesterId = (int) semesterList.SelectedValue;
+
+            var groups = Repo
+                .StudentGroups
+                .GetAllStudentGroups()
+                .Where(sg => sg.Semester.SemesterId == semesterId)
+                .OrderBy(g => g.Name)
+                .ToList();
+
+            groupList.ValueMember = "StudentGroupId";
+            groupList.DisplayMember = "Name";
+            groupList.DataSource = groups;
         }
     }
 }

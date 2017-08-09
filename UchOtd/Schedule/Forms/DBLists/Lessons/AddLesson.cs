@@ -19,6 +19,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
     public partial class AddLesson : Form
     {
         private readonly ScheduleRepository _repo;
+        private readonly Semester _semester;
         private readonly int _tfdId = -1;
 
         private int _selectedBuildingId = -1;
@@ -30,13 +31,22 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             _repo = repo;
         }
 
-        public AddLesson(ScheduleRepository repo, int tfdId)
+        public AddLesson(ScheduleRepository repo, int tfdId, Semester semester)
         {
             InitializeComponent();
 
             _repo = repo;
 
             _tfdId = tfdId;
+            _semester = semester;
+        }
+
+        public AddLesson(ScheduleRepository repo, Semester semester)
+        {
+            InitializeComponent();
+
+            _repo = repo;
+            _semester = semester;
         }
 
         private void RadioButtonCheckedChanged(Object sender, EventArgs e)
@@ -218,7 +228,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             
             var calendarsList = (
                     from week in weekList
-                    select _repo.CommonFunctions.GetDateFromDowAndWeek((int)DayOfWeekListBox.SelectedValue, week)
+                    select _repo.CommonFunctions.GetDateFromDowAndWeek(week, (int)DayOfWeekListBox.SelectedValue, _semester)
                     into date
                     select _repo.Calendars.FindCalendar(date)
                     into calendar
@@ -297,7 +307,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                         Ring = ring
                     };
 
-                    var date = _repo.CommonFunctions.GetDateFromDowAndWeek((int)DayOfWeekListBox.SelectedValue, week);
+                    var date = _repo.CommonFunctions.GetDateFromDowAndWeek(week, (int)DayOfWeekListBox.SelectedValue, _semester);
                     var calendar = _repo.Calendars.FindCalendar(date) ?? new Calendar(date);
                     lesson.Calendar = calendar;
 
@@ -378,7 +388,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             var calendarIds = (
                     from cal in _repo.Calendars.GetAllCalendars()
                     where Constants.DowRemap[(int) cal.Date.DayOfWeek] - 1 == DayOfWeekListBox.SelectedIndex
-                    let week = _repo.CommonFunctions.CalculateWeekNumber(cal.Date)
+                    let week = _repo.CommonFunctions.CalculateWeekNumber(_semester, cal.Date)
                     where weekList.Contains(week)
                     select cal.CalendarId)
                 .ToList();

@@ -101,7 +101,7 @@ namespace UchOtd.Schedule.Core
                 SetCornerStamp(section);
             }
 
-            SetHeaderText(section, repo, facultyName, dow);
+            SetHeaderText(section, repo, semester, facultyName, dow);
 
             PutScheduleTable(repo, semester, section, schedule, scheduleFontsize);
 
@@ -150,7 +150,7 @@ namespace UchOtd.Schedule.Core
             paragraph.Format.SpaceAfter = 3;
         }
 
-        private static void SetHeaderText(Section section, ScheduleRepository repo, string facultyName, string dow)
+        private static void SetHeaderText(Section section, ScheduleRepository repo, Semester semester, string facultyName, string dow)
         {
             // Create the text frame for the address
             var addressFrame = section.AddTextFrame();
@@ -169,7 +169,7 @@ namespace UchOtd.Schedule.Core
             paragraph.Format.Font.Size = 10;
             paragraph.Format.SpaceAfter = 3;
 
-            var semesterString = DetectSemesterString(repo);
+            var semesterString = DetectSemesterString(semester);
             paragraph = addressFrame.AddParagraph(semesterString);
             paragraph.Format.Font.Name = "Calibri";
             paragraph.Format.Alignment = ParagraphAlignment.Center;
@@ -189,17 +189,16 @@ namespace UchOtd.Schedule.Core
             paragraph.Format.SpaceAfter = 3;
         }
 
-        private static string DetectSemesterString(ScheduleRepository repo)
+        private static string DetectSemesterString(Semester semester)
         {
-            var semesterSterts = repo.CommonFunctions.GetSemesterStarts();
-            var ssYear = semesterSterts.Year;
+            var ssYear = semester.StartingYear;
 
-            if (semesterSterts.Month > 6)
+            if (semester.SemesterInYear == 1)
             {
-                return "первого семестра " + ssYear + " – " + (ssYear+1) + " учебного года";
+                return "первого семестра " + ssYear + " – " + (ssYear + 1) + " учебного года";
             }
 
-            return "второго семестра " + (ssYear-1) + " – " + ssYear + " учебного года";
+            return "второго семестра " + (ssYear - 1) + " – " + ssYear + " учебного года";
         }        
 
         private static void PutScheduleTable(ScheduleRepository repo, Semester semester, Section section,
@@ -330,7 +329,9 @@ namespace UchOtd.Schedule.Core
                         cellTable.AddColumn(table.Columns[columnGroupIndex].Width.Centimeter + "cm");
                         cellTable.Borders.Width = 0;
 
-                        foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min()))
+                        foreach (var tfdData in group.Value[time].OrderBy(tfd => 
+                            tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(
+                                semester, l.Item1.Calendar.Date)).Min()))
                         {
                             var cellText = "";
                             cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
@@ -351,7 +352,9 @@ namespace UchOtd.Schedule.Core
                             cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
                             cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
 
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => 
+                                repo.CommonFunctions.CalculateWeekNumber(
+                                    semester, l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
                             var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();

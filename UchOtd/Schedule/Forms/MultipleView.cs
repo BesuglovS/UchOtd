@@ -32,6 +32,17 @@ namespace UchOtd.Schedule.Forms
         {
             _tokenSource = new CancellationTokenSource();
 
+            var semesters = _repo
+                .Semesters
+                .GetAllSemesters()
+                .OrderBy(s => s.StartingYear)
+                .ThenBy(s => s.SemesterInYear)
+                .ToList();
+
+            semesterList.ValueMember = "SemesterId";
+            semesterList.DisplayMember = "DisplayName";
+            semesterList.DataSource = semesters;
+
             var groups1 = _repo
                 .StudentGroups
                 .GetAllStudentGroups()
@@ -99,11 +110,25 @@ namespace UchOtd.Schedule.Forms
                 var repo = _repo;
                 var isShowProposed = showProposed.Checked;
 
+                Semester semester = null;
+
+                if (semesterList.SelectedValue == null)
+                {
+                    return;
+                }
+
+                semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+                if (semester == null)
+                {
+                    return;
+                }
+
                 try
                 {
                     groupsEvents = await Task.Run(() =>
                     {
-                        var groupsLessons = repo.CommonFunctions.GetGroupedGroupsLessons(groupsList, isShowProposed,
+                        var groupsLessons = repo.CommonFunctions.GetGroupedGroupsLessons(semester, groupsList, isShowProposed,
                             _cToken);
                         return CreateGroupsTableView(groupsLessons, _cToken);
                     }, _cToken);
@@ -185,6 +210,20 @@ namespace UchOtd.Schedule.Forms
             var plainGroupName = "";
             var nGroupName = "";
 
+            Semester semester = null;
+
+            if (semesterList.SelectedValue == null)
+            {
+                return null;
+            }
+
+            semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+            if (semester == null)
+            {
+                return null;
+            }
+
             var group = _repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.StudentGroupId == groupId);
             
             if (group.Name.Contains(" (+Н)"))
@@ -213,7 +252,9 @@ namespace UchOtd.Schedule.Forms
                     eventString += tfd.Teacher.FIO + Environment.NewLine;
                     eventString += "(" + item.Value.Item1 + ")" + Environment.NewLine;
 
-                    var audWeekList = item.Value.Item2.ToDictionary(l => _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date), l => l.Auditorium.Name);
+                    var audWeekList = item.Value.Item2.ToDictionary(l => 
+                        _repo.CommonFunctions.CalculateWeekNumber(
+                            semester, l.Calendar.Date), l => l.Auditorium.Name);
                     var grouped = audWeekList.GroupBy(a => a.Value);
 
                     var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();

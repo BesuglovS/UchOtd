@@ -41,6 +41,8 @@ namespace UchOtd.Forms
             this.viewPanel = new System.Windows.Forms.Panel();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.auditoriumsView = new System.Windows.Forms.DataGridView();
+            this.label2 = new System.Windows.Forms.Label();
+            this.semesterList = new System.Windows.Forms.ComboBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.auditoriumsView)).BeginInit();
@@ -48,6 +50,8 @@ namespace UchOtd.Forms
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.semesterList);
+            this.controlsPanel.Controls.Add(this.label2);
             this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.lessonsDate);
             this.controlsPanel.Controls.Add(this.label1);
@@ -56,7 +60,7 @@ namespace UchOtd.Forms
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(875, 50);
+            this.controlsPanel.Size = new System.Drawing.Size(930, 50);
             this.controlsPanel.TabIndex = 0;
             // 
             // showProposed
@@ -112,7 +116,7 @@ namespace UchOtd.Forms
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 50);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(875, 494);
+            this.viewPanel.Size = new System.Drawing.Size(930, 494);
             this.viewPanel.TabIndex = 1;
             // 
             // loadingLabel
@@ -140,14 +144,31 @@ namespace UchOtd.Forms
             this.auditoriumsView.Name = "auditoriumsView";
             this.auditoriumsView.ReadOnly = true;
             this.auditoriumsView.RowHeadersVisible = false;
-            this.auditoriumsView.Size = new System.Drawing.Size(875, 494);
+            this.auditoriumsView.Size = new System.Drawing.Size(930, 494);
             this.auditoriumsView.TabIndex = 0;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(719, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(51, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Семестр";
+            // 
+            // semesterList
+            // 
+            this.semesterList.FormattingEnabled = true;
+            this.semesterList.Location = new System.Drawing.Point(776, 9);
+            this.semesterList.Name = "semesterList";
+            this.semesterList.Size = new System.Drawing.Size(121, 21);
+            this.semesterList.TabIndex = 6;
             // 
             // BuildingLessons
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(875, 544);
+            this.ClientSize = new System.Drawing.Size(930, 544);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -174,5 +195,7 @@ namespace UchOtd.Forms
         private DataGridView auditoriumsView;
         private Label loadingLabel;
         private CheckBox showProposed;
+        private ComboBox semesterList;
+        private Label label2;
     }
 }

@@ -139,7 +139,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                         if (groupNameF)
                         {
-                            var groupsListIds = Utilities.StudentGroupIdsFromGroupId(groupId, _repo);
+                            var groupsListIds = Utilities.StudentGroupIdsFromGroupId(_repo, groupId);
 
                             discList = discList
                                 .Where(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId))
@@ -513,10 +513,11 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void DiscipineListView_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             var discId = ((List<DisciplineView>)DisciplinesList.DataSource)[e.RowIndex].DisciplineId;
+            var disc = _repo.Disciplines.GetFirstFiltredDisciplines(d => d.DisciplineId == discId);
             var tefd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
             if (tefd != null)
             {
-                var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId);
+                var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId, disc.Semester);
                 addLessonForm.Show();
             }
             else

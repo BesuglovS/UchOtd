@@ -151,7 +151,7 @@ namespace Schedule.Repositories.Common
                 return 0;
             });
 
-            var final = result.Aggregate((current, str) => current + ", " + str);
+            var final = result.Count == 0 ? "" : result.Aggregate((current, str) => current + ", " + str);
             return final;
         }
 
@@ -218,12 +218,14 @@ namespace Schedule.Repositories.Common
             return result;
         }
 
-        public DateTime GetDateFromDowAndWeek(int dow, int week)
+        public DateTime GetDateFromDowAndWeek(int week, int dow, Semester semester)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
                 var semesterStartsOption = context.Config
-                    .FirstOrDefault(co => co.Key == "Semester Starts");
+                    .FirstOrDefault(co => 
+                        co.Key == "Semester Starts" &&
+                        co.Semester.SemesterId == semester.SemesterId);
                 if (semesterStartsOption == null)
                 {
                     return new DateTime(2000, 1, 1);
@@ -236,7 +238,7 @@ namespace Schedule.Repositories.Common
             }
         }
 
-        public Calendar GetCalendarFromDowAndWeek(int dow, int week)
+        public Calendar GetCalendarFromDowAndWeek(Semester semester, int dow, int week)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -309,9 +311,9 @@ namespace Schedule.Repositories.Common
             }
         }
 
-        public int CalculateWeekNumber(DateTime dateTime)
+        public int CalculateWeekNumber(Semester semester, DateTime dateTime)
         {
-            var semesterStarts = GetSemesterStarts();
+            var semesterStarts = GetSemesterStarts(semester);
             var ssDow = (semesterStarts.DayOfWeek != DayOfWeek.Sunday) ? (int)semesterStarts.DayOfWeek : 7;
 
             var ssWeeksMonday = semesterStarts.AddDays((-1) * (ssDow - 1));
@@ -319,7 +321,7 @@ namespace Schedule.Repositories.Common
             return (dateTime - ssWeeksMonday).Days / 7 + 1;
         }
 
-        public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> GetGroupedGroupsLessons(List<int> groupListIds, bool showProposed, CancellationToken cToken)
+        public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> GetGroupedGroupsLessons(Semester semester, List<int> groupListIds, bool showProposed, CancellationToken cToken)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -381,7 +383,7 @@ namespace Schedule.Repositories.Common
                         foreach (var lessonGroup in dateTimeLessons.Groups)
                         {
                             var weekList = lessonGroup.Lessons
-                                .Select(lesson => CalculateWeekNumber(lesson.Calendar.Date.Date))
+                                .Select(lesson => CalculateWeekNumber(semester, lesson.Calendar.Date.Date))
                                 .ToList();
 
                             var weekString = CombineWeeks(weekList);
@@ -402,7 +404,7 @@ namespace Schedule.Repositories.Common
 
         // data   - Dictionary<RingId, Dictionary <AuditoriumId, List<Dictionary<tfd, List<Lesson>>>>>
         // result - Dictionary<RingId, Dictionary <AuditoriumId, List<tfd/Event-string>>>
-        public Dictionary<int, Dictionary<int, List<string>>> GetDowAuds(DayOfWeek dow, int weekNumber, int buildingId, bool showProposed)
+        public Dictionary<int, Dictionary<int, List<string>>> GetDowAuds(Semester semester, DayOfWeek dow, int weekNumber, int buildingId, bool showProposed)
         {
             var data = new Dictionary<int, Dictionary<int, Dictionary<int, List<Lesson>>>>();
 
@@ -432,7 +434,7 @@ namespace Schedule.Repositories.Common
                     dowLessons = _repo.Lessons.GetFiltredLessons(l =>
                             l.Calendar.Date.DayOfWeek == dow &&
                             ((l.State == 1) || ((l.State == 2) && showProposed)) &&
-                            CalculateWeekNumber(l.Calendar.Date) == weekNumber)
+                            CalculateWeekNumber(semester, l.Calendar.Date) == weekNumber)
                         .ToList();
                 }
                 else
@@ -440,7 +442,7 @@ namespace Schedule.Repositories.Common
                     dowLessons = _repo.Lessons.GetFiltredLessons(l =>
                             l.Calendar.Date.DayOfWeek == dow &&
                             ((l.State == 1) || ((l.State == 2) && showProposed)) &&
-                            CalculateWeekNumber(l.Calendar.Date) == weekNumber &&
+                            CalculateWeekNumber(semester, l.Calendar.Date) == weekNumber &&
                             l.Auditorium.Building.BuildingId == buildingId)
                         .ToList();
                 }
@@ -485,7 +487,7 @@ namespace Schedule.Repositories.Common
                     foreach (var tfd in aud.Value)
                     {
                         result[ring.Key][aud.Key].Add(tfd.Value[0].TeacherForDiscipline.Discipline.StudentGroup.Name + Environment.NewLine +
-                            "(" + GetWeekStringFromLessons(tfd.Value) + ")@" +
+                            "(" + GetWeekStringFromLessons(semester, tfd.Value) + ")@" +
                             tfd.Value[0].TeacherForDiscipline.Teacher.FIO + "@" + tfd.Value[0].TeacherForDiscipline.Discipline.Name);
                     }
                 }
@@ -510,13 +512,13 @@ namespace Schedule.Repositories.Common
                 {
                     audEvents = _repo.AuditoriumEvents.GetFiltredAuditoriumEvents(evt =>
                         evt.Calendar.Date.DayOfWeek == dow &&
-                        CalculateWeekNumber(evt.Calendar.Date) == weekNumber);
+                        CalculateWeekNumber(semester, evt.Calendar.Date) == weekNumber);
                 }
                 else
                 {
                     audEvents = _repo.AuditoriumEvents.GetFiltredAuditoriumEvents(evt =>
                         evt.Calendar.Date.DayOfWeek == dow &&
-                        CalculateWeekNumber(evt.Calendar.Date) == weekNumber &&
+                        CalculateWeekNumber(semester, evt.Calendar.Date) == weekNumber &&
                         evt.Auditorium.Building.BuildingId == buildingId);
                 }
             }
@@ -578,11 +580,11 @@ namespace Schedule.Repositories.Common
                         {
                             var evtName = eventPair.Value[0].Name.Split('@')[0];
                             var evtHint = eventPair.Value[0].Name.Substring(evtName.Length + 1);
-                            result[ring.Key][aud.Key].Add(evtName + Environment.NewLine + "( " + GetWeekStringFromEvents(eventPair.Value) + " )@" + evtHint);
+                            result[ring.Key][aud.Key].Add(evtName + Environment.NewLine + "( " + GetWeekStringFromEvents(semester, eventPair.Value) + " )@" + evtHint);
                         }
                         else
                         {
-                            result[ring.Key][aud.Key].Add(eventPair.Value[0].Name + Environment.NewLine + "( " + GetWeekStringFromEvents(eventPair.Value) + " )");
+                            result[ring.Key][aud.Key].Add(eventPair.Value[0].Name + Environment.NewLine + "( " + GetWeekStringFromEvents(semester, eventPair.Value) + " )");
                         }
                     }
                 }
@@ -595,7 +597,7 @@ namespace Schedule.Repositories.Common
 
         // data   - Dictionary<RingId, Dictionary <dow, List<Dictionary<tfd, List<Lesson>>>>>
         // result - Dictionary<RingId, Dictionary <dow, List<tfd/Event-string>>>
-        public Dictionary<int, Dictionary<int, List<string>>> GetAud(int auditoriumId, 
+        public Dictionary<int, Dictionary<int, List<string>>> GetAud(Semester semester, int auditoriumId, 
             bool showProposed, CancellationToken cToken)
         {
             var data = new Dictionary<int, Dictionary<int, Dictionary<int, List<Lesson>>>>();
@@ -603,6 +605,7 @@ namespace Schedule.Repositories.Common
             cToken.ThrowIfCancellationRequested();
 
             var audLessons = _repo.Lessons.GetFiltredLessons(l =>
+                l.TeacherForDiscipline.Discipline.Semester.SemesterId == semester.SemesterId &&
                 l.Auditorium.AuditoriumId == auditoriumId &&
                 ((l.State == 1) || ((l.State == 2) && showProposed)))
                 .ToList();
@@ -648,13 +651,20 @@ namespace Schedule.Repositories.Common
                     foreach (var tfd in dow.Value)
                     {
                         result[ring.Key][dow.Key].Add(tfd.Value[0].TeacherForDiscipline.Discipline.StudentGroup.Name + Environment.NewLine +
-                            "(" + GetWeekStringFromLessons(tfd.Value) + ")@" +
+                            "(" + GetWeekStringFromLessons(semester, tfd.Value) + ")@" +
                             tfd.Value[0].TeacherForDiscipline.Teacher.FIO + "@" + tfd.Value[0].TeacherForDiscipline.Discipline.Name);
                     }
                 }
             }
 
-            var dowEvents = _repo.AuditoriumEvents.GetFiltredAuditoriumEvents(evt => evt.Auditorium.AuditoriumId == auditoriumId);
+            var semesterStart = _repo.ConfigOptions.GetSemesterStart(semester);
+            var ssDate = DateTime.ParseExact(semesterStart.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            var semesterEnd = _repo.ConfigOptions.GetSemesterEnd(semester);
+            var seDate = DateTime.ParseExact(semesterEnd.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            var dowEvents = _repo.AuditoriumEvents.GetFiltredAuditoriumEvents(evt => 
+                evt.Auditorium.AuditoriumId == auditoriumId && evt.Calendar.Date.Date >= ssDate &&
+                evt.Auditorium.AuditoriumId == auditoriumId && evt.Calendar.Date.Date <= seDate );
 
             var eventId = 0;
             var eventsIds = new Dictionary<int, string>();
@@ -719,11 +729,11 @@ namespace Schedule.Repositories.Common
                         {
                             var evtName = eventPair.Value[0].Name.Split('@')[0];
                             var evtHint = eventPair.Value[0].Name.Substring(evtName.Length + 1);
-                            result[ring.Key][dow.Key].Add(evtName + Environment.NewLine + "( " + GetWeekStringFromEvents(eventPair.Value) + " )@" + evtHint);
+                            result[ring.Key][dow.Key].Add(evtName + Environment.NewLine + "( " + GetWeekStringFromEvents(semester, eventPair.Value) + " )@" + evtHint);
                         }
                         else
                         {
-                            result[ring.Key][dow.Key].Add(eventPair.Value[0].Name + Environment.NewLine + "( " + GetWeekStringFromEvents(eventPair.Value) + " )");
+                            result[ring.Key][dow.Key].Add(eventPair.Value[0].Name + Environment.NewLine + "( " + GetWeekStringFromEvents(semester, eventPair.Value) + " )");
                         }
                     }
                 }
@@ -736,27 +746,27 @@ namespace Schedule.Repositories.Common
             return result;
         }
 
-        public string GetWeekStringFromLessons(IEnumerable<Lesson> list)
+        public string GetWeekStringFromLessons(Semester semester, IEnumerable<Lesson> list)
         {
-            var weeksList = list.Select(lesson => CalculateWeekNumber(lesson.Calendar.Date)).ToList();
+            var weeksList = list.Select(lesson => CalculateWeekNumber(semester, lesson.Calendar.Date)).ToList();
 
             string result = CombineWeeks(weeksList);
 
             return result;
         }
 
-        public string GetWeekStringFromEvents(IEnumerable<AuditoriumEvent> list)
+        public string GetWeekStringFromEvents(Semester semester, IEnumerable<AuditoriumEvent> list)
         {
-            var weeksList = list.Select(lesson => CalculateWeekNumber(lesson.Calendar.Date)).ToList();
+            var weeksList = list.Select(lesson => CalculateWeekNumber(semester, lesson.Calendar.Date)).ToList();
 
             var result = CombineWeeks(weeksList);
 
             return result;
         }
 
-        public string GetWeekStringFromWishes(IEnumerable<TeacherWish> list)
+        public string GetWeekStringFromWishes(Semester semester, IEnumerable<TeacherWish> list)
         {
-            var weeksList = list.Select(wish => CalculateWeekNumber(wish.Calendar.Date)).ToList();
+            var weeksList = list.Select(wish => CalculateWeekNumber(semester, wish.Calendar.Date)).ToList();
 
             string result = CombineWeeks(weeksList);
 
@@ -793,19 +803,17 @@ namespace Schedule.Repositories.Common
             }
         }
         
-        public DateTime GetSemesterStarts()
+        public DateTime GetSemesterStarts(Semester semester)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
                 var semesterStartsOption = context
                     .Config
-                    .FirstOrDefault(co => co.Key == "Semester Starts");
-                if (semesterStartsOption == null)
-                {
-                    return new DateTime(2000, 1, 1);
-                }
+                    .FirstOrDefault(co => co.Key == "Semester Starts" && co.Semester.SemesterId == semester.SemesterId);
 
-                return DateTime.ParseExact(semesterStartsOption.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                return semesterStartsOption == null ? 
+                    new DateTime() : 
+                    DateTime.ParseExact(semesterStartsOption.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
             }
         }
     }

@@ -350,10 +350,11 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void TFDListView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             var discId = ((List<DisciplineView>)TFDListView.DataSource)[e.RowIndex].DisciplineId;
+            var disc = _repo.Disciplines.GetFirstFiltredDisciplines(d => d.DisciplineId == discId);
             var tefd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
             if (tefd != null)
             {
-                var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId);
+                var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId, disc.Semester);
                 addLessonForm.Show();
             }
             else

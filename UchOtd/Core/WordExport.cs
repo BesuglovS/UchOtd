@@ -64,7 +64,7 @@ namespace UchOtd.Core
 
             oPara1 = oDoc.Content.Paragraphs.Add();
             //oPara1.Range.Text = "второго семестра 2013 – 2014 учебного года";
-            oPara1.Range.Text = DetectSemesterString(repo);
+            oPara1.Range.Text = FormSemesterString(repo, semester);
             oPara1.Range.Font.Bold = 0;
             oPara1.Range.Font.Size = 10;
             oPara1.Range.ParagraphFormat.LineSpacingRule =
@@ -240,7 +240,9 @@ namespace UchOtd.Core
                         timeTable.Range.Font.Bold = 0;
 
                         var tfdIndex = 0;
-                        foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(lwt => repo.CommonFunctions.CalculateWeekNumber(lwt.Item1.Calendar.Date)).Min()))
+                        foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2
+                            .Select(lwt => 
+                                repo.CommonFunctions.CalculateWeekNumber(semester, lwt.Item1.Calendar.Date)).Min()))
                         {
                             var cellText = "";
 
@@ -293,7 +295,9 @@ namespace UchOtd.Core
                                 cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
                             }
 
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => 
+                                repo.CommonFunctions.CalculateWeekNumber(
+                                    semester, l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
                             var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
@@ -611,7 +615,9 @@ namespace UchOtd.Core
                         foreach (
                             var tfdData in
                                 @group.Value[time].OrderBy(
-                                    tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min()))
+                                    tfd => tfd.Value.Item2.Select(l => 
+                                        repo.CommonFunctions.CalculateWeekNumber(
+                                            semester, l.Item1.Calendar.Date)).Min()))
                         {
                             var cellText = "";
                             // Discipline name
@@ -655,7 +661,9 @@ namespace UchOtd.Core
                                 cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
                             }
 
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date),
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => 
+                                repo.CommonFunctions.CalculateWeekNumber(
+                                    semester, l.Item1.Calendar.Date),
                                 l => l.Item1.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
@@ -754,7 +762,7 @@ namespace UchOtd.Core
 
                     oPara1 = oDoc.Content.Paragraphs.Add();
                     //oPara1.Range.Text = "второго семестра 2013 – 2014 учебного года";
-                    oPara1.Range.Text = DetectSemesterString(repo);
+                    oPara1.Range.Text = FormSemesterString(repo, semester);
                     oPara1.Range.Font.Bold = 0;
                     oPara1.Range.Font.Size = 10;
                     oPara1.Range.ParagraphFormat.LineSpacingRule =
@@ -932,7 +940,9 @@ namespace UchOtd.Core
                                 timeTable.Range.Font.Bold = 0;
 
                                 var tfdIndex = 0;
-                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min()))
+                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => 
+                                    repo.CommonFunctions.CalculateWeekNumber(
+                                        semester, l.Item1.Calendar.Date)).Min()))
                                 {
                                     var cellText = "";
                                     cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
@@ -952,7 +962,9 @@ namespace UchOtd.Core
                                     cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
                                     cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
 
-                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
+                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => 
+                                        repo.CommonFunctions.CalculateWeekNumber(
+                                            semester, l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
                                     var grouped = audWeekList.GroupBy(a => a.Value);
 
                                     var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
@@ -1127,7 +1139,7 @@ namespace UchOtd.Core
 
                     oPara1 = oDoc.Content.Paragraphs.Add();
                     //oPara1.Range.Text = "второго семестра 2013 – 2014 учебного года";
-                    oPara1.Range.Text = DetectSemesterString(repo);
+                    oPara1.Range.Text = FormSemesterString(repo, semester);
                     oPara1.Range.Font.Bold = 0;
                     oPara1.Range.Font.Size = 10;
                     oPara1.Range.ParagraphFormat.LineSpacingRule =
@@ -1327,7 +1339,9 @@ namespace UchOtd.Core
                                 timeTable.Range.Font.Bold = 0;
 
                                 var tfdIndex = 0;
-                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min()))
+                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => 
+                                    repo.CommonFunctions.CalculateWeekNumber(
+                                        semester, l.Item1.Calendar.Date)).Min()))
                                 {
                                     var cellText = "";
                                     cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
@@ -1365,7 +1379,9 @@ namespace UchOtd.Core
                                         cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
                                     }
 
-                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
+                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => 
+                                        repo.CommonFunctions.CalculateWeekNumber(
+                                            semester, l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
                                     var grouped = audWeekList.GroupBy(a => a.Value);
 
                                     var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
@@ -1504,12 +1520,11 @@ namespace UchOtd.Core
             Marshal.ReleaseComObject(oWord);
         }
 
-        private static string DetectSemesterString(ScheduleRepository repo)
+        private static string FormSemesterString(ScheduleRepository repo, Semester semester)
         {
-            var semesterSterts = repo.CommonFunctions.GetSemesterStarts();
-            var ssYear = semesterSterts.Year;
+            var ssYear = semester.StartingYear;
 
-            if (semesterSterts.Month > 6)
+            if (semester.SemesterInYear == 1)
             {
                 return "первого семестра " + ssYear + " – " + (ssYear + 1) + " учебного года";
             }
@@ -1622,7 +1637,7 @@ namespace UchOtd.Core
 
             oPara1 = oDoc.Content.Paragraphs.Add();
             //oPara1.Range.Text = "второго семестра 2013 – 2014 учебного года";
-            oPara1.Range.Text = DetectSemesterString(repo);
+            oPara1.Range.Text = FormSemesterString(repo, semester);
             oPara1.Range.Font.Bold = 0;
             oPara1.Range.Font.Size = 10;
             oPara1.Range.ParagraphFormat.LineSpacingRule =
@@ -2201,7 +2216,8 @@ namespace UchOtd.Core
 
                         var groupDowTimeLessons = @group.Value[time]
                             .OrderBy(tfd => tfd.Value.Item2.Select(l =>
-                                repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min())
+                                repo.CommonFunctions.CalculateWeekNumber(
+                                    semester, l.Item1.Calendar.Date)).Min())
                             .ToList();
 
                         var groupObject = repo.StudentGroups.GetStudentGroup(@group.Key);
@@ -2258,13 +2274,13 @@ namespace UchOtd.Core
                                 WdCellVerticalAlignment.wdCellAlignVerticalCenter;
                             subgroupsTable.Cell(1, 1).Borders[WdBorderType.wdBorderRight].Visible = true;
 
-                            PutDowSchedulePutGroupOrSubGroupDowTimeItem(repo, oDoc, subgroupsTable.Cell(1, 1), group1Items, true);
+                            PutDowSchedulePutGroupOrSubGroupDowTimeItem(repo, semester, oDoc, subgroupsTable.Cell(1, 1), group1Items, true);
 
-                            PutDowSchedulePutGroupOrSubGroupDowTimeItem(repo, oDoc, subgroupsTable.Cell(1, 2), group2Items, true);
+                            PutDowSchedulePutGroupOrSubGroupDowTimeItem(repo, semester, oDoc, subgroupsTable.Cell(1, 2), group2Items, true);
                         }
                         else
                         {
-                            PutDowSchedulePutGroupOrSubGroupDowTimeItem(repo, oDoc, oTable.Cell(tableRowOffset + timeRowIndex, columnGroupIndex), groupDowTimeLessons, false);
+                            PutDowSchedulePutGroupOrSubGroupDowTimeItem(repo, semester, oDoc, oTable.Cell(tableRowOffset + timeRowIndex, columnGroupIndex), groupDowTimeLessons, false);
                         }
                     }
 
@@ -2277,7 +2293,7 @@ namespace UchOtd.Core
             return oTable;
         }
 
-        private static void PutDowSchedulePutGroupOrSubGroupDowTimeItem(ScheduleRepository repo, _Document oDoc, Cell tableCell, List<KeyValuePair<int, Tuple<string, List<Tuple<Lesson, int>>, string>>> groupDowTimeLessons, bool subgroups)
+        private static void PutDowSchedulePutGroupOrSubGroupDowTimeItem(ScheduleRepository repo, Semester semester, _Document oDoc, Cell tableCell, List<KeyValuePair<int, Tuple<string, List<Tuple<Lesson, int>>, string>>> groupDowTimeLessons, bool subgroups)
         {
             Table timeTable = oDoc.Tables.Add(tableCell.Range, 1, 1);
             for (int i = 0; i < groupDowTimeLessons.Count - 1; i++)
@@ -2364,7 +2380,7 @@ namespace UchOtd.Core
                 // Auditoriums
                 var audWeekList =
                     tfdData.Value.Item2.ToDictionary(
-                        l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date),
+                        l => repo.CommonFunctions.CalculateWeekNumber(semester, l.Item1.Calendar.Date),
                         l => l.Item1.Auditorium.Name);
                 var grouped = audWeekList.GroupBy(a => a.Value);
 
@@ -2538,7 +2554,8 @@ namespace UchOtd.Core
 
                         var groupDowTimeLessons = @group.Value[time]
                             .OrderBy(tfd => tfd.Value.Item2.Select(l =>
-                                repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min())
+                                repo.CommonFunctions.CalculateWeekNumber(
+                                    semester, l.Item1.Calendar.Date)).Min())
                             .ToList();
                         var tfdIndex = 0;
 
@@ -2675,7 +2692,9 @@ namespace UchOtd.Core
 
                             String audText = "";
                             // Auditoriums
-                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date),
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => 
+                                repo.CommonFunctions.CalculateWeekNumber(
+                                    semester, l.Item1.Calendar.Date),
                                 l => l.Item1.Auditorium.Name);
                             var grouped = audWeekList.GroupBy(a => a.Value);
 
@@ -2796,7 +2815,7 @@ namespace UchOtd.Core
                 : fioParts[0] + " " + fioParts[1].Substring(0, 1) + "." + fioParts[2].Substring(0, 1) + ".";
         }
 
-        public static void ExportWholeScheduleOneGroupPerPage(ScheduleRepository repo, MainEditForm form, CancellationToken cToken)
+        public static void ExportWholeScheduleOneGroupPerPage(ScheduleRepository repo, MainEditForm form, Semester semester, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
 
@@ -2824,11 +2843,11 @@ namespace UchOtd.Core
                 {
                     cToken.ThrowIfCancellationRequested();
 
-                    var sStarts = repo.CommonFunctions.GetSemesterStarts();
+                    var sStarts = repo.CommonFunctions.GetSemesterStarts(semester);
 
-                    var groupLessons = repo.Lessons.GetGroupedGroupLessons(group.StudentGroupId, sStarts, -1, false, false);
+                    var groupLessons = repo.Lessons.GetGroupedGroupLessons(semester, @group.StudentGroupId, -1, false, false);
 
-                    var groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons, false);
+                    var groupEvents = form.CreateGroupTableView(semester, group.StudentGroupId, groupLessons, false);
 
                     Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
 
@@ -2899,9 +2918,7 @@ namespace UchOtd.Core
             }
         }
 
-        public static void ExportGroupSchedulePage(ScheduleRepository repo, MainEditForm form, int groupId,
-            bool weekFilteredF, int weekFilterNum,
-            bool onlyFutureDates, CancellationToken cToken)
+        public static void ExportGroupSchedulePage(ScheduleRepository repo, MainEditForm form, Semester semester, int groupId, bool weekFilteredF, int weekFilterNum, bool onlyFutureDates, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
 
@@ -2919,7 +2936,7 @@ namespace UchOtd.Core
 
             var group = repo.StudentGroups.GetStudentGroup(groupId);
 
-            var sStarts = repo.CommonFunctions.GetSemesterStarts();
+            var sStarts = repo.CommonFunctions.GetSemesterStarts(semester);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -2928,11 +2945,11 @@ namespace UchOtd.Core
             {
                 weekFilter = weekFilterNum;
             }
-            var groupLessons = repo.Lessons.GetGroupedGroupLessons(group.StudentGroupId, sStarts, weekFilter, false, onlyFutureDates);
+            var groupLessons = repo.Lessons.GetGroupedGroupLessons(semester, @group.StudentGroupId, weekFilter, false, onlyFutureDates);
 
             cToken.ThrowIfCancellationRequested();
 
-            List<GroupTableView> groupEvents = form.CreateGroupTableView(group.StudentGroupId, groupLessons, false);
+            List<GroupTableView> groupEvents = form.CreateGroupTableView(semester, group.StudentGroupId, groupLessons, false);
 
             Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
 
@@ -3017,7 +3034,7 @@ namespace UchOtd.Core
             var faculty = repo.Faculties.GetFaculty(facultyId);
 
             Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
-            oPara1.Range.Text = "Расписание " + DetectSemesterString(repo);
+            oPara1.Range.Text = "Расписание " + FormSemesterString(repo, semester);
             oPara1.Range.Font.Bold = 0;
             oPara1.Range.Font.Size = 10;
             oPara1.Range.ParagraphFormat.LineSpacingRule =
@@ -3113,7 +3130,7 @@ namespace UchOtd.Core
             Marshal.ReleaseComObject(oWord);
         }
 
-        public static void TeachersSchedule(ScheduleRepository repo, TeacherSchedule tsForm, bool OnlyFutureDates, CancellationToken cToken)
+        public static void TeachersSchedule(ScheduleRepository repo, Semester semester, TeacherSchedule tsForm, bool OnlyFutureDates, CancellationToken cToken)
         {
             var teachers = repo.Teachers.GetAllTeachers().OrderBy(t => t.FIO).ToList();
 
@@ -3132,7 +3149,7 @@ namespace UchOtd.Core
 
             foreach (var teacher in teachers)
             {
-                var result = tsForm.GetTeacherScheduleToView(teacher.TeacherId, false, -1, false, OnlyFutureDates, cToken);
+                var result = tsForm.GetTeacherScheduleToView(semester, teacher.TeacherId, false, -1, false, OnlyFutureDates, cToken);
 
                 var isColumnEmpty = GetEmptyColumnIndexes(result);
                 var columnTitles = new List<string>();
@@ -3683,7 +3700,7 @@ namespace UchOtd.Core
                     var group = facultyGroups[j];
                     var semesterInYear = group.Semester.SemesterInYear;
                     
-                    var groupIds = Utilities.StudentGroupIdsFromGroupId(group.StudentGroupId, Repo);
+                    var groupIds = Utilities.StudentGroupIdsFromGroupId(Repo, @group.StudentGroupId);
 
                     for (int k = 0; k < groupIds.Count; k++)
                     {

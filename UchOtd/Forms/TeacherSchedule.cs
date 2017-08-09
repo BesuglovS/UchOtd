@@ -22,7 +22,7 @@ namespace UchOtd.Forms
 
         CancellationTokenSource _tokenSource;
         CancellationToken _cToken;
-
+        
         public TeacherSchedule(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -39,7 +39,25 @@ namespace UchOtd.Forms
         private void TeacherScheduleLoad(object sender, EventArgs e)
         {
             _tokenSource = new CancellationTokenSource();
-            
+
+            var semesters = _repo
+                .Semesters
+                .GetAllSemesters()
+                .OrderBy(s => s.StartingYear)
+                .ThenBy(s => s.SemesterInYear)
+                .ToList();
+
+            semesterList.ValueMember = "SemesterId";
+            semesterList.DisplayMember = "DisplayName";
+            semesterList.DataSource = semesters;
+
+            if (semesters.Count == 0)
+            {
+                return;
+            }
+
+            semesterList.SelectedIndex = semesterList.Items.Count - 1;
+
             Left = (Screen.PrimaryScreen.Bounds.Width - Width) / 2;
             Top = (Screen.PrimaryScreen.Bounds.Height - Height) / 2;
 
@@ -56,7 +74,8 @@ namespace UchOtd.Forms
 
         }
         
-        public List<TeacherScheduleTimeView> GetTeacherScheduleToView(int teacherId, bool isWeekFiltered, int weekNumber, bool showingProposed, bool OnlyFutureDates, CancellationToken cToken)
+        public List<TeacherScheduleTimeView> GetTeacherScheduleToView(Semester semester, int teacherId, bool isWeekFiltered, int weekNumber, 
+            bool showingProposed, bool onlyFutureDates, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
             
@@ -68,25 +87,28 @@ namespace UchOtd.Forms
             {
                 lessonList = _repo
                     .Lessons
-                    .GetFiltredLessons(l => 
+                    .GetFiltredLessons(l =>
+                        l.TeacherForDiscipline.Discipline.Semester.SemesterId == semester.SemesterId &&
                         l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
                         ((l.State == 1) || ((l.State == 2) && showingProposed)) && 
-                        _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date.Date) == weekNumber)
-                    .ToList();            }
+                        _repo.CommonFunctions.CalculateWeekNumber(semester, l.Calendar.Date.Date) == weekNumber)
+                    .ToList();
+            }
             else
             {
                 lessonList = _repo
                     .Lessons
-                    .GetFiltredLessons(l => 
+                    .GetFiltredLessons(l =>
+                        l.TeacherForDiscipline.Discipline.Semester.SemesterId == semester.SemesterId &&
                         l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
                         ((l.State == 1) || ((l.State == 2) && showingProposed)))
                     .ToList();
             }
 
-            if (OnlyFutureDates)
+            if (onlyFutureDates)
             {
-                var DayStart = DateTime.Now.Date;
-                lessonList = lessonList.Where(l => l.Calendar.Date >= DayStart).ToList();
+                var dayStart = DateTime.Now.Date;
+                lessonList = lessonList.Where(l => l.Calendar.Date >= dayStart).ToList();
             }
 
             var teacherBuildingsCount = lessonList.Select(l => l.Auditorium.Building.BuildingId).Distinct().Count();
@@ -102,7 +124,9 @@ namespace UchOtd.Forms
 
             cToken.ThrowIfCancellationRequested();
 
-            var semesterStartsOption = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts");
+            var semesterStartsOption = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => 
+                co.Key == "Semester Starts" && 
+                co.Semester.SemesterId == semester.SemesterId);
             if (semesterStartsOption == null)
             {
                 return result;
@@ -328,6 +352,20 @@ namespace UchOtd.Forms
             {
                 _cToken = _tokenSource.Token;
 
+                Semester semester = null;
+
+                if (semesterList.SelectedValue == null)
+                {
+                    return;
+                }
+
+                semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+                if (semester == null)
+                {
+                    return;
+                }
+
                 refresh.Image = Resources.Loading;
                 refresh.Text = "";
 
@@ -343,7 +381,7 @@ namespace UchOtd.Forms
                 try
                 {
                     result = await Task.Run(() =>
-                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
+                        GetTeacherScheduleToView(semester, teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
                         _cToken);
                 }
                 catch (OperationCanceledException)
@@ -373,6 +411,20 @@ namespace UchOtd.Forms
             {
                 _cToken = _tokenSource.Token;
 
+                Semester semester = null;
+
+                if (semesterList.SelectedValue == null)
+                {
+                    return;
+                }
+
+                semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+                if (semester == null)
+                {
+                    return;
+                }
+
                 ExportInWordPortrait.Text = "";
                 ExportInWordPortrait.Image = Resources.Loading;
 
@@ -389,7 +441,7 @@ namespace UchOtd.Forms
                     var teacherId = (int)teacherList.SelectedValue;
 
                     var result = await Task.Run(() => 
-                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
+                        GetTeacherScheduleToView(semester, teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
                         _cToken);
 
                     var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
@@ -415,6 +467,20 @@ namespace UchOtd.Forms
             {
                 _cToken = _tokenSource.Token;
 
+                Semester semester = null;
+
+                if (semesterList.SelectedValue == null)
+                {
+                    return;
+                }
+
+                semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+                if (semester == null)
+                {
+                    return;
+                }
+
                 ExportInWordLandscape.Text = "";
                 ExportInWordLandscape.Image = Resources.Loading;
 
@@ -431,7 +497,7 @@ namespace UchOtd.Forms
                     var teacherId = (int)teacherList.SelectedValue;
 
                     var result = await Task.Run(() => 
-                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
+                        GetTeacherScheduleToView(semester, teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
                         _cToken);
 
                     var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
@@ -455,6 +521,20 @@ namespace UchOtd.Forms
         {
             if (ExportAllTeachersInWord.Text == "Word (все преподаватели)")
             {
+                Semester semester = null;
+
+                if (semesterList.SelectedValue == null)
+                {
+                    return;
+                }
+
+                semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
+
+                if (semester == null)
+                {
+                    return;
+                }
+
                 _cToken = _tokenSource.Token;
                 var repo = _repo;
 
@@ -463,7 +543,7 @@ namespace UchOtd.Forms
                 
                 try
                 {
-                    await Task.Run(() => WordExport.TeachersSchedule(repo, this, OnlyFutureDatesExportInWord.Checked, _cToken), _cToken);
+                    await Task.Run(() => WordExport.TeachersSchedule(repo, semester, this, OnlyFutureDatesExportInWord.Checked, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
