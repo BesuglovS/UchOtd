@@ -32,6 +32,7 @@ namespace UchOtd.Schedule
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.controlsPanel = new System.Windows.Forms.Panel();
             this.semester = new System.Windows.Forms.ComboBox();
             this.changeSemesterDb = new System.Windows.Forms.Button();
@@ -163,17 +164,22 @@ namespace UchOtd.Schedule
             this.поправитьАудиторииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.поправитьАудиторииФакультетаИскусствToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.поправитьАудиторииСессииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.графикПроцессаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.проверитьКоллизииПреподавателейToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
-            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.графикПроцессаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ScheduleView)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // controlsPanel
@@ -334,7 +340,7 @@ namespace UchOtd.Schedule
             this.ToDBName.Name = "ToDBName";
             this.ToDBName.Size = new System.Drawing.Size(88, 20);
             this.ToDBName.TabIndex = 61;
-            this.ToDBName.Text = "Schedule16172";
+            this.ToDBName.Text = "Schedule17181";
             // 
             // DownloadRestore
             // 
@@ -352,7 +358,7 @@ namespace UchOtd.Schedule
             this.FromDBName.Name = "FromDBName";
             this.FromDBName.Size = new System.Drawing.Size(100, 20);
             this.FromDBName.TabIndex = 59;
-            this.FromDBName.Text = "Schedule16172";
+            this.FromDBName.Text = "Schedule17181";
             // 
             // BackupUpload
             // 
@@ -1234,7 +1240,9 @@ namespace UchOtd.Schedule
             this.поправитьАудиторииФакультетаИскусствToolStripMenuItem,
             this.поправитьАудиторииСессииToolStripMenuItem,
             this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem,
-            this.графикПроцессаToolStripMenuItem});
+            this.графикПроцессаToolStripMenuItem,
+            this.проверитьКоллизииПреподавателейToolStripMenuItem,
+            this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem});
             this.bigRedButtonToolStripMenuItem.Name = "bigRedButtonToolStripMenuItem";
             this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
             this.bigRedButtonToolStripMenuItem.Text = "BIG RED BUTTON";
@@ -1337,6 +1345,34 @@ namespace UchOtd.Schedule
             this.поправитьАудиторииСессииToolStripMenuItem.Text = "Поправить аудитории сессии";
             this.поправитьАудиторииСессииToolStripMenuItem.Click += new System.EventHandler(this.поправитьАудиторииСессииToolStripMenuItem_Click);
             // 
+            // убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem
+            // 
+            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem.Name = "убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem";
+            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem.Text = "Убрать группы иностранных языков из названий дисциплин";
+            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem.Click += new System.EventHandler(this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem_Click);
+            // 
+            // графикПроцессаToolStripMenuItem
+            // 
+            this.графикПроцессаToolStripMenuItem.Name = "графикПроцессаToolStripMenuItem";
+            this.графикПроцессаToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.графикПроцессаToolStripMenuItem.Text = "График процесса";
+            this.графикПроцессаToolStripMenuItem.Click += new System.EventHandler(this.графикПроцессаToolStripMenuItem_Click);
+            // 
+            // проверитьКоллизииПреподавателейToolStripMenuItem
+            // 
+            this.проверитьКоллизииПреподавателейToolStripMenuItem.Name = "проверитьКоллизииПреподавателейToolStripMenuItem";
+            this.проверитьКоллизииПреподавателейToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.проверитьКоллизииПреподавателейToolStripMenuItem.Text = "Проверить коллизии преподавателей";
+            this.проверитьКоллизииПреподавателейToolStripMenuItem.Click += new System.EventHandler(this.проверитьКоллизииПреподавателейToolStripMenuItem_Click);
+            // 
+            // копироватьРасписаниеНаДеньНеделюToolStripMenuItem
+            // 
+            this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem.Name = "копироватьРасписаниеНаДеньНеделюToolStripMenuItem";
+            this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem.Text = "Копировать расписание на день неделю";
+            this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem.Click += new System.EventHandler(this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem_Click);
+            // 
             // viewPanel
             // 
             this.viewPanel.Controls.Add(this.statusStrip1);
@@ -1364,10 +1400,12 @@ namespace UchOtd.Schedule
             // 
             // ScheduleView
             // 
+            this.ScheduleView.AllowDrop = true;
             this.ScheduleView.AllowUserToAddRows = false;
             this.ScheduleView.AllowUserToDeleteRows = false;
             this.ScheduleView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.ScheduleView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ScheduleView.ContextMenuStrip = this.contextMenuStrip1;
             this.ScheduleView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ScheduleView.Location = new System.Drawing.Point(0, 0);
             this.ScheduleView.Name = "ScheduleView";
@@ -1376,20 +1414,23 @@ namespace UchOtd.Schedule
             this.ScheduleView.Size = new System.Drawing.Size(971, 393);
             this.ScheduleView.TabIndex = 1;
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
+            this.ScheduleView.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.ScheduleView_CellMouseDown);
+            this.ScheduleView.DragDrop += new System.Windows.Forms.DragEventHandler(this.ScheduleView_DragDrop);
+            this.ScheduleView.DragEnter += new System.Windows.Forms.DragEventHandler(this.ScheduleView_DragEnter);
             // 
-            // убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem
+            // contextMenuStrip1
             // 
-            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem.Name = "убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem";
-            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
-            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem.Text = "Убрать группы иностранных языков из названий дисциплин";
-            this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem.Click += new System.EventHandler(this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem_Click);
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.editSchedule});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(134, 26);
             // 
-            // графикПроцессаToolStripMenuItem
+            // editSchedule
             // 
-            this.графикПроцессаToolStripMenuItem.Name = "графикПроцессаToolStripMenuItem";
-            this.графикПроцессаToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
-            this.графикПроцессаToolStripMenuItem.Text = "График процесса";
-            this.графикПроцессаToolStripMenuItem.Click += new System.EventHandler(this.графикПроцессаToolStripMenuItem_Click);
+            this.editSchedule.Name = "editSchedule";
+            this.editSchedule.Size = new System.Drawing.Size(133, 22);
+            this.editSchedule.Text = "Аудитория";
+            this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
             // 
             // MainEditForm
             // 
@@ -1414,6 +1455,7 @@ namespace UchOtd.Schedule
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ScheduleView)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1558,6 +1600,10 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem поправитьАудиторииСессииToolStripMenuItem;
         private ToolStripMenuItem убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem;
         private ToolStripMenuItem графикПроцессаToolStripMenuItem;
+        private ToolStripMenuItem проверитьКоллизииПреподавателейToolStripMenuItem;
+        private ToolStripMenuItem копироватьРасписаниеНаДеньНеделюToolStripMenuItem;
+        private ContextMenuStrip contextMenuStrip1;
+        private ToolStripMenuItem editSchedule;
     }
 }
 

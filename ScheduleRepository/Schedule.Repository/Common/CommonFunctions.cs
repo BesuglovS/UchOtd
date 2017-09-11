@@ -763,13 +763,27 @@ namespace Schedule.Repositories.Common
             return result;
         }
 
-        public int GetTfdHours(int tfdId, bool includeProposed = false)
+        public int GetTfdHours(int tfdId, bool includeProposed, bool hoursCountWeekFiltered, int hoursCountWeekFilter)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Lessons.Count(l =>
-                    ((l.State == 1) || ((l.State == 2) && includeProposed)) &&
-                    l.TeacherForDiscipline.TeacherForDisciplineId == tfdId) * 2;
+                if (hoursCountWeekFiltered)
+                {
+                    var lessons = context.Lessons
+                                    .Where(l =>
+                                    ((l.State == 1) || ((l.State == 2) && includeProposed)) &&
+                                    l.TeacherForDiscipline.TeacherForDisciplineId == tfdId)
+                                    .ToList();
+                    var count = lessons.Count(l => CalculateWeekNumber(l.Calendar.Date) == hoursCountWeekFilter)*2;
+                    return count;
+                }
+                else
+                {
+                    return context.Lessons.Count(l =>
+                               ((l.State == 1) || ((l.State == 2) && includeProposed)) &&
+                               l.TeacherForDiscipline.TeacherForDisciplineId == tfdId) * 2;
+                }
+                
             }
         }
 

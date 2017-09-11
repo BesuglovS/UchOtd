@@ -25,7 +25,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>97</ApplicationRevision>
+    <ApplicationRevision>101</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -134,6 +134,18 @@
     </Compile>
     <Compile Include="Forms\BuildingLessons.Designer.cs">
       <DependentUpon>BuildingLessons.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ChooseRing.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChooseRing.Designer.cs">
+      <DependentUpon>ChooseRing.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CopyWeekSchedule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CopyWeekSchedule.Designer.cs">
+      <DependentUpon>CopyWeekSchedule.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\DailyLessons.cs">
       <SubType>Form</SubType>
@@ -509,6 +521,12 @@
     <Compile Include="Views\TeacherWithLocation.cs" />
     <EmbeddedResource Include="Forms\BuildingLessons.resx">
       <DependentUpon>BuildingLessons.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChooseRing.resx">
+      <DependentUpon>ChooseRing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CopyWeekSchedule.resx">
+      <DependentUpon>CopyWeekSchedule.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DailyLessons.resx">
       <DependentUpon>DailyLessons.cs</DependentUpon>

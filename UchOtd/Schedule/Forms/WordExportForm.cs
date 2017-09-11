@@ -64,6 +64,17 @@ namespace UchOtd.Schedule.Forms
 
             wordButton.Click += ExportButtonClick;
 
+            var wordButton2 = new Button
+            {
+                Parent = this,
+                Name = "Export17Button",
+                Text = "Экспорт 1-7",
+                Bounds = new Rectangle(230, 10 + (faculties.Count + 1) * 25 + 40, 125, 25)
+            };
+            Controls.Add(wordButton2);
+
+            wordButton2.Click += ExportButtonClick2;
+
             var checkBox90 = new CheckBox
             {
                 Parent = this,
@@ -119,6 +130,43 @@ namespace UchOtd.Schedule.Forms
             dailyChangesButton.Click += dailyChangesButtonClick;
 
             Height = (faculties.Count + 1) * 25 + 150;
+        }
+
+        private async void ExportButtonClick2(object sender, EventArgs e)
+        {
+            var button = (sender as Button);
+            if (button == null) return;
+
+            if (button.Text == "Экспорт 1-7")
+            {
+                _cToken = _tokenSource.Token;
+
+                button.Text = "";
+                button.Image = Resources.Loading;
+
+                var lesson8090Length = ((CheckBox)Controls.Find("cb90", false).First()).Checked ? 90 : 80;
+                var futureDatesOnly = ((CheckBox)Controls.Find("cbfuture", false).First()).Checked;
+                var weekFilteredF = ((CheckBox)Controls.Find("weekFiltered", false).First()).Checked;
+                int weekFilterF = -1;
+                int.TryParse(((ComboBox)Controls.Find("weekFilter", false).First()).Text, out weekFilterF);
+
+                try
+                {
+                    await Task.Run(() => WordExport.ExportCustomSchedule(
+                        _choice, _repo, "Расписание.docx", false, false,
+                        lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, weekFilteredF, weekFilterF, true, _cToken), _cToken);
+                }
+                catch (OperationCanceledException)
+                {
+                }
+            }
+            else
+            {
+                _tokenSource.Cancel();
+            }
+
+            button.Image = null;
+            button.Text = "Экспорт 1-7";
         }
 
 

@@ -142,7 +142,7 @@ namespace Schedule.Repositories.Repositories.Main
                             PublicComment = publicComment,
                             HiddenComment = hiddenComment
                         }
-                        );
+                    );
                 }
                 
                 context.SaveChanges();                
@@ -222,7 +222,7 @@ namespace Schedule.Repositories.Repositories.Main
                                 PublicComment = publicComment,
                                 HiddenComment = hiddenComment
                             }
-                            );
+                        );
                     }
                 }
 

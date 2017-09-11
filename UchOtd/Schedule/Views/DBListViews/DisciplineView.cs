@@ -10,13 +10,13 @@ namespace UchOtd.Schedule.Views.DBListViews
     {
         public int DisciplineId { get; set; }
         public string Name { get; set; }
+        public int AuditoriumHoursPerWeek { get; set; }
         public string StudentGroupName { get; set; }
         public string TeacherFio { get; set; }
         public int ScheduleHours { get; set; }
         public string Attestation { get; set; } // 0 - ничего; 1 - зачёт; 2 - экзамен; 3 - зачёт и экзамен
         public int AuditoriumHours { get; set; }
         public int ProposedHours { get; set; }
-        public int AuditoriumHoursPerWeek { get; set; }
         public int LectureHours { get; set; }
         public int PracticalHours { get; set; }
         public string TypeSequence { get; set; }
@@ -26,7 +26,7 @@ namespace UchOtd.Schedule.Views.DBListViews
 
         }
 
-        public DisciplineView(ScheduleRepository repo, Discipline discipline)
+        public DisciplineView(ScheduleRepository repo, Discipline discipline, bool hoursCountWeekFiltered, int hoursCountWeekFilter)
         {
             DisciplineId = discipline.DisciplineId;
             Name = discipline.Name;
@@ -43,7 +43,7 @@ namespace UchOtd.Schedule.Views.DBListViews
             if (tefd != null)
             {
                 TeacherFio = tefd.Teacher.FIO;
-                ScheduleHours = repo.CommonFunctions.GetTfdHours(tefd.TeacherForDisciplineId);
+                ScheduleHours = repo.CommonFunctions.GetTfdHours(tefd.TeacherForDisciplineId, false, hoursCountWeekFiltered, hoursCountWeekFilter);
                 ProposedHours = repo.CommonFunctions.GetTfdProposedHours(tefd.TeacherForDisciplineId);
             }
             else
@@ -53,9 +53,9 @@ namespace UchOtd.Schedule.Views.DBListViews
             }
         }
 
-        public static List<DisciplineView> DisciplinesToView(ScheduleRepository repo, List<Discipline> list)
+        public static List<DisciplineView> DisciplinesToView(ScheduleRepository repo, List<Discipline> list, bool hoursCountWeekFiltered, int hoursCountWeekFilter)
         {
-            return list.Select(disc => new DisciplineView(repo, disc)).ToList();
+            return list.Select(disc => new DisciplineView(repo, disc, hoursCountWeekFiltered, hoursCountWeekFilter)).ToList();
         }
     }
 }

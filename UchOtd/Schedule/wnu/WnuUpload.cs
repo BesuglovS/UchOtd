@@ -156,7 +156,7 @@ namespace UchOtd.Schedule.wnu
             var mySqlDisciplines = MySqlDiscipline.FromDisciplineList(disciplines);
             wud = new WnuUploadData { dbPrefix = databaseTablesPrefix, tableSelector = "disciplines", data = jsonSerializer.Serialize(mySqlDisciplines) };
             json = jsonSerializer.Serialize(wud);
-            UploadTableData(json, uploadEndPoint);
+            var r2 = UploadTableData(json, uploadEndPoint);
 
             cToken.ThrowIfCancellationRequested();
 

@@ -32,6 +32,7 @@ namespace UchOtd.Forms
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.studentGroupsFiltered = new System.Windows.Forms.CheckBox();
             this.studentGroupList = new System.Windows.Forms.ListBox();
             this.refresh = new System.Windows.Forms.Button();
@@ -42,7 +43,6 @@ namespace UchOtd.Forms
             this.viewPanel = new System.Windows.Forms.Panel();
             this.loadingLabel = new System.Windows.Forms.Label();
             this.view = new System.Windows.Forms.DataGridView();
-            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view)).BeginInit();
@@ -63,6 +63,16 @@ namespace UchOtd.Forms
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(881, 108);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // showProposed
+            // 
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(437, 28);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(223, 17);
+            this.showProposed.TabIndex = 11;
+            this.showProposed.Text = "Показывать предполагаемые занятия";
+            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // studentGroupsFiltered
             // 
@@ -166,16 +176,6 @@ namespace UchOtd.Forms
             this.view.Size = new System.Drawing.Size(881, 597);
             this.view.TabIndex = 0;
             this.view.SelectionChanged += new System.EventHandler(this.view_SelectionChanged);
-            // 
-            // showProposed
-            // 
-            this.showProposed.AutoSize = true;
-            this.showProposed.Location = new System.Drawing.Point(437, 28);
-            this.showProposed.Name = "showProposed";
-            this.showProposed.Size = new System.Drawing.Size(223, 17);
-            this.showProposed.TabIndex = 11;
-            this.showProposed.Text = "Показывать предполагаемые занятия";
-            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // DailyLessons
             // 

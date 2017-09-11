@@ -114,5 +114,72 @@ namespace Schedule.Repositories.Repositories.Main
                 context.SaveChanges();
             }
         }
+
+        public Auditorium getFreeAud(int calendarId, int ringId, int buildingId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                List<Auditorium> auds;
+                if (buildingId == -1)
+                {
+                    auds = context.Auditoriums.ToList();
+                }
+                else
+                {
+                    auds = context.Auditoriums.Where(a => a.Building.BuildingId == buildingId).ToList();
+                }
+
+                var lessonAudIds = context.Lessons.Where(l =>
+                        l.State == 1 &&
+                        l.Calendar.CalendarId == calendarId &&
+                        l.Ring.RingId == ringId)
+                    .Select(l => l.Auditorium.AuditoriumId)
+                    .Distinct();
+
+                auds = auds.Where(a => !lessonAudIds.Contains(a.AuditoriumId)).ToList();
+
+                var audEventsAudIds = context.AuditoriumEvents.Where(evt =>
+                        evt.Calendar.CalendarId == calendarId &&
+                        evt.Ring.RingId == ringId)
+                    .Select(l => l.Auditorium.AuditoriumId)
+                    .Distinct();
+
+                auds = auds.Where(a => !audEventsAudIds.Contains(a.AuditoriumId)).ToList();
+
+                if (auds.Count == 0)
+                {
+                    return null;
+                }
+
+                Random rnd = new Random();
+
+                return auds[rnd.Next(0, auds.Count)];
+            }
+        }
+
+        public bool CheckIfEmpty(Calendar calendar, Ring ring, Auditorium aud)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var lessonCount = context.Lessons.Count(l =>
+                    l.State == 1 &&
+                    l.Calendar.CalendarId == calendar.CalendarId &&
+                    l.Ring.RingId == ring.RingId &&
+                    l.Auditorium.AuditoriumId == aud.AuditoriumId);
+                var eventCount = context.AuditoriumEvents.Count(ae =>
+                    ae.Calendar.CalendarId == calendar.CalendarId &&
+                    ae.Ring.RingId == ring.RingId &&
+                    ae.Auditorium.AuditoriumId == aud.AuditoriumId);
+
+                if (lessonCount > 0 || eventCount > 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
     }
 }

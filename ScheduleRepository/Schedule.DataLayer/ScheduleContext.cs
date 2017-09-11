@@ -28,8 +28,8 @@ namespace Schedule.DataLayer
 
         private static string GetConnectionString()
         {
-            return "data source=tcp:" + @"UCH-OTD-DISP\SQLEXPRESS" +
-                   ",1433;Database=Schedule16172; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True";
+            return "data source=tcp:" + @".\SQLEXPRESS" +
+                   ",1433;Database=Schedule17181; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True";
         }
 
         // Main

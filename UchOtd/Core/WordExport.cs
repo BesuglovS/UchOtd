@@ -26,9 +26,7 @@ namespace UchOtd.Core
     public static class WordExport
     {
         
-        public static void ExportSchedulePage(ScheduleRepository repo, string filename, bool save, bool quit,
-            int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter,
-            bool weeksMarksVisible, bool onlyFutureDates, CancellationToken cToken)
+        public static void ExportSchedulePage(ScheduleRepository repo, string filename, bool save, bool quit, int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek, bool weekFiltered, int weekFilter, bool weeksMarksVisible, bool onlyFutureDates, bool BottomSignatures, bool SchoolHeader, CancellationToken cToken)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
@@ -98,15 +96,29 @@ namespace UchOtd.Core
                 WdLineSpacing.wdLineSpaceSingle;
             if (dow == "Понедельник")
             {
-                var prorUchRabNameOption = repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Проректор по учебной работе");
-                var prorUchRabName = (prorUchRabNameOption == null) ? "" : prorUchRabNameOption.Value;
+                if (SchoolHeader)
+                {
+                    cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
+                                                           Environment.NewLine + "Ректор   " +
+                                                           "______________     Наянова М.В." +
+                                                           Environment.NewLine + "«___» ____________  20__ г.";
+                    cornerStamp.TextFrame.TextRange.Font.Size = 10;
+                    cornerStamp.TextFrame.TextRange.ParagraphFormat.Alignment =
+                        WdParagraphAlignment.wdAlignParagraphRight;
+                }
+                else
+                {
+                    var prorUchRabNameOption = repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Проректор по учебной работе");
+                    var prorUchRabName = (prorUchRabNameOption == null) ? "" : prorUchRabNameOption.Value;
 
-                cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
-                    Environment.NewLine + "Проректор по учебной работе" +
-                    Environment.NewLine + "______________     " + prorUchRabName;
-                cornerStamp.TextFrame.TextRange.Font.Size = 10;
-                cornerStamp.TextFrame.TextRange.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphRight;
+                    cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
+                                                           Environment.NewLine + "Проректор по учебной работе" +
+                                                           Environment.NewLine + "______________     " + prorUchRabName;
+                    cornerStamp.TextFrame.TextRange.Font.Size = 10;
+                    cornerStamp.TextFrame.TextRange.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphRight;
+                }
             }
+
             cornerStamp.TextFrame.WordWrap = 1;
             cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
             cornerStamp.Line.Visible = MsoTriState.msoFalse;
@@ -331,7 +343,7 @@ namespace UchOtd.Core
                 timeRowIndex++;
             }
 
-            if (dayOfWeek == daysOfWeek)
+            if (BottomSignatures && (dayOfWeek == daysOfWeek))
             {
                 var oPara3 =
                     oDoc.Content.Paragraphs.Add(ref oMissing);
@@ -1100,6 +1112,7 @@ namespace UchOtd.Core
                 {
                     continue;
                 }
+                
 
                 for (int dayOfWeek = 1; dayOfWeek <= daysOfWeek; dayOfWeek++)
                 {
@@ -1108,366 +1121,473 @@ namespace UchOtd.Core
                         continue;
                     }
 
-                    string dow = Constants.DowLocal[dayOfWeek];
+                    var fList = new List<string> {"1-е классы", "2-е классы", "3-е классы", "4-е классы", "5-е классы", "6-е классы", "7-е классы"};
 
-                    cToken.ThrowIfCancellationRequested();
+                    Table oTable;
 
-                    var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, onlyFutureDates);
-
-                    cToken.ThrowIfCancellationRequested();
-
-                    Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
-                    oPara1.Range.Text = "Расписание";
-                    oPara1.Range.Font.Bold = 0;
-                    oPara1.Range.Font.Size = 10;
-                    oPara1.Range.ParagraphFormat.LineSpacingRule =
-                        WdLineSpacing.wdLineSpaceSingle;
-                    oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
-                    oPara1.SpaceAfter = 0;
-                    oPara1.Range.InsertParagraphAfter();
-
-                    Range textBoxRange = oPara1.Range;
-
-                    oPara1 = oDoc.Content.Paragraphs.Add();
-                    //oPara1.Range.Text = "второго семестра 2013 – 2014 учебного года";
-                    oPara1.Range.Text = DetectSemesterString(repo);
-                    oPara1.Range.Font.Bold = 0;
-                    oPara1.Range.Font.Size = 10;
-                    oPara1.Range.ParagraphFormat.LineSpacingRule =
-                        WdLineSpacing.wdLineSpaceSingle;
-                    oPara1.Range.InsertParagraphAfter();
-
-                    oPara1 = oDoc.Content.Paragraphs.Add();
-                    oPara1.Range.Text = facultyName;
-                    oPara1.Range.Font.Bold = 0;
-                    oPara1.Range.Font.Size = 10;
-                    oPara1.Range.ParagraphFormat.LineSpacingRule =
-                        WdLineSpacing.wdLineSpaceSingle;
-                    oPara1.Range.InsertParagraphAfter();
-
-                    oPara1 = oDoc.Content.Paragraphs.Add();
-                    oPara1.Range.Font.Size = 14;
-                    oPara1.Range.Text = dow.ToUpper();
-                    oPara1.Range.Font.Bold = 1;
-                    oPara1.Range.ParagraphFormat.LineSpacingRule =
-                        WdLineSpacing.wdLineSpaceSingle;
-                    oPara1.Range.InsertParagraphAfter();
-
-                    Shape cornerStamp = oDoc.Shapes.AddTextbox(
-                        MsoTextOrientation.msoTextOrientationHorizontal,
-                        oWord.CentimetersToPoints(22f),
-                        oWord.CentimetersToPoints(0.5f),
-                        200, 50,
-                        textBoxRange);
-                    cornerStamp.TextFrame.TextRange.ParagraphFormat.LineSpacingRule =
-                        WdLineSpacing.wdLineSpaceSingle;
-                    if (dow == "Понедельник")
+                    if (fList.Contains(faculty.Name))
                     {
-                        if (!schoolHeader)
-                        {
-                            var prorUchRabNameOption = repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Проректор по учебной работе");
-                            var prorUchRabName = (prorUchRabNameOption == null) ? "" : prorUchRabNameOption.Value;
+                        Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
+                        oPara1.Range.Text = "Расписание " + DetectSemesterString(repo);
+                        oPara1.Range.Font.Bold = 0;
+                        oPara1.Range.Font.Size = 10;
+                        oPara1.Range.ParagraphFormat.LineSpacingRule =
+                            WdLineSpacing.wdLineSpaceSingle;
+                        oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                        oPara1.SpaceAfter = 0;
+                        oPara1.Range.InsertParagraphAfter();
 
-                            cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
-                                Environment.NewLine + "Проректор по учебной работе" +
-                                Environment.NewLine + "______________     " + prorUchRabName;
-                            cornerStamp.TextFrame.TextRange.Font.Size = 10;
-                            cornerStamp.TextFrame.TextRange.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphRight;
-                        }
-                        else
+                        var textBoxRange = oPara1.Range;
+
+                        oPara1 = oDoc.Content.Paragraphs.Add();
+                        oPara1.Range.Font.Size = 14;
+                        oPara1.Range.Text = Constants.DowLocal[dayOfWeek].ToUpper();
+                        oPara1.Range.Font.Bold = 1;
+                        //oPara1.Range.Font.Underline = WdUnderline.wdUnderlineSingle;
+                        //oPara1.Range.ParagraphFormat.LineSpacingRule =
+                        //    WdLineSpacing.wdLineSpaceSingle;
+                        oPara1.Range.InsertParagraphAfter();
+
+                        Shape cornerStamp = oDoc.Shapes.AddTextbox(
+                            MsoTextOrientation.msoTextOrientationHorizontal,
+                            oWord.CentimetersToPoints(22f),
+                            oWord.CentimetersToPoints(0.5f),
+                            200, 50,
+                            textBoxRange);
+                        cornerStamp.TextFrame.TextRange.ParagraphFormat.LineSpacingRule =
+                            WdLineSpacing.wdLineSpaceSingle;
+
+                        if (dayOfWeek == 1)
                         {
                             cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
-                                Environment.NewLine + "Ректор   " + "______________     Наянова М.В." +
-                                Environment.NewLine + "«___» ____________  20__ г.";
+                                                                   Environment.NewLine +
+                                                                   "Ректор   ______________     Наянова М.В.   «___» ____________  20__ г.";
                             cornerStamp.TextFrame.TextRange.Font.Size = 10;
                             cornerStamp.TextFrame.TextRange.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphRight;
                         }
+                        cornerStamp.TextFrame.WordWrap = 1;
+                        cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
+                        cornerStamp.Line.Visible = MsoTriState.msoFalse;
+
+                        cToken.ThrowIfCancellationRequested();
+                        
+                        oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, false, faculty, oDoc, oEndOfDoc, oWord, null, cToken);
+                        if (dayOfWeek != 7)
+                        {
+                            oPara1 = oDoc.Content.Paragraphs.Add();
+                            oPara1.Range.Font.Size = 14;
+                            oPara1.Range.Text = Constants.DowLocal[dayOfWeek+1].ToUpper();
+                            oPara1.Range.Font.Bold = 1;
+                            oPara1.Range.InsertParagraphAfter();
+
+                            oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, false, faculty, oDoc, oEndOfDoc, oWord, null, cToken);
+                        }
+                        
+                        Range wrdRng2 = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                        wrdRng2.InsertParagraphAfter();
                     }
-                    cornerStamp.TextFrame.WordWrap = 1;
-                    cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
-                    cornerStamp.Line.Visible = MsoTriState.msoFalse;
-
-                    //qrCode 
-                    /*
-                    Shape qrStamp = oDoc.Shapes.AddTextbox(
-                        MsoTextOrientation.msoTextOrientationHorizontal,
-                        oWord.CentimetersToPoints(2f),
-                        oWord.CentimetersToPoints(0.5f),
-                        200, 50,
-                        textBoxRange);
-                    qrStamp.Line.Visible = MsoTriState.msoFalse;
-
-                    object f = false;
-                    object tr = true;
-                    qrStamp.TextFrame.TextRange.InlineShapes.AddPicture(@"d:\qrcode.png", ref f, ref tr, qrStamp.TextFrame.TextRange);
-                    */
-
-                    var timeList = new List<string>();
-                    foreach (var group in schedule)
+                    else
                     {
-                        foreach (var time in group.Value.Keys)
+                        string dow = Constants.DowLocal[dayOfWeek];
+
+                        cToken.ThrowIfCancellationRequested();
+
+                        var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered,
+                            weekFilter, false, onlyFutureDates);
+
+                        cToken.ThrowIfCancellationRequested();
+
+                        Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
+                        oPara1.Range.Text = "Расписание";
+                        oPara1.Range.Font.Bold = 0;
+                        oPara1.Range.Font.Size = 10;
+                        oPara1.Range.ParagraphFormat.LineSpacingRule =
+                            WdLineSpacing.wdLineSpaceSingle;
+                        oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+                        oPara1.SpaceAfter = 0;
+                        oPara1.Range.InsertParagraphAfter();
+
+                        Range textBoxRange = oPara1.Range;
+
+                        oPara1 = oDoc.Content.Paragraphs.Add();
+                        //oPara1.Range.Text = "второго семестра 2013 – 2014 учебного года";
+                        oPara1.Range.Text = DetectSemesterString(repo);
+                        oPara1.Range.Font.Bold = 0;
+                        oPara1.Range.Font.Size = 10;
+                        oPara1.Range.ParagraphFormat.LineSpacingRule =
+                            WdLineSpacing.wdLineSpaceSingle;
+                        oPara1.Range.InsertParagraphAfter();
+
+                        oPara1 = oDoc.Content.Paragraphs.Add();
+                        oPara1.Range.Text = facultyName;
+                        oPara1.Range.Font.Bold = 0;
+                        oPara1.Range.Font.Size = 10;
+                        oPara1.Range.ParagraphFormat.LineSpacingRule =
+                            WdLineSpacing.wdLineSpaceSingle;
+                        oPara1.Range.InsertParagraphAfter();
+
+                        oPara1 = oDoc.Content.Paragraphs.Add();
+                        oPara1.Range.Font.Size = 14;
+                        oPara1.Range.Text = dow.ToUpper();
+                        oPara1.Range.Font.Bold = 1;
+                        oPara1.Range.ParagraphFormat.LineSpacingRule =
+                            WdLineSpacing.wdLineSpaceSingle;
+                        oPara1.Range.InsertParagraphAfter();
+
+                        Shape cornerStamp = oDoc.Shapes.AddTextbox(
+                            MsoTextOrientation.msoTextOrientationHorizontal,
+                            oWord.CentimetersToPoints(22f),
+                            oWord.CentimetersToPoints(0.5f),
+                            200, 50,
+                            textBoxRange);
+                        cornerStamp.TextFrame.TextRange.ParagraphFormat.LineSpacingRule =
+                            WdLineSpacing.wdLineSpaceSingle;
+                        if (dow == "Понедельник")
                         {
-                            if (!timeList.Contains(time))
+                            if (!schoolHeader)
                             {
-                                timeList.Add(time);
+                                var prorUchRabNameOption =
+                                    repo.ConfigOptions.GetFirstFiltredConfigOption(
+                                        co => co.Key == "Проректор по учебной работе");
+                                var prorUchRabName = (prorUchRabNameOption == null) ? "" : prorUchRabNameOption.Value;
+
+                                cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
+                                                                       Environment.NewLine +
+                                                                       "Проректор по учебной работе" +
+                                                                       Environment.NewLine + "______________     " +
+                                                                       prorUchRabName;
+                                cornerStamp.TextFrame.TextRange.Font.Size = 10;
+                                cornerStamp.TextFrame.TextRange.ParagraphFormat.Alignment =
+                                    WdParagraphAlignment.wdAlignParagraphRight;
+                            }
+                            else
+                            {
+                                cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
+                                                                       Environment.NewLine + "Ректор   " +
+                                                                       "______________     Наянова М.В." +
+                                                                       Environment.NewLine +
+                                                                       "«___» ____________  20__ г.";
+                                cornerStamp.TextFrame.TextRange.Font.Size = 10;
+                                cornerStamp.TextFrame.TextRange.ParagraphFormat.Alignment =
+                                    WdParagraphAlignment.wdAlignParagraphRight;
                             }
                         }
-                    }
+                        cornerStamp.TextFrame.WordWrap = 1;
+                        cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
+                        cornerStamp.Line.Visible = MsoTriState.msoFalse;
 
-                    Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                        //qrCode 
+                        /*
+                        Shape qrStamp = oDoc.Shapes.AddTextbox(
+                            MsoTextOrientation.msoTextOrientationHorizontal,
+                            oWord.CentimetersToPoints(2f),
+                            oWord.CentimetersToPoints(0.5f),
+                            200, 50,
+                            textBoxRange);
+                        qrStamp.Line.Visible = MsoTriState.msoFalse;
+    
+                        object f = false;
+                        object tr = true;
+                        qrStamp.TextFrame.TextRange.InlineShapes.AddPicture(@"d:\qrcode.png", ref f, ref tr, qrStamp.TextFrame.TextRange);
+                        */
 
-                    Table oTable = oDoc.Tables.Add(wrdRng, 1 + timeList.Count, 1 + schedule.Count);
-                    oTable.Borders.Enable = 1;
-                    oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
-                    oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
-                    oTable.Range.Font.Size = 10;
-                    oTable.Range.Font.Bold = 0;
-
-                    oTable.Columns[1].Width = oWord.CentimetersToPoints(2.44f);
-                    float colWidth = 25.64F / schedule.Count;
-                    for (int i = 0; i < schedule.Count; i++)
-                    {
-                        oTable.Columns[i + 2].Width = oWord.CentimetersToPoints(colWidth);
-                    }
-
-                    oTable.Cell(1, 1).Range.Text = "Время";
-                    oTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
-                                WdParagraphAlignment.wdAlignParagraphCenter;
-
-                    int groupColumn = 2;
-
-                    var plainGroupsListIds = new Dictionary<int, List<int>>();
-                    var nGroupsListIds = new Dictionary<int, List<int>>();
-                    var plainNGroupIds = new Dictionary<int, Tuple<int, int>>();
-
-                    foreach (var group in schedule)
-                    {
-                        var groupObject = repo.StudentGroups.GetStudentGroup(group.Key);
-                        var groupName = groupObject.Name;
-                        oTable.Cell(1, groupColumn).Range.Text = groupName.Replace(" (+Н)", "");
-                        oTable.Cell(1, groupColumn).Range.ParagraphFormat.Alignment =
-                            WdParagraphAlignment.wdAlignParagraphCenter;
-                        groupColumn++;
-
-                        if (groupName.Contains(" (+Н)"))
+                        var timeList = new List<string>();
+                        foreach (var group in schedule)
                         {
-                            var plainGroupName = groupName.Replace(" (+Н)", "");
-                            var nGroupName = groupName.Replace(" (+", "(");
+                            foreach (var time in group.Value.Keys)
+                            {
+                                if (!timeList.Contains(time))
+                                {
+                                    timeList.Add(time);
+                                }
+                            }
+                        }
 
-                            var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName).StudentGroupId;
-                            var plainStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
+                        Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+
+                        oTable = oDoc.Tables.Add(wrdRng, 1 + timeList.Count, 1 + schedule.Count);
+                        oTable.Borders.Enable = 1;
+                        oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+                        oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                        oTable.Range.Font.Size = 10;
+                        oTable.Range.Font.Bold = 0;
+
+                        oTable.Columns[1].Width = oWord.CentimetersToPoints(2.44f);
+                        float colWidth = 25.64F / schedule.Count;
+                        for (int i = 0; i < schedule.Count; i++)
+                        {
+                            oTable.Columns[i + 2].Width = oWord.CentimetersToPoints(colWidth);
+                        }
+
+                        oTable.Cell(1, 1).Range.Text = "Время";
+                        oTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
+                            WdParagraphAlignment.wdAlignParagraphCenter;
+
+                        int groupColumn = 2;
+
+                        var plainGroupsListIds = new Dictionary<int, List<int>>();
+                        var nGroupsListIds = new Dictionary<int, List<int>>();
+                        var plainNGroupIds = new Dictionary<int, Tuple<int, int>>();
+
+                        foreach (var group in schedule)
+                        {
+                            var groupObject = repo.StudentGroups.GetStudentGroup(group.Key);
+                            var groupName = groupObject.Name;
+                            oTable.Cell(1, groupColumn).Range.Text = groupName.Replace(" (+Н)", "");
+                            oTable.Cell(1, groupColumn).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+                            groupColumn++;
+
+                            if (groupName.Contains(" (+Н)"))
+                            {
+                                var plainGroupName = groupName.Replace(" (+Н)", "");
+                                var nGroupName = groupName.Replace(" (+", "(");
+
+                                var plainGroupId = repo.StudentGroups.FindStudentGroup(plainGroupName).StudentGroupId;
+                                var plainStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => sig.StudentGroup.StudentGroupId == plainGroupId)
                                     .Select(stig => stig.Student.StudentId)
                                     .ToList();
-                            plainGroupsListIds.Add(group.Key, repo.StudentsInGroups.GetAllStudentsInGroups()
+                                plainGroupsListIds.Add(group.Key, repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => plainStudentIds.Contains(sig.Student.StudentId))
                                     .Select(stig => stig.StudentGroup.StudentGroupId)
                                     .Distinct()
                                     .ToList());
 
-                            var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName).StudentGroupId;
-                            var nStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
+                                var nGroupId = repo.StudentGroups.FindStudentGroup(nGroupName).StudentGroupId;
+                                var nStudentIds = repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => sig.StudentGroup.StudentGroupId == nGroupId)
                                     .Select(stig => stig.Student.StudentId)
                                     .ToList();
-                            nGroupsListIds.Add(group.Key, repo.StudentsInGroups.GetAllStudentsInGroups()
+                                nGroupsListIds.Add(group.Key, repo.StudentsInGroups.GetAllStudentsInGroups()
                                     .Where(sig => nStudentIds.Contains(sig.Student.StudentId))
                                     .Select(stig => stig.StudentGroup.StudentGroupId)
                                     .Distinct()
                                     .ToList());
 
-                            plainNGroupIds.Add(groupObject.StudentGroupId, new Tuple<int, int>(plainGroupId, nGroupId));
+                                plainNGroupIds.Add(groupObject.StudentGroupId,
+                                    new Tuple<int, int>(plainGroupId, nGroupId));
+                            }
                         }
-                    }
 
-                    cToken.ThrowIfCancellationRequested();
-
-                    var timeRowIndexList = new List<int>();
-
-                    var timeRowIndex = 2;
-                    foreach (var time in timeList.OrderBy(t => int.Parse(t.Split(':')[0]) * 60 + int.Parse(t.Split(':')[1])))
-                    {
                         cToken.ThrowIfCancellationRequested();
 
-                        var hour = int.Parse(time.Substring(0, 2));
-                        var minute = int.Parse(time.Substring(3, 2));
+                        var timeRowIndexList = new List<int>();
 
-                        minute += lessonLength;
-
-                        while (minute >= 60)
+                        var timeRowIndex = 2;
+                        foreach (var time in timeList.OrderBy(
+                            t => int.Parse(t.Split(':')[0]) * 60 + int.Parse(t.Split(':')[1])))
                         {
-                            hour++;
-                            minute -= 60;
-                        }
+                            cToken.ThrowIfCancellationRequested();
 
+                            var hour = int.Parse(time.Substring(0, 2));
+                            var minute = int.Parse(time.Substring(3, 2));
 
-                        timeRowIndexList.Add(timeRowIndex);
-                        oTable.Cell(timeRowIndex, 1).Range.Text = time + " - " +
-                            hour.ToString("D2") + ":" + minute.ToString("D2");
-                        oTable.Cell(timeRowIndex, 1).Range.ParagraphFormat.Alignment =
-                                WdParagraphAlignment.wdAlignParagraphCenter;
-                        oTable.Cell(timeRowIndex, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                            minute += lessonLength;
 
-                        var columnGroupIndex = 2;
-                        foreach (var group in schedule)
-                        {
-                            if (group.Value.ContainsKey(time))
+                            while (minute >= 60)
                             {
-                                oTable.Cell(timeRowIndex, columnGroupIndex).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
-
-                                var timeTable = oDoc.Tables.Add(oTable.Cell(timeRowIndex, columnGroupIndex).Range, 1, 1);
-                                for (int i = 0; i < group.Value[time].Count - 1; i++)
-                                {
-                                    timeTable.Rows.Add();
-                                }
-                                for (int i = 0; i < group.Value[time].Count - 1; i++)
-                                {
-                                    timeTable.Cell(i + 1, 1).Borders[WdBorderType.wdBorderBottom].Visible = true;
-                                }
-                                timeTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
-                                timeTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
-                                timeTable.Range.Font.Size = 10;
-                                timeTable.Range.Font.Bold = 0;
-
-                                var tfdIndex = 0;
-                                foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2.Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min()))
-                                {
-                                    var cellText = "";
-                                    cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
-                                    var groupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
-                                    if (plainGroupsListIds.ContainsKey(group.Key))
-                                    {
-                                        if (plainGroupsListIds[group.Key].Contains(groupId) && nGroupsListIds[group.Key].Contains(groupId))
-                                        {
-                                            cellText += " (+Н)";
-                                        }
-                                        if (!plainGroupsListIds[group.Key].Contains(groupId) && nGroupsListIds[group.Key].Contains(groupId))
-                                        {
-                                            cellText += " (Н)";
-                                        }
-                                    }
-
-                                    var tfdGroupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId;
-                                    if ((tfdGroupId != group.Key))
-                                    {
-                                        if ((!plainNGroupIds.ContainsKey(group.Key)) || ((tfdGroupId != plainNGroupIds[group.Key].Item1) && (tfdGroupId != plainNGroupIds[group.Key].Item2)))
-                                        {
-                                            cellText += " (" + tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.Name + ")";
-                                        }
-                                    }
-                                    cellText += Environment.NewLine;
-                                    cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO + Environment.NewLine;
-
-                                    // Weeks
-                                    if (!tfdData.Value.Item3.Contains("*"))
-                                    {
-                                        cellText += "(" + tfdData.Value.Item3 + ")" + Environment.NewLine;
-                                    }
-                                    else
-                                    {
-                                        cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
-                                    }
-
-                                    var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date), l => l.Item1.Auditorium.Name);
-                                    var grouped = audWeekList.GroupBy(a => a.Value);
-
-                                    var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
-                                    var gcount = enumerable.Count();
-                                    if (gcount == 1)
-                                    {
-                                        cellText += enumerable.ElementAt(0).Key;
-                                    }
-                                    else
-                                    {
-                                        for (int j = 0; j < gcount; j++)
-                                        {
-                                            var jItem = enumerable.OrderBy(e => e.Select(ag => ag.Key).ToList().Min()).ElementAt(j);
-                                            cellText += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
-
-                                            if (j != gcount - 1)
-                                            {
-                                                cellText += Environment.NewLine;
-                                            }
-                                        }
-                                    }
-
-                                    timeTable.Cell(tfdIndex + 1, 1).Range.Text = cellText;
-                                    timeTable.Cell(tfdIndex + 1, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
-
-                                    tfdIndex++;
-
-                                }
+                                hour++;
+                                minute -= 60;
                             }
 
-                            columnGroupIndex++;
+
+                            timeRowIndexList.Add(timeRowIndex);
+                            oTable.Cell(timeRowIndex, 1).Range.Text = time + " - " +
+                                                                      hour.ToString("D2") + ":" + minute.ToString("D2");
+                            oTable.Cell(timeRowIndex, 1).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+                            oTable.Cell(timeRowIndex, 1).VerticalAlignment =
+                                WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+                            var columnGroupIndex = 2;
+                            foreach (var group in schedule)
+                            {
+                                if (group.Value.ContainsKey(time))
+                                {
+                                    oTable.Cell(timeRowIndex, columnGroupIndex).VerticalAlignment =
+                                        WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+                                    var timeTable =
+                                        oDoc.Tables.Add(oTable.Cell(timeRowIndex, columnGroupIndex).Range, 1, 1);
+                                    for (int i = 0; i < group.Value[time].Count - 1; i++)
+                                    {
+                                        timeTable.Rows.Add();
+                                    }
+                                    for (int i = 0; i < group.Value[time].Count - 1; i++)
+                                    {
+                                        timeTable.Cell(i + 1, 1).Borders[WdBorderType.wdBorderBottom].Visible = true;
+                                    }
+                                    timeTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+                                    timeTable.Range.ParagraphFormat.Alignment =
+                                        WdParagraphAlignment.wdAlignParagraphLeft;
+                                    timeTable.Range.Font.Size = 10;
+                                    timeTable.Range.Font.Bold = 0;
+
+                                    var tfdIndex = 0;
+                                    foreach (var tfdData in group.Value[time].OrderBy(tfd => tfd.Value.Item2
+                                        .Select(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date))
+                                        .Min()))
+                                    {
+                                        var cellText = "";
+                                        cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
+                                        var groupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline
+                                            .StudentGroup.StudentGroupId;
+                                        if (plainGroupsListIds.ContainsKey(group.Key))
+                                        {
+                                            if (plainGroupsListIds[group.Key].Contains(groupId) &&
+                                                nGroupsListIds[group.Key].Contains(groupId))
+                                            {
+                                                cellText += " (+Н)";
+                                            }
+                                            if (!plainGroupsListIds[group.Key].Contains(groupId) &&
+                                                nGroupsListIds[group.Key].Contains(groupId))
+                                            {
+                                                cellText += " (Н)";
+                                            }
+                                        }
+
+                                        var tfdGroupId = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline
+                                            .StudentGroup.StudentGroupId;
+                                        if ((tfdGroupId != group.Key))
+                                        {
+                                            if ((!plainNGroupIds.ContainsKey(group.Key)) ||
+                                                ((tfdGroupId != plainNGroupIds[group.Key].Item1) &&
+                                                 (tfdGroupId != plainNGroupIds[group.Key].Item2)))
+                                            {
+                                                cellText += " (" + tfdData.Value.Item2[0].Item1.TeacherForDiscipline
+                                                                .Discipline.StudentGroup.Name + ")";
+                                            }
+                                        }
+                                        cellText += Environment.NewLine;
+                                        cellText += tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO +
+                                                    Environment.NewLine;
+
+                                        // Weeks
+                                        if (!tfdData.Value.Item3.Contains("*"))
+                                        {
+                                            cellText += "(" + tfdData.Value.Item3 + ")" + Environment.NewLine;
+                                        }
+                                        else
+                                        {
+                                            cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
+                                        }
+
+                                        var audWeekList =
+                                            tfdData.Value.Item2.ToDictionary(
+                                                l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date),
+                                                l => l.Item1.Auditorium.Name);
+                                        var grouped = audWeekList.GroupBy(a => a.Value);
+
+                                        var enumerable =
+                                            grouped as List<IGrouping<string, KeyValuePair<int, string>>> ??
+                                            grouped.ToList();
+                                        var gcount = enumerable.Count();
+                                        if (gcount == 1)
+                                        {
+                                            cellText += enumerable.ElementAt(0).Key;
+                                        }
+                                        else
+                                        {
+                                            for (int j = 0; j < gcount; j++)
+                                            {
+                                                var jItem = enumerable
+                                                    .OrderBy(e => e.Select(ag => ag.Key).ToList().Min()).ElementAt(j);
+                                                cellText +=
+                                                    CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) +
+                                                    " - " + jItem.Key;
+
+                                                if (j != gcount - 1)
+                                                {
+                                                    cellText += Environment.NewLine;
+                                                }
+                                            }
+                                        }
+
+                                        timeTable.Cell(tfdIndex + 1, 1).Range.Text = cellText;
+                                        timeTable.Cell(tfdIndex + 1, 1).VerticalAlignment =
+                                            WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+                                        tfdIndex++;
+
+                                    }
+                                }
+
+                                columnGroupIndex++;
+                            }
+
+                            timeRowIndex++;
                         }
 
-                        timeRowIndex++;
+                        if (dayOfWeek == daysOfWeek)
+                        {
+                            var oPara3 = oDoc.Content.Paragraphs.Add(ref oMissing);
+                            oPara3.Range.Font.Size = 12;
+                            oPara3.Format.LineSpacing = oWord.LinesToPoints(1);
+                            oPara3.Range.Text = "";
+                            oPara3.Format.SpaceAfter = 0;
+                            oPara3.Range.InsertParagraphAfter();
+
+                            var headUchOtdNameOption =
+                                repo.ConfigOptions.GetFirstFiltredConfigOption(
+                                    co => co.Key == "Начальник учебного отдела");
+                            var headUchOtdName = (headUchOtdNameOption == null) ? "" : headUchOtdNameOption.Value;
+
+
+                            Range wordRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+
+                            Table signTable = oDoc.Tables.Add(wordRng, 2, 2);
+                            signTable.Borders.Enable = 0;
+                            signTable.Range.Bold = 0;
+
+                            signTable.Cell(1, 1).Range.Text = "Начальник учебного отдела";
+                            signTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphLeft;
+
+                            signTable.Cell(1, 2).Range.Text = "_________________  " + headUchOtdName;
+                            signTable.Cell(1, 2).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphRight;
+
+                            signTable.Rows[1].Height = oWord.CentimetersToPoints(1);
+
+                            signTable.Cell(2, 1).Range.Text = faculty.ScheduleSigningTitle;
+                            signTable.Cell(2, 1).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphLeft;
+
+                            signTable.Cell(2, 2).Range.Text = "_________________  " + faculty.DeanSigningSchedule;
+                            signTable.Cell(2, 2).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphRight;
+
+                            /*
+                            oPara3 = oDoc.Content.Paragraphs.Add(ref oMissing);
+                            oPara3.Range.Text = "Начальник учебного отдела\t\t" + "_________________  " + headUchOtdName;
+                            oPara3.Range.Font.Size = 12;
+                            oPara3.Range.Font.Bold = 0;
+                            oPara3.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                            oPara3.Format.LineSpacing = oWord.LinesToPoints(1);
+                            oPara3.Format.SpaceAfter = 0;
+                            oPara3.Range.InsertParagraphAfter();
+                            oPara3.Range.InsertParagraphAfter();
+    
+                            oPara3 = oDoc.Content.Paragraphs.Add(ref oMissing);
+                            //"Декан " + UchOtd.NUDS.Core.Constants.facultyTitles[facCounter] + "\t\t_________________  "
+                            //+ UchOtd.NUDS.Core.Constants.HeadsOfFaculties.ElementAt(facCounter).Value;
+                            oPara3.Range.Text = faculty.ScheduleSigningTitle + "\t\t_________________  " + faculty.DeanSigningSchedule;
+                            oPara3.Range.Font.Size = 12;
+                            oPara3.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                            oPara3.Format.LineSpacing = oWord.LinesToPoints(1);
+                            oPara3.Range.Font.Bold = 0;
+                            oPara3.Format.SpaceAfter = 0;
+                            oPara3.Range.InsertParagraphAfter();
+                            oPara3.Range.InsertParagraphAfter();
+                            */
+
+
+                        }
+
+                        cToken.ThrowIfCancellationRequested();
+
                     }
-
-                    if (dayOfWeek == daysOfWeek)
-                    {
-                        var oPara3 = oDoc.Content.Paragraphs.Add(ref oMissing);
-                        oPara3.Range.Font.Size = 12;
-                        oPara3.Format.LineSpacing = oWord.LinesToPoints(1);
-                        oPara3.Range.Text = "";
-                        oPara3.Format.SpaceAfter = 0;
-                        oPara3.Range.InsertParagraphAfter();
-
-                        var headUchOtdNameOption = repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Начальник учебного отдела");
-                        var headUchOtdName = (headUchOtdNameOption == null) ? "" : headUchOtdNameOption.Value;
-
-
-                        Range wordRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
-
-                        Table signTable = oDoc.Tables.Add(wordRng, 2, 2);
-                        signTable.Borders.Enable = 0;
-                        signTable.Range.Bold = 0;
-
-                        signTable.Cell(1, 1).Range.Text = "Начальник учебного отдела";
-                        signTable.Cell(1, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
-
-                        signTable.Cell(1, 2).Range.Text = "_________________  " + headUchOtdName;
-                        signTable.Cell(1, 2).Range.ParagraphFormat.Alignment =
-                            WdParagraphAlignment.wdAlignParagraphRight;
-
-                        signTable.Rows[1].Height = oWord.CentimetersToPoints(1);
-
-                        signTable.Cell(2, 1).Range.Text = faculty.ScheduleSigningTitle;
-                        signTable.Cell(2, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
-
-                        signTable.Cell(2, 2).Range.Text = "_________________  " + faculty.DeanSigningSchedule;
-                        signTable.Cell(2, 2).Range.ParagraphFormat.Alignment =
-                            WdParagraphAlignment.wdAlignParagraphRight;
-
-                        /*
-                        oPara3 = oDoc.Content.Paragraphs.Add(ref oMissing);
-                        oPara3.Range.Text = "Начальник учебного отдела\t\t" + "_________________  " + headUchOtdName;
-                        oPara3.Range.Font.Size = 12;
-                        oPara3.Range.Font.Bold = 0;
-                        oPara3.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
-                        oPara3.Format.LineSpacing = oWord.LinesToPoints(1);
-                        oPara3.Format.SpaceAfter = 0;
-                        oPara3.Range.InsertParagraphAfter();
-                        oPara3.Range.InsertParagraphAfter();
-
-                        oPara3 = oDoc.Content.Paragraphs.Add(ref oMissing);
-                        //"Декан " + UchOtd.NUDS.Core.Constants.facultyTitles[facCounter] + "\t\t_________________  "
-                        //+ UchOtd.NUDS.Core.Constants.HeadsOfFaculties.ElementAt(facCounter).Value;
-                        oPara3.Range.Text = faculty.ScheduleSigningTitle + "\t\t_________________  " + faculty.DeanSigningSchedule;
-                        oPara3.Range.Font.Size = 12;
-                        oPara3.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
-                        oPara3.Format.LineSpacing = oWord.LinesToPoints(1);
-                        oPara3.Range.Font.Bold = 0;
-                        oPara3.Format.SpaceAfter = 0;
-                        oPara3.Range.InsertParagraphAfter();
-                        oPara3.Range.InsertParagraphAfter();
-                        */
-
-
-                    }
-
-                    cToken.ThrowIfCancellationRequested();
 
                     pageCounter++;
                     int pageCount;
@@ -2434,6 +2554,8 @@ namespace UchOtd.Core
                 }
             }
 
+
+
             oTable.Cell(tableRowOffset + 1, 1).Range.Text = Constants.DowLocal[dayOfWeek];
             oTable.Cell(tableRowOffset + 1, 1).Range.Bold = 1;
             oTable.Cell(tableRowOffset + 1, 1).Range.ParagraphFormat.Alignment =
@@ -3067,6 +3189,349 @@ namespace UchOtd.Core
             return oTable;
         }
 
+        private static Table GetAndPutDowStartSchedule2(ScheduleRepository repo, int lessonLength, int dayOfWeek,
+            bool weekFiltered, int weekFilter, bool weeksMarksVisible,
+            Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord, CancellationToken cToken)
+        {
+            cToken.ThrowIfCancellationRequested();
+
+            var schedule = repo.Lessons.GetFacultyDowSchedule(faculty.FacultyId, dayOfWeek, weekFiltered, weekFilter, false, false);
+
+            cToken.ThrowIfCancellationRequested();
+
+            var timeList = new List<string>();
+            foreach (var group in schedule)
+            {
+                foreach (var time in @group.Value.Keys)
+                {
+                    if (!timeList.Contains(time))
+                    {
+                        timeList.Add(time);
+                    }
+                }
+            }
+
+            Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+
+            Table oTable = oDoc.Tables.Add(wrdRng, 1 + timeList.Count, 1 + (schedule.Count * 2));
+            oTable.Borders.Enable = 1;
+            oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+            oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+            oTable.Range.Font.Size = 11;
+            oTable.Range.Font.Bold = 0;
+
+            oTable.Columns[1].Width = oWord.CentimetersToPoints(2.44f);
+            float colWidth = 25.64F / schedule.Count;
+            for (int i = 0; i < schedule.Count * 2; i += 2)
+            {
+                oTable.Columns[i + 2].Width = oWord.CentimetersToPoints(colWidth - 1.1f);
+                oTable.Columns[i + 3].Width = oWord.CentimetersToPoints(1.1f);
+            }
+
+
+            oTable.Range.Font.Underline = WdUnderline.wdUnderlineNone;
+
+
+            oTable.Cell(1, 1).Range.Text = "Время занятий";//Constants.DOWLocal[dayOfWeek];
+            oTable.Cell(1, 1).Range.Font.Bold = 1;
+            oTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
+                WdParagraphAlignment.wdAlignParagraphCenter;
+
+            int groupColumn = 2;
+
+
+            foreach (var group in schedule)
+            {
+                var groupObject = repo.StudentGroups.GetStudentGroup(@group.Key);
+                var groupName = groupObject.Name;
+                oTable.Cell(1, groupColumn).Range.Text = groupName;
+                oTable.Cell(1, groupColumn).Range.Font.Bold = 1;
+                oTable.Cell(1, groupColumn).Range.ParagraphFormat.Alignment =
+                    WdParagraphAlignment.wdAlignParagraphCenter;
+                oTable.Cell(1, groupColumn).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+                oTable.Cell(1, groupColumn + 1).Range.Text = "Ауд";
+                oTable.Cell(1, groupColumn + 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                groupColumn += 2;
+            }
+
+            var timeRowIndexList = new List<int>();
+
+            var timeRowIndex = 2;
+            foreach (var time in timeList.OrderBy(t => int.Parse(t.Split(':')[0]) * 60 + int.Parse(t.Split(':')[1])))
+            {
+                cToken.ThrowIfCancellationRequested();
+
+                var hour = int.Parse(time.Substring(0, 2));
+                var minute = int.Parse(time.Substring(3, 2));
+
+                minute += lessonLength;
+
+                while (minute >= 60)
+                {
+                    hour++;
+                    minute -= 60;
+                }
+
+
+                timeRowIndexList.Add(timeRowIndex);
+                oTable.Cell(timeRowIndex, 1).Range.Text = time + "-" +
+                                                          hour.ToString("D2") + ":" + minute.ToString("D2");
+                oTable.Cell(timeRowIndex, 1).Range.Font.Bold = 1;
+                oTable.Cell(timeRowIndex, 1).Range.ParagraphFormat.Alignment =
+                    WdParagraphAlignment.wdAlignParagraphCenter;
+                oTable.Cell(timeRowIndex, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+                var columnGroupIndex = 2;
+                foreach (var group in schedule)
+                {
+                    if (@group.Value.ContainsKey(time))
+                    {
+                        oTable.Cell(timeRowIndex, columnGroupIndex).VerticalAlignment =
+                            WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+                        var groupDowTimeLessons = @group.Value[time]
+                            .OrderBy(tfd => tfd.Value.Item2.Select(l =>
+                                repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date)).Min())
+                            .ToList();
+                        var tfdIndex = 0;
+
+                        if (groupDowTimeLessons.Count() == 2)
+                        {
+                            if (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.") &&
+                                groupDowTimeLessons[1].Value.Item1.Contains("(нечёт."))
+                            {
+                                var tmp = groupDowTimeLessons[0];
+                                groupDowTimeLessons[0] = groupDowTimeLessons[1];
+                                groupDowTimeLessons[1] = tmp;
+                            }
+                        }
+
+                        if (
+                            ((@group.Value[time].Count == 2) &&
+                             ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт."))))
+                            || ((@group.Value[time].Count == 1) && (groupDowTimeLessons[0].Value.Item1.Contains("чёт."))))
+                        {
+                            var rng = oTable.Cell(timeRowIndex, columnGroupIndex).Range;
+                            rng.Borders[WdBorderType.wdBorderDiagonalUp].LineStyle = WdLineStyle.wdLineStyleSingle;
+                        }
+
+
+                        var groupObject = repo.StudentGroups.GetStudentGroup(@group.Key);
+                        var subGroupOne = repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupObject.Name + "1");
+                        var subGroupTwo = repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupObject.Name + "2");
+
+                        if (groupDowTimeLessons.Count() == 2)
+                        {
+                            if (((subGroupOne != null) && (subGroupTwo != null)) &&
+                                ((groupDowTimeLessons[0].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId) &&
+                                 (groupDowTimeLessons[1].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId)))
+                            {
+                                var tmp = groupDowTimeLessons[0];
+                                groupDowTimeLessons[0] = groupDowTimeLessons[1];
+                                groupDowTimeLessons[1] = tmp;
+                            }
+                        }
+
+                        var addSubGroupColumn = 0;
+
+                        if ((groupDowTimeLessons.Count() == 1) &&
+                            (subGroupOne != null) &&
+                            (groupDowTimeLessons[0].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupOne.StudentGroupId))
+                        {
+                            addSubGroupColumn = 1;
+
+                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Tuple<Lesson, int>>, string>>(-1, null);
+                            groupDowTimeLessons.Add(emptytfd);
+                        }
+
+                        if ((groupDowTimeLessons.Count() == 1) &&
+                            (subGroupTwo != null) &&
+                            (groupDowTimeLessons[0].Value.Item2[0].Item1.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId == subGroupTwo.StudentGroupId))
+                        {
+                            addSubGroupColumn = 1;
+
+                            var emptytfd = new KeyValuePair<int, Tuple<string, List<Tuple<Lesson, int>>, string>>(-1, null);
+                            groupDowTimeLessons.Add(emptytfd);
+
+                            var tmp = groupDowTimeLessons[0];
+                            groupDowTimeLessons[0] = groupDowTimeLessons[1];
+                            groupDowTimeLessons[1] = tmp;
+                        }
+
+                        var timeTable = oDoc.Tables.Add(oTable.Cell(timeRowIndex, columnGroupIndex).Range, 1, @group.Value[time].Count + addSubGroupColumn);
+
+                        if (!((groupDowTimeLessons.Count == 2) &&
+                              (((groupDowTimeLessons[0].Value != null) && (groupDowTimeLessons[1].Value != null)) &&
+                               ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт."))))))
+                        {
+                            for (int i = 0; i < groupDowTimeLessons.Count - 1; i++)
+                            {
+                                timeTable.Cell(1, i + 1).Borders[WdBorderType.wdBorderRight].Visible = true;
+                            }
+                        }
+
+
+                        timeTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+                        timeTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+                        timeTable.Range.Font.Size = 10;
+                        timeTable.Range.Font.Bold = 0;
+
+
+                        foreach (var tfdData in groupDowTimeLessons)
+                        {
+                            var cellText = "";
+
+                            if (tfdData.Value == null)
+                            {
+                                tfdIndex++;
+
+                                continue;
+                            }
+
+                            var discName = tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Discipline.Name;
+
+                            var shorteningDictionary = new Dictionary<string, string>
+                            {
+                                {"Английский язык", "Англ. яз."},
+                                {"Немецкий язык", "Нем. яз."},
+                                {"Французский язык", "Франц. яз."}
+                            };
+
+                            if (shorteningDictionary.ContainsKey(discName))
+                            {
+                                discName = shorteningDictionary[discName];
+                            }
+
+                            // Discipline name
+                            cellText += discName + Environment.NewLine;
+
+                            // Teacher FIO
+                            var ommitInitials = @group.Value[time].Count != 1;
+                            String teacherFio = ShortenFio(tfdData.Value.Item2[0].Item1.TeacherForDiscipline.Teacher.FIO, ommitInitials);
+                            cellText += teacherFio;
+
+                            // Total weeks
+                            if (weeksMarksVisible)
+                            {
+                                /*
+                                if (tfdData.Value.Item1.Contains("(чёт."))
+                                {
+                                    cellText += "(чёт.)" + Environment.NewLine;
+                                }
+                                if (tfdData.Value.Item1.Contains("(нечёт."))
+                                {
+                                    cellText += "(нечёт.)" + Environment.NewLine;
+                                }
+                                */
+                                //cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
+                            }
+
+                            String audText = "";
+                            // Auditoriums
+                            var audWeekList = tfdData.Value.Item2.ToDictionary(l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date),
+                                l => l.Item1.Auditorium.Name);
+                            var grouped = audWeekList.GroupBy(a => a.Value);
+
+                            var enumerable = grouped as List<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
+                            var gcount = enumerable.Count();
+                            if (gcount == 1)
+                            {
+                                audText += ShortenAudName(enumerable.ElementAt(0).Key);
+                            }
+                            else
+                            {
+                                for (int j = 0; j < gcount; j++)
+                                {
+                                    var jItem = enumerable.OrderBy(e => e.Select(ag => ag.Key).ToList().Min()).ElementAt(j);
+                                    audText += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " +
+                                               ShortenAudName(jItem.Key);
+
+                                    if (j != gcount - 1)
+                                    {
+                                        audText += Environment.NewLine;
+                                    }
+                                }
+                            }
+
+                            if ((groupDowTimeLessons.Count == 1) &&
+                                (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.")))
+                            {
+                                cellText = Environment.NewLine + cellText;
+                            }
+
+                            if ((groupDowTimeLessons.Count == 1) &&
+                                (groupDowTimeLessons[0].Value.Item1.Contains("(нечёт.")))
+                            {
+                                cellText = cellText + Environment.NewLine;
+                            }
+                            //Auditoriums
+
+
+                            timeTable.Cell(1, tfdIndex + 1).Range.Text = cellText;
+                            timeTable.Cell(1, tfdIndex + 1).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+
+                            /*
+                             * FIO in one line
+                            var lineSpacing = timeTable.Cell(1, tfdIndex + 1).Range.ParagraphFormat.LineSpacing;
+
+                            var Height = timeTable.Cell(1, tfdIndex + 1).Height;
+
+                            if (Height > lineSpacing * 2)
+                            {
+
+                            }
+                             */
+
+                            timeTable.Cell(1, tfdIndex + 1).VerticalAlignment =
+                                WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+
+                            var audCellText = oTable.Cell(timeRowIndex, columnGroupIndex + 1).Range.Text;
+                            if (audCellText == "\r\a")
+                            {
+                                oTable.Cell(timeRowIndex, columnGroupIndex + 1).Range.Text = audText;
+                            }
+                            else
+                            {
+                                oTable.Cell(timeRowIndex, columnGroupIndex + 1).Range.Text = audCellText + "/ " + audText;
+                            }
+                            oTable.Cell(timeRowIndex, columnGroupIndex + 1).Range.ParagraphFormat.Alignment =
+                                WdParagraphAlignment.wdAlignParagraphCenter;
+                            oTable.Cell(timeRowIndex, columnGroupIndex + 1).VerticalAlignment =
+                                WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+
+                            if ((@group.Value[time].Count == 2) &&
+                                ((groupDowTimeLessons[0].Value.Item1.Contains("нечёт.")) && (groupDowTimeLessons[1].Value.Item1.Contains("чёт."))))
+                            {
+                                timeTable.Cell(1, tfdIndex + 1).Range.ParagraphFormat.Alignment =
+                                    (tfdIndex == 0)
+                                        ? WdParagraphAlignment.wdAlignParagraphLeft
+                                        : WdParagraphAlignment.wdAlignParagraphRight;
+                            }
+
+                            if ((groupDowTimeLessons.Count == 1) &&
+                                (groupDowTimeLessons[0].Value.Item1.Contains("(чёт.")))
+                            {
+                                timeTable.Cell(1, tfdIndex + 1).Range.ParagraphFormat.Alignment =
+                                    WdParagraphAlignment.wdAlignParagraphRight;
+                            }
+
+                            tfdIndex++;
+                        }
+                    }
+
+                    columnGroupIndex += 2;
+                }
+
+                timeRowIndex++;
+            }
+
+            return oTable;
+        }
+
         private static string ShortenAudName(string audName)
         {
             return (audName.StartsWith("Ауд. ")) ? audName.Substring(5) : audName;
@@ -3366,6 +3831,123 @@ namespace UchOtd.Core
                 oPara1.Range.InsertParagraphAfter();
 
                 oTable2 = GetAndPutDowStartSchedule(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
+            }
+
+            cToken.ThrowIfCancellationRequested();
+
+            int pageCount;
+            var fontSize = 10.5F;
+            do
+            {
+                fontSize -= 0.5F;
+                oTable.Range.Font.Size = fontSize;
+                if (oTable2 != null)
+                {
+                    oTable2.Range.Font.Size = fontSize;
+                }
+
+                if (fontSize <= 3)
+                {
+                    break;
+                }
+
+                pageCount = oDoc.ComputeStatistics(WdStatistic.wdStatisticPages);
+            } while (pageCount > 1);
+
+            if (save)
+            {
+                object fileName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + filename;
+                oDoc.SaveAs(ref fileName);
+            }
+
+            if (quit)
+            {
+                oWord.Quit();
+            }
+
+            Marshal.ReleaseComObject(oWord);
+        }
+
+        public static void WordStartSchool2(ScheduleRepository repo, string filename, bool save, bool quit, 
+            int lessonLength, int facultyId, int dayOfWeek, int daysOfWeek,
+            bool weekFiltered, int weekFilter, bool weeksMarksVisible, CancellationToken cToken)
+        {
+            cToken.ThrowIfCancellationRequested();
+
+            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+            //Start Word and create a new document.
+            _Application oWord = new Application { Visible = true };
+            _Document oDoc = oWord.Documents.Add();
+
+            oDoc.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+            oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
+
+            var faculty = repo.Faculties.GetFaculty(facultyId);
+
+            Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
+            oPara1.Range.Text = "Расписание " + DetectSemesterString(repo);
+            oPara1.Range.Font.Bold = 0;
+            oPara1.Range.Font.Size = 10;
+            oPara1.Range.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+            oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oPara1.SpaceAfter = 0;
+            oPara1.Range.InsertParagraphAfter();
+
+            var textBoxRange = oPara1.Range;
+
+            oPara1 = oDoc.Content.Paragraphs.Add();
+            oPara1.Range.Font.Size = 14;
+            oPara1.Range.Text = Constants.DowLocal[dayOfWeek].ToUpper();
+            oPara1.Range.Font.Bold = 1;
+            oPara1.Range.Font.Underline = WdUnderline.wdUnderlineSingle;
+            oPara1.Range.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+            oPara1.Range.InsertParagraphAfter();
+
+            Shape cornerStamp = oDoc.Shapes.AddTextbox(
+                MsoTextOrientation.msoTextOrientationHorizontal,
+                oWord.CentimetersToPoints(22f),
+                oWord.CentimetersToPoints(0.5f),
+                200, 50,
+                textBoxRange);
+            cornerStamp.TextFrame.TextRange.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+
+            if (dayOfWeek == 1)
+            {
+                cornerStamp.TextFrame.TextRange.Text = @"«УТВЕРЖДАЮ»" +
+                                                       Environment.NewLine +
+                                                       "Ректор   ______________     Наянова М.В.   «___» ____________  20__ г.";
+                cornerStamp.TextFrame.TextRange.Font.Size = 10;
+                cornerStamp.TextFrame.TextRange.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphRight;
+            }
+            cornerStamp.TextFrame.WordWrap = 1;
+            cornerStamp.TextFrame.TextRange.ParagraphFormat.SpaceAfter = 0;
+            cornerStamp.Line.Visible = MsoTriState.msoFalse;
+
+            cToken.ThrowIfCancellationRequested();
+
+            Table oTable = GetAndPutDowStartSchedule2(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
+
+            Table oTable2 = null;
+
+            if ((dayOfWeek != 6) && (dayOfWeek != 7))
+            {
+                oPara1 = oDoc.Content.Paragraphs.Add();
+                oPara1.Range.Font.Size = 14;
+                oPara1.Range.Text = Constants.DowLocal[dayOfWeek + 1].ToUpper();
+                oPara1.Range.Font.Bold = 1;
+                oPara1.Range.Font.Underline = WdUnderline.wdUnderlineSingle;
+                oPara1.Range.ParagraphFormat.LineSpacingRule =
+                    WdLineSpacing.wdLineSpaceSingle;
+                oPara1.Range.InsertParagraphAfter();
+
+                oTable2 = GetAndPutDowStartSchedule2(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
             }
 
             cToken.ThrowIfCancellationRequested();

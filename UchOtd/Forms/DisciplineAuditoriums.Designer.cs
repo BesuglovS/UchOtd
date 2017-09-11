@@ -42,7 +42,7 @@
             this.semesters.Name = "semesters";
             this.semesters.Size = new System.Drawing.Size(172, 265);
             this.semesters.TabIndex = 0;
-            this.semesters.Text = "13141\r\n13142\r\n14151\r\n14152\r\n15161\r\n15162\r\n16171\r\n16172";
+            this.semesters.Text = "13141\r\n13142\r\n14151\r\n14152\r\n15161\r\n15162\r\n16171\r\n16172\r\n17181\r\n17182";
             // 
             // label1
             // 
