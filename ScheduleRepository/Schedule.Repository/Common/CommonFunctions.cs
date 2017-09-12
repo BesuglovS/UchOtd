@@ -787,6 +787,45 @@ namespace Schedule.Repositories.Common
             }
         }
 
+        public int GetTfdHours(int tfdId, bool includeProposed, bool hoursCountWeekFiltered, List<int> hoursCountWeekFilter)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var tefd = context.TeacherForDiscipline.FirstOrDefault(tfd => tfd.TeacherForDisciplineId == tfdId);
+                if (tefd == null) return -1;
+
+                var hoursPerLesson = -1;
+                var building = _repo.Buildings.GetBuildingFromGroupName(tefd.Discipline.StudentGroup.Name);
+
+                if (building.Name.Contains("Чапаевская") || tefd.Discipline.StudentGroup.Name.StartsWith("4"))
+                {
+                    hoursPerLesson = 1;
+                }
+                else
+                {
+                    hoursPerLesson = 2;
+                }
+
+                if (hoursCountWeekFiltered)
+                {
+                    var lessons = context.Lessons
+                            .Where(l =>
+                                    ((l.State == 1) || ((l.State == 2) && includeProposed)) &&
+
+                                    l.TeacherForDiscipline.TeacherForDisciplineId == tfdId).ToList();
+                    return lessons.Count(l => hoursCountWeekFilter.Contains(CalculateWeekNumber(l.Calendar.Date))) * hoursPerLesson;
+
+                }
+                else
+                {
+                    return context.Lessons.Count(l =>
+                               ((l.State == 1) || ((l.State == 2) && includeProposed)) &&
+                               l.TeacherForDiscipline.TeacherForDisciplineId == tfdId) * hoursPerLesson;
+                }
+
+            }
+        }
+
         public int GetTfdProposedHours(int tfdId)
         {
             using (var context = new ScheduleContext(ConnectionString))

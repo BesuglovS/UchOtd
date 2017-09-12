@@ -62,6 +62,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.viewPanel = new System.Windows.Forms.Panel();
             this.DisciplinesList = new System.Windows.Forms.DataGridView();
             this.filterPanel = new System.Windows.Forms.Panel();
+            this.hoursFilteredByWeek = new System.Windows.Forms.CheckBox();
             this.orderByDisciplineName = new System.Windows.Forms.CheckBox();
             this.withoutTypeSequence = new System.Windows.Forms.CheckBox();
             this.WithLessonsToday = new System.Windows.Forms.CheckBox();
@@ -81,8 +82,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.groupnameFilter = new System.Windows.Forms.CheckBox();
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.filter = new System.Windows.Forms.TextBox();
-            this.hoursFilteredByWeek = new System.Windows.Forms.CheckBox();
-            this.hoursWeekFilter = new System.Windows.Forms.ComboBox();
+            this.hoursWeekFilter = new System.Windows.Forms.TextBox();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -425,6 +425,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filterPanel.Size = new System.Drawing.Size(1308, 67);
             this.filterPanel.TabIndex = 1;
             // 
+            // hoursFilteredByWeek
+            // 
+            this.hoursFilteredByWeek.AutoSize = true;
+            this.hoursFilteredByWeek.Location = new System.Drawing.Point(131, 7);
+            this.hoursFilteredByWeek.Name = "hoursFilteredByWeek";
+            this.hoursFilteredByWeek.Size = new System.Drawing.Size(110, 17);
+            this.hoursFilteredByWeek.TabIndex = 21;
+            this.hoursFilteredByWeek.Text = "Часы на неделю";
+            this.hoursFilteredByWeek.UseVisualStyleBackColor = true;
+            // 
             // orderByDisciplineName
             // 
             this.orderByDisciplineName.AutoSize = true;
@@ -609,22 +619,11 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
             // 
-            // hoursFilteredByWeek
-            // 
-            this.hoursFilteredByWeek.AutoSize = true;
-            this.hoursFilteredByWeek.Location = new System.Drawing.Point(131, 7);
-            this.hoursFilteredByWeek.Name = "hoursFilteredByWeek";
-            this.hoursFilteredByWeek.Size = new System.Drawing.Size(110, 17);
-            this.hoursFilteredByWeek.TabIndex = 21;
-            this.hoursFilteredByWeek.Text = "Часы на неделю";
-            this.hoursFilteredByWeek.UseVisualStyleBackColor = true;
-            // 
             // hoursWeekFilter
             // 
-            this.hoursWeekFilter.FormattingEnabled = true;
-            this.hoursWeekFilter.Location = new System.Drawing.Point(247, 5);
+            this.hoursWeekFilter.Location = new System.Drawing.Point(236, 5);
             this.hoursWeekFilter.Name = "hoursWeekFilter";
-            this.hoursWeekFilter.Size = new System.Drawing.Size(39, 21);
+            this.hoursWeekFilter.Size = new System.Drawing.Size(65, 20);
             this.hoursWeekFilter.TabIndex = 22;
             // 
             // DisciplineList
@@ -700,7 +699,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private Label label11;
         private CheckBox withoutTypeSequence;
         private CheckBox orderByDisciplineName;
-        private ComboBox hoursWeekFilter;
         private CheckBox hoursFilteredByWeek;
+        private TextBox hoursWeekFilter;
     }
 }

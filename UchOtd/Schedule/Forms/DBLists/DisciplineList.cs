@@ -59,8 +59,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             checkForDoubleDiscsOnAdding.Text = "Проверять дубликаты дисциплин\r\nпри добавлении";
 
-            hoursWeekFilter.Items.Clear();
-            hoursWeekFilter.Items.AddRange(Enumerable.Range(1, 18).Select(o => o.ToString()).ToArray());
+            hoursWeekFilter.Text = "11-12";
 
             //RefreshView();
         }
@@ -101,10 +100,24 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var withLessonsToday = WithLessonsToday.Checked;
                 var woTypeSequence = withoutTypeSequence.Checked;
                 var hoursCountWeekFiltered = hoursFilteredByWeek.Checked;
-                var hoursCountWeekFilter = -1;
+                var hoursCountWeekList = new List<int>();
                 try
                 {
-                    hoursCountWeekFilter = int.Parse(hoursWeekFilter.Text);
+                    hoursCountWeekList = new List<int>();
+                    if (!hoursWeekFilter.Text.Contains("-"))
+                    {
+                        hoursCountWeekList.Add(int.Parse(hoursWeekFilter.Text));
+                    }
+                    else
+                    {
+                        var split = hoursWeekFilter.Text.Split('-');
+                        var start = int.Parse(split[0]);
+                        var finish = int.Parse(split[1]);
+                        for (int i = start; i <= finish; i++)
+                        {
+                            hoursCountWeekList.Add(i);
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
@@ -248,7 +261,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                             discList = discList.OrderBy(d => d.Name).ToList();
                         }
 
-                        return DisciplineView.DisciplinesToView(_repo, discList, hoursCountWeekFiltered, hoursCountWeekFilter).ToList();
+                        return DisciplineView.DisciplinesToView(_repo, discList, hoursCountWeekFiltered, hoursCountWeekList).ToList();
                     }, _cToken);
                 }
                 catch (OperationCanceledException)
@@ -734,7 +747,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             Text = "Дисциплины - " + discList.Count();
 
-            var discView = DisciplineView.DisciplinesToView(_repo, discList, false, -1);
+            var discView = DisciplineView.DisciplinesToView(_repo, discList, false, null);
 
             DisciplinesList.DataSource = discView.OrderBy(dv => dv.TeacherFio).ToList();
 

@@ -17,6 +17,8 @@ namespace UchOtd.Schedule.Forms
         CancellationTokenSource _tokenSource;
         CancellationToken _cToken;
 
+        private Dictionary<int, Dictionary<int, List<string>>> auds;
+
         public Auditoriums(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -39,7 +41,7 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
-            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+            auds = null;
 
             if (Mon.Text == "Понедельник")
             {
@@ -97,7 +99,7 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
-            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+            auds = null;
 
             if (Tue.Text == "Вторник")
             {
@@ -155,7 +157,7 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
-            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+            auds = null;
 
             if (Wed.Text == "Среда")
             {
@@ -213,7 +215,7 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
-            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+            auds = null;
 
             if (Thu.Text == "Четверг")
             {
@@ -271,7 +273,7 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
-            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+            auds = null;
 
             if (Fri.Text == "Пятница")
             {
@@ -329,7 +331,7 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
-            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+            auds = null;
 
             if (Sat.Text == "Суббота")
             {
@@ -484,6 +486,34 @@ namespace UchOtd.Schedule.Forms
         private void Auditoriums_ResizeEnd(object sender, EventArgs e)
         {
             AdjustColumnWidth();
+        }
+
+        private void audView_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && e.Clicks == 1)
+            {
+                //var source = (List<GroupTableView>)ScheduleView.DataSource;
+                //var timeString = source[e.RowIndex].Time;
+                //var ring = RingFromTimeString(timeString);
+                //var ringId = -1;
+                //if (ring != null)
+                //{
+                //    ringId = ring.RingId;
+                //}
+                //var dow = e.ColumnIndex;
+                //var eprst = 999;
+                //var week = 1;
+                //try
+                //{
+                //    week = int.Parse(WeekFilter.Text);
+                //}
+                //catch (Exception exc)
+                //{
+                //    return;
+                //}
+
+                //ScheduleView.DoDragDrop("lesson:" + ringId + ":" + dow, DragDropEffects.Copy);
+            }
         }
     }
 }

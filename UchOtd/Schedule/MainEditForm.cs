@@ -75,8 +75,8 @@ namespace UchOtd.Schedule
         private void updateAudsContextMenu()
         {
             var groupName = groupList.Text;
-            var buildingId = Repo.Buildings.getBuildingIdFromGroupName(groupName);
-            var auds = Repo.Auditoriums.FindAll(a => a.Building.BuildingId == buildingId);
+            var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
+            var auds = Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId);
 
             editSchedule.DropDownItems.Clear();
 
@@ -5630,15 +5630,15 @@ namespace UchOtd.Schedule
         {
             await Task.Run(() =>
             {
-                CheckTeacherCollisions();
+                CheckTeacherCollisions(11);
             });
         }
 
-        private void CheckTeacherCollisions()
+        private void CheckTeacherCollisions(int weekFilter)
         {
             TextFileUtilities.CreateOrEmptyFile("TeacherCollisions.txt");
 
-            var teachers = Repo.Teachers.GetAllTeachers();
+            var teachers = Repo.Teachers.GetAllTeachers().OrderBy(t => t.FIO).ToList();
 
             var pairs = new List<Tuple<int, int>>();
 
@@ -5646,9 +5646,22 @@ namespace UchOtd.Schedule
             {
                 var teacher = teachers[i];
 
-                var teacherLessons =
-                    Repo.Lessons.GetFiltredLessons(l => l.State == 1 &&
-                        l.TeacherForDiscipline.Teacher.TeacherId == teacher.TeacherId);
+                List<Lesson> teacherLessons;
+
+                if (weekFilter == -1)
+                {
+                    teacherLessons =
+                        Repo.Lessons.GetFiltredLessons(l => l.State == 1 &&
+                                                            l.TeacherForDiscipline.Teacher.TeacherId ==
+                                                            teacher.TeacherId);
+                }
+                else
+                {
+                    teacherLessons =
+                        Repo.Lessons.GetFiltredLessons(l => l.State == 1 &&
+                                                            Repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date) == weekFilter &&
+                                                            l.TeacherForDiscipline.Teacher.TeacherId == teacher.TeacherId);
+                }
 
                 for (int j = 0; j < teacherLessons.Count - 1; j++)
                 {
@@ -5705,7 +5718,7 @@ namespace UchOtd.Schedule
 
                 Invoke((MethodInvoker)delegate
                 {
-                    status.Text = (i + 1) + " / " + teachers.Count;
+                    status.Text = (i + 1) + " / " + teachers.Count + " - " + teachers[i].FIO;
                     // runs on UI thread
                 });
             }
@@ -5852,7 +5865,7 @@ namespace UchOtd.Schedule
                 else
                 {
                     aud = Repo.Auditoriums.getFreeAud(cTo.CalendarId, ringTo.RingId,
-                        Repo.Buildings.getBuildingIdFromGroupName(lesson.TeacherForDiscipline.Discipline.StudentGroup.Name));
+                        Repo.Buildings.GetBuildingFromGroupName(lesson.TeacherForDiscipline.Discipline.StudentGroup.Name).BuildingId);
                 }
                 var newLesson = new Lesson(lesson.TeacherForDiscipline, cTo, ringTo, aud);
                 newLesson.State = 1;
@@ -5894,7 +5907,7 @@ namespace UchOtd.Schedule
                 else
                 {
                     aud = Repo.Auditoriums.getFreeAud(cTo.CalendarId, ringTo.RingId,
-                        Repo.Buildings.getBuildingIdFromGroupName(lesson.TeacherForDiscipline.Discipline.StudentGroup.Name));
+                        Repo.Buildings.GetBuildingFromGroupName(lesson.TeacherForDiscipline.Discipline.StudentGroup.Name).BuildingId);
                 }
                 var newLesson = new Lesson(lesson.TeacherForDiscipline, cTo, ringTo, aud);
                 newLesson.State = 1;
@@ -5914,7 +5927,7 @@ namespace UchOtd.Schedule
                 else
                 {
                     aud = Repo.Auditoriums.getFreeAud(cFrom.CalendarId, ringFrom.RingId,
-                        Repo.Buildings.getBuildingIdFromGroupName(lesson.TeacherForDiscipline.Discipline.StudentGroup.Name));
+                        Repo.Buildings.GetBuildingFromGroupName(lesson.TeacherForDiscipline.Discipline.StudentGroup.Name).BuildingId);
                 }
                 var newLesson = new Lesson(lesson.TeacherForDiscipline, cFrom, ringFrom, aud);
                 newLesson.State = 1;
@@ -6000,6 +6013,71 @@ namespace UchOtd.Schedule
             var eprst = 999;
         }
 
+        private void расписаниеПереходовМеждуКорпусамиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TextFileUtilities.CreateOrEmptyFile("TeacherTransitions.txt");
+
+            Task.Run(() =>
+            {
+                var teachers = Repo.Teachers.GetAllTeachers().OrderBy(t => t.FIO).ToList();
+
+                for (int i = 0; i < teachers.Count; i++)
+                {
+                    var teacher = teachers[i];
+
+                    var teacherLessons =
+                        Repo.Lessons.GetFiltredLessons(l => l.State == 1 &&
+                                                            Repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date) == 3 &&
+                                                            l.TeacherForDiscipline.Teacher.TeacherId == teacher.TeacherId);
+                    var lessonDict = new Dictionary<int, List<Lesson>>();
+
+                    for (int j = 0; j < teacherLessons.Count; j++)
+                    {
+                        var lesson = teacherLessons[j];
+                        if (!lessonDict.ContainsKey(lesson.Calendar.CalendarId))
+                        {
+                            lessonDict.Add(lesson.Calendar.CalendarId, new List<Lesson>());
+                        }
+
+                        lessonDict[lesson.Calendar.CalendarId].Add(lesson);
+                    }
+
+                    foreach (var calId in lessonDict.Keys)
+                    {
+                        var lessons = lessonDict[calId].OrderBy(l => l.Ring.Time.TimeOfDay).ToList();
+
+                        for (int j = 1; j < lessons.Count; j++)
+                        {
+                            if (lessons[j].Auditorium.Building.BuildingId !=
+                                lessons[j - 1].Auditorium.Building.BuildingId)
+                            {
+                                var b1 = Repo.Buildings.Get(lessons[j-1].Auditorium.Building.BuildingId);
+                                var b2 = Repo.Buildings.Get(lessons[j].Auditorium.Building.BuildingId);
+
+                                var t1 = lessons[j - 1].Ring.Time.ToString("HH:mm");
+                                var t2 = lessons[j].Ring.Time.ToString("HH:mm");
+
+                                TextFileUtilities.WriteString("TeacherTransitions.txt", 
+                                    teacher.FIO + "\t" + t1 + "\t" + b1.Name + "\t" + t2 + "\t" + b2.Name );
+                            }
+                        }
+                    }
+
+                    Invoke((MethodInvoker)delegate
+                    {
+                        status.Text = (i + 1) + " / " + teachers.Count + " - " + teachers[i].FIO;
+                        // runs on UI thread
+                    });
+                }
+
+                Invoke((MethodInvoker)delegate
+                {
+                    status.Text = "Done";
+                    // runs on UI thread
+                });
+            });
+        }
+
         public void ringsChosen(List<int> ringIds)
         {
             var week = 1;
@@ -6018,13 +6096,13 @@ namespace UchOtd.Schedule
             var tefd = Repo.TeacherForDisciplines.GetTeacherForDiscipline(dropTfdId);
 
             var groupName = tefd.Discipline.StudentGroup.Name;
-            var buildingId = Repo.Buildings.getBuildingIdFromGroupName(groupName);
+            var buildingId = Repo.Buildings.GetBuildingFromGroupName(groupName);
 
             foreach (var ringId in ringIds)
             {
                 var ring = Repo.Rings.Get(ringId);
 
-                var newLesson = new Lesson(tefd, c, ring, Repo.Auditoriums.getFreeAud(c.CalendarId, ringId, Repo.Buildings.getBuildingIdFromGroupName(groupName)));
+                var newLesson = new Lesson(tefd, c, ring, Repo.Auditoriums.getFreeAud(c.CalendarId, ringId, Repo.Buildings.GetBuildingFromGroupName(groupName).BuildingId));
                 newLesson.State = 1;
                 Repo.Lessons.AddLessonWoLog(newLesson);
             }

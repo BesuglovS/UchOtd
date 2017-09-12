@@ -33,7 +33,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 disciplines = disciplines.Where(d => d.Name.Contains(filter.Text)).ToList();
             }
 
-            var discView = DisciplineView.DisciplinesToView(_repo, disciplines, false, -1);
+            var discView = DisciplineView.DisciplinesToView(_repo, disciplines, false, null);
 
             AllDisciplinesList.DataSource = discView;
 
@@ -95,7 +95,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             var teacherDisciplines = _repo.Disciplines.GetTeacherDisciplines(teacher);
 
-            var discView = DisciplineView.DisciplinesToView(_repo, teacherDisciplines, false, -1);
+            var discView = DisciplineView.DisciplinesToView(_repo, teacherDisciplines, false, null);
 
             TFDListView.DataSource = discView;
 

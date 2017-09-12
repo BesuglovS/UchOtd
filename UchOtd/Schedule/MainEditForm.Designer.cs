@@ -174,6 +174,7 @@ namespace UchOtd.Schedule
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
+            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -1242,7 +1243,8 @@ namespace UchOtd.Schedule
             this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem,
             this.графикПроцессаToolStripMenuItem,
             this.проверитьКоллизииПреподавателейToolStripMenuItem,
-            this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem});
+            this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem,
+            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem});
             this.bigRedButtonToolStripMenuItem.Name = "bigRedButtonToolStripMenuItem";
             this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
             this.bigRedButtonToolStripMenuItem.Text = "BIG RED BUTTON";
@@ -1432,6 +1434,13 @@ namespace UchOtd.Schedule
             this.editSchedule.Text = "Аудитория";
             this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
             // 
+            // расписаниеПереходовМеждуКорпусамиToolStripMenuItem
+            // 
+            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Name = "расписаниеПереходовМеждуКорпусамиToolStripMenuItem";
+            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Text = "Расписание переходов между корпусами";
+            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Click += new System.EventHandler(this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem_Click);
+            // 
             // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1604,6 +1613,7 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem копироватьРасписаниеНаДеньНеделюToolStripMenuItem;
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem editSchedule;
+        private ToolStripMenuItem расписаниеПереходовМеждуКорпусамиToolStripMenuItem;
     }
 }
 

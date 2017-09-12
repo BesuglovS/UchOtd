@@ -99,7 +99,7 @@ namespace Schedule.Repositories.Repositories.Main
             }
         }
 
-        public int getBuildingIdFromGroupName(string groupName)
+        public Building GetBuildingFromGroupName(string groupName)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -112,6 +112,10 @@ namespace Schedule.Repositories.Repositories.Main
                     if (digits.Contains(groupName[i].ToString()))
                     {
                         numString += groupName[i];
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
 
@@ -127,17 +131,20 @@ namespace Schedule.Repositories.Repositories.Main
                 var chap = new List<int> {1, 2, 3, 5, 6, 7};
                 var jar = new List<int> {4};
                 var mol = new List<int> {8, 9, 10, 11};
+                var high = new List<int> { 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
+
+                var Mol = context.Buildings.FirstOrDefault(b => b.Name.Contains("Молодогвардейская"));
 
                 if (chap.Contains(num))
                 {
                     var building = context.Buildings.FirstOrDefault(b => b.Name.Contains("Чапаевская"));
                     if (building == null)
                     {
-                        return -1;
+                        return null; 
                     }
                     else
                     {
-                        return building.BuildingId;
+                        return building;
                     }
                 }
 
@@ -146,11 +153,11 @@ namespace Schedule.Repositories.Repositories.Main
                     var building = context.Buildings.FirstOrDefault(b => b.Name.Contains("Ярмарочная"));
                     if (building == null)
                     {
-                        return -1;
+                        return null;
                     }
                     else
                     {
-                        return building.BuildingId;
+                        return building;
                     }
                 }
 
@@ -159,15 +166,26 @@ namespace Schedule.Repositories.Repositories.Main
                     var building = context.Buildings.FirstOrDefault(b => b.Name.Contains("Молодогвардейская"));
                     if (building == null)
                     {
-                        return -1;
+                        return null;
                     }
                     else
                     {
-                        return building.BuildingId;
+                        return building;
                     }
                 }
 
-                return -1;
+                if (high.Contains(num))
+                {
+                    var Jar = context.Buildings.FirstOrDefault(b => b.Name.Contains("Ярмарочная"));
+                    if (groupName[groupName.Length - 1] == 'У' || groupName[groupName.Length - 1] == 'Т')
+                    {
+                        return Jar;
+                    }
+
+                    return Mol;
+                }
+
+                return Mol;
             }
         }
     }

@@ -32,6 +32,7 @@ namespace UchOtd.Schedule.Forms
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.PlusTeacherFIO = new System.Windows.Forms.CheckBox();
             this.ExportInWord = new System.Windows.Forms.CheckBox();
             this.buildingList = new System.Windows.Forms.ComboBox();
@@ -46,7 +47,6 @@ namespace UchOtd.Schedule.Forms
             this.Mon = new System.Windows.Forms.Button();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.audView = new System.Windows.Forms.DataGridView();
-            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.weekNumber)).BeginInit();
             this.viewPanel.SuspendLayout();
@@ -73,6 +73,16 @@ namespace UchOtd.Schedule.Forms
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(870, 76);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // showProposed
+            // 
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(648, 12);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(211, 17);
+            this.showProposed.TabIndex = 12;
+            this.showProposed.Text = "Показывать предполагаемые уроки";
+            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // PlusTeacherFIO
             // 
@@ -225,16 +235,7 @@ namespace UchOtd.Schedule.Forms
             this.audView.RowHeadersWidth = 20;
             this.audView.Size = new System.Drawing.Size(870, 395);
             this.audView.TabIndex = 0;
-            // 
-            // showProposed
-            // 
-            this.showProposed.AutoSize = true;
-            this.showProposed.Location = new System.Drawing.Point(648, 12);
-            this.showProposed.Name = "showProposed";
-            this.showProposed.Size = new System.Drawing.Size(211, 17);
-            this.showProposed.TabIndex = 12;
-            this.showProposed.Text = "Показывать предполагаемые уроки";
-            this.showProposed.UseVisualStyleBackColor = true;
+            this.audView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.audView_MouseDown);
             // 
             // Auditoriums
             // 

@@ -10,9 +10,9 @@ namespace UchOtd.Schedule.Views.DBListViews
     {
         public int DisciplineId { get; set; }
         public string Name { get; set; }
-        public int AuditoriumHoursPerWeek { get; set; }
         public string StudentGroupName { get; set; }
         public string TeacherFio { get; set; }
+        public int AuditoriumHoursPerWeek { get; set; }
         public int ScheduleHours { get; set; }
         public string Attestation { get; set; } // 0 - ничего; 1 - зачёт; 2 - экзамен; 3 - зачёт и экзамен
         public int AuditoriumHours { get; set; }
@@ -26,7 +26,7 @@ namespace UchOtd.Schedule.Views.DBListViews
 
         }
 
-        public DisciplineView(ScheduleRepository repo, Discipline discipline, bool hoursCountWeekFiltered, int hoursCountWeekFilter)
+        public DisciplineView(ScheduleRepository repo, Discipline discipline, bool hoursCountWeekFiltered, List<int> hoursCountWeekFilter)
         {
             DisciplineId = discipline.DisciplineId;
             Name = discipline.Name;
@@ -53,7 +53,7 @@ namespace UchOtd.Schedule.Views.DBListViews
             }
         }
 
-        public static List<DisciplineView> DisciplinesToView(ScheduleRepository repo, List<Discipline> list, bool hoursCountWeekFiltered, int hoursCountWeekFilter)
+        public static List<DisciplineView> DisciplinesToView(ScheduleRepository repo, List<Discipline> list, bool hoursCountWeekFiltered, List<int> hoursCountWeekFilter)
         {
             return list.Select(disc => new DisciplineView(repo, disc, hoursCountWeekFiltered, hoursCountWeekFilter)).ToList();
         }
