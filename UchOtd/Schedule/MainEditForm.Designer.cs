@@ -34,6 +34,7 @@ namespace UchOtd.Schedule
         {
             this.components = new System.ComponentModel.Container();
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.ElevenTwelveWeek = new System.Windows.Forms.Button();
             this.semester = new System.Windows.Forms.ComboBox();
             this.changeSemesterDb = new System.Windows.Forms.Button();
             this.siteToUpload = new System.Windows.Forms.ComboBox();
@@ -168,13 +169,13 @@ namespace UchOtd.Schedule
             this.графикПроцессаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.проверитьКоллизииПреподавателейToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
-            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -185,6 +186,7 @@ namespace UchOtd.Schedule
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.ElevenTwelveWeek);
             this.controlsPanel.Controls.Add(this.semester);
             this.controlsPanel.Controls.Add(this.changeSemesterDb);
             this.controlsPanel.Controls.Add(this.siteToUpload);
@@ -235,6 +237,16 @@ namespace UchOtd.Schedule
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(971, 196);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // ElevenTwelveWeek
+            // 
+            this.ElevenTwelveWeek.Location = new System.Drawing.Point(148, 165);
+            this.ElevenTwelveWeek.Name = "ElevenTwelveWeek";
+            this.ElevenTwelveWeek.Size = new System.Drawing.Size(49, 21);
+            this.ElevenTwelveWeek.TabIndex = 72;
+            this.ElevenTwelveWeek.Text = "11-12";
+            this.ElevenTwelveWeek.UseVisualStyleBackColor = true;
+            this.ElevenTwelveWeek.Click += new System.EventHandler(this.ElevenTwelveWeek_Click);
             // 
             // semester
             // 
@@ -1375,6 +1387,13 @@ namespace UchOtd.Schedule
             this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem.Text = "Копировать расписание на день неделю";
             this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem.Click += new System.EventHandler(this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem_Click);
             // 
+            // расписаниеПереходовМеждуКорпусамиToolStripMenuItem
+            // 
+            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Name = "расписаниеПереходовМеждуКорпусамиToolStripMenuItem";
+            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Text = "Расписание переходов между корпусами";
+            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Click += new System.EventHandler(this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem_Click);
+            // 
             // viewPanel
             // 
             this.viewPanel.Controls.Add(this.statusStrip1);
@@ -1433,13 +1452,6 @@ namespace UchOtd.Schedule
             this.editSchedule.Size = new System.Drawing.Size(133, 22);
             this.editSchedule.Text = "Аудитория";
             this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
-            // 
-            // расписаниеПереходовМеждуКорпусамиToolStripMenuItem
-            // 
-            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Name = "расписаниеПереходовМеждуКорпусамиToolStripMenuItem";
-            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
-            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Text = "Расписание переходов между корпусами";
-            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Click += new System.EventHandler(this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -1614,6 +1626,7 @@ namespace UchOtd.Schedule
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem editSchedule;
         private ToolStripMenuItem расписаниеПереходовМеждуКорпусамиToolStripMenuItem;
+        private Button ElevenTwelveWeek;
     }
 }
 

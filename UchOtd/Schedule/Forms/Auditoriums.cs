@@ -26,13 +26,41 @@ namespace UchOtd.Schedule.Forms
             _repo = repo;
         }
 
+        private bool getWeekFilter(ComboBox weekList, out List<int> weekFilterList)
+        {
+            var text = weekList.Text;
+            weekFilterList = new List<int>();
+            try
+            {
+                if (!text.Contains("-"))
+                {
+                    weekFilterList.Add(int.Parse(text));
+                }
+                else
+                {
+                    var split = text.Split('-');
+                    var start = int.Parse(split[0]);
+                    var finish = int.Parse(split[1]);
+                    for (int i = start; i <= finish; i++)
+                    {
+                        weekFilterList.Add(i);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private async void Mon_Click(object sender, EventArgs e)
         {
-            int weekNum = -1;
             int buildingId = -1;
-            if (oneWeek.Checked)
+            List<int> weekFilterList = null;
+            if (weekFiltered.Checked)
             {
-                weekNum = (int)weekNumber.Value;
+                if (getWeekFilter(weekFilter, out weekFilterList)) return;
             }
             if (oneBuilding.Checked)
             {
@@ -54,7 +82,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Monday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Monday, weekFilterList, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -86,11 +114,11 @@ namespace UchOtd.Schedule.Forms
 
         private async void Tue_Click(object sender, EventArgs e)
         {
-            int weekNum = -1;
             int buildingId = -1;
-            if (oneWeek.Checked)
+            List<int> weekFilterList = null;
+            if (weekFiltered.Checked)
             {
-                weekNum = (int)weekNumber.Value;
+                if (getWeekFilter(weekFilter, out weekFilterList)) return;
             }
             if (oneBuilding.Checked)
             {
@@ -112,7 +140,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Tuesday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Tuesday, weekFilterList, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -144,11 +172,11 @@ namespace UchOtd.Schedule.Forms
 
         private async void Wed_Click(object sender, EventArgs e)
         {
-            int weekNum = -1;
             int buildingId = -1;
-            if (oneWeek.Checked)
+            List<int> weekFilterList = null;
+            if (weekFiltered.Checked)
             {
-                weekNum = (int)weekNumber.Value;
+                if (getWeekFilter(weekFilter, out weekFilterList)) return;
             }
             if (oneBuilding.Checked)
             {
@@ -170,7 +198,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Wednesday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Wednesday, weekFilterList, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -202,11 +230,11 @@ namespace UchOtd.Schedule.Forms
 
         private async void Thu_Click(object sender, EventArgs e)
         {
-            int weekNum = -1;
             int buildingId = -1;
-            if (oneWeek.Checked)
+            List<int> weekFilterList = null;
+            if (weekFiltered.Checked)
             {
-                weekNum = (int)weekNumber.Value;
+                if (getWeekFilter(weekFilter, out weekFilterList)) return;
             }
             if (oneBuilding.Checked)
             {
@@ -228,7 +256,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Thursday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Thursday, weekFilterList, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -260,11 +288,11 @@ namespace UchOtd.Schedule.Forms
 
         private async void Fri_Click(object sender, EventArgs e)
         {
-            int weekNum = -1;
             int buildingId = -1;
-            if (oneWeek.Checked)
+            List<int> weekFilterList = null;
+            if (weekFiltered.Checked)
             {
-                weekNum = (int)weekNumber.Value;
+                if (getWeekFilter(weekFilter, out weekFilterList)) return;
             }
             if (oneBuilding.Checked)
             {
@@ -286,7 +314,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Friday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Friday, weekFilterList, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -318,11 +346,11 @@ namespace UchOtd.Schedule.Forms
 
         private async void Sat_Click(object sender, EventArgs e)
         {
-            int weekNum = -1;
             int buildingId = -1;
-            if (oneWeek.Checked)
+            List<int> weekFilterList = null;
+            if (weekFiltered.Checked)
             {
-                weekNum = (int)weekNumber.Value;
+                if (getWeekFilter(weekFilter, out weekFilterList)) return;
             }
             if (oneBuilding.Checked)
             {
@@ -344,7 +372,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Saturday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Saturday, weekFilterList, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -480,6 +508,12 @@ namespace UchOtd.Schedule.Forms
             if (mainBuilding != null)
             {
                 buildingList.SelectedValue = mainBuilding.BuildingId;
+            }
+
+            weekFilter.Items.Clear();
+            for (int i = 1; i < 18; i++)
+            {
+                weekFilter.Items.Add(i);
             }
         }
 

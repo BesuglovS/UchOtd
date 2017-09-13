@@ -788,5 +788,11 @@ namespace UchOtd.Schedule.Forms.DBLists
                 DisciplinesList.DoDragDrop("tfd:" + tefd.TeacherForDisciplineId, DragDropEffects.Copy);
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            hoursFilteredByWeek.Checked = true;
+            hoursWeekFilter.Text = "11-12";
+        }
     }
 }

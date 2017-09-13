@@ -265,19 +265,19 @@ namespace UchOtd.Schedule
         }
 
         public List<GroupTableView> GetGroupSchedule(int groupId, bool showProposed, CancellationToken cToken,
-            bool isWeekFilered, int weekFilterNum, bool onlyFutureDates)
+            bool isWeekFiltered, List<int> weekFilterList, bool onlyFutureDates)
         {
             var sStarts = Repo.CommonFunctions.GetSemesterStarts();
 
-            int weekNum = -1;
-            if (isWeekFilered)
+            List<int> weekList = null;
+            if (isWeekFiltered)
             {
-                weekNum = weekFilterNum;
+                weekList = weekFilterList;
             }
 
             cToken.ThrowIfCancellationRequested();
 
-            var groupLessons = Repo.Lessons.GetGroupedGroupLessons(groupId, sStarts, weekNum, showProposed,
+            var groupLessons = Repo.Lessons.GetGroupedGroupLessons(groupId, sStarts, weekList, showProposed,
                 onlyFutureDates);
 
             cToken.ThrowIfCancellationRequested();
@@ -300,8 +300,12 @@ namespace UchOtd.Schedule
                 var groupId = (int) groupList.SelectedValue;
                 var showProposed = showProposedLessons.Checked;
                 var isWeekFilered = weekFiltered.Checked;
-                int weekFilterNum;
-                int.TryParse(WeekFilter.Text, out weekFilterNum);
+                List<int> weekFilterList = null;
+                if (isWeekFilered)
+                {
+                    if (getWeekFilter(WeekFilter, out weekFilterList)) return;
+                }
+
                 var onlyFutureDates = OnlyFutureDatesExportInWord.Checked;
 
                 try
@@ -310,7 +314,7 @@ namespace UchOtd.Schedule
                         await
                             Task.Run(
                                 () =>
-                                    GetGroupSchedule(groupId, showProposed, _cToken, isWeekFilered, weekFilterNum,
+                                    GetGroupSchedule(groupId, showProposed, _cToken, isWeekFilered, weekFilterList,
                                         onlyFutureDates), _cToken);
                 }
                 catch (OperationCanceledException)
@@ -333,6 +337,34 @@ namespace UchOtd.Schedule
             {
                 _tokenSource.Cancel();
             }
+        }
+
+        private bool getWeekFilter(ComboBox weekList, out List<int> weekFilterList)
+        {
+            var text = weekList.Text;
+            weekFilterList = new List<int>();
+            try
+            {
+                if (!text.Contains("-"))
+                {
+                    weekFilterList.Add(int.Parse(text));
+                }
+                else
+                {
+                    var split = text.Split('-');
+                    var start = int.Parse(split[0]);
+                    var finish = int.Parse(split[1]);
+                    for (int i = start; i <= finish; i++)
+                    {
+                        weekFilterList.Add(i);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                return true;
+            }
+            return false;
         }
 
         private void UpdateViewWidth()
@@ -1632,7 +1664,7 @@ namespace UchOtd.Schedule
             cToken.ThrowIfCancellationRequested();
 
             var facultyDowLessons = Repo.Lessons
-                .GetFacultyDowSchedule(facultyId, ruDow, false, -1, false, false);
+                .GetFacultyDowSchedule(facultyId, ruDow, false, null, false, false);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -1866,15 +1898,18 @@ namespace UchOtd.Schedule
                 var facultyId = (int) FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
                 var wordWeekFiltered = wordExportWeekFiltered.Checked;
-                int weekFilter;
-                int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+                List<int> weekFilterList = null;
+                if (wordWeekFiltered)
+                {
+                    if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+                }
                 var onlyFutureDates = OnlyFutureDatesExportInWord.Checked;
 
                 try
                 {
                     await Task.Run(() => WordExport.ExportSchedulePage(
                         repo, "Расписание.docx", false, false, length80Or90, facultyId, ruDow, 6,
-                        wordWeekFiltered, weekFilter, !wordWeekFiltered, onlyFutureDates, true, false, _cToken), _cToken);
+                        wordWeekFiltered, weekFilterList, !wordWeekFiltered, onlyFutureDates, true, false, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -1899,23 +1934,29 @@ namespace UchOtd.Schedule
         {
             var facultyId = (int) FacultyList.SelectedValue;
             var ruDow = DOWList.SelectedIndex + 1;
-            int weekFilter;
-            int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+            List<int> weekFilterList = null;
+            if (wordExportWeekFiltered.Checked)
+            {
+                if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+            }
 
             WordExport.ExportTwoSchedulePages(
                 Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
-                wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
+                wordExportWeekFiltered.Checked, weekFilterList, !wordExportWeekFiltered.Checked);
         }
 
         private void FacultyTwoDaysInList_Click(object sender, EventArgs e)
         {
             var facultyId = (int) WordFacultyFilter.SelectedValue;
-            int weekFilter;
-            int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+            List<int> weekFilterList = null;
+            if (wordExportWeekFiltered.Checked)
+            {
+                if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+            }
 
             WordExport.ExportTwoDaysInPageFacultySchedule(
                 Repo, "Расписание.docx", false, false, 80, facultyId, 6,
-                wordExportWeekFiltered.Checked, weekFilter, !wordExportWeekFiltered.Checked);
+                wordExportWeekFiltered.Checked, weekFilterList, !wordExportWeekFiltered.Checked);
         }
 
         private void Log(string filename, string line)
@@ -2746,15 +2787,18 @@ namespace UchOtd.Schedule
 
                 var facultyId = (int) FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
-                int weekFilter;
-                int.TryParse(WordExportWeekFilter.Text, out weekFilter);
                 var wordWeekFiltered = wordExportWeekFiltered.Checked;
+                List<int> weekFilterList = null;
+                if (wordWeekFiltered)
+                {
+                    if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+                }
 
                 try
                 {
                     await Task.Run(() => WordExport.ExportSchedulePage(
                         Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
-                        wordWeekFiltered, weekFilter, false, false, false, true, _cToken), _cToken);
+                        wordWeekFiltered, weekFilterList, false, false, false, true, _cToken), _cToken);
                     //await Task.Run(() => WordExport.WordSchool(
                     //    Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
                     //    wordWeekFiltered, weekFilter, !wordWeekFiltered, _cToken), _cToken);
@@ -2783,15 +2827,19 @@ namespace UchOtd.Schedule
 
                 var facultyId = (int) FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
-                int weekFilter;
-                int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+                
                 var wordWeekFiltered = wordExportWeekFiltered.Checked;
+                List<int> weekFilterList = null;
+                if (wordWeekFiltered)
+                {
+                    if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+                }
 
                 try
                 {
                     await Task.Run(() => WordExport.WordSchoolTwoDays(
                         Repo, "Расписание.docx", false, false, 80, facultyId, ruDow, 6,
-                        wordWeekFiltered, weekFilter, !wordWeekFiltered, _cToken), _cToken);
+                        wordWeekFiltered, weekFilterList, !wordWeekFiltered, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -2836,8 +2884,8 @@ namespace UchOtd.Schedule
         {
             var onlyFutureDatesF = OnlyFutureDatesExportInWord.Checked;
             var weekFilteredF = weekFiltered.Checked;
-            var weekFilterNum = 0;
-            int.TryParse(WeekFilter.Text, out weekFilterNum);
+            List<int> weekFilterList;
+            if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
 
             if (OnePageGroupScheduleWordExport.Text == "Экспорт в Word - одна группа")
             {
@@ -2853,7 +2901,7 @@ namespace UchOtd.Schedule
                     await
                         Task.Run(
                             () =>
-                                WordExport.ExportGroupSchedulePage(Repo, this, groupId, weekFilteredF, weekFilterNum,
+                                WordExport.ExportGroupSchedulePage(Repo, this, groupId, weekFilteredF, weekFilterList,
                                     onlyFutureDatesF, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
@@ -2923,15 +2971,20 @@ namespace UchOtd.Schedule
 
                 var facultyId = (int) FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
-                int weekFilter;
-                int.TryParse(WordExportWeekFilter.Text, out weekFilter);
+                
                 var wordWeekFiltered = wordExportWeekFiltered.Checked;
+                List<int> weekFilterList = null;
+                if (wordWeekFiltered)
+                {
+                    if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+                }
+
 
                 try
                 {
                     await Task.Run(() => WordExport.WordStartSchool2(
                         Repo, "Расписание.docx", false, false, 40, facultyId, ruDow, 6,
-                        wordWeekFiltered, weekFilter, !wordWeekFiltered, _cToken), _cToken);
+                        wordWeekFiltered, weekFilterList, !wordWeekFiltered, _cToken), _cToken);
 
                     //await Task.Run(() => WordExport.WordStartSchool(
                     //    Repo, "Расписание.docx", false, false, 40, facultyId, ruDow, 6,
@@ -3903,7 +3956,7 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА А " + dbNames[semIndex] + ".docx";
 
                         WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
-                            0, false, _cToken);
+                            null, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -3956,7 +4009,7 @@ namespace UchOtd.Schedule
                                        ".docx";
 
                         WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
-                            0, false, _cToken);
+                            null, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4010,7 +4063,7 @@ namespace UchOtd.Schedule
                                        ".docx";
 
                         WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
-                            0, false, _cToken);
+                            null, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4064,7 +4117,7 @@ namespace UchOtd.Schedule
                                        ".docx";
 
                         WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
-                            0, false, _cToken);
+                            null, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4453,7 +4506,7 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА И " + dbNames[semIndex] + ".docx";
 
                         WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
-                            0, false, _cToken);
+                            null, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4612,7 +4665,7 @@ namespace UchOtd.Schedule
                                        ".docx";
 
                         WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
-                            0, false, _cToken);
+                            null, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -6076,6 +6129,12 @@ namespace UchOtd.Schedule
                     // runs on UI thread
                 });
             });
+        }
+
+        private void ElevenTwelveWeek_Click(object sender, EventArgs e)
+        {
+            weekFiltered.Checked = true;
+            WeekFilter.Text = "11-12";
         }
 
         public void ringsChosen(List<int> ringIds)

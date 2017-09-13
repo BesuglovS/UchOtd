@@ -33,6 +33,7 @@ namespace UchOtd.Forms
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TeacherSchedule));
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.OnlyFutureDatesExportInWord = new System.Windows.Forms.CheckBox();
             this.ExportAllTeachersInWord = new System.Windows.Forms.Button();
             this.showProposed = new System.Windows.Forms.CheckBox();
             this.ExportInWordLandscape = new System.Windows.Forms.Button();
@@ -43,7 +44,7 @@ namespace UchOtd.Forms
             this.teacherList = new System.Windows.Forms.ComboBox();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.scheduleView = new System.Windows.Forms.DataGridView();
-            this.OnlyFutureDatesExportInWord = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scheduleView)).BeginInit();
@@ -51,6 +52,7 @@ namespace UchOtd.Forms
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.button1);
             this.controlsPanel.Controls.Add(this.OnlyFutureDatesExportInWord);
             this.controlsPanel.Controls.Add(this.ExportAllTeachersInWord);
             this.controlsPanel.Controls.Add(this.showProposed);
@@ -65,6 +67,16 @@ namespace UchOtd.Forms
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(1085, 77);
             this.controlsPanel.TabIndex = 2;
+            // 
+            // OnlyFutureDatesExportInWord
+            // 
+            this.OnlyFutureDatesExportInWord.AutoSize = true;
+            this.OnlyFutureDatesExportInWord.Location = new System.Drawing.Point(460, 53);
+            this.OnlyFutureDatesExportInWord.Name = "OnlyFutureDatesExportInWord";
+            this.OnlyFutureDatesExportInWord.Size = new System.Drawing.Size(155, 17);
+            this.OnlyFutureDatesExportInWord.TabIndex = 68;
+            this.OnlyFutureDatesExportInWord.Text = "только последующие дни";
+            this.OnlyFutureDatesExportInWord.UseVisualStyleBackColor = true;
             // 
             // ExportAllTeachersInWord
             // 
@@ -168,15 +180,16 @@ namespace UchOtd.Forms
             this.scheduleView.TabStop = false;
             this.scheduleView.SelectionChanged += new System.EventHandler(this.ScheduleViewSelectionChanged);
             // 
-            // OnlyFutureDatesExportInWord
+            // button1
             // 
-            this.OnlyFutureDatesExportInWord.AutoSize = true;
-            this.OnlyFutureDatesExportInWord.Location = new System.Drawing.Point(460, 53);
-            this.OnlyFutureDatesExportInWord.Name = "OnlyFutureDatesExportInWord";
-            this.OnlyFutureDatesExportInWord.Size = new System.Drawing.Size(155, 17);
-            this.OnlyFutureDatesExportInWord.TabIndex = 68;
-            this.OnlyFutureDatesExportInWord.Text = "только последующие дни";
-            this.OnlyFutureDatesExportInWord.UseVisualStyleBackColor = true;
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button1.Location = new System.Drawing.Point(649, 4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(33, 23);
+            this.button1.TabIndex = 69;
+            this.button1.Text = "11-12";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // TeacherSchedule
             // 
@@ -212,5 +225,6 @@ namespace UchOtd.Forms
         private CheckBox showProposed;
         private Button ExportAllTeachersInWord;
         private CheckBox OnlyFutureDatesExportInWord;
+        private Button button1;
     }
 }

@@ -251,7 +251,7 @@ namespace Schedule.Repositories.Repositories.Main
         }
 
         public Dictionary<string, Dictionary<string, Tuple<string, List<Lesson>>>> GetGroupedGroupLessons
-            (int groupId, DateTime semesterStarts, int weekfilter, bool putProposedLessons, bool onlyFutureDates)
+            (int groupId, DateTime semesterStarts, List<int> weekFilterList, bool putProposedLessons, bool onlyFutureDates)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -288,10 +288,10 @@ namespace Schedule.Repositories.Repositories.Main
                     primaryList = primaryList.Where(l => l.State != 2).ToList();
                 }
 
-                if (weekfilter != -1)
+                if (weekFilterList != null && weekFilterList.Count != 0)
                 {
                     primaryList = primaryList
-                        .Where(l => _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date) == weekfilter)
+                        .Where(l => weekFilterList.Contains(_repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)))
                         .ToList();
                 }
 
@@ -343,7 +343,7 @@ namespace Schedule.Repositories.Repositories.Main
         }
 
         public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>>
-            GetFacultyDowSchedule(int facultyId, int dowRu, bool weekFiltered, int weekFilter, bool includeProposed, bool onlyFutureDates)
+            GetFacultyDowSchedule(int facultyId, int dowRu, bool weekFiltered, List<int> weekFilterList, bool includeProposed, bool onlyFutureDates)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
@@ -397,7 +397,7 @@ namespace Schedule.Repositories.Repositories.Main
                     if (weekFiltered)
                     {
                         primaryList = primaryList
-                            .Where(l => _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date) == weekFilter)
+                            .Where(l => weekFilterList.Contains(_repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)))
                             .ToList();
                     }
 

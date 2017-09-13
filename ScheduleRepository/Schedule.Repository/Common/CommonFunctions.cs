@@ -402,12 +402,12 @@ namespace Schedule.Repositories.Common
 
         // data   - Dictionary<RingId, Dictionary <AuditoriumId, List<Dictionary<tfd, List<Lesson>>>>>
         // result - Dictionary<RingId, Dictionary <AuditoriumId, List<tfd/Event-string>>>
-        public Dictionary<int, Dictionary<int, List<string>>> GetDowAuds(DayOfWeek dow, int weekNumber, int buildingId, bool showProposed)
+        public Dictionary<int, Dictionary<int, List<string>>> GetDowAuds(DayOfWeek dow, List<int> weekFilterList, int buildingId, bool showProposed)
         {
             var data = new Dictionary<int, Dictionary<int, Dictionary<int, List<Lesson>>>>();
 
             List<Lesson> dowLessons;
-            if (weekNumber == -1)
+            if (weekFilterList == null || weekFilterList.Count == 0)
             {
                 if (buildingId == -1)
                 {
@@ -432,7 +432,7 @@ namespace Schedule.Repositories.Common
                     dowLessons = _repo.Lessons.GetFiltredLessons(l =>
                             l.Calendar.Date.DayOfWeek == dow &&
                             ((l.State == 1) || ((l.State == 2) && showProposed)) &&
-                            CalculateWeekNumber(l.Calendar.Date) == weekNumber)
+                            weekFilterList.Contains(CalculateWeekNumber(l.Calendar.Date)))
                         .ToList();
                 }
                 else
@@ -440,7 +440,7 @@ namespace Schedule.Repositories.Common
                     dowLessons = _repo.Lessons.GetFiltredLessons(l =>
                             l.Calendar.Date.DayOfWeek == dow &&
                             ((l.State == 1) || ((l.State == 2) && showProposed)) &&
-                            CalculateWeekNumber(l.Calendar.Date) == weekNumber &&
+                            weekFilterList.Contains(CalculateWeekNumber(l.Calendar.Date)) &&
                             l.Auditorium.Building.BuildingId == buildingId)
                         .ToList();
                 }
@@ -492,7 +492,7 @@ namespace Schedule.Repositories.Common
             }
 
             List<AuditoriumEvent> audEvents;
-            if (weekNumber == -1)
+            if (weekFilterList == null || weekFilterList.Count == 0)
             {
                 if (buildingId == -1)
                 {
@@ -510,13 +510,13 @@ namespace Schedule.Repositories.Common
                 {
                     audEvents = _repo.AuditoriumEvents.GetFiltredAuditoriumEvents(evt =>
                         evt.Calendar.Date.DayOfWeek == dow &&
-                        CalculateWeekNumber(evt.Calendar.Date) == weekNumber);
+                        weekFilterList.Contains(CalculateWeekNumber(evt.Calendar.Date)));
                 }
                 else
                 {
                     audEvents = _repo.AuditoriumEvents.GetFiltredAuditoriumEvents(evt =>
                         evt.Calendar.Date.DayOfWeek == dow &&
-                        CalculateWeekNumber(evt.Calendar.Date) == weekNumber &&
+                        weekFilterList.Contains(CalculateWeekNumber(evt.Calendar.Date)) &&
                         evt.Auditorium.Building.BuildingId == buildingId);
                 }
             }

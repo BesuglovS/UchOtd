@@ -56,7 +56,7 @@ namespace UchOtd.Forms
 
         }
         
-        public List<TeacherScheduleTimeView> GetTeacherScheduleToView(int teacherId, bool isWeekFiltered, int weekNumber, bool showingProposed, bool OnlyFutureDates, CancellationToken cToken)
+        public List<TeacherScheduleTimeView> GetTeacherScheduleToView(int teacherId, bool isWeekFiltered, List<int> weekFilterList, bool showingProposed, bool OnlyFutureDates, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
             
@@ -70,8 +70,8 @@ namespace UchOtd.Forms
                     .Lessons
                     .GetFiltredLessons(l => 
                         l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
-                        ((l.State == 1) || ((l.State == 2) && showingProposed)) && 
-                        _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date.Date) == weekNumber)
+                        ((l.State == 1) || ((l.State == 2) && showingProposed)) &&
+                        weekFilterList.Contains(_repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date.Date)))
                     .ToList();            }
             else
             {
@@ -320,10 +320,37 @@ namespace UchOtd.Forms
             }
         }
 
+        private bool getWeekFilter(out List<int> weekFilterList)
+        {
+            weekFilterList = new List<int>();
+            try
+            {
+                if (!weekFilter.Text.Contains("-"))
+                {
+                    weekFilterList.Add(int.Parse(weekFilter.Text));
+                }
+                else
+                {
+                    var split = weekFilter.Text.Split('-');
+                    var start = int.Parse(split[0]);
+                    var finish = int.Parse(split[1]);
+                    for (int i = start; i <= finish; i++)
+                    {
+                        weekFilterList.Add(i);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private async void refresh_Click(object sender, EventArgs e)
         {
             List<TeacherScheduleTimeView> result = null;
-
+            
             if (refresh.Text == "Обновить")
             {
                 _cToken = _tokenSource.Token;
@@ -333,17 +360,18 @@ namespace UchOtd.Forms
 
                 var teacherId = (int) teacherList.SelectedValue;
                 var isWeekFiltered = weekFiltered.Checked;
-                int weekNum = -1;
+
+                List<int> weekFilterList = null;
                 if (isWeekFiltered)
                 {
-                    int.TryParse(weekFilter.Text, out weekNum);
+                    if (getWeekFilter(out weekFilterList)) return;
                 }
                 var isShowProposed = showProposed.Checked;
 
                 try
                 {
                     result = await Task.Run(() =>
-                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
+                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekFilterList, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
                         _cToken);
                 }
                 catch (OperationCanceledException)
@@ -377,10 +405,10 @@ namespace UchOtd.Forms
                 ExportInWordPortrait.Image = Resources.Loading;
 
                 var isWeekFiltered = weekFiltered.Checked;
-                int weekNum = -1;
+                List<int> weekFilterList = null;
                 if (isWeekFiltered)
                 {
-                    int.TryParse(weekFilter.Text, out weekNum);
+                    if (getWeekFilter(out weekFilterList)) return;
                 }
                 var isShowProposed = showProposed.Checked;
 
@@ -389,7 +417,7 @@ namespace UchOtd.Forms
                     var teacherId = (int)teacherList.SelectedValue;
 
                     var result = await Task.Run(() => 
-                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
+                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekFilterList, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
                         _cToken);
 
                     var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
@@ -419,10 +447,10 @@ namespace UchOtd.Forms
                 ExportInWordLandscape.Image = Resources.Loading;
 
                 var isWeekFiltered = weekFiltered.Checked;
-                int weekNum = -1;
+                List<int> weekFilterList = null;
                 if (isWeekFiltered)
                 {
-                    int.TryParse(weekFilter.Text, out weekNum);
+                    if (getWeekFilter(out weekFilterList)) return;
                 }
                 var isShowProposed = showProposed.Checked;
                 
@@ -431,7 +459,7 @@ namespace UchOtd.Forms
                     var teacherId = (int)teacherList.SelectedValue;
 
                     var result = await Task.Run(() => 
-                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
+                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekFilterList, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
                         _cToken);
 
                     var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
@@ -476,6 +504,12 @@ namespace UchOtd.Forms
 
             ExportAllTeachersInWord.Image = null;
             ExportAllTeachersInWord.Text = "Word (все преподаватели)";
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            weekFiltered.Checked = true;
+            weekFilter.Text = "11-12";
         }
     }
 }

@@ -62,6 +62,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.viewPanel = new System.Windows.Forms.Panel();
             this.DisciplinesList = new System.Windows.Forms.DataGridView();
             this.filterPanel = new System.Windows.Forms.Panel();
+            this.hoursWeekFilter = new System.Windows.Forms.TextBox();
             this.hoursFilteredByWeek = new System.Windows.Forms.CheckBox();
             this.orderByDisciplineName = new System.Windows.Forms.CheckBox();
             this.withoutTypeSequence = new System.Windows.Forms.CheckBox();
@@ -82,7 +83,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.groupnameFilter = new System.Windows.Forms.CheckBox();
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.filter = new System.Windows.Forms.TextBox();
-            this.hoursWeekFilter = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -398,6 +399,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // filterPanel
             // 
+            this.filterPanel.Controls.Add(this.button1);
             this.filterPanel.Controls.Add(this.hoursWeekFilter);
             this.filterPanel.Controls.Add(this.hoursFilteredByWeek);
             this.filterPanel.Controls.Add(this.orderByDisciplineName);
@@ -425,10 +427,17 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filterPanel.Size = new System.Drawing.Size(1308, 67);
             this.filterPanel.TabIndex = 1;
             // 
+            // hoursWeekFilter
+            // 
+            this.hoursWeekFilter.Location = new System.Drawing.Point(193, 5);
+            this.hoursWeekFilter.Name = "hoursWeekFilter";
+            this.hoursWeekFilter.Size = new System.Drawing.Size(65, 20);
+            this.hoursWeekFilter.TabIndex = 22;
+            // 
             // hoursFilteredByWeek
             // 
             this.hoursFilteredByWeek.AutoSize = true;
-            this.hoursFilteredByWeek.Location = new System.Drawing.Point(131, 7);
+            this.hoursFilteredByWeek.Location = new System.Drawing.Point(88, 7);
             this.hoursFilteredByWeek.Name = "hoursFilteredByWeek";
             this.hoursFilteredByWeek.Size = new System.Drawing.Size(110, 17);
             this.hoursFilteredByWeek.TabIndex = 21;
@@ -571,9 +580,9 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(10, 9);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(115, 13);
+            this.label7.Size = new System.Drawing.Size(74, 13);
             this.label7.TabIndex = 7;
-            this.label7.Text = "Фильтр по названию";
+            this.label7.Text = "По названию";
             // 
             // refresh
             // 
@@ -619,12 +628,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
             // 
-            // hoursWeekFilter
+            // button1
             // 
-            this.hoursWeekFilter.Location = new System.Drawing.Point(236, 5);
-            this.hoursWeekFilter.Name = "hoursWeekFilter";
-            this.hoursWeekFilter.Size = new System.Drawing.Size(65, 20);
-            this.hoursWeekFilter.TabIndex = 22;
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button1.Location = new System.Drawing.Point(264, 4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(37, 23);
+            this.button1.TabIndex = 23;
+            this.button1.Text = "11-12";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // DisciplineList
             // 
@@ -701,5 +714,6 @@ namespace UchOtd.Schedule.Forms.DBLists
         private CheckBox orderByDisciplineName;
         private CheckBox hoursFilteredByWeek;
         private TextBox hoursWeekFilter;
+        private Button button1;
     }
 }
