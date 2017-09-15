@@ -13,22 +13,27 @@ using UchOtd.Schedule.Views.DBListViews;
 
 namespace UchOtd.Forms
 {
-    public partial class ChooseRing : Form
+    public partial class ChooseRingAndAud : Form
     {
         private readonly List<RingView> _rings;
         private readonly MainEditForm _mef;
         private readonly Ring _ring;
+        private readonly List<Auditorium> _auds;
 
-        public ChooseRing(List<Ring> rings, MainEditForm mef, Ring ring)
+        public ChooseRingAndAud(List<Ring> rings, MainEditForm mef, Ring ring, List<Auditorium> auds)
         {
             _rings = RingView.RingsToView(rings.OrderBy(r => r.Time.TimeOfDay).ToList());
             _mef = mef;
             _ring = ring;
+            _auds = auds;
             InitializeComponent();
         }
 
         private void ChooseRing_Load(object sender, EventArgs e)
         {
+            audsList.DisplayMember = "Name";
+            audsList.DataSource = _auds;
+
             ringsList.DisplayMember = "Time";
             ringsList.DataSource = _rings;
 
@@ -68,7 +73,7 @@ namespace UchOtd.Forms
                 rIndexes.Add(_rings[rIndex].RingId);
             }
 
-            _mef.ringsChosen(rIndexes);
+            _mef.ringsChosen(rIndexes, (Auditorium)audsList.SelectedItem);
 
             Close();
         }
