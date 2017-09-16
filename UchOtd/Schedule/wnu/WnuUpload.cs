@@ -185,6 +185,11 @@ namespace UchOtd.Schedule.wnu
 
             splitCount = 1000;
             var lessons = repo.Lessons.GetFiltredLessons(l => l.State == 0 || l.State == 1);
+            // Загрузка только до 10-й недели вклюючительно
+            //var lessons =
+            //    repo.Lessons.GetFiltredLessons(l => 
+            //    (l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId < 61 || (l.Calendar.CalendarId < 67))
+            //    && (l.State == 0 || l.State == 1));
             partsCount = Math.Ceiling((double)lessons.Count / splitCount);
 
             for (int i = 0; i < partsCount; i++)

@@ -2884,8 +2884,11 @@ namespace UchOtd.Schedule
         {
             var onlyFutureDatesF = OnlyFutureDatesExportInWord.Checked;
             var weekFilteredF = weekFiltered.Checked;
-            List<int> weekFilterList;
-            if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+            List<int> weekFilterList = null;
+            if (weekFilteredF)
+            {
+                if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+            }
 
             if (OnePageGroupScheduleWordExport.Text == "Экспорт в Word - одна группа")
             {
@@ -5683,11 +5686,11 @@ namespace UchOtd.Schedule
         {
             await Task.Run(() =>
             {
-                CheckTeacherCollisions(11);
+                CheckTeacherCollisions(new List<int> {12, 13});
             });
         }
 
-        private void CheckTeacherCollisions(int weekFilter)
+        private void CheckTeacherCollisions(List<int> weekFilter)
         {
             TextFileUtilities.CreateOrEmptyFile("TeacherCollisions.txt");
 
@@ -5700,7 +5703,7 @@ namespace UchOtd.Schedule
 
                 List<Lesson> teacherLessons;
 
-                if (weekFilter == -1)
+                if (weekFilter == null || weekFilter.Count == 0)
                 {
                     teacherLessons =
                         Repo.Lessons.GetFiltredLessons(l => l.State == 1 &&
@@ -5711,7 +5714,7 @@ namespace UchOtd.Schedule
                 {
                     teacherLessons =
                         Repo.Lessons.GetFiltredLessons(l => l.State == 1 &&
-                                                            Repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date) == weekFilter &&
+                                                            weekFilter.Contains(Repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)) &&
                                                             l.TeacherForDiscipline.Teacher.TeacherId == teacher.TeacherId);
                 }
 
@@ -5756,6 +5759,7 @@ namespace UchOtd.Schedule
                 foreach (var pair in pairs)
                 {
                     TextFileUtilities.WriteString("TeacherCollisions.txt",
+                        DateTime.Now.ToString("dd.MM.yyyy HH:mm - ") +
                         teacherLessons[pair.Item1].TeacherForDiscipline.Teacher.FIO + "\t" +
                         teacherLessons[pair.Item1].Calendar.Date.ToString("dd.MM.yyyy") + "\t" +
                         teacherLessons[pair.Item1].TeacherForDiscipline.Discipline.Name + "\t" +
@@ -6138,7 +6142,7 @@ namespace UchOtd.Schedule
         private void ElevenTwelveWeek_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "11-12";
+            WeekFilter.Text = "12-13";
         }
 
         public void ringsChosen(List<int> ringIds, Auditorium aud)

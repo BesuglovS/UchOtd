@@ -62,6 +62,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.viewPanel = new System.Windows.Forms.Panel();
             this.DisciplinesList = new System.Windows.Forms.DataGridView();
             this.filterPanel = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.hoursWeekFilter = new System.Windows.Forms.TextBox();
             this.hoursFilteredByWeek = new System.Windows.Forms.CheckBox();
             this.orderByDisciplineName = new System.Windows.Forms.CheckBox();
@@ -83,7 +84,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.groupnameFilter = new System.Windows.Forms.CheckBox();
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.filter = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -427,6 +427,17 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filterPanel.Size = new System.Drawing.Size(1308, 67);
             this.filterPanel.TabIndex = 1;
             // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button1.Location = new System.Drawing.Point(264, 4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(37, 23);
+            this.button1.TabIndex = 23;
+            this.button1.Text = "12-13";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // hoursWeekFilter
             // 
             this.hoursWeekFilter.Location = new System.Drawing.Point(193, 5);
@@ -627,17 +638,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filter.Name = "filter";
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
-            // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.Location = new System.Drawing.Point(264, 4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(37, 23);
-            this.button1.TabIndex = 23;
-            this.button1.Text = "11-12";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // DisciplineList
             // 

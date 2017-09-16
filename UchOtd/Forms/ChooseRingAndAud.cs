@@ -62,7 +62,7 @@ namespace UchOtd.Forms
 
             var mp = MousePosition;
 
-            this.SetDesktopLocation(mp.X-50, mp.Y-260);
+            this.SetDesktopLocation(mp.X-100, mp.Y-30);
         }
 
         private void button1_Click(object sender, EventArgs e)

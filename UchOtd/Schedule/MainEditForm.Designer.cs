@@ -244,7 +244,7 @@ namespace UchOtd.Schedule
             this.ElevenTwelveWeek.Name = "ElevenTwelveWeek";
             this.ElevenTwelveWeek.Size = new System.Drawing.Size(49, 21);
             this.ElevenTwelveWeek.TabIndex = 72;
-            this.ElevenTwelveWeek.Text = "11-12";
+            this.ElevenTwelveWeek.Text = "12-13";
             this.ElevenTwelveWeek.UseVisualStyleBackColor = true;
             this.ElevenTwelveWeek.Click += new System.EventHandler(this.ElevenTwelveWeek_Click);
             // 

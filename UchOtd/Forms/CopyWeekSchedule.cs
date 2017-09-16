@@ -240,6 +240,16 @@ namespace UchOtd.Forms
                                         calendarIds.Contains(l.Calendar.CalendarId) &&
                                         groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
 
+            var lessonIds = weekLessons.Select(l => l.LessonId).ToList();
+            var lessonEvents = _repo.LessonLogEvents.GetFiltredLessonLogEvents(le =>
+                (le.OldLesson != null && lessonIds.Contains(le.OldLesson.LessonId)) ||
+                (le.NewLesson != null && lessonIds.Contains(le.NewLesson.LessonId)));
+
+            foreach (var lessonLogEvent in lessonEvents)
+            {
+                _repo.LessonLogEvents.RemoveLessonLogEvent(lessonLogEvent.LessonLogEventId);
+            }
+
             foreach (var lesson in weekLessons)
             {
                 _repo.Lessons.RemoveLessonWoLog(lesson.LessonId);
