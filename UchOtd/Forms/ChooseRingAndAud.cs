@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Main;
+using Schedule.Repositories;
+using Schedule.Repositories.Common;
 using UchOtd.Schedule;
 using UchOtd.Schedule.Views.DBListViews;
 
@@ -18,14 +20,23 @@ namespace UchOtd.Forms
         private readonly List<RingView> _rings;
         private readonly MainEditForm _mef;
         private readonly Ring _ring;
+        private readonly Building _building;
         private readonly List<Auditorium> _auds;
+        private readonly ScheduleRepository _repo;
+        private readonly int _week;
+        private readonly int _dow;
 
-        public ChooseRingAndAud(List<Ring> rings, MainEditForm mef, Ring ring, List<Auditorium> auds)
+        public ChooseRingAndAud(ScheduleRepository repo, MainEditForm mef, Ring ring, Building building, int week, int dow)
         {
+            _repo = repo;
+            var rings = _repo.Rings.GetAllRings();
             _rings = RingView.RingsToView(rings.OrderBy(r => r.Time.TimeOfDay).ToList());
+            _week = week;
+            _dow = dow;
             _mef = mef;
             _ring = ring;
-            _auds = auds;
+            _building = building;
+            _auds = _repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList();
             InitializeComponent();
         }
 
@@ -81,6 +92,35 @@ namespace UchOtd.Forms
         private void button2_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void ringsList_SelectedValueChanged(object sender, EventArgs e)
+        {
+            var cf = new CommonFunctions(_repo) {ConnectionString = _repo.GetConnectionString()};
+            var calendar = cf.GetCalendarFromDowAndWeek(_dow, _week);
+
+            var rIndexes = new List<int>();
+            var auds = new List<List<int>>();
+            foreach (int rIndex in ringsList.SelectedIndices)
+            {
+                rIndexes.Add(_rings[rIndex].RingId);
+                
+                auds.Add(_repo.Auditoriums.getFreeAuds(calendar.CalendarId, _rings[rIndex].RingId, _building.BuildingId).Select(a => a.AuditoriumId).ToList());
+            }
+
+            if (auds.Count == 0) return;
+
+            var result = auds[0];
+
+            for (int i = 1; i < auds.Count; i++)
+            {
+                result = result.Intersect(auds[i]).ToList();
+            }
+
+            var resultAuds = _repo.Auditoriums.FindAll(a => result.Contains(a.AuditoriumId));
+
+            audsList.DataSource = resultAuds;
+
         }
     }
 }

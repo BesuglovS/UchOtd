@@ -342,6 +342,11 @@ namespace UchOtd.Schedule
         private bool getWeekFilter(ComboBox weekList, out List<int> weekFilterList)
         {
             var text = weekList.Text;
+            return getWeeksFromString(out weekFilterList, text);
+        }
+
+        private static bool getWeeksFromString(out List<int> weekFilterList, string text)
+        {
             weekFilterList = new List<int>();
             try
             {
@@ -5676,7 +5681,6 @@ namespace UchOtd.Schedule
                 LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t\t Конец семестра \t" + semesterMax.ToString("dd.MM.yyyy"));
                 LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t\t Начало сессии \t" + sessionMin.ToString("dd.MM.yyyy"));
                 LogInFile(@"d:\Github\SemRanges.txt", dbNames[semIndex] + "\t\t Конец сессии \t" + sessionMax.ToString("dd.MM.yyyy"));
-
             }
 
             LogInFile(@"d:\Github\SemRanges.txt", "Done");
@@ -5684,9 +5688,14 @@ namespace UchOtd.Schedule
 
         private async void проверитьКоллизииПреподавателейToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            string weeksString = Prompt.ShowDialog("Ку-ку", "Выберите недели для проверки", "12-13");
+
+            List<int> weeks = null;
+            if (getWeeksFromString(out weeks, weeksString)) return;
+
             await Task.Run(() =>
             {
-                CheckTeacherCollisions(new List<int> {12, 13});
+                CheckTeacherCollisions(weeks);
             });
         }
 
@@ -5700,6 +5709,42 @@ namespace UchOtd.Schedule
             {
                 var pairs = new List<Tuple<int, int>>();
                 var teacher = teachers[i];
+
+                var groupNames =
+                    Repo.TeacherForDisciplines.GetFiltredTeacherForDiscipline(
+                        tfd => tfd.Teacher.TeacherId == teacher.TeacherId)
+                        .Select(tfd => tfd.Discipline.StudentGroup.Name)
+                        .Distinct()
+                        .ToList();
+                var HaveSchool = false;
+                var small = new List<string> {"1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 ", "10 ", "11 "};
+                for (int j = 0; j < groupNames.Count; j++)
+                {
+                    for (int k = 0; k < small.Count; k++)
+                    {
+                        if (groupNames[j].StartsWith(small[k]))
+                        {
+                            HaveSchool = true;
+                            break;
+                        }
+                    }
+
+                    if (HaveSchool)
+                    {
+                        break;
+                    }
+                }
+
+                if (!HaveSchool)
+                {
+                    Invoke((MethodInvoker)delegate
+                    {
+                        status.Text = (i + 1) + " / " + teachers.Count + " - " + teachers[i].FIO + " пропуск";
+                        // runs on UI thread
+                    });
+
+                    continue;
+                }
 
                 List<Lesson> teacherLessons;
 
@@ -5837,11 +5882,18 @@ namespace UchOtd.Schedule
 
                     var groupName = groupList.Text;
                     var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
-                    var auds = Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList();
-                    
+                    // var auds = Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList();
+                    var weekNum = 1;
+                    try
+                    {
+                        weekNum = int.Parse(WeekFilter.Text);
+                    }
+                    catch (Exception exc)
+                    {
+                        return;
+                    }
 
-                    var rings = Repo.Rings.GetAllRings();
-                    var rForm = new ChooseRingAndAud(rings, this, ring, auds);
+                    var rForm = new ChooseRingAndAud(Repo, this, ring, building, weekNum, dropDow);
                     rForm.Show(this);
                     break;
                 case "lesson":
@@ -5993,7 +6045,7 @@ namespace UchOtd.Schedule
                 var newLesson = new Lesson(lesson.TeacherForDiscipline, cFrom, ringFrom, aud);
                 newLesson.State = 1;
                 Repo.Lessons.AddLessonWoLog(newLesson);
-
+                
                 Repo.Lessons.RemoveLessonWoLog(lesson.LessonId);
             }
         }
@@ -6143,6 +6195,86 @@ namespace UchOtd.Schedule
         {
             weekFiltered.Checked = true;
             WeekFilter.Text = "12-13";
+        }
+
+        private async void неточности811ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TextFileUtilities.CreateOrEmptyFile("Hours-8-11.txt");
+
+            await Task.Run(() =>
+            {
+
+
+                var groupNamesList = new List<string>
+                {
+                    "8 А", "8 Б", "8 В", "8 Г",
+                    "9 А", "9 Б", "9 В", "9 Г",
+                    "10 А", "10 Б", "10 В", "10 Г",
+                    "11 А", "11 Б", "11 В", "11 Г"
+                };
+
+                var groups = new List<StudentGroup>();
+                for (int i = 0; i < groupNamesList.Count; i++)
+                {
+                    var groupName = groupNamesList[i];
+
+                    var group = Repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupName);
+                    if (group != null)
+                    {
+                        groups.Add(group);
+                    }
+                }
+
+
+                for (int i = 0; i < groups.Count; i++)
+                {
+                    var group = groups[i];
+
+                    var groupGroups = StudentGroupIdsFromGroupId(group.StudentGroupId);
+
+                    var disciplines =
+                        Repo.Disciplines.GetFiltredDisciplines(
+                            d => groupGroups.Contains(d.StudentGroup.StudentGroupId));
+
+                    for (int j = 0; j < disciplines.Count; j++)
+                    {
+                        var discipline = disciplines[j];
+
+                        var tefd = Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
+                            tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
+
+                        if (tefd == null)
+                        {
+                            continue;
+                        }
+
+                        var hours1213 = Repo.CommonFunctions.GetTfdHours(tefd.TeacherForDisciplineId, false, true,
+                            new List<int> {12, 13});
+
+                        if (discipline.AuditoriumHoursPerWeek * 2 != hours1213)
+                        {
+                            TextFileUtilities.WriteString("Hours-8-11.txt", 
+                                group.Name + "\t" + 
+                                tefd.Teacher.FIO + "\t" + 
+                                tefd.Discipline.Name + "\t" + 
+                                tefd.Discipline.AuditoriumHoursPerWeek + "\t" + 
+                                hours1213);
+                        }
+                    }
+                }
+            });
+        }
+
+        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            var freeForm = new FreeScheduleSpot(Repo);
+            freeForm.Show();
+        }
+
+        private void освободитьМестоВРасписанииToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var freeForm = new FreeScheduleSpot(Repo);
+            freeForm.Show();
         }
 
         public void ringsChosen(List<int> ringIds, Auditorium aud)

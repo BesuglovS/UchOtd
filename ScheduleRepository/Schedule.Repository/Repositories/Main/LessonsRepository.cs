@@ -537,5 +537,23 @@ namespace Schedule.Repositories.Repositories.Main
                 return typeSequence.Length <= index ? 0 : int.Parse(typeSequence[index].ToString());
             }
         }
+
+        public List<Lesson> GetTeacherWeekLessons(int teacherId, int week)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var calendars = _repo.Calendars.GetWeekCalendars(week).Select(c => c.CalendarId).ToList();
+
+                return context.Lessons.Where(l =>
+                    l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
+                    calendars.Contains(l.Calendar.CalendarId))
+                    .Include(l => l.TeacherForDiscipline.Teacher)
+                    .Include(l => l.TeacherForDiscipline.Discipline.StudentGroup)
+                    .Include(l => l.Calendar)
+                    .Include(l => l.Ring)
+                    .Include(l => l.Auditorium.Building)
+                    .ToList();
+            }
+        }
     }
 }

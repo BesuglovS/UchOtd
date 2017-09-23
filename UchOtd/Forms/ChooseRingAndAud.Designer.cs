@@ -127,6 +127,7 @@
             this.ringsList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.ringsList.Size = new System.Drawing.Size(118, 225);
             this.ringsList.TabIndex = 1;
+            this.ringsList.SelectedValueChanged += new System.EventHandler(this.ringsList_SelectedValueChanged);
             // 
             // ChooseRingAndAud
             // 

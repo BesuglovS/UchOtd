@@ -117,6 +117,13 @@ namespace Schedule.Repositories.Repositories.Main
 
         public Auditorium getFreeAud(int calendarId, int ringId, int buildingId)
         {
+            var auds = getFreeAuds(calendarId, ringId, buildingId);
+            Random rnd = new Random();
+            return auds[rnd.Next(0, auds.Count)];
+        }
+
+        public List<Auditorium> getFreeAuds(int calendarId, int ringId, int buildingId)
+        {
             using (var context = new ScheduleContext(ConnectionString))
             {
                 List<Auditorium> auds;
@@ -150,10 +157,8 @@ namespace Schedule.Repositories.Repositories.Main
                 {
                     return null;
                 }
-
-                Random rnd = new Random();
-
-                return auds[rnd.Next(0, auds.Count)];
+                
+                return auds;
             }
         }
 

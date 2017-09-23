@@ -79,6 +79,7 @@ namespace UchOtd.Forms
 
         private async void copyGroupSchedule()
         {
+            List<int> dow = GetDow();
             var weekFrom = -1;
             var weekTo = -1;
             try
@@ -95,11 +96,23 @@ namespace UchOtd.Forms
 
             await Task.Run(() =>
             {
-                copyGroupWeekSchedule(@group, weekFrom, weekTo);
+                copyGroupWeekSchedule(@group, weekFrom, weekTo, dow);
             });
         }
 
-        private void copyGroupWeekSchedule(StudentGroup @group, int weekFrom, int weekTo)
+        private List<int> GetDow()
+        {
+            var dow = new List<int>();
+            if (Mon.Checked) dow.Add(1);
+            if (Tue.Checked) dow.Add(2);
+            if (Wed.Checked) dow.Add(3);
+            if (Thu.Checked) dow.Add(4);
+            if (Fri.Checked) dow.Add(5);
+            if (Sat.Checked) dow.Add(6);
+            return dow;
+        }
+
+        private void copyGroupWeekSchedule(StudentGroup @group, int weekFrom, int weekTo, List<int> dow)
         {
             if (weekFrom == weekTo)
             {
@@ -113,11 +126,12 @@ namespace UchOtd.Forms
 
             var calendarPairs = new Dictionary<Calendar, Calendar>();
 
-            for (int i = 1; i <= 7; i++)
+            for (int i = 0; i < dow.Count; i++)
             {
+                var dayOfWeek = dow[i];
                 Calendar c1, c2;
-                c1 = cf.GetCalendarFromDowAndWeek(i, weekFrom);
-                c2 = cf.GetCalendarFromDowAndWeek(i, weekTo);
+                c1 = cf.GetCalendarFromDowAndWeek(dayOfWeek, weekFrom);
+                c2 = cf.GetCalendarFromDowAndWeek(dayOfWeek, weekTo);
                 if (c1 != null && c2 != null)
                 {
                     calendarPairs.Add(c1, c2);
@@ -150,6 +164,8 @@ namespace UchOtd.Forms
 
         private async void copyFacultySchedule()
         {
+            List<int> dow = GetDow();
+
             var weekFrom = -1;
             var weekTo = -1;
             try
@@ -172,13 +188,15 @@ namespace UchOtd.Forms
             {
                 await Task.Run(() =>
                 {
-                    copyGroupWeekSchedule(studentGroup, weekFrom, weekTo);
+                    copyGroupWeekSchedule(studentGroup, weekFrom, weekTo, dow);
                 });
             }
         }
 
         private async void deleteWeekSchedule_Click(object sender, EventArgs e)
         {
+            List<int> dow = GetDow();
+
             var weekFrom = -1;
             
             try
@@ -196,17 +214,17 @@ namespace UchOtd.Forms
             {
                 await Task.Run(() =>
                 {
-                    deleteGroupSchedule(group, weekFrom);
+                    deleteGroupSchedule(group, weekFrom, dow);
                 });
             }
 
             if (copyFaculty.Checked)
             {
-                deleteFacultySchedule();
+                deleteFacultySchedule(dow);
             }
         }
 
-        private async void deleteGroupSchedule(StudentGroup group, int weekFrom)
+        private async void deleteGroupSchedule(StudentGroup group, int weekFrom, List<int> dow)
         {
             Invoke((MethodInvoker)delegate
             {
@@ -220,10 +238,13 @@ namespace UchOtd.Forms
 
             var calendarList = new List<Calendar>();
 
-            for (int i = 1; i <= 7; i++)
+
+
+            for (int i = 0; i < dow.Count; i++)
             {
-                Calendar c1, c2;
-                c1 = cf.GetCalendarFromDowAndWeek(i, weekFrom);
+                var doyOfWeek = dow[i];
+                Calendar c1;
+                c1 = cf.GetCalendarFromDowAndWeek(doyOfWeek, weekFrom);
                 
                 if (c1 != null)
                 {
@@ -262,7 +283,7 @@ namespace UchOtd.Forms
             });
         }
 
-        private async void deleteFacultySchedule()
+        private async void deleteFacultySchedule(List<int> dow)
         {
             var weekFrom = -1;
             
@@ -285,7 +306,7 @@ namespace UchOtd.Forms
             {
                 await Task.Run(() =>
                 {
-                    deleteGroupSchedule(studentGroup, weekFrom);
+                    deleteGroupSchedule(studentGroup, weekFrom, dow);
                 });
             }
 

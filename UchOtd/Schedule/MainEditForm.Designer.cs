@@ -170,12 +170,14 @@ namespace UchOtd.Schedule
             this.проверитьКоллизииПреподавателейToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.неточности811ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
+            this.освободитьМестоВРасписанииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -1256,7 +1258,9 @@ namespace UchOtd.Schedule
             this.графикПроцессаToolStripMenuItem,
             this.проверитьКоллизииПреподавателейToolStripMenuItem,
             this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem,
-            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem});
+            this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem,
+            this.неточности811ToolStripMenuItem,
+            this.освободитьМестоВРасписанииToolStripMenuItem});
             this.bigRedButtonToolStripMenuItem.Name = "bigRedButtonToolStripMenuItem";
             this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
             this.bigRedButtonToolStripMenuItem.Text = "BIG RED BUTTON";
@@ -1394,6 +1398,13 @@ namespace UchOtd.Schedule
             this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Text = "Расписание переходов между корпусами";
             this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem.Click += new System.EventHandler(this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem_Click);
             // 
+            // неточности811ToolStripMenuItem
+            // 
+            this.неточности811ToolStripMenuItem.Name = "неточности811ToolStripMenuItem";
+            this.неточности811ToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.неточности811ToolStripMenuItem.Text = "Неточности 8-11";
+            this.неточности811ToolStripMenuItem.Click += new System.EventHandler(this.неточности811ToolStripMenuItem_Click);
+            // 
             // viewPanel
             // 
             this.viewPanel.Controls.Add(this.statusStrip1);
@@ -1449,9 +1460,16 @@ namespace UchOtd.Schedule
             // editSchedule
             // 
             this.editSchedule.Name = "editSchedule";
-            this.editSchedule.Size = new System.Drawing.Size(133, 22);
+            this.editSchedule.Size = new System.Drawing.Size(152, 22);
             this.editSchedule.Text = "Аудитория";
             this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
+            // 
+            // освободитьМестоВРасписанииToolStripMenuItem
+            // 
+            this.освободитьМестоВРасписанииToolStripMenuItem.Name = "освободитьМестоВРасписанииToolStripMenuItem";
+            this.освободитьМестоВРасписанииToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.освободитьМестоВРасписанииToolStripMenuItem.Text = "Освободить место в расписании";
+            this.освободитьМестоВРасписанииToolStripMenuItem.Click += new System.EventHandler(this.освободитьМестоВРасписанииToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -1627,6 +1645,8 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem editSchedule;
         private ToolStripMenuItem расписаниеПереходовМеждуКорпусамиToolStripMenuItem;
         private Button ElevenTwelveWeek;
+        private ToolStripMenuItem неточности811ToolStripMenuItem;
+        private ToolStripMenuItem освободитьМестоВРасписанииToolStripMenuItem;
     }
 }
 

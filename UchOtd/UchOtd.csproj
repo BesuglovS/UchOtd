@@ -125,6 +125,7 @@
     <Compile Include="Core\BuildingLessonsData.cs" />
     <Compile Include="Core\DailyLessonsData.cs" />
     <Compile Include="Core\LayoutSupport.cs" />
+    <Compile Include="Core\Prompt.cs" />
     <Compile Include="Core\StudentDetailsMode.cs" />
     <Compile Include="Core\TextFileUtilities.cs" />
     <Compile Include="Core\Utilities.cs" />
@@ -233,6 +234,8 @@
     <Compile Include="NUDS\View\LleView.cs" />
     <Compile Include="NUDS\View\TeacherScheduleTimeView.cs" />
     <Compile Include="Schedule\Core\PDFExport.cs" />
+    <Compile Include="Schedule\Core\ScheduleChange.cs" />
+    <Compile Include="Schedule\Core\ScheduleChangeType.cs" />
     <Compile Include="Schedule\Core\Utilities.cs" />
     <Compile Include="Schedule\Forms\AllChanges.cs">
       <SubType>Form</SubType>
@@ -263,6 +266,12 @@
     </Compile>
     <Compile Include="Schedule\Forms\Analysis\DisciplinesWithAud.Designer.cs">
       <DependentUpon>DisciplinesWithAud.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\FreeScheduleSpot.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\FreeScheduleSpot.Designer.cs">
+      <DependentUpon>FreeScheduleSpot.cs</DependentUpon>
     </Compile>
     <Compile Include="Schedule\Forms\Analysis\GroupPeriods.cs">
       <SubType>Form</SubType>
@@ -432,11 +441,11 @@
     <Compile Include="Schedule\Forms\OneAuditorium.Designer.cs">
       <DependentUpon>OneAuditorium.cs</DependentUpon>
     </Compile>
-    <Compile Include="Schedule\Forms\teacherHours.cs">
+    <Compile Include="Schedule\Forms\TeacherHours.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Schedule\Forms\teacherHours.Designer.cs">
-      <DependentUpon>teacherHours.cs</DependentUpon>
+    <Compile Include="Schedule\Forms\TeacherHours.Designer.cs">
+      <DependentUpon>TeacherHours.cs</DependentUpon>
     </Compile>
     <Compile Include="Schedule\Forms\Analysis\Wishes.cs">
       <SubType>Form</SubType>
@@ -582,6 +591,9 @@
     <EmbeddedResource Include="Schedule\Forms\Analysis\DisciplinesWithAud.resx">
       <DependentUpon>DisciplinesWithAud.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\Analysis\FreeScheduleSpot.resx">
+      <DependentUpon>FreeScheduleSpot.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\Analysis\GroupPeriods.resx">
       <DependentUpon>GroupPeriods.cs</DependentUpon>
     </EmbeddedResource>
@@ -660,8 +672,8 @@
     <EmbeddedResource Include="Schedule\Forms\OneAuditorium.resx">
       <DependentUpon>OneAuditorium.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Schedule\Forms\teacherHours.resx">
-      <DependentUpon>teacherHours.cs</DependentUpon>
+    <EmbeddedResource Include="Schedule\Forms\TeacherHours.resx">
+      <DependentUpon>TeacherHours.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\Analysis\Wishes.resx">
       <DependentUpon>Wishes.cs</DependentUpon>

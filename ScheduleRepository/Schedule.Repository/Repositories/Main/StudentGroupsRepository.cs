@@ -99,5 +99,26 @@ namespace Schedule.Repositories.Repositories.Main
                 context.SaveChanges();
             }
         }
+
+        public List<int> StudentGroupIdsFromGroupId(int groupId)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var studentIds = context
+                    .StudentsInGroups
+                    .Where(sig => sig.StudentGroup.StudentGroupId == groupId &&
+                                                       !sig.Student.Expelled)
+                    .Select(stig => stig.Student.StudentId)
+                    .ToList();
+
+                var groupsListIds = context
+                    .StudentsInGroups
+                    .Where(sig => studentIds.Contains(sig.Student.StudentId))
+                    .Select(stig => stig.StudentGroup.StudentGroupId)
+                    .Distinct()
+                    .ToList();
+                return groupsListIds;
+            }
+        }
     }
 }
