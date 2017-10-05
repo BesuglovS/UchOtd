@@ -17,6 +17,7 @@
 
         public int LessonId { get; set; }        
         public int State { get; set; } // 0 - не в расписании; 1 - в расписаниии; 2 - преполагаемые занятия
+        public int LengthInMinutes { get; set; }
         public virtual TeacherForDiscipline TeacherForDiscipline { get; set; }
         public virtual Calendar Calendar { get; set; }
         public virtual Ring Ring { get; set; }

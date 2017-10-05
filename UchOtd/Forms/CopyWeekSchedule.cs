@@ -523,7 +523,7 @@ namespace UchOtd.Forms
 
                 Invoke((MethodInvoker)delegate
                 {
-                    status.Text = @group.Name + ": " + calendar.Date.ToString("dd.MM.yyyy") + " - " + dayOfWeek;
+                    status.Text = @group.Name + ": " + calendar.Date.ToString("dd.MM.yyyy") + " - " + Constants.DowRu[dayOfWeek];
                     // runs on UI thread
                 });
             }
