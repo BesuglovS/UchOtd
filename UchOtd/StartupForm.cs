@@ -30,7 +30,7 @@ namespace UchOtd
 
         public static List<string> serverList = School ?
             new List<string> { @"127.0.0.1\SQLEXPRESS" } :
-            new List<string> { @".\SQLEXPRESS" };
+            new List<string> { @"uch-otd-disp\SQLEXPRESS" };
 
         public static string CurrentServerName = "";
         //public static string DefaultDbName = "School";

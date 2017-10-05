@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using Schedule.Repositories.Common;
+using UchOtd.NUDS.Core;
 
 namespace UchOtd.Forms
 {
@@ -49,6 +50,22 @@ namespace UchOtd.Forms
 
         private void Go_Click(object sender, EventArgs e)
         {
+            List<int> dow = GetDow();
+
+            var weekFrom = -1;
+            var weekTo = -1;
+            try
+            {
+                weekFrom = int.Parse(fromWeek.Text);
+                weekTo = int.Parse(toWeek.Text);
+            }
+            catch
+            {
+                return;
+            }
+
+            var faculty = (Faculty)facultyList.SelectedItem;
+
             if (copyGroup.Checked)
             {
                 copyGroupSchedule();
@@ -56,7 +73,7 @@ namespace UchOtd.Forms
 
             if (copyFaculty.Checked)
             {
-                copyFacultySchedule();
+                CopyFacultySchedule(faculty, weekFrom, weekTo, dow);
             }
         }
 
@@ -98,6 +115,8 @@ namespace UchOtd.Forms
             {
                 copyGroupWeekSchedule(@group, weekFrom, weekTo, dow);
             });
+
+            status.Text = "Готово";
         }
 
         private List<int> GetDow()
@@ -162,24 +181,8 @@ namespace UchOtd.Forms
             }
         }
 
-        private async void copyFacultySchedule()
+        private async void CopyFacultySchedule(Faculty faculty, int weekFrom, int weekTo, List<int> dow)
         {
-            List<int> dow = GetDow();
-
-            var weekFrom = -1;
-            var weekTo = -1;
-            try
-            {
-                weekFrom = int.Parse(fromWeek.Text);
-                weekTo = int.Parse(toWeek.Text);
-            }
-            catch
-            {
-                return;
-            }
-
-            var faculty = (Faculty) facultyList.SelectedItem;
-
             var facultyGroups =
                 _repo.GroupsInFaculties.GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
                 .Select(gif => gif.StudentGroup);
@@ -191,6 +194,8 @@ namespace UchOtd.Forms
                     copyGroupWeekSchedule(studentGroup, weekFrom, weekTo, dow);
                 });
             }
+
+            status.Text = "Готово";
         }
 
         private async void deleteWeekSchedule_Click(object sender, EventArgs e)
@@ -220,7 +225,9 @@ namespace UchOtd.Forms
 
             if (copyFaculty.Checked)
             {
-                deleteFacultySchedule(dow);
+                var faculty = (Faculty)facultyList.SelectedItem;
+
+                DeleteFacultySchedule(faculty, weekFrom, dow);
             }
         }
 
@@ -283,21 +290,8 @@ namespace UchOtd.Forms
             });
         }
 
-        private async void deleteFacultySchedule(List<int> dow)
+        private async void DeleteFacultySchedule(Faculty faculty, int weekFrom, List<int> dow)
         {
-            var weekFrom = -1;
-            
-            try
-            {
-                weekFrom = int.Parse(fromWeek.Text);
-            }
-            catch
-            {
-                return;
-            }
-
-            var faculty = (Faculty)facultyList.SelectedItem;
-
             var facultyGroups =
                 _repo.GroupsInFaculties.GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
                     .Select(gif => gif.StudentGroup);
@@ -434,6 +428,249 @@ namespace UchOtd.Forms
             }
 
             return result;
+        }
+
+        private async Task MoveScheduleByRings(Dictionary<TimeSpan, TimeSpan> rings)
+        {
+            List<int> dow = GetDow();
+
+            var week = -1;
+            try
+            {
+                week = int.Parse(fromWeek.Text);
+            }
+            catch
+            {
+                return;
+            }
+
+            var faculty = (Faculty) facultyList.SelectedItem;
+            var group = (StudentGroup) groupList.SelectedItem;
+
+            if (copyGroup.Checked)
+            {
+                await Task.Run(() => { MoveGroupSchedule(@group, week, dow, rings); });
+            }
+
+            if (copyFaculty.Checked)
+            {
+                await Task.Run(() => { MoveFacultySchedule(faculty, week, dow, rings); });
+            }
+
+            Invoke((MethodInvoker)delegate
+            {
+                status.Text = "Готово";
+            });
+        }
+
+        private async void MoveFacultySchedule(Faculty faculty, int week, List<int> dow, Dictionary<TimeSpan, TimeSpan> rings)
+        {
+            var facultyGroups =
+                _repo.GroupsInFaculties.GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                    .Select(gif => gif.StudentGroup);
+
+            foreach (var studentGroup in facultyGroups)
+            {
+                await Task.Run(() =>
+                {
+                    MoveGroupSchedule(studentGroup, week, dow, rings);
+                });
+            }
+        }
+
+        private void MoveGroupSchedule(StudentGroup @group, int week, List<int> dow, Dictionary<TimeSpan, TimeSpan> rings)
+        {
+            var ringsTransformDict = RingsFromTimeSpans(rings);
+            
+            var groupIds = StudentGroupIdsFromGroupId(@group.StudentGroupId);
+
+            var cf = new CommonFunctions(_repo) { ConnectionString = _repo.GetConnectionString() };
+
+            var calendarList = new List<Calendar>();
+
+            for (int i = 0; i < dow.Count; i++)
+            {
+                var dayOfWeek = dow[i];
+                var c1 = cf.GetCalendarFromDowAndWeek(dayOfWeek, week);
+                if (c1 != null)
+                {
+                    calendarList.Add(c1);
+                }
+            }
+
+            foreach (var calendar in calendarList)
+            {
+                var dayLessons = _repo
+                    .Lessons
+                    .GetFiltredLessons(l => l.State == 1 &&
+                                            l.Calendar.CalendarId == calendar.CalendarId &&
+                                            groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
+
+                
+
+                foreach (var lesson in dayLessons)
+                {
+                    if (!ringsTransformDict.ContainsKey(lesson.Ring.RingId))
+                    {
+                        continue;
+                    }
+
+                    lesson.Ring = ringsTransformDict[lesson.Ring.RingId];
+                    _repo.Lessons.UpdateLesson(lesson);
+                }
+
+                var dayOfWeek = GetRuDow(calendar.Date);
+
+                Invoke((MethodInvoker)delegate
+                {
+                    status.Text = @group.Name + ": " + calendar.Date.ToString("dd.MM.yyyy") + " - " + dayOfWeek;
+                    // runs on UI thread
+                });
+            }
+
+        }
+
+        private static int GetRuDow(DateTime date)
+        {
+            int dow = -1;
+            switch (date.DayOfWeek)
+            {
+                case DayOfWeek.Monday:
+                    dow = 1;
+                    break;
+                case DayOfWeek.Tuesday:
+                    dow = 2;
+                    break;
+                case DayOfWeek.Wednesday:
+                    dow = 3;
+                    break;
+                case DayOfWeek.Thursday:
+                    dow = 4;
+                    break;
+                case DayOfWeek.Friday:
+                    dow = 5;
+                    break;
+                case DayOfWeek.Saturday:
+                    dow = 6;
+                    break;
+                case DayOfWeek.Sunday:
+                    dow = 7;
+                    break;
+            }
+
+            return dow;
+        }
+
+        private Dictionary<int, Ring> RingsFromTimeSpans(Dictionary<TimeSpan, TimeSpan> rings)
+        {
+            var ringIdDict = new Dictionary<int, Ring>();
+
+            var allRings = _repo.Rings.GetAllRings();
+
+            foreach (var ringPair in rings)
+            {
+                var r1 = allRings.FirstOrDefault(r => r.Time.Hour == ringPair.Key.Hours &&
+                                                      r.Time.Minute == ringPair.Key.Minutes);
+                var r2 = allRings.FirstOrDefault(r => r.Time.Hour == ringPair.Value.Hours &&
+                                                      r.Time.Minute == ringPair.Value.Minutes);
+                if (r1 != null && r2 != null)
+                {
+                    ringIdDict.Add(r1.RingId, r2);
+                }
+            }
+            return ringIdDict;
+        }
+
+        private async void ringsOldToNew_Click(object sender, EventArgs e)
+        {
+            var rings = new Dictionary<TimeSpan, TimeSpan>
+            {
+                { new TimeSpan(08,00,00), new TimeSpan(08,00,00) },
+                { new TimeSpan(08,50,00), new TimeSpan(08,45,00) },
+                { new TimeSpan(09,50,00), new TimeSpan(09,40,00) },
+                { new TimeSpan(10,50,00), new TimeSpan(10,35,00) },
+                { new TimeSpan(11,40,00), new TimeSpan(11,25,00) },
+                { new TimeSpan(12,30,00), new TimeSpan(12,15,00) },
+                { new TimeSpan(13,15,00), new TimeSpan(13,15,00) },
+                { new TimeSpan(14,00,00), new TimeSpan(14,00,00) },
+                { new TimeSpan(14,50,00), new TimeSpan(14,50,00) },
+                { new TimeSpan(15,50,00), new TimeSpan(15,45,00) },
+                { new TimeSpan(16,50,00), new TimeSpan(16,35,00) },
+                { new TimeSpan(17,40,00), new TimeSpan(17,25,00) },
+                { new TimeSpan(18,30,00), new TimeSpan(18,15,00) },
+                { new TimeSpan(19,20,00), new TimeSpan(19,05,00) }
+            };
+
+            await MoveScheduleByRings(rings);
+        }
+
+        private async void ringsNewToOld_Click(object sender, EventArgs e)
+        {
+            var rings = new Dictionary<TimeSpan, TimeSpan>
+            {
+                { new TimeSpan(08,00,00), new TimeSpan(08,00,00) },
+                { new TimeSpan(08,45,00), new TimeSpan(08,50,00) },
+                { new TimeSpan(09,40,00), new TimeSpan(09,50,00) },
+                { new TimeSpan(10,35,00), new TimeSpan(10,50,00) },
+                { new TimeSpan(11,25,00), new TimeSpan(11,40,00) },
+                { new TimeSpan(12,15,00), new TimeSpan(12,30,00) },
+                { new TimeSpan(13,15,00), new TimeSpan(13,15,00) },
+                { new TimeSpan(14,00,00), new TimeSpan(14,00,00) },
+                { new TimeSpan(14,50,00), new TimeSpan(14,50,00) },
+                { new TimeSpan(15,45,00), new TimeSpan(15,50,00) },
+                { new TimeSpan(16,35,00), new TimeSpan(16,50,00) },
+                { new TimeSpan(17,25,00), new TimeSpan(17,40,00) },
+                { new TimeSpan(18,15,00), new TimeSpan(18,30,00) },
+                { new TimeSpan(19,05,00), new TimeSpan(19,20,00) }
+            };
+
+            await MoveScheduleByRings(rings);
+        }
+
+        private async void ShortenLessons_Click(object sender, EventArgs e)
+        {
+            var rings = new Dictionary<TimeSpan, TimeSpan>
+            {
+                { new TimeSpan(08,00,00), new TimeSpan(08,00,00) },
+                { new TimeSpan(08,45,00), new TimeSpan(08,40,00) },
+                { new TimeSpan(09,40,00), new TimeSpan(09,25,00) },
+                { new TimeSpan(10,35,00), new TimeSpan(10,10,00) },
+                { new TimeSpan(11,25,00), new TimeSpan(10,50,00) },
+                { new TimeSpan(12,15,00), new TimeSpan(11,30,00) },
+                { new TimeSpan(13,15,00), new TimeSpan(12,10,00) },
+                { new TimeSpan(14,00,00), new TimeSpan(12,55,00) },
+                { new TimeSpan(14,50,00), new TimeSpan(13,40,00) },
+                { new TimeSpan(15,45,00), new TimeSpan(14,25,00) },
+                { new TimeSpan(16,35,00), new TimeSpan(15,05,00) },
+                { new TimeSpan(17,25,00), new TimeSpan(15,45,00) },
+                { new TimeSpan(18,15,00), new TimeSpan(16,25,00) },
+                { new TimeSpan(19,05,00), new TimeSpan(17,05,00) }
+            };
+
+            await MoveScheduleByRings(rings);
+        }
+
+        private async void LongerLessons_Click(object sender, EventArgs e)
+        {
+            var rings = new Dictionary<TimeSpan, TimeSpan>
+            {
+                { new TimeSpan(08,00,00), new TimeSpan(08,00,00) },
+                { new TimeSpan(08,40,00), new TimeSpan(08,45,00) },
+                { new TimeSpan(09,25,00), new TimeSpan(09,40,00) },
+                { new TimeSpan(10,10,00), new TimeSpan(10,35,00) },
+                { new TimeSpan(10,50,00), new TimeSpan(11,25,00) },
+                { new TimeSpan(11,30,00), new TimeSpan(12,15,00) },
+                { new TimeSpan(12,10,00), new TimeSpan(13,15,00) },
+                { new TimeSpan(12,55,00), new TimeSpan(14,00,00) },
+                { new TimeSpan(13,40,00), new TimeSpan(14,50,00) },
+                { new TimeSpan(14,25,00), new TimeSpan(15,45,00) },
+                { new TimeSpan(15,05,00), new TimeSpan(16,35,00) },
+                { new TimeSpan(15,45,00), new TimeSpan(17,25,00) },
+                { new TimeSpan(16,25,00), new TimeSpan(18,15,00) },
+                { new TimeSpan(17,05,00), new TimeSpan(19,05,00) }
+            };
+
+            await MoveScheduleByRings(rings);
         }
     }
 }

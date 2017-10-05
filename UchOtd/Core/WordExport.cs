@@ -1126,7 +1126,7 @@ namespace UchOtd.Core
 
                     var fList = new List<string> {"1-е классы", "2-е классы", "3-е классы", "4-е классы", "5-е классы", "6-е классы", "7-е классы"};
 
-                    Table oTable;
+                    Table oTable, oTable2 = null;
 
                     if (fList.Contains(faculty.Name))
                     {
@@ -1174,7 +1174,9 @@ namespace UchOtd.Core
 
                         cToken.ThrowIfCancellationRequested();
                         
-                        oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek, weekFiltered, weekFilterList, false, faculty, oDoc, oEndOfDoc, oWord, null, cToken);
+
+                        oTable = GetAndPutDowStartSchedule2(repo, 40, dayOfWeek, weekFiltered, weekFilterList, !weekFiltered, faculty, oDoc, oEndOfDoc, oWord, cToken);
+                        
                         if (dayOfWeek != 7)
                         {
                             oPara1 = oDoc.Content.Paragraphs.Add();
@@ -1183,7 +1185,7 @@ namespace UchOtd.Core
                             oPara1.Range.Font.Bold = 1;
                             oPara1.Range.InsertParagraphAfter();
 
-                            oTable = GetAndPutDowSchedule(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilterList, false, faculty, oDoc, oEndOfDoc, oWord, null, cToken);
+                            oTable2 = GetAndPutDowStartSchedule2(repo, 40, dayOfWeek + 1, weekFiltered, weekFilterList, !weekFiltered, faculty, oDoc, oEndOfDoc, oWord, cToken);
                         }
                         
                         Range wrdRng2 = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
@@ -1599,8 +1601,12 @@ namespace UchOtd.Core
                     {
                         fontSize -= 0.5F;
                         oTable.Range.Font.Size = fontSize;
+                        if (fList.Contains(faculty.Name))
+                        {
+                            oTable2.Range.Font.Size = fontSize;
+                        }
 
-                        if (fontSize <= 3)
+                            if (fontSize <= 3)
                         {
                             break;
                         }

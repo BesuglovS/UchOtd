@@ -171,13 +171,15 @@ namespace UchOtd.Schedule
             this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.неточности811ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.освободитьМестоВРасписанииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
-            this.освободитьМестоВРасписанииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FontBigger = new System.Windows.Forms.Button();
+            this.FontSmaller = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -188,6 +190,8 @@ namespace UchOtd.Schedule
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.FontSmaller);
+            this.controlsPanel.Controls.Add(this.FontBigger);
             this.controlsPanel.Controls.Add(this.ElevenTwelveWeek);
             this.controlsPanel.Controls.Add(this.semester);
             this.controlsPanel.Controls.Add(this.changeSemesterDb);
@@ -1405,6 +1409,13 @@ namespace UchOtd.Schedule
             this.неточности811ToolStripMenuItem.Text = "Неточности 8-11";
             this.неточности811ToolStripMenuItem.Click += new System.EventHandler(this.неточности811ToolStripMenuItem_Click);
             // 
+            // освободитьМестоВРасписанииToolStripMenuItem
+            // 
+            this.освободитьМестоВРасписанииToolStripMenuItem.Name = "освободитьМестоВРасписанииToolStripMenuItem";
+            this.освободитьМестоВРасписанииToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.освободитьМестоВРасписанииToolStripMenuItem.Text = "Освободить место в расписании";
+            this.освободитьМестоВРасписанииToolStripMenuItem.Click += new System.EventHandler(this.освободитьМестоВРасписанииToolStripMenuItem_Click);
+            // 
             // viewPanel
             // 
             this.viewPanel.Controls.Add(this.statusStrip1);
@@ -1460,16 +1471,29 @@ namespace UchOtd.Schedule
             // editSchedule
             // 
             this.editSchedule.Name = "editSchedule";
-            this.editSchedule.Size = new System.Drawing.Size(152, 22);
+            this.editSchedule.Size = new System.Drawing.Size(133, 22);
             this.editSchedule.Text = "Аудитория";
             this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
             // 
-            // освободитьМестоВРасписанииToolStripMenuItem
+            // FontBigger
             // 
-            this.освободитьМестоВРасписанииToolStripMenuItem.Name = "освободитьМестоВРасписанииToolStripMenuItem";
-            this.освободитьМестоВРасписанииToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
-            this.освободитьМестоВРасписанииToolStripMenuItem.Text = "Освободить место в расписании";
-            this.освободитьМестоВРасписанииToolStripMenuItem.Click += new System.EventHandler(this.освободитьМестоВРасписанииToolStripMenuItem_Click);
+            this.FontBigger.Location = new System.Drawing.Point(265, 164);
+            this.FontBigger.Name = "FontBigger";
+            this.FontBigger.Size = new System.Drawing.Size(63, 21);
+            this.FontBigger.TabIndex = 73;
+            this.FontBigger.Text = "Шрифт +";
+            this.FontBigger.UseVisualStyleBackColor = true;
+            this.FontBigger.Click += new System.EventHandler(this.FontBigger_Click);
+            // 
+            // FontSmaller
+            // 
+            this.FontSmaller.Location = new System.Drawing.Point(201, 164);
+            this.FontSmaller.Name = "FontSmaller";
+            this.FontSmaller.Size = new System.Drawing.Size(58, 21);
+            this.FontSmaller.TabIndex = 74;
+            this.FontSmaller.Text = "Шрифт -";
+            this.FontSmaller.UseVisualStyleBackColor = true;
+            this.FontSmaller.Click += new System.EventHandler(this.FontSmaller_Click);
             // 
             // MainEditForm
             // 
@@ -1647,6 +1671,8 @@ namespace UchOtd.Schedule
         private Button ElevenTwelveWeek;
         private ToolStripMenuItem неточности811ToolStripMenuItem;
         private ToolStripMenuItem освободитьМестоВРасписанииToolStripMenuItem;
+        private Button FontSmaller;
+        private Button FontBigger;
     }
 }
 

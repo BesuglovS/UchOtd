@@ -118,21 +118,18 @@ namespace UchOtd.Schedule
                 var ring = RingFromTimeString(timeString);
                 var dow = cell.ColumnIndex;
 
-                var week = 1;
-                try
-                {
-                    week = int.Parse(weekString);
-                }
-                catch (Exception exception)
-                {
-                    return;
-                }
+                List<int> weekFilterList = null;
+                if (getWeekFilter(WeekFilter, out weekFilterList)) return;
 
                 var cf = new CommonFunctions(Repo) { ConnectionString = Repo.GetConnectionString() };
-                var calendar = cf.GetCalendarFromDowAndWeek(dow, week);
+                var calendarIds = new List<int>();
+                foreach (var week in weekFilterList)
+                {
+                    calendarIds.Add(cf.GetCalendarFromDowAndWeek(dow, week).CalendarId);
+                }
 
                 var lessons = Repo.Lessons.GetFiltredLessons(l => l.State == 1 &&
-                                                                  l.Calendar.CalendarId == calendar.CalendarId &&
+                                                                  calendarIds.Contains(l.Calendar.CalendarId) &&
                                                                   l.Ring.RingId == ring.RingId &&
                                                                   groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
 
@@ -6275,6 +6272,16 @@ namespace UchOtd.Schedule
         {
             var freeForm = new FreeScheduleSpot(Repo);
             freeForm.Show();
+        }
+
+        private void FontSmaller_Click(object sender, EventArgs e)
+        {
+            ScheduleView.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", ScheduleView.DefaultCellStyle.Font.Size - 0.5f, GraphicsUnit.Pixel);
+        }
+
+        private void FontBigger_Click(object sender, EventArgs e)
+        {
+            ScheduleView.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", ScheduleView.DefaultCellStyle.Font.Size + 0.5f, GraphicsUnit.Pixel);
         }
 
         public void ringsChosen(List<int> ringIds, Auditorium aud)

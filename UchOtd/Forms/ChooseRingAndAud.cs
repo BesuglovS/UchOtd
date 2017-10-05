@@ -122,5 +122,10 @@ namespace UchOtd.Forms
             audsList.DataSource = resultAuds;
 
         }
+
+        private void audsList_DoubleClick(object sender, EventArgs e)
+        {
+            button1_Click(this, e);
+        }
     }
 }

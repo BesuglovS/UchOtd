@@ -170,11 +170,22 @@ namespace Schedule.Repositories.Repositories.Main
             }
         }
 
-        public void RemoveLessonWoLog(int lessonId)
+        public void RemoveLessonWoLog(int lessonId, bool removeEvents = true)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
                 var lesson = context.Lessons.FirstOrDefault(l => l.LessonId == lessonId);
+                if (removeEvents)
+                {
+                    var events = context.LessonLog.Where(lle =>
+                        lle.OldLesson != null && lle.OldLesson.LessonId == lesson.LessonId ||
+                        lle.NewLesson != null && lle.NewLesson.LessonId == lesson.LessonId);
+
+                    foreach (var logEvent in events)
+                    {
+                        context.LessonLog.Remove(logEvent);
+                    }
+                }
 
                 context.Lessons.Remove(lesson);
 

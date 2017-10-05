@@ -46,6 +46,10 @@
             this.Thu = new System.Windows.Forms.CheckBox();
             this.Fri = new System.Windows.Forms.CheckBox();
             this.Sat = new System.Windows.Forms.CheckBox();
+            this.ringsOldToNew = new System.Windows.Forms.Button();
+            this.ShortenLessons = new System.Windows.Forms.Button();
+            this.ringsNewToOld = new System.Windows.Forms.Button();
+            this.LongerLessons = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -134,7 +138,7 @@
             // 
             this.panel1.Controls.Add(this.status);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 303);
+            this.panel1.Location = new System.Drawing.Point(0, 384);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(405, 35);
             this.panel1.TabIndex = 12;
@@ -231,11 +235,55 @@
             this.Sat.Text = "СБ";
             this.Sat.UseVisualStyleBackColor = true;
             // 
+            // ringsOldToNew
+            // 
+            this.ringsOldToNew.Location = new System.Drawing.Point(10, 293);
+            this.ringsOldToNew.Name = "ringsOldToNew";
+            this.ringsOldToNew.Size = new System.Drawing.Size(94, 71);
+            this.ringsOldToNew.TabIndex = 20;
+            this.ringsOldToNew.Text = "Перенести уроки со старых на новые звонки";
+            this.ringsOldToNew.UseVisualStyleBackColor = true;
+            this.ringsOldToNew.Click += new System.EventHandler(this.ringsOldToNew_Click);
+            // 
+            // ShortenLessons
+            // 
+            this.ShortenLessons.Location = new System.Drawing.Point(206, 293);
+            this.ShortenLessons.Name = "ShortenLessons";
+            this.ShortenLessons.Size = new System.Drawing.Size(89, 71);
+            this.ShortenLessons.TabIndex = 21;
+            this.ShortenLessons.Text = "Перенести уроки из новых в укороченные";
+            this.ShortenLessons.UseVisualStyleBackColor = true;
+            this.ShortenLessons.Click += new System.EventHandler(this.ShortenLessons_Click);
+            // 
+            // ringsNewToOld
+            // 
+            this.ringsNewToOld.Location = new System.Drawing.Point(110, 293);
+            this.ringsNewToOld.Name = "ringsNewToOld";
+            this.ringsNewToOld.Size = new System.Drawing.Size(94, 71);
+            this.ringsNewToOld.TabIndex = 22;
+            this.ringsNewToOld.Text = "Перенести уроки с новых на старые звонки";
+            this.ringsNewToOld.UseVisualStyleBackColor = true;
+            this.ringsNewToOld.Click += new System.EventHandler(this.ringsNewToOld_Click);
+            // 
+            // LongerLessons
+            // 
+            this.LongerLessons.Location = new System.Drawing.Point(299, 293);
+            this.LongerLessons.Name = "LongerLessons";
+            this.LongerLessons.Size = new System.Drawing.Size(89, 71);
+            this.LongerLessons.TabIndex = 23;
+            this.LongerLessons.Text = "Перенести уроки из укороченных в новые";
+            this.LongerLessons.UseVisualStyleBackColor = true;
+            this.LongerLessons.Click += new System.EventHandler(this.LongerLessons_Click);
+            // 
             // CopyWeekSchedule
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(405, 338);
+            this.ClientSize = new System.Drawing.Size(405, 419);
+            this.Controls.Add(this.LongerLessons);
+            this.Controls.Add(this.ringsNewToOld);
+            this.Controls.Add(this.ShortenLessons);
+            this.Controls.Add(this.ringsOldToNew);
             this.Controls.Add(this.Sat);
             this.Controls.Add(this.Fri);
             this.Controls.Add(this.Thu);
@@ -282,5 +330,9 @@
         private System.Windows.Forms.CheckBox Thu;
         private System.Windows.Forms.CheckBox Fri;
         private System.Windows.Forms.CheckBox Sat;
+        private System.Windows.Forms.Button ringsOldToNew;
+        private System.Windows.Forms.Button ShortenLessons;
+        private System.Windows.Forms.Button ringsNewToOld;
+        private System.Windows.Forms.Button LongerLessons;
     }
 }
