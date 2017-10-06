@@ -55,15 +55,38 @@ namespace UchOtd.Schedule.Core
             return num2;
         }
 
-        public static Dictionary<int,string> GetAudWeeksList(string weekAuds)
+        // week + audName/LessonLength
+        public static Dictionary<int,Tuple<string, int>> GetAudWeeksList(string weekAuds)
         {
-            var result = new Dictionary<int, string>();
+            var result = new Dictionary<int, Tuple<string, int>>();
             var audsArray = weekAuds.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var auds = new List<string>(audsArray);
 
             if (auds.Count == 1)
             {
-                result.Add(0, auds[0]);
+
+                var st = auds[0];
+
+                var lessonLength = 0;
+
+                if (st.Contains("("))
+                {
+                    var llb = st.IndexOf("(") + 1;
+                    var lle = st.IndexOf(")") - 1;
+                    var llStr = st.Substring(llb, lle - llb + 1);
+
+                    try
+                    {
+                        lessonLength = int.Parse(llStr);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+
+                    st = st.Substring(0, llb - 2).Trim(' ');
+                }
+
+                result.Add(0, new Tuple<string, int>(st, lessonLength));
             }
             else
             {
@@ -75,10 +98,12 @@ namespace UchOtd.Schedule.Core
                     var auditorium = aud.Substring(dashPos + 3, aud.Length - (dashPos + 3));
                     foreach (var week in weeks)
                     {
-                        if (!result.ContainsKey(week))
+                        if (!result.ContainsKey(week.Key))
                         {
-                            result.Add(week, auditorium);
+                            result.Add(week.Key, null);
                         }
+
+                        result[week.Key] = new Tuple<string, int>(auditorium, week.Value);
                     }
                 }
             }
@@ -86,9 +111,9 @@ namespace UchOtd.Schedule.Core
             return result;
         }
 
-        public static List<int> ConvertWeeksToList(string p, bool removeParentheses = false)
+        public static Dictionary<int, int> ConvertWeeksToList(string p, bool removeParentheses = false)
         {
-            var result = new List<int>();
+            var result = new Dictionary<int, int>();
 
             string str = p;
             if (removeParentheses)
@@ -103,13 +128,31 @@ namespace UchOtd.Schedule.Core
             {
                 var st = item.Trim(' ');
 
+                var lessonLength = 0;
+
+                if (st.Contains("("))
+                {
+                    var llb = st.IndexOf("(") + 1;
+                    var lle = st.IndexOf(")") - 1;
+                    var llStr = st.Substring(llb, lle - llb + 1);
+
+                    try
+                    {
+                        lessonLength = int.Parse(llStr);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+
+                    st = st.Substring(0, llb - 2).Trim(' ');
+                }
+
                 if (!st.Contains('-'))
                 {
-                    result.Add(int.Parse(st));
+                    result.Add(int.Parse(st), lessonLength);
                 }
                 else
                 {
-
                     if (st.EndsWith(" (нечёт.)"))
                     {
                         st = st.Substring(0, st.Length - 9);
@@ -132,15 +175,15 @@ namespace UchOtd.Schedule.Core
                         switch (mods)
                         {
                             case 0:
-                                result.Add(i);
+                                result.Add(i, lessonLength);
                                 break;
                             case 1:
                                 if ((i % 2) == 1)
-                                    result.Add(i);
+                                    result.Add(i, lessonLength);
                                 break;
                             case 2:
                                 if ((i % 2) == 0)
-                                    result.Add(i);
+                                    result.Add(i, lessonLength);
                                 break;
                         }
                     }

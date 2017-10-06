@@ -319,15 +319,17 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                             }
                         }
 
-                        aud = _repo.Auditoriums.Find(audWeekList[week]);
+                        lesson.LengthInMinutes = audWeekList[week].Item2;
+
+                        aud = _repo.Auditoriums.Find(audWeekList[week].Item1);
                         if (aud == null)
                         {
                             var firstBuilding = _repo.Buildings.GetFirstFiltredBuilding(b => true);
 
                             if (firstBuilding != null)
                             {
-                                _repo.Auditoriums.Add(new Auditorium(audWeekList[week], firstBuilding));
-                                aud = _repo.Auditoriums.Find(audWeekList[week]);
+                                _repo.Auditoriums.Add(new Auditorium(audWeekList[week].Item1, firstBuilding));
+                                aud = _repo.Auditoriums.Find(audWeekList[week].Item1);
                             }
                         }
                     }
@@ -359,7 +361,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
         private void UpdateFreeAuds()
         {
-            List<int> weekList;
+            Dictionary<int, int> weekList;
 
             try
             {
@@ -379,7 +381,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                     from cal in _repo.Calendars.GetAllCalendars()
                     where Constants.DowRemap[(int) cal.Date.DayOfWeek] - 1 == DayOfWeekListBox.SelectedIndex
                     let week = _repo.CommonFunctions.CalculateWeekNumber(cal.Date)
-                    where weekList.Contains(week)
+                    where weekList.Select(wi => wi.Key).ToList().Contains(week)
                     select cal.CalendarId)
                 .ToList();
 

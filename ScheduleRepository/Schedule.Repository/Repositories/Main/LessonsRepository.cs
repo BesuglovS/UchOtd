@@ -164,6 +164,7 @@ namespace Schedule.Repositories.Repositories.Main
                         context.TeacherForDiscipline.FirstOrDefault(
                             tfd => tfd.TeacherForDisciplineId == lesson.TeacherForDiscipline.TeacherForDisciplineId);
                     curLesson.State = lesson.State;
+                    curLesson.LengthInMinutes = lesson.LengthInMinutes;
                 }
 
                 context.SaveChanges();
@@ -353,6 +354,7 @@ namespace Schedule.Repositories.Repositories.Main
             }
         }
 
+        // GroupId - 08:00 - {tfdId - {weeks + List<Lesson, LessonType> + weeksAndTypes}}
         public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>>
             GetFacultyDowSchedule(int facultyId, int dowRu, bool weekFiltered, List<int> weekFilterList, bool includeProposed, bool onlyFutureDates)
         {

@@ -1970,7 +1970,43 @@ namespace UchOtd.Schedule
 
         private async void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Пусто тут, барин!)");
+            // MessageBox.Show("Пусто тут, барин!)");
+
+            await Task.Run(() =>
+            {
+                var lessons = Repo.Lessons.GetAllLessons();
+                var lc = lessons.Count;
+
+                for (int i = 0; i < lessons.Count; i++)
+                {
+                    var lesson = lessons[i];
+                    var lessonLength = 0;
+
+                    var groupName = lesson.TeacherForDiscipline.Discipline.StudentGroup.Name;
+                    if (groupName.StartsWith("1 ") || groupName.StartsWith("2 ") || groupName.StartsWith("3 ") ||
+                        groupName.StartsWith("4 ") || groupName.StartsWith("5 ") || groupName.StartsWith("6 ") ||
+                        groupName.StartsWith("7 "))
+                    {
+                        lessonLength = 40;
+                    }
+                    else
+                    {
+                        lessonLength = 80;
+                    }
+
+                    lesson.LengthInMinutes = lessonLength;
+
+                    Repo.Lessons.UpdateLesson(lesson);
+
+                    Invoke((MethodInvoker)delegate
+                    {
+                        status.Text = (i + 1) + " / " + lc;
+                        // runs on UI thread
+                    });
+                }
+            });
+
+            status.Text = "Готово";
         }
 
 
@@ -3960,8 +3996,8 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА А " + dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
-                            null, false, _cToken);
+                        WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
+                            false, null, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4013,8 +4049,8 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА БМ " + dbNames[semIndex] +
                                        ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
-                            null, false, _cToken);
+                        WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
+                            false, null, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4067,8 +4103,8 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА ГМ " + dbNames[semIndex] +
                                        ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
-                            null, false, _cToken);
+                        WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
+                            false, null, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4121,8 +4157,8 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА ДМ " + dbNames[semIndex] +
                                        ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
-                            null, false, _cToken);
+                        WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
+                            false, null, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4510,8 +4546,8 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА И " + dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
-                            null, false, _cToken);
+                        WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
+                            false, null, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4669,8 +4705,8 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Горюшкин " + dbNames[semIndex] +
                                        ".docx";
 
-                        WordExport.ExportCustomSchedule(choice, repo, filename, true, true, 90, 6, false, false, false,
-                            null, false, _cToken);
+                        WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
+                            false, null, false, _cToken);
 
                         scheduleFilenames.Add(filename);
                     }

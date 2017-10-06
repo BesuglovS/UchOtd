@@ -181,22 +181,22 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 }
             }
 
-            var keys = oldAuds.Keys.ToList();
-            foreach (var audKey in keys)            
+            var oldWeeksList = oldAuds.Keys.ToList();
+            foreach (var oldWeeksListKey in oldWeeksList)            
             {
-                if (newAuds.ContainsKey(audKey) && (oldAuds[audKey] == newAuds[audKey]))
+                if (newAuds.ContainsKey(oldWeeksListKey) && (oldAuds[oldWeeksListKey] == newAuds[oldWeeksListKey].Item1))
                 {
-                    oldAuds[audKey] = "-1";
-                    oldWeeks.Remove(audKey);
-                    newWeeks.Remove(audKey);
-                    newAuds.Remove(audKey);
+                    oldAuds[oldWeeksListKey] = "-1";
+                    oldWeeks.Remove(oldWeeksListKey);
+                    newWeeks.Remove(oldWeeksListKey);
+                    newAuds.Remove(oldWeeksListKey);
                 }
 
-                if (newAuds.ContainsKey(audKey) && (oldAuds[audKey] != newAuds[audKey]))
+                if (newAuds.ContainsKey(oldWeeksListKey) && (oldAuds[oldWeeksListKey] != newAuds[oldWeeksListKey].Item1))
                 {
 
                     var oldLesson = _curLessons[_curLessons.Keys.ElementAt(_curTfdIndex)].Item2
-                        .FirstOrDefault(l => audKey == _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date));
+                        .FirstOrDefault(l => oldWeeksListKey == _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date));
 
                     var weekNumber = -1;
                     if (oldLesson != null)
@@ -209,7 +209,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                     {
                         TeacherForDiscipline = _repo.TeacherForDisciplines.GetTeacherForDiscipline(int.Parse(_curLessons.Keys.ElementAt(_curTfdIndex).Split('+')[0])),
                         Ring = _ring,
-                        Auditorium = _repo.Auditoriums.Find(newAuds[weekNumber]),
+                        Auditorium = _repo.Auditoriums.Find(newAuds[weekNumber].Item1),
                         State = 1
                     };
 
@@ -229,10 +229,10 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                                                     HiddenComment = ""
                                                 });
 
-                    oldAuds[audKey] = "-1";
-                    oldWeeks.Remove(audKey);
-                    newWeeks.Remove(audKey);
-                    newAuds.Remove(audKey);
+                    oldAuds[oldWeeksListKey] = "-1";
+                    oldWeeks.Remove(oldWeeksListKey);
+                    newWeeks.Remove(oldWeeksListKey);
+                    newAuds.Remove(oldWeeksListKey);
                 }
             }
 
@@ -257,7 +257,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 var lesson = new Lesson { 
                     TeacherForDiscipline = curTfd,
                     Ring = _ring,
-                    Auditorium = _repo.Auditoriums.Find(newAuds[week]),
+                    Auditorium = _repo.Auditoriums.Find(newAuds[week].Item1),
                     State = 1
                 };
 

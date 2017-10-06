@@ -1082,7 +1082,8 @@ namespace UchOtd.Core
 
         public static void ExportCustomSchedule(
             // facultyId, List of DOW
-            Dictionary<int, List<int>> facultyDow, ScheduleRepository repo, string filename, bool save, bool quit, int lessonLength, int daysOfWeek,
+            ScheduleRepository repo, Dictionary<int, List<int>> facultyDow, 
+            string filename, bool save, bool quit, int lessonLength, int daysOfWeek,
             bool schoolHeader, bool onlyFutureDates, bool weekFiltered, List<int> weekFilterList, bool appVisible, CancellationToken cToken)
         {
             object oMissing = Missing.Value;
@@ -1175,7 +1176,7 @@ namespace UchOtd.Core
                         cToken.ThrowIfCancellationRequested();
                         
 
-                        oTable = GetAndPutDowStartSchedule2(repo, 40, dayOfWeek, weekFiltered, weekFilterList, !weekFiltered, faculty, oDoc, oEndOfDoc, oWord, cToken);
+                        oTable = GetAndPutDowStartSchedule2(repo, dayOfWeek, weekFiltered, weekFilterList, !weekFiltered, faculty, oDoc, oEndOfDoc, oWord, cToken);
                         
                         if (dayOfWeek != 7)
                         {
@@ -1185,7 +1186,7 @@ namespace UchOtd.Core
                             oPara1.Range.Font.Bold = 1;
                             oPara1.Range.InsertParagraphAfter();
 
-                            oTable2 = GetAndPutDowStartSchedule2(repo, 40, dayOfWeek + 1, weekFiltered, weekFilterList, !weekFiltered, faculty, oDoc, oEndOfDoc, oWord, cToken);
+                            oTable2 = GetAndPutDowStartSchedule2(repo, dayOfWeek + 1, weekFiltered, weekFilterList, !weekFiltered, faculty, oDoc, oEndOfDoc, oWord, cToken);
                         }
                         
                         Range wrdRng2 = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
@@ -3209,9 +3210,7 @@ namespace UchOtd.Core
             return oTable;
         }
 
-        private static Table GetAndPutDowStartSchedule2(ScheduleRepository repo, int lessonLength, int dayOfWeek,
-            bool weekFiltered, List<int> weekFilterList, bool weeksMarksVisible,
-            Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord, CancellationToken cToken)
+        private static Table GetAndPutDowStartSchedule2(ScheduleRepository repo, int dayOfWeek, bool weekFiltered, List<int> weekFilterList, bool weeksMarksVisible, Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
 
@@ -3956,7 +3955,7 @@ namespace UchOtd.Core
 
             cToken.ThrowIfCancellationRequested();
 
-            Table oTable = GetAndPutDowStartSchedule2(repo, lessonLength, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
+            Table oTable = GetAndPutDowStartSchedule2(repo, dayOfWeek, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
 
             Table oTable2 = null;
 
@@ -3971,7 +3970,7 @@ namespace UchOtd.Core
                     WdLineSpacing.wdLineSpaceSingle;
                 oPara1.Range.InsertParagraphAfter();
 
-                oTable2 = GetAndPutDowStartSchedule2(repo, lessonLength, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
+                oTable2 = GetAndPutDowStartSchedule2(repo, dayOfWeek + 1, weekFiltered, weekFilter, weeksMarksVisible, faculty, oDoc, oEndOfDoc, oWord, cToken);
             }
 
             cToken.ThrowIfCancellationRequested();
