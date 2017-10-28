@@ -34,6 +34,8 @@ namespace UchOtd.Schedule
         {
             this.components = new System.ComponentModel.Container();
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.FontSmaller = new System.Windows.Forms.Button();
+            this.FontBigger = new System.Windows.Forms.Button();
             this.ElevenTwelveWeek = new System.Windows.Forms.Button();
             this.semester = new System.Windows.Forms.ComboBox();
             this.changeSemesterDb = new System.Windows.Forms.Button();
@@ -178,8 +180,6 @@ namespace UchOtd.Schedule
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
-            this.FontBigger = new System.Windows.Forms.Button();
-            this.FontSmaller = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -244,13 +244,33 @@ namespace UchOtd.Schedule
             this.controlsPanel.Size = new System.Drawing.Size(971, 196);
             this.controlsPanel.TabIndex = 0;
             // 
+            // FontSmaller
+            // 
+            this.FontSmaller.Location = new System.Drawing.Point(201, 164);
+            this.FontSmaller.Name = "FontSmaller";
+            this.FontSmaller.Size = new System.Drawing.Size(58, 21);
+            this.FontSmaller.TabIndex = 74;
+            this.FontSmaller.Text = "Шрифт -";
+            this.FontSmaller.UseVisualStyleBackColor = true;
+            this.FontSmaller.Click += new System.EventHandler(this.FontSmaller_Click);
+            // 
+            // FontBigger
+            // 
+            this.FontBigger.Location = new System.Drawing.Point(265, 164);
+            this.FontBigger.Name = "FontBigger";
+            this.FontBigger.Size = new System.Drawing.Size(63, 21);
+            this.FontBigger.TabIndex = 73;
+            this.FontBigger.Text = "Шрифт +";
+            this.FontBigger.UseVisualStyleBackColor = true;
+            this.FontBigger.Click += new System.EventHandler(this.FontBigger_Click);
+            // 
             // ElevenTwelveWeek
             // 
             this.ElevenTwelveWeek.Location = new System.Drawing.Point(148, 165);
             this.ElevenTwelveWeek.Name = "ElevenTwelveWeek";
             this.ElevenTwelveWeek.Size = new System.Drawing.Size(49, 21);
             this.ElevenTwelveWeek.TabIndex = 72;
-            this.ElevenTwelveWeek.Text = "12-13";
+            this.ElevenTwelveWeek.Text = "16-17";
             this.ElevenTwelveWeek.UseVisualStyleBackColor = true;
             this.ElevenTwelveWeek.Click += new System.EventHandler(this.ElevenTwelveWeek_Click);
             // 
@@ -1474,26 +1494,6 @@ namespace UchOtd.Schedule
             this.editSchedule.Size = new System.Drawing.Size(133, 22);
             this.editSchedule.Text = "Аудитория";
             this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
-            // 
-            // FontBigger
-            // 
-            this.FontBigger.Location = new System.Drawing.Point(265, 164);
-            this.FontBigger.Name = "FontBigger";
-            this.FontBigger.Size = new System.Drawing.Size(63, 21);
-            this.FontBigger.TabIndex = 73;
-            this.FontBigger.Text = "Шрифт +";
-            this.FontBigger.UseVisualStyleBackColor = true;
-            this.FontBigger.Click += new System.EventHandler(this.FontBigger_Click);
-            // 
-            // FontSmaller
-            // 
-            this.FontSmaller.Location = new System.Drawing.Point(201, 164);
-            this.FontSmaller.Name = "FontSmaller";
-            this.FontSmaller.Size = new System.Drawing.Size(58, 21);
-            this.FontSmaller.TabIndex = 74;
-            this.FontSmaller.Text = "Шрифт -";
-            this.FontSmaller.UseVisualStyleBackColor = true;
-            this.FontSmaller.Click += new System.EventHandler(this.FontSmaller_Click);
             // 
             // MainEditForm
             // 

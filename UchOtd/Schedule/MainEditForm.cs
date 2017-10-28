@@ -30,6 +30,7 @@ using Utilities = UchOtd.Core.Utilities;
 using Newtonsoft.Json;
 using Schedule.DomainClasses.Logs;
 using Schedule.DomainClasses.Session;
+using TeacherList = UchOtd.Schedule.Forms.DBLists.TeacherList;
 
 namespace UchOtd.Schedule
 {
@@ -1970,40 +1971,41 @@ namespace UchOtd.Schedule
 
         private async void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
-            // MessageBox.Show("Пусто тут, барин!)");
+             MessageBox.Show("Пусто тут, барин!)");
 
             await Task.Run(() =>
             {
-                var lessons = Repo.Lessons.GetAllLessons();
-                var lc = lessons.Count;
+                
 
-                for (int i = 0; i < lessons.Count; i++)
-                {
-                    var lesson = lessons[i];
-                    var lessonLength = 0;
+                //var lessons = Repo.Lessons.GetAllLessons();
+                //var lc = lessons.Count;
 
-                    var groupName = lesson.TeacherForDiscipline.Discipline.StudentGroup.Name;
-                    if (groupName.StartsWith("1 ") || groupName.StartsWith("2 ") || groupName.StartsWith("3 ") ||
-                        groupName.StartsWith("4 ") || groupName.StartsWith("5 ") || groupName.StartsWith("6 ") ||
-                        groupName.StartsWith("7 "))
-                    {
-                        lessonLength = 40;
-                    }
-                    else
-                    {
-                        lessonLength = 80;
-                    }
+                //for (int i = 0; i < lessons.Count; i++)
+                //{
+                //    var lesson = lessons[i];
+                //    var lessonLength = 0;
 
-                    lesson.LengthInMinutes = lessonLength;
+                //    var groupName = lesson.TeacherForDiscipline.Discipline.StudentGroup.Name;
+                //    if (groupName.StartsWith("1 ") || groupName.StartsWith("2 ") || groupName.StartsWith("3 ") ||
+                //        groupName.StartsWith("4 ") || groupName.StartsWith("5 ") || groupName.StartsWith("6 ") ||
+                //        groupName.StartsWith("7 "))
+                //    {
+                //        lessonLength = 40;
+                //    }
+                //    else
+                //    {
+                //        lessonLength = 80;
+                //    }
 
-                    Repo.Lessons.UpdateLesson(lesson);
+                //    lesson.LengthInMinutes = lessonLength;
 
-                    Invoke((MethodInvoker)delegate
-                    {
-                        status.Text = (i + 1) + " / " + lc;
-                        // runs on UI thread
-                    });
-                }
+                //    Repo.Lessons.UpdateLesson(lesson);
+
+                //    Invoke((MethodInvoker)delegate
+                //    {
+                //        status.Text = (i + 1) + " / " + lc;
+                //        // runs on UI thread
+                //    });
             });
 
             status.Text = "Готово";
@@ -5734,9 +5736,15 @@ namespace UchOtd.Schedule
 
         private void CheckTeacherCollisions(List<int> weekFilter)
         {
+
+
             TextFileUtilities.CreateOrEmptyFile("TeacherCollisions.txt");
 
             var teachers = Repo.Teachers.GetAllTeachers().OrderBy(t => t.FIO).ToList();
+
+            //var teachers = Repo.Teachers.GetFiltredTeachers(t => UchOtd.Core.TeacherList.List.Contains(t.FIO))
+            //    .OrderBy(t => t.FIO)
+            //    .ToList();
 
             for (int i = 0; i < teachers.Count; i++)
             {
@@ -5838,16 +5846,16 @@ namespace UchOtd.Schedule
                 {
                     TextFileUtilities.WriteString("TeacherCollisions.txt",
                         DateTime.Now.ToString("dd.MM.yyyy HH:mm - ") +
-                        teacherLessons[pair.Item1].TeacherForDiscipline.Teacher.FIO + "\t" +
-                        teacherLessons[pair.Item1].Calendar.Date.ToString("dd.MM.yyyy") + "\t" +
+                        teacherLessons[pair.Item1].TeacherForDiscipline.Teacher.FIO + "\t" + Environment.NewLine +
+                        teacherLessons[pair.Item1].Calendar.Date.ToString("dd.MM.yyyy") + "\t" + Constants.DowLocal[(int)teacherLessons[pair.Item1].Calendar.Date.DayOfWeek] + "\t" + Environment.NewLine +
                         teacherLessons[pair.Item1].TeacherForDiscipline.Discipline.Name + "\t" +
                         teacherLessons[pair.Item1].TeacherForDiscipline.Discipline.StudentGroup.Name + "\t" +
                         teacherLessons[pair.Item1].Ring.Time.ToString("HH:mm") + "\t" +
-                        teacherLessons[pair.Item1].Auditorium.Name + "\t" +
+                        teacherLessons[pair.Item1].Auditorium.Name + "\t" + Environment.NewLine +
                         teacherLessons[pair.Item2].TeacherForDiscipline.Discipline.Name + "\t" +
                         teacherLessons[pair.Item2].TeacherForDiscipline.Discipline.StudentGroup.Name + "\t" +
                         teacherLessons[pair.Item2].Ring.Time.ToString("HH:mm") + "\t" +
-                        teacherLessons[pair.Item2].Auditorium.Name);
+                        teacherLessons[pair.Item2].Auditorium.Name + Environment.NewLine);
                 }
 
                 Invoke((MethodInvoker)delegate
@@ -5916,17 +5924,10 @@ namespace UchOtd.Schedule
                     var groupName = groupList.Text;
                     var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
                     // var auds = Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList();
-                    var weekNum = 1;
-                    try
-                    {
-                        weekNum = int.Parse(WeekFilter.Text);
-                    }
-                    catch (Exception exc)
-                    {
-                        return;
-                    }
+                    List<int> weekFilterList = null;
+                    if (getWeekFilter(WeekFilter, out weekFilterList)) return;
 
-                    var rForm = new ChooseRingAndAud(Repo, this, ring, building, weekNum, dropDow);
+                    var rForm = new ChooseRingAndAud(Repo, this, ring, building, weekFilterList, dropDow);
                     rForm.Show(this);
                     break;
                 case "lesson":
@@ -5962,16 +5963,8 @@ namespace UchOtd.Schedule
                         var timeString = ds[theRow].Time;
                         ringTo = RingFromTimeString(timeString);
                     }
-
-                    var week = 1;
-                    try
-                    {
-                        week = int.Parse(WeekFilter.Text);
-                    }
-                    catch (Exception exception)
-                    {
-                        return;
-                    }
+                    
+                    if (getWeekFilter(WeekFilter, out weekFilterList)) return;
 
                     if ((dowFrom == dowTo) && (ringIdFrom == ringTo.RingId))
                     {
@@ -5979,7 +5972,7 @@ namespace UchOtd.Schedule
                     }
 
                     //MoveLessonOneWeek(dowFrom, ringIdFrom, dowTo, ringTo, week);
-                    SwapLessonOneWeek(dowFrom, ringIdFrom, dowTo, ringTo, week);
+                    SwapLessons(dowFrom, ringIdFrom, dowTo, ringTo, weekFilterList);
 
                     ShowGroupLessonsClick(this, null);
                     break;
@@ -6021,65 +6014,74 @@ namespace UchOtd.Schedule
             }
         }
 
-        private void SwapLessonOneWeek(int dowFrom, int ringIdFrom, int dowTo, Ring ringTo, int week)
+        private void SwapLessons(int dowFrom, int ringIdFrom, int dowTo, Ring ringTo, List<int> weekFilterList)
         {
             var ringFrom = Repo.Rings.GetRing(ringIdFrom);
 
-            var cf = new CommonFunctions(Repo);
-            cf.ConnectionString = Repo.GetConnectionString();
-            var cFrom = cf.GetCalendarFromDowAndWeek(dowFrom, week);
-            var cTo = cf.GetCalendarFromDowAndWeek(dowTo, week);
-
-            var groupIds = StudentGroupIdsFromGroupId(((StudentGroup)groupList.SelectedItem).StudentGroupId);
-
-            var lessons = Repo.Lessons.GetFiltredLessons(l => l.State == 1 &&
-                                                              l.Calendar.CalendarId == cFrom.CalendarId &&
-                                                              l.Ring.RingId == ringIdFrom &&
-                                                              groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
-
-            var lessons2 = Repo.Lessons.GetFiltredLessons(l => l.State == 1 &&
-                                                              l.Calendar.CalendarId == cTo.CalendarId &&
-                                                              l.Ring.RingId == ringTo.RingId &&
-                                                              groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
-
-            foreach (var lesson in lessons)
+            foreach (var week in weekFilterList)
             {
-                var audIsEmpty = Repo.Auditoriums.CheckIfEmpty(cTo, ringTo, lesson.Auditorium);
-                Auditorium aud;
-                if (audIsEmpty)
-                {
-                    aud = lesson.Auditorium;
-                }
-                else
-                {
-                    aud = Repo.Auditoriums.getFreeAud(cTo.CalendarId, ringTo.RingId,
-                        Repo.Buildings.GetBuildingFromGroupName(lesson.TeacherForDiscipline.Discipline.StudentGroup.Name).BuildingId);
-                }
-                var newLesson = new Lesson(lesson.TeacherForDiscipline, cTo, ringTo, aud);
-                newLesson.State = 1;
-                Repo.Lessons.AddLessonWoLog(newLesson);
+                var cf = new CommonFunctions(Repo);
+                cf.ConnectionString = Repo.GetConnectionString();
+                var cFrom = cf.GetCalendarFromDowAndWeek(dowFrom, week);
+                var cTo = cf.GetCalendarFromDowAndWeek(dowTo, week);
 
-                Repo.Lessons.RemoveLessonWoLog(lesson.LessonId);
-            }
+                var groupIds = StudentGroupIdsFromGroupId(((StudentGroup) groupList.SelectedItem).StudentGroupId);
 
-            foreach (var lesson in lessons2)
-            {
-                var audIsEmpty = Repo.Auditoriums.CheckIfEmpty(cFrom, ringFrom, lesson.Auditorium);
-                Auditorium aud;
-                if (audIsEmpty)
+                var lessons = Repo.Lessons.GetFiltredLessons(l => l.State == 1 &&
+                                                                  l.Calendar.CalendarId == cFrom.CalendarId &&
+                                                                  l.Ring.RingId == ringIdFrom &&
+                                                                  groupIds.Contains(l.TeacherForDiscipline.Discipline
+                                                                      .StudentGroup.StudentGroupId));
+
+                var lessons2 = Repo.Lessons.GetFiltredLessons(l => l.State == 1 &&
+                                                                   l.Calendar.CalendarId == cTo.CalendarId &&
+                                                                   l.Ring.RingId == ringTo.RingId &&
+                                                                   groupIds.Contains(l.TeacherForDiscipline.Discipline
+                                                                       .StudentGroup.StudentGroupId));
+
+                foreach (var lesson in lessons)
                 {
-                    aud = lesson.Auditorium;
+                    var audIsEmpty = Repo.Auditoriums.CheckIfEmpty(cTo, ringTo, lesson.Auditorium);
+                    Auditorium aud;
+                    if (audIsEmpty)
+                    {
+                        aud = lesson.Auditorium;
+                    }
+                    else
+                    {
+                        aud = Repo.Auditoriums.getFreeAud(cTo.CalendarId, ringTo.RingId,
+                            Repo.Buildings
+                                .GetBuildingFromGroupName(lesson.TeacherForDiscipline.Discipline.StudentGroup.Name)
+                                .BuildingId);
+                    }
+                    var newLesson = new Lesson(lesson.TeacherForDiscipline, cTo, ringTo, aud);
+                    newLesson.State = 1;
+                    Repo.Lessons.AddLessonWoLog(newLesson);
+
+                    Repo.Lessons.RemoveLessonWoLog(lesson.LessonId);
                 }
-                else
+
+                foreach (var lesson in lessons2)
                 {
-                    aud = Repo.Auditoriums.getFreeAud(cFrom.CalendarId, ringFrom.RingId,
-                        Repo.Buildings.GetBuildingFromGroupName(lesson.TeacherForDiscipline.Discipline.StudentGroup.Name).BuildingId);
+                    var audIsEmpty = Repo.Auditoriums.CheckIfEmpty(cFrom, ringFrom, lesson.Auditorium);
+                    Auditorium aud;
+                    if (audIsEmpty)
+                    {
+                        aud = lesson.Auditorium;
+                    }
+                    else
+                    {
+                        aud = Repo.Auditoriums.getFreeAud(cFrom.CalendarId, ringFrom.RingId,
+                            Repo.Buildings
+                                .GetBuildingFromGroupName(lesson.TeacherForDiscipline.Discipline.StudentGroup.Name)
+                                .BuildingId);
+                    }
+                    var newLesson = new Lesson(lesson.TeacherForDiscipline, cFrom, ringFrom, aud);
+                    newLesson.State = 1;
+                    Repo.Lessons.AddLessonWoLog(newLesson);
+
+                    Repo.Lessons.RemoveLessonWoLog(lesson.LessonId);
                 }
-                var newLesson = new Lesson(lesson.TeacherForDiscipline, cFrom, ringFrom, aud);
-                newLesson.State = 1;
-                Repo.Lessons.AddLessonWoLog(newLesson);
-                
-                Repo.Lessons.RemoveLessonWoLog(lesson.LessonId);
             }
         }
 
@@ -6140,15 +6142,9 @@ namespace UchOtd.Schedule
                 }
                 var dow = e.ColumnIndex;
                 var eprst = 999;
-                var week = 1;
-                try
-                {
-                    week = int.Parse(WeekFilter.Text);
-                }
-                catch (Exception exc)
-                {
-                    return;
-                }
+
+                List<int> weekFilterList = null;
+                if (getWeekFilter(WeekFilter, out weekFilterList)) return;
 
                 ScheduleView.DoDragDrop("lesson:" + ringId + ":" + dow, DragDropEffects.Copy);
             }
@@ -6227,7 +6223,7 @@ namespace UchOtd.Schedule
         private void ElevenTwelveWeek_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "12-13";
+            WeekFilter.Text = "16-17";
         }
 
         private async void неточности811ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6322,32 +6318,29 @@ namespace UchOtd.Schedule
 
         public void ringsChosen(List<int> ringIds, Auditorium aud)
         {
-            var week = 1;
-            try
-            {
-                week = int.Parse(WeekFilter.Text);
-            }
-            catch (Exception e)
-            {
-                return;
-            }
+            List<int> weekFilterList = null;
+            if (getWeekFilter(WeekFilter, out weekFilterList)) return;
+
             var cf = new CommonFunctions(Repo);
             cf.ConnectionString = Repo.GetConnectionString();
 
-            var c = cf.GetCalendarFromDowAndWeek(dropDow, week);
-            var tefd = Repo.TeacherForDisciplines.GetTeacherForDiscipline(dropTfdId);
-
-            var groupName = tefd.Discipline.StudentGroup.Name;
-            var buildingId = Repo.Buildings.GetBuildingFromGroupName(groupName);
-
-            foreach (var ringId in ringIds)
+            foreach (var week in weekFilterList)
             {
-                var ring = Repo.Rings.Get(ringId);
+                var c = cf.GetCalendarFromDowAndWeek(dropDow, week);
+                var tefd = Repo.TeacherForDisciplines.GetTeacherForDiscipline(dropTfdId);
 
-                //var newLesson = new Lesson(tefd, c, ring, Repo.Auditoriums.getFreeAud(c.CalendarId, ringId, Repo.Buildings.GetBuildingFromGroupName(groupName).BuildingId));
-                var newLesson = new Lesson(tefd, c, ring, aud);
-                newLesson.State = 1;
-                Repo.Lessons.AddLessonWoLog(newLesson);
+                var groupName = tefd.Discipline.StudentGroup.Name;
+                var buildingId = Repo.Buildings.GetBuildingFromGroupName(groupName);
+
+                foreach (var ringId in ringIds)
+                {
+                    var ring = Repo.Rings.Get(ringId);
+
+                    //var newLesson = new Lesson(tefd, c, ring, Repo.Auditoriums.getFreeAud(c.CalendarId, ringId, Repo.Buildings.GetBuildingFromGroupName(groupName).BuildingId));
+                    var newLesson = new Lesson(tefd, c, ring, aud);
+                    newLesson.State = 1;
+                    Repo.Lessons.AddLessonWoLog(newLesson);
+                }
             }
 
             ShowGroupLessonsClick(this, null);

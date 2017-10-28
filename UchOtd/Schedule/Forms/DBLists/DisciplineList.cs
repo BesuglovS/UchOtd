@@ -792,7 +792,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void button1_Click(object sender, EventArgs e)
         {
             hoursFilteredByWeek.Checked = true;
-            hoursWeekFilter.Text = "12-13";
+            hoursWeekFilter.Text = "16-17";
         }
     }
 }

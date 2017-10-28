@@ -509,7 +509,7 @@ namespace UchOtd.Forms
         private void button1_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            weekFilter.Text = "12-13";
+            weekFilter.Text = "16-17";
         }
     }
 }

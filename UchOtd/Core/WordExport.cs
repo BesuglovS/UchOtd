@@ -3210,7 +3210,8 @@ namespace UchOtd.Core
             return oTable;
         }
 
-        private static Table GetAndPutDowStartSchedule2(ScheduleRepository repo, int dayOfWeek, bool weekFiltered, List<int> weekFilterList, bool weeksMarksVisible, Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord, CancellationToken cToken)
+        private static Table GetAndPutDowStartSchedule2(ScheduleRepository repo, int dayOfWeek, bool weekFiltered, List<int> weekFilterList,
+            bool weeksMarksVisible, Faculty faculty, _Document oDoc, object oEndOfDoc, _Application oWord, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
 
@@ -3284,7 +3285,7 @@ namespace UchOtd.Core
                 var hour = int.Parse(time.Substring(0, 2));
                 var minute = int.Parse(time.Substring(3, 2));
 
-                minute += lessonLength;
+                minute += 40; // TODO: fix this with variable length
 
                 while (minute >= 60)
                 {
