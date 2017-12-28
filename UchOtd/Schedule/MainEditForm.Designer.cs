@@ -34,6 +34,8 @@ namespace UchOtd.Schedule
         {
             this.components = new System.ComponentModel.Container();
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.week17 = new System.Windows.Forms.Button();
+            this.week16 = new System.Windows.Forms.Button();
             this.FontSmaller = new System.Windows.Forms.Button();
             this.FontBigger = new System.Windows.Forms.Button();
             this.ElevenTwelveWeek = new System.Windows.Forms.Button();
@@ -174,6 +176,8 @@ namespace UchOtd.Schedule
             this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.неточности811ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.освободитьМестоВРасписанииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.googleCalendarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.GoogleCalendarExport = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
@@ -190,6 +194,8 @@ namespace UchOtd.Schedule
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.week17);
+            this.controlsPanel.Controls.Add(this.week16);
             this.controlsPanel.Controls.Add(this.FontSmaller);
             this.controlsPanel.Controls.Add(this.FontBigger);
             this.controlsPanel.Controls.Add(this.ElevenTwelveWeek);
@@ -244,9 +250,29 @@ namespace UchOtd.Schedule
             this.controlsPanel.Size = new System.Drawing.Size(971, 196);
             this.controlsPanel.TabIndex = 0;
             // 
+            // week17
+            // 
+            this.week17.Location = new System.Drawing.Point(238, 165);
+            this.week17.Name = "week17";
+            this.week17.Size = new System.Drawing.Size(29, 21);
+            this.week17.TabIndex = 76;
+            this.week17.Text = "17";
+            this.week17.UseVisualStyleBackColor = true;
+            this.week17.Click += new System.EventHandler(this.week17_Click);
+            // 
+            // week16
+            // 
+            this.week16.Location = new System.Drawing.Point(203, 165);
+            this.week16.Name = "week16";
+            this.week16.Size = new System.Drawing.Size(29, 21);
+            this.week16.TabIndex = 75;
+            this.week16.Text = "16";
+            this.week16.UseVisualStyleBackColor = true;
+            this.week16.Click += new System.EventHandler(this.week16_Click);
+            // 
             // FontSmaller
             // 
-            this.FontSmaller.Location = new System.Drawing.Point(201, 164);
+            this.FontSmaller.Location = new System.Drawing.Point(280, 165);
             this.FontSmaller.Name = "FontSmaller";
             this.FontSmaller.Size = new System.Drawing.Size(58, 21);
             this.FontSmaller.TabIndex = 74;
@@ -256,7 +282,7 @@ namespace UchOtd.Schedule
             // 
             // FontBigger
             // 
-            this.FontBigger.Location = new System.Drawing.Point(265, 164);
+            this.FontBigger.Location = new System.Drawing.Point(344, 165);
             this.FontBigger.Name = "FontBigger";
             this.FontBigger.Size = new System.Drawing.Size(63, 21);
             this.FontBigger.TabIndex = 73;
@@ -701,7 +727,8 @@ namespace UchOtd.Schedule
             this.справочникиToolStripMenuItem,
             this.анализToolStripMenuItem,
             this.экспортВWordToolStripMenuItem,
-            this.bigRedButtonToolStripMenuItem});
+            this.bigRedButtonToolStripMenuItem,
+            this.googleCalendarToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(971, 24);
@@ -1436,6 +1463,21 @@ namespace UchOtd.Schedule
             this.освободитьМестоВРасписанииToolStripMenuItem.Text = "Освободить место в расписании";
             this.освободитьМестоВРасписанииToolStripMenuItem.Click += new System.EventHandler(this.освободитьМестоВРасписанииToolStripMenuItem_Click);
             // 
+            // googleCalendarToolStripMenuItem
+            // 
+            this.googleCalendarToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.GoogleCalendarExport});
+            this.googleCalendarToolStripMenuItem.Name = "googleCalendarToolStripMenuItem";
+            this.googleCalendarToolStripMenuItem.Size = new System.Drawing.Size(107, 20);
+            this.googleCalendarToolStripMenuItem.Text = "Google Calendar";
+            // 
+            // GoogleCalendarExport
+            // 
+            this.GoogleCalendarExport.Name = "GoogleCalendarExport";
+            this.GoogleCalendarExport.Size = new System.Drawing.Size(187, 22);
+            this.GoogleCalendarExport.Text = "Экспорт расписания";
+            this.GoogleCalendarExport.Click += new System.EventHandler(this.GoogleCalendarExport_Click);
+            // 
             // viewPanel
             // 
             this.viewPanel.Controls.Add(this.statusStrip1);
@@ -1673,6 +1715,10 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem освободитьМестоВРасписанииToolStripMenuItem;
         private Button FontSmaller;
         private Button FontBigger;
+        private Button week17;
+        private Button week16;
+        private ToolStripMenuItem googleCalendarToolStripMenuItem;
+        private ToolStripMenuItem GoogleCalendarExport;
     }
 }
 

@@ -659,5 +659,10 @@ namespace UchOtd
                 }
             }, cToken);
         }
+
+        private void StartupForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

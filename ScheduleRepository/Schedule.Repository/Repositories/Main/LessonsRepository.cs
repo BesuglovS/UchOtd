@@ -164,7 +164,7 @@ namespace Schedule.Repositories.Repositories.Main
                         context.TeacherForDiscipline.FirstOrDefault(
                             tfd => tfd.TeacherForDisciplineId == lesson.TeacherForDiscipline.TeacherForDisciplineId);
                     curLesson.State = lesson.State;
-                    curLesson.LengthInMinutes = lesson.LengthInMinutes;
+                    //curLesson.LengthInMinutes = lesson.LengthInMinutes;
                 }
 
                 context.SaveChanges();

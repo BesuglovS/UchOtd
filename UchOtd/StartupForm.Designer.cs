@@ -258,6 +258,7 @@ namespace UchOtd
             this.ClientSize = new System.Drawing.Size(283, 203);
             this.Name = "StartupForm";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.StartupForm_Load);
             this.trayIconMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 

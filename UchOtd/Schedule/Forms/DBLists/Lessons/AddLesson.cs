@@ -319,7 +319,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                             }
                         }
 
-                        lesson.LengthInMinutes = audWeekList[week].Item2;
+                        //lesson.LengthInMinutes = audWeekList[week].Item2;
 
                         aud = _repo.Auditoriums.Find(audWeekList[week].Item1);
                         if (aud == null)

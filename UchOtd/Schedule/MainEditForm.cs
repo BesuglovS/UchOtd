@@ -29,8 +29,14 @@ using StudentList = UchOtd.Schedule.Forms.DBLists.StudentList;
 using Utilities = UchOtd.Core.Utilities;
 using Newtonsoft.Json;
 using Schedule.DomainClasses.Logs;
-using Schedule.DomainClasses.Session;
 using TeacherList = UchOtd.Schedule.Forms.DBLists.TeacherList;
+using DomainCalendar = Schedule.DomainClasses.Main.Calendar;
+using Google.Apis.Calendar.v3;
+using Google.Apis.Calendar.v3.Data;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Util.Store;
+using Google.Apis.Services;
+using Calendar = Google.Apis.Calendar.v3.Data.Calendar;
 
 namespace UchOtd.Schedule
 {
@@ -1087,7 +1093,7 @@ namespace UchOtd.Schedule
 
         private void ДниСеместраToolStripMenuItemClick(object sender, EventArgs e)
         {
-            var calendarForm = new CalendarList(Repo);
+            var calendarForm = new Forms.DBLists.CalendarList(Repo);
             calendarForm.Show();
         }
 
@@ -1969,46 +1975,202 @@ namespace UchOtd.Schedule
             sw.Close();
         }
 
+        private Dictionary<int, Ring> RingsFromTimeSpans(Dictionary<TimeSpan, TimeSpan> rings)
+        {
+            var ringIdDict = new Dictionary<int, Ring>();
+
+            var allRings = Repo.Rings.GetAllRings();
+
+            foreach (var ringPair in rings)
+            {
+                var r1 = allRings.FirstOrDefault(r => r.Time.Hour == ringPair.Key.Hours &&
+                                                      r.Time.Minute == ringPair.Key.Minutes);
+                var r2 = allRings.FirstOrDefault(r => r.Time.Hour == ringPair.Value.Hours &&
+                                                      r.Time.Minute == ringPair.Value.Minutes);
+                if (r1 != null && r2 != null)
+                {
+                    ringIdDict.Add(r1.RingId, r2);
+                }
+            }
+            return ringIdDict;
+        }
+
         private async void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
-             MessageBox.Show("Пусто тут, барин!)");
-
+            //MessageBox.Show("Пусто тут, барин!)");
             await Task.Run(() =>
             {
-                
+                var rings = new Dictionary<TimeSpan, TimeSpan>
+                {
+                    { new TimeSpan(13,15,00), new TimeSpan(13,05,00) },                
+                };
 
-                //var lessons = Repo.Lessons.GetAllLessons();
-                //var lc = lessons.Count;
+                var fNames = new List<string> { "1-е классы", "2-е классы", "3-е классы", "4-е классы", "5-е классы", "6-е классы", "7-е классы" };
 
-                //for (int i = 0; i < lessons.Count; i++)
-                //{
-                //    var lesson = lessons[i];
-                //    var lessonLength = 0;
+                var faculties = Repo.Faculties.GetFiltredFaculties(f => fNames.Contains(f.Name));
 
-                //    var groupName = lesson.TeacherForDiscipline.Discipline.StudentGroup.Name;
-                //    if (groupName.StartsWith("1 ") || groupName.StartsWith("2 ") || groupName.StartsWith("3 ") ||
-                //        groupName.StartsWith("4 ") || groupName.StartsWith("5 ") || groupName.StartsWith("6 ") ||
-                //        groupName.StartsWith("7 "))
-                //    {
-                //        lessonLength = 40;
-                //    }
-                //    else
-                //    {
-                //        lessonLength = 80;
-                //    }
+                List<int> dow = new List<int> { 6 };
 
-                //    lesson.LengthInMinutes = lessonLength;
+                foreach (var faculty in faculties.OrderBy(f => f.SortingOrder))
+                {
+                    var facultyGroups = Repo.GroupsInFaculties
+                        .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                        .Select(gif => gif.StudentGroup);
 
-                //    Repo.Lessons.UpdateLesson(lesson);
+                    foreach (var studentGroup in facultyGroups)
 
-                //    Invoke((MethodInvoker)delegate
-                //    {
-                //        status.Text = (i + 1) + " / " + lc;
-                //        // runs on UI thread
-                //    });
+
+                    {
+                        var ringsTransformDict = RingsFromTimeSpans(rings);
+
+                        var groupIds = StudentGroupIdsFromGroupId(studentGroup.StudentGroupId);
+
+                        var cf = new CommonFunctions(Repo) { ConnectionString = Repo.GetConnectionString() };
+
+                        var calendarList = new List<DomainCalendar>();
+
+                        for (int i = 0; i < dow.Count; i++)
+                        {
+                            var dayOfWeek = dow[i];
+                            var c1 = cf.GetCalendarFromDowAndWeek(dayOfWeek, 15);
+                            if (c1 != null)
+                            {
+                                calendarList.Add(c1);
+                            }
+                        }
+
+                        foreach (var calendar in calendarList)
+                        {
+                            var dayLessons = Repo
+                                .Lessons
+                                .GetFiltredLessons(l => l.State == 1 &&
+                                                        l.Calendar.CalendarId == calendar.CalendarId &&
+                                                        groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
+
+
+
+                            foreach (var lesson in dayLessons)
+                            {
+                                if (!ringsTransformDict.ContainsKey(lesson.Ring.RingId))
+                                {
+                                    continue;
+                                }
+
+                                lesson.Ring = ringsTransformDict[lesson.Ring.RingId];
+                                Repo.Lessons.UpdateLesson(lesson);
+                            }
+                                                        
+
+                            Invoke((MethodInvoker)delegate
+                            {
+                                status.Text = studentGroup.Name + ": " + calendar.Date.ToString("dd.MM.yyyy");
+                                // runs on UI thread
+                            });
+                        }
+                    }
+                }
             });
 
             status.Text = "Готово";
+        }
+
+       
+        private void SameAud()
+        {
+            TextFileUtilities.CreateOrEmptyFile("SameAud.txt");
+
+            var calendars = Repo.Calendars
+                .GetFiltredCalendars(c => c.Date > new DateTime(2017, 11, 19))
+                .OrderBy(c => c.Date)
+                .ToList();
+
+            for (int i = 0; i < calendars.Count; i++)
+            {
+                var c = calendars[i];
+                int dow = ((int)c.Date.DayOfWeek == 0) ? 7 : (int)c.Date.DayOfWeek;
+                string dowRu = Constants.DowLocal[dow];
+                var weekNum = Repo.CommonFunctions.CalculateWeekNumber(c.Date);
+
+                var building = Repo.Buildings.GetFiltredBuildings(b => b.Name == "ул. Молодогвардейская, 196")[0];
+
+                var buildingLessons = Repo.Lessons.GetFiltredLessons(l =>
+                    l.State == 1 &&
+                    l.Auditorium.Building.BuildingId == building.BuildingId &&
+                    l.Calendar.CalendarId == c.CalendarId
+                );
+
+                for (int j = 0; j < buildingLessons.Count; j++)
+                {
+                    for (int k = j + 1; k < buildingLessons.Count; k++)
+                    {
+                        var l1 = buildingLessons[j];
+                        var l2 = buildingLessons[k];
+
+                        if (l1.Auditorium.AuditoriumId == l2.Auditorium.AuditoriumId && l1.Ring.RingId == l2.Ring.RingId)
+                        {
+                            TextFileUtilities.WriteString("SameAud.txt",
+                                c.Date.ToString("dd.MM.yyyy") + "\tНеделя: " + weekNum + "\t" + dowRu + "\t" +
+                                l1.Ring.Time.ToString("HH:mm") + "\t" + l1.Auditorium.Name + Environment.NewLine +
+                                l1.TeacherForDiscipline.Teacher.FIO + "\t\t\t" +
+                                l1.TeacherForDiscipline.Discipline.StudentGroup.Name + "\t\t\t" +
+                                l1.TeacherForDiscipline.Discipline.Name + Environment.NewLine +
+                                l2.TeacherForDiscipline.Teacher.FIO + "\t\t\t" +
+                                l2.TeacherForDiscipline.Discipline.StudentGroup.Name + "\t\t\t" +
+                                l2.TeacherForDiscipline.Discipline.Name
+                            );
+                        }
+                    }
+                }
+
+                Invoke((MethodInvoker)delegate
+                {
+                    status.Text = (i + 1) + " / " + calendars.Count + " = " +
+                                  (((double)i + 1) * 100 / calendars.Count).ToString("0.00") + "%";
+                    // runs on UI thread
+                });
+            }
+        }
+
+        private async Task RemoveDuplicateLessons()
+        {
+            await Task.Run(() =>
+            {
+                var lessons = Repo.Lessons.GetFiltredLessons(l => l.State == 1);
+
+                for (int i = 0; i < lessons.Count; i++)
+                {
+                    if (lessons[i] == null)
+                    {
+                        continue;
+                    }
+
+                    for (int j = i + 1; j < lessons.Count; j++)
+                    {
+                        if (lessons[j] == null)
+                        {
+                            continue;
+                        }
+
+                        var l1 = lessons[i];
+                        var l2 = lessons[j];
+                        if ((l1.TeacherForDiscipline.TeacherForDisciplineId ==
+                             l2.TeacherForDiscipline.TeacherForDisciplineId) &&
+                            (l1.Calendar.CalendarId == l2.Calendar.CalendarId) &&
+                            (l1.Ring.RingId == l2.Ring.RingId))
+                        {
+                            Repo.Lessons.RemoveLessonWoLog(l2.LessonId);
+                            lessons[j] = null;
+                        }
+                    }
+
+                    Invoke((MethodInvoker) delegate
+                    {
+                        status.Text = (i + 1) + " / " + lessons.Count + " = " +
+                                      (((double) i + 1) * 100 / lessons.Count).ToString("0.00") + "%";
+                        // runs on UI thread
+                    });
+                }
+            });
         }
 
 
@@ -6314,6 +6476,111 @@ namespace UchOtd.Schedule
         private void FontBigger_Click(object sender, EventArgs e)
         {
             ScheduleView.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", ScheduleView.DefaultCellStyle.Font.Size + 0.5f, GraphicsUnit.Pixel);
+        }
+
+        private void week16_Click(object sender, EventArgs e)
+        {
+            weekFiltered.Checked = true;
+            WeekFilter.Text = "16";
+        }
+
+        private void week17_Click(object sender, EventArgs e)
+        {
+            weekFiltered.Checked = true;
+            WeekFilter.Text = "17";
+        }
+
+        private async void BitrixScheduleExport_Click(object sender, EventArgs e)
+        {
+            const String BasePath = @"D:\BitrixExport\";
+
+            var facultyNames = new List<string>
+            {
+                "Факультет математики и компьютерных наук" ,
+                "Философский факультет",
+                "Химико-биологический факультет",
+                "Экономический факультет",
+                "Юридический факультет",
+                "Факультет международных отношений",
+                "Факультет управления",
+                "Факультета туризма",
+                "Философский факультет (магистратура)",
+                "Юридический факультет (магистратура)"
+            };
+
+            Invoke((MethodInvoker)delegate
+            {
+                status.Text = "Экспорт расписания....";
+                // runs on UI thread
+            });
+
+            var faculties = Repo.Faculties.GetFiltredFaculties(f => facultyNames.Contains(f.Name)).OrderBy(f => f.SortingOrder).ToList();
+
+            var facultyDowIds = new Dictionary<int, List<int>>();
+
+            for (int i = 0; i < faculties.Count; i++)            
+            {
+                var faculty = faculties[i];
+
+                facultyDowIds.Add(faculty.FacultyId, new List<int> { 1, 2, 3, 4, 5, 6 });
+                
+            }
+
+            var fileName = BasePath + "Расписание (17-18-1).docx";
+
+            try
+            {
+                _tokenSource = new CancellationTokenSource();
+                _cToken = _tokenSource.Token;
+
+                await Task.Run(() => WordExport.ExportCustomSchedule(Repo, facultyDowIds,
+                    fileName, true, true, 90, 6, SchoolHeader, false, false, new List<int> { }, false, _cToken), _cToken);
+            }
+            catch (OperationCanceledException exception)
+            {
+            }
+
+            Invoke((MethodInvoker)delegate
+            {
+                status.Text = "Экспорт расписания завершён.";
+                // runs on UI thread
+            });
+        }
+
+        private void GoogleCalendarExport_Click(object sender, EventArgs e)
+        {
+            Task.Run(() => { 
+                var service = GoogleCalendarService.InitService();
+
+                //var studentGroup = Repo.StudentGroups
+                //    .GetFirstFiltredStudentGroups(sg =>
+                //        sg.Name == "15 А");
+
+                var faculties = Repo.Faculties
+                    .GetAllFaculties()
+                    .OrderBy(f => f.SortingOrder)
+                    .ToList();
+
+                foreach (var faculty in faculties)
+                {
+                    var facultyGroups = Repo.GroupsInFaculties
+                            .GetFiltredGroupsInFaculty(gif =>
+                                gif.Faculty.FacultyId == faculty.FacultyId)
+                        .Select(gif => gif.StudentGroup);
+
+                    foreach (var studentGroup in facultyGroups)
+                    {
+                        GoogleCalendarService.UploadGroupLessonEvents(Repo, studentGroup);
+
+                        Invoke((MethodInvoker)delegate
+                        {
+                            status.Text = studentGroup.Name;
+                            // runs on UI thread
+                        });
+                    }
+                }
+
+            });
         }
 
         public void ringsChosen(List<int> ringIds, Auditorium aud)

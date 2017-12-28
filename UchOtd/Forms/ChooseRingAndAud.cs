@@ -12,6 +12,7 @@ using Schedule.Repositories;
 using Schedule.Repositories.Common;
 using UchOtd.Schedule;
 using UchOtd.Schedule.Views.DBListViews;
+using UchOtd.Views;
 
 namespace UchOtd.Forms
 {
@@ -42,8 +43,8 @@ namespace UchOtd.Forms
 
         private void ChooseRing_Load(object sender, EventArgs e)
         {
-            audsList.DisplayMember = "Name";
-            audsList.DataSource = _auds;
+            audsList.DisplayMember = "FancyName";
+            audsList.DataSource = _auds.Select(a => new AudFreeView(a.AuditoriumId, a.Name, true)).ToList();
 
             ringsList.DisplayMember = "Time";
             ringsList.DataSource = _rings;
@@ -84,7 +85,10 @@ namespace UchOtd.Forms
                 rIndexes.Add(_rings[rIndex].RingId);
             }
 
-            _mef.ringsChosen(rIndexes, (Auditorium)audsList.SelectedItem);
+            var aView = (AudFreeView) audsList.SelectedItem;
+            var aud = _repo.Auditoriums.Get(aView.AuditoriumId);
+
+            _mef.ringsChosen(rIndexes, aud);
 
             Close();
         }
@@ -132,7 +136,13 @@ namespace UchOtd.Forms
                 resultAuds = _repo.Auditoriums.GetAll();
             }
 
-            audsList.DataSource = resultAuds;
+            var buildingAuds = _repo.Auditoriums.FindAll(a => a.Building.BuildingId == _building.BuildingId);
+            List<int> FreeAudIds = resultAuds.Select(a => a.AuditoriumId).ToList();
+
+            var finalAuds = buildingAuds
+                .Select(a => new AudFreeView(a.AuditoriumId, a.Name, FreeAudIds.Contains(a.AuditoriumId))).ToList();
+
+            audsList.DataSource = finalAuds;
 
         }
 
