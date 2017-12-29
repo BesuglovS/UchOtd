@@ -21,7 +21,10 @@ namespace UchOtd.Core
         public static CalendarService Service;
         public static string TimeZone = "Europe/Samara";
 
-        public static CalendarService InitService()
+        public static string NUCredentials = "client_secret.json";
+        public static string NACredentials = "client_secret2.json";
+
+        public static CalendarService InitService(string credentialsFilename)
         {
             string[] Scopes = { CalendarService.Scope.Calendar };
             string ApplicationName = "UchOtd";
@@ -29,11 +32,11 @@ namespace UchOtd.Core
             UserCredential credential;
 
             using (var stream =
-                new FileStream("client_secret.json", FileMode.Open, FileAccess.Read))
+                new FileStream(credentialsFilename, FileMode.Open, FileAccess.Read))
             {
                 string credPath = System.Environment.GetFolderPath(
                     System.Environment.SpecialFolder.Personal);
-                credPath = Path.Combine(credPath, ".credentials/calendar-dotnet-quickstart.json");
+                credPath = Path.Combine(credPath, ".credentials/" + credentialsFilename);
 
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
@@ -87,7 +90,7 @@ namespace UchOtd.Core
             var lessonLengthInMinutes = Utilities.GetLessonLengthFromGroupname(group.Name);
 
             var oldEvents = GetCalendarEvents(calendar);
-            var lessonsToDelete = Enumerable.Range(0, oldEvents.Count-1).ToList();
+            var lessonsToDelete = (oldEvents.Count > 0) ? (Enumerable.Range(0, oldEvents.Count-1).ToList()) : (new List<int>());
 
             for (var i = 0; i < groupLessons.Count; i++)
             {
@@ -133,7 +136,7 @@ namespace UchOtd.Core
 
                     var newEvent = Service.Events.Insert(evt, calendar.Id).Execute();
 
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
                 }
 
                 foreach (var lessonIndex in lessonsToDelete)

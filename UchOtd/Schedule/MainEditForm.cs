@@ -6550,7 +6550,7 @@ namespace UchOtd.Schedule
         private void GoogleCalendarExport_Click(object sender, EventArgs e)
         {
             Task.Run(() => { 
-                var service = GoogleCalendarService.InitService();
+                var service = GoogleCalendarService.InitService(GoogleCalendarService.NACredentials);
 
                 //var studentGroup = Repo.StudentGroups
                 //    .GetFirstFiltredStudentGroups(sg =>
@@ -6558,6 +6558,7 @@ namespace UchOtd.Schedule
 
                 var faculties = Repo.Faculties
                     .GetAllFaculties()
+                    .Where(f => f.SortingOrder < 20)
                     .OrderBy(f => f.SortingOrder)
                     .ToList();
 
