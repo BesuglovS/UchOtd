@@ -47,9 +47,9 @@
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.OK);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 225);
+            this.panel1.Location = new System.Drawing.Point(0, 602);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(232, 54);
+            this.panel1.Size = new System.Drawing.Size(375, 54);
             this.panel1.TabIndex = 0;
             // 
             // button2
@@ -58,7 +58,7 @@
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.button2.Location = new System.Drawing.Point(118, 0);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(114, 54);
+            this.button2.Size = new System.Drawing.Size(257, 54);
             this.button2.TabIndex = 1;
             this.button2.Text = "Cancel";
             this.button2.UseVisualStyleBackColor = true;
@@ -83,28 +83,28 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(232, 225);
+            this.panel2.Size = new System.Drawing.Size(375, 602);
             this.panel2.TabIndex = 1;
             // 
             // panel4
             // 
             this.panel4.Controls.Add(this.audsList);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel4.Location = new System.Drawing.Point(118, 0);
+            this.panel4.Location = new System.Drawing.Point(156, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(114, 225);
+            this.panel4.Size = new System.Drawing.Size(219, 602);
             this.panel4.TabIndex = 2;
             // 
             // audsList
             // 
             this.audsList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.audsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.audsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.audsList.FormattingEnabled = true;
-            this.audsList.ItemHeight = 9;
+            this.audsList.ItemHeight = 37;
             this.audsList.Location = new System.Drawing.Point(0, 0);
             this.audsList.Name = "audsList";
             this.audsList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.audsList.Size = new System.Drawing.Size(114, 225);
+            this.audsList.Size = new System.Drawing.Size(219, 602);
             this.audsList.TabIndex = 2;
             this.audsList.DoubleClick += new System.EventHandler(this.audsList_DoubleClick);
             // 
@@ -114,19 +114,19 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(118, 225);
+            this.panel3.Size = new System.Drawing.Size(156, 602);
             this.panel3.TabIndex = 1;
             // 
             // ringsList
             // 
             this.ringsList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ringsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ringsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ringsList.FormattingEnabled = true;
-            this.ringsList.ItemHeight = 9;
+            this.ringsList.ItemHeight = 37;
             this.ringsList.Location = new System.Drawing.Point(0, 0);
             this.ringsList.Name = "ringsList";
             this.ringsList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.ringsList.Size = new System.Drawing.Size(118, 225);
+            this.ringsList.Size = new System.Drawing.Size(156, 602);
             this.ringsList.TabIndex = 1;
             this.ringsList.SelectedValueChanged += new System.EventHandler(this.ringsList_SelectedValueChanged);
             // 
@@ -134,7 +134,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(232, 279);
+            this.ClientSize = new System.Drawing.Size(375, 656);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "ChooseRingAndAud";

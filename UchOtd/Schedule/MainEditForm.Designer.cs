@@ -405,7 +405,7 @@ namespace UchOtd.Schedule
             this.ToDBName.Name = "ToDBName";
             this.ToDBName.Size = new System.Drawing.Size(88, 20);
             this.ToDBName.TabIndex = 61;
-            this.ToDBName.Text = "Schedule17181";
+            this.ToDBName.Text = "Schedule17182";
             // 
             // DownloadRestore
             // 
@@ -423,7 +423,7 @@ namespace UchOtd.Schedule
             this.FromDBName.Name = "FromDBName";
             this.FromDBName.Size = new System.Drawing.Size(100, 20);
             this.FromDBName.TabIndex = 59;
-            this.FromDBName.Text = "Schedule17181";
+            this.FromDBName.Text = "Schedule17182";
             // 
             // BackupUpload
             // 

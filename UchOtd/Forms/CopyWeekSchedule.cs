@@ -68,7 +68,7 @@ namespace UchOtd.Forms
 
             if (copyGroup.Checked)
             {
-                copyGroupSchedule();
+                CopyGroupSchedule();
             }
 
             if (copyFaculty.Checked)
@@ -94,7 +94,7 @@ namespace UchOtd.Forms
             return groupsListIds;
         }
 
-        private async void copyGroupSchedule()
+        private async void CopyGroupSchedule()
         {
             List<int> dow = GetDow();
             var weekFrom = -1;
@@ -113,7 +113,7 @@ namespace UchOtd.Forms
 
             await Task.Run(() =>
             {
-                copyGroupWeekSchedule(@group, weekFrom, weekTo, dow);
+                CopyGroupWeekSchedule(@group, weekFrom, weekTo, dow);
             });
 
             status.Text = "Готово";
@@ -131,7 +131,7 @@ namespace UchOtd.Forms
             return dow;
         }
 
-        private void copyGroupWeekSchedule(StudentGroup @group, int weekFrom, int weekTo, List<int> dow)
+        private void CopyGroupWeekSchedule(StudentGroup @group, int weekFrom, int weekTo, List<int> dow)
         {
             if (weekFrom == weekTo)
             {
@@ -170,7 +170,7 @@ namespace UchOtd.Forms
                     var newLesson = new Lesson(lesson.TeacherForDiscipline, calendarPair.Value, lesson.Ring, lesson.Auditorium);
                     newLesson.State = 1;
 
-                    _repo.Lessons.AddLessonWoLog(newLesson);
+                    _repo.Lessons.AddLesson(newLesson);
                 }
 
                 Invoke((MethodInvoker)delegate
@@ -191,7 +191,7 @@ namespace UchOtd.Forms
             {
                 await Task.Run(() =>
                 {
-                    copyGroupWeekSchedule(studentGroup, weekFrom, weekTo, dow);
+                    CopyGroupWeekSchedule(studentGroup, weekFrom, weekTo, dow);
                 });
             }
 
@@ -219,7 +219,7 @@ namespace UchOtd.Forms
             {
                 await Task.Run(() =>
                 {
-                    deleteGroupSchedule(group, weekFrom, dow);
+                    DeleteGroupSchedule(group, weekFrom, dow);
                 });
             }
 
@@ -231,7 +231,7 @@ namespace UchOtd.Forms
             }
         }
 
-        private async void deleteGroupSchedule(StudentGroup group, int weekFrom, List<int> dow)
+        private async void DeleteGroupSchedule(StudentGroup group, int weekFrom, List<int> dow)
         {
             Invoke((MethodInvoker)delegate
             {
@@ -300,7 +300,7 @@ namespace UchOtd.Forms
             {
                 await Task.Run(() =>
                 {
-                    deleteGroupSchedule(studentGroup, weekFrom, dow);
+                    DeleteGroupSchedule(studentGroup, weekFrom, dow);
                 });
             }
 

@@ -26,7 +26,7 @@ namespace UchOtd
     public partial class StartupForm : Form
     {
         public const bool School = false;
-        private const string DefaultDbName = "Schedule17181";
+        private const string DefaultDbName = "Schedule17182";
 
         public static List<string> serverList = School ?
             new List<string> { @"127.0.0.1\SQLEXPRESS" } :
