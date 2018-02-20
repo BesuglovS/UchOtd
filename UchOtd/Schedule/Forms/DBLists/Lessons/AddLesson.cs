@@ -361,11 +361,11 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
         private void UpdateFreeAuds()
         {
-            Dictionary<int, int> weekList;
+            List<int> weekList;
 
             try
             {
-                weekList = Utilities.ConvertWeeksToList(lessonWeeks.Text);
+                weekList = CommonFunctions.WeeksStringToList(lessonWeeks.Text);
             }
             catch
             {
@@ -381,7 +381,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                     from cal in _repo.Calendars.GetAllCalendars()
                     where Constants.DowRemap[(int) cal.Date.DayOfWeek] - 1 == DayOfWeekListBox.SelectedIndex
                     let week = _repo.CommonFunctions.CalculateWeekNumber(cal.Date)
-                    where weekList.Select(wi => wi.Key).ToList().Contains(week)
+                    where weekList.Contains(week)
                     select cal.CalendarId)
                 .ToList();
 

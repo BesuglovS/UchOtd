@@ -203,13 +203,20 @@ namespace Schedule.Repositories
             ExecuteQuery(backupSql);
         }
 
-        public void RestoreDb(string dbName, string filename)
+        public void RestoreDb(string dbName, string filename, string dbInternalName)
         {
-            ExecuteQuery("ALTER DATABASE " + dbName + " SET Single_User WITH Rollback Immediate");
+            //ExecuteQuery("ALTER DATABASE " + dbName + " SET Single_User WITH Rollback Immediate");
 
-            ExecuteQuery("use master; RESTORE DATABASE " + dbName + " FROM DISK = '" + filename + "' WITH REPLACE");
+            var dataPath = @"C:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\";
 
-            ExecuteQuery("ALTER DATABASE " + dbName + " SET Multi_User");
+            var restoreQuery = "use master; RESTORE DATABASE " + dbName + " FROM DISK = '" + filename + "' ";
+            restoreQuery += "WITH ";
+            restoreQuery += @"MOVE '" + dbInternalName + @"' TO '" + dataPath + dbName + @"_Data.mdf', ";
+            restoreQuery += @"MOVE '" + dbInternalName + @"_log' TO '" + dataPath + dbName + @"_Log.ldf';";
+
+            ExecuteQuery(restoreQuery);
+
+            //ExecuteQuery("ALTER DATABASE " + dbName + " SET Multi_User");
         }
 
         private void ExecuteQuery(string sqlQuery)

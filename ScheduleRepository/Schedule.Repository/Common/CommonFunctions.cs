@@ -19,22 +19,37 @@ namespace Schedule.Repositories.Common
         public CommonFunctions(ScheduleRepository repo)
         {
             _repo = repo;
+            ConnectionString = _repo.GetConnectionString();
+        }
+
+        public static int IndexOfNth(string str, string value, int nth = 1)
+        {
+            if (nth <= 0)
+                throw new ArgumentException("Can not find the zeroth index of substring in string. Must start with 1");
+            int offset = str.IndexOf(value);
+            for (int i = 1; i < nth; i++)
+            {
+                if (offset == -1) return -1;
+                offset = str.IndexOf(value, offset + 1);
+            }
+            return offset;
         }
 
         public static string CombineWeeks(List<int> list)
         {
             var result = new List<string>();
-            const int maxWeek = 54;
-            var boolWeeks = new bool[maxWeek + 1];
+            int maxWeek = list.Max() + 3;
+            int minWeek = list.Min() - 3;
+            var boolWeeks = new Dictionary<int, bool>();
 
-            for (var i = 0; i <= maxWeek; i++)
+            for (var i = minWeek; i <= maxWeek; i++)
             {
                 boolWeeks[i] = list.Contains(i);
             }
 
             bool prev = false;
             int baseNum = maxWeek;
-            for (var i = 1; i <= maxWeek - 2; i++)
+            for (var i = minWeek + 1; i <= maxWeek - 2; i++)
             {
                 if (!prev && boolWeeks[i])
                 {
@@ -62,7 +77,7 @@ namespace Schedule.Repositories.Common
 
             prev = false;
             baseNum = maxWeek + 1;
-            for (var i = 1; i <= maxWeek; i += 2)
+            for (var i = minWeek; i <= maxWeek; i += 2)
             {
                 if (!prev && boolWeeks[i])
                 {
@@ -71,7 +86,7 @@ namespace Schedule.Repositories.Common
 
                 if (!boolWeeks[i] && ((i - baseNum) > 4))
                 {
-                    result.Add(baseNum + "-" + (i - 2) + " (нечёт.)");
+                    result.Add(baseNum + "-" + (i - 2) + ((baseNum % 2 == 1) ? " (нечёт.)": " (чёт.)"));
 
                     for (var k = baseNum; k < i; k += 2)
                     {
@@ -89,7 +104,7 @@ namespace Schedule.Repositories.Common
 
             prev = false;
             baseNum = maxWeek + 1;
-            for (var i = 2; i <= maxWeek; i += 2)
+            for (var i = minWeek + 1; i <= maxWeek; i += 2)
             {
                 if (!prev && boolWeeks[i])
                 {
@@ -98,7 +113,7 @@ namespace Schedule.Repositories.Common
 
                 if (!boolWeeks[i] && ((i - baseNum) > 4))
                 {
-                    result.Add(baseNum + "-" + (i - 2) + " (чёт.)");
+                    result.Add(baseNum + "-" + (i - 2) + ((baseNum % 2 == 1) ? " (нечёт.)" : " (чёт.)"));
 
                     for (var k = baseNum; k < i; k += 2)
                     {
@@ -116,7 +131,7 @@ namespace Schedule.Repositories.Common
 
 
 
-            for (var i = 1; i <= maxWeek; i++)
+            for (var i = minWeek; i <= maxWeek; i++)
             {
                 if (boolWeeks[i])
                 {
@@ -151,7 +166,7 @@ namespace Schedule.Repositories.Common
                 return 0;
             });
 
-            var final = result.Aggregate((current, str) => current + ", " + str);
+            var final = (result.Count == 0) ? "" : result.Aggregate((current, str) => current + ", " + str);
             return final;
         }
 
@@ -176,40 +191,74 @@ namespace Schedule.Repositories.Common
                 }
                 else
                 {
-                    int mods = 0; // 0 - нет; 1 - нечётные; 2 - чётные
-
-                    if (st.EndsWith(" (нечёт.)"))
+                    var parsedOK = true;
+                    int weekNum = -1;
+                    try
                     {
-                        st = st.Substring(0, st.Length - 9);
-                        mods = 1;
+                        weekNum = int.Parse(st);
+                    }
+                    catch (Exception e)
+                    {
+                        parsedOK = false;
                     }
 
-                    if (st.EndsWith(" (чёт.)"))
+                    if (parsedOK)
                     {
-                        st = st.Substring(0, st.Length - 7);
-                        mods = 2;
+                        result.Add(weekNum);
                     }
-
-                    int start = int.Parse(st.Substring(0, st.IndexOf('-')));
-
-                    int end = int.Parse(
-                        st.Substring(st.IndexOf('-') + 1, st.Length - st.IndexOf('-') - 1));
-
-                    for (int i = start; i <= end; i++)
+                    else
                     {
-                        switch (mods)
+                        int mods = 0; // 0 - нет; 1 - нечётные; 2 - чётные
+
+                        if (st.EndsWith(" (нечёт.)"))
                         {
-                            case 0:
-                                result.Add(i);
-                                break;
+                            st = st.Substring(0, st.Length - 9);
+                            mods = 1;
+                        }
+
+                        if (st.EndsWith(" (чёт.)"))
+                        {
+                            st = st.Substring(0, st.Length - 7);
+                            mods = 2;
+                        }
+
+                        var minusCount = st.Where(c => c == '-').ToList().Count();
+                        int breakIndex = -1;
+
+                        switch (minusCount)
+                        {
                             case 1:
-                                if ((i % 2) == 1)
-                                    result.Add(i);
+                                breakIndex = IndexOfNth(st, "-", 1);
                                 break;
                             case 2:
-                                if ((i % 2) == 0)
-                                    result.Add(i);
+                                breakIndex = IndexOfNth(st, "-", st.IndexOf("--", StringComparison.Ordinal) != -1 ? 1 : 2);
                                 break;
+                            case 3:
+                                breakIndex = IndexOfNth(st, "-", 2);
+                                break;
+                        }
+
+                        int start = int.Parse(st.Substring(0, breakIndex));
+
+                        int end = int.Parse(
+                            st.Substring(breakIndex + 1));
+
+                        for (int i = start; i <= end; i++)
+                        {
+                            switch (mods)
+                            {
+                                case 0:
+                                    result.Add(i);
+                                    break;
+                                case 1:
+                                    if ((i % 2) == 1)
+                                        result.Add(i);
+                                    break;
+                                case 2:
+                                    if ((i % 2) == 0)
+                                        result.Add(i);
+                                    break;
+                            }
                         }
                     }
                 }
@@ -316,7 +365,9 @@ namespace Schedule.Repositories.Common
 
             var ssWeeksMonday = semesterStarts.AddDays((-1) * (ssDow - 1));
 
-            return (dateTime - ssWeeksMonday).Days / 7 + 1;
+            return (dateTime >= ssWeeksMonday) ? 
+                ((dateTime - ssWeeksMonday).Days / 7 + 1) :
+                ((-1) * (((ssWeeksMonday - dateTime).Days - 1) / 7));
         }
 
         public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Lesson>>>>> GetGroupedGroupsLessons(List<int> groupListIds, bool showProposed, CancellationToken cToken)

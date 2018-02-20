@@ -184,6 +184,7 @@ namespace UchOtd.Schedule
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
+            this.очиститьКаледнарьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -256,7 +257,7 @@ namespace UchOtd.Schedule
             this.week17.Name = "week17";
             this.week17.Size = new System.Drawing.Size(29, 21);
             this.week17.TabIndex = 76;
-            this.week17.Text = "17";
+            this.week17.Text = "4";
             this.week17.UseVisualStyleBackColor = true;
             this.week17.Click += new System.EventHandler(this.week17_Click);
             // 
@@ -266,7 +267,7 @@ namespace UchOtd.Schedule
             this.week16.Name = "week16";
             this.week16.Size = new System.Drawing.Size(29, 21);
             this.week16.TabIndex = 75;
-            this.week16.Text = "16";
+            this.week16.Text = "3";
             this.week16.UseVisualStyleBackColor = true;
             this.week16.Click += new System.EventHandler(this.week16_Click);
             // 
@@ -296,7 +297,7 @@ namespace UchOtd.Schedule
             this.ElevenTwelveWeek.Name = "ElevenTwelveWeek";
             this.ElevenTwelveWeek.Size = new System.Drawing.Size(49, 21);
             this.ElevenTwelveWeek.TabIndex = 72;
-            this.ElevenTwelveWeek.Text = "16-17";
+            this.ElevenTwelveWeek.Text = "3-4";
             this.ElevenTwelveWeek.UseVisualStyleBackColor = true;
             this.ElevenTwelveWeek.Click += new System.EventHandler(this.ElevenTwelveWeek_Click);
             // 
@@ -1466,7 +1467,8 @@ namespace UchOtd.Schedule
             // googleCalendarToolStripMenuItem
             // 
             this.googleCalendarToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.GoogleCalendarExport});
+            this.GoogleCalendarExport,
+            this.очиститьКаледнарьToolStripMenuItem});
             this.googleCalendarToolStripMenuItem.Name = "googleCalendarToolStripMenuItem";
             this.googleCalendarToolStripMenuItem.Size = new System.Drawing.Size(107, 20);
             this.googleCalendarToolStripMenuItem.Text = "Google Calendar";
@@ -1518,6 +1520,7 @@ namespace UchOtd.Schedule
             this.ScheduleView.RowHeadersVisible = false;
             this.ScheduleView.Size = new System.Drawing.Size(971, 393);
             this.ScheduleView.TabIndex = 1;
+            this.ScheduleView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ScheduleView_CellContentClick);
             this.ScheduleView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainViewCellDoubleClick);
             this.ScheduleView.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.ScheduleView_CellMouseDown);
             this.ScheduleView.DragDrop += new System.Windows.Forms.DragEventHandler(this.ScheduleView_DragDrop);
@@ -1536,6 +1539,13 @@ namespace UchOtd.Schedule
             this.editSchedule.Size = new System.Drawing.Size(133, 22);
             this.editSchedule.Text = "Аудитория";
             this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
+            // 
+            // очиститьКаледнарьToolStripMenuItem
+            // 
+            this.очиститьКаледнарьToolStripMenuItem.Name = "очиститьКаледнарьToolStripMenuItem";
+            this.очиститьКаледнарьToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.очиститьКаледнарьToolStripMenuItem.Text = "Очистить каледнарь";
+            this.очиститьКаледнарьToolStripMenuItem.Click += new System.EventHandler(this.очиститьКаледнарьToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
@@ -1719,6 +1729,7 @@ namespace UchOtd.Schedule
         private Button week16;
         private ToolStripMenuItem googleCalendarToolStripMenuItem;
         private ToolStripMenuItem GoogleCalendarExport;
+        private ToolStripMenuItem очиститьКаледнарьToolStripMenuItem;
     }
 }
 

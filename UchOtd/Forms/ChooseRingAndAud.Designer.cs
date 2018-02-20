@@ -49,7 +49,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(0, 602);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(375, 54);
+            this.panel1.Size = new System.Drawing.Size(444, 54);
             this.panel1.TabIndex = 0;
             // 
             // button2
@@ -58,7 +58,7 @@
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.button2.Location = new System.Drawing.Point(118, 0);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(257, 54);
+            this.button2.Size = new System.Drawing.Size(326, 54);
             this.button2.TabIndex = 1;
             this.button2.Text = "Cancel";
             this.button2.UseVisualStyleBackColor = true;
@@ -83,7 +83,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(375, 602);
+            this.panel2.Size = new System.Drawing.Size(444, 602);
             this.panel2.TabIndex = 1;
             // 
             // panel4
@@ -92,7 +92,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(156, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(219, 602);
+            this.panel4.Size = new System.Drawing.Size(288, 602);
             this.panel4.TabIndex = 2;
             // 
             // audsList
@@ -104,7 +104,7 @@
             this.audsList.Location = new System.Drawing.Point(0, 0);
             this.audsList.Name = "audsList";
             this.audsList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.audsList.Size = new System.Drawing.Size(219, 602);
+            this.audsList.Size = new System.Drawing.Size(288, 602);
             this.audsList.TabIndex = 2;
             this.audsList.DoubleClick += new System.EventHandler(this.audsList_DoubleClick);
             // 
@@ -134,7 +134,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(375, 656);
+            this.ClientSize = new System.Drawing.Size(444, 656);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "ChooseRingAndAud";

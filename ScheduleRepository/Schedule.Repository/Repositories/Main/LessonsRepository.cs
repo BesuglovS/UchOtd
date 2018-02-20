@@ -333,7 +333,7 @@ namespace Schedule.Repositories.Repositories.Main
 
                     result.Add(dowLocal + " " + dateTimeLessons.time, new Dictionary<string, Tuple<string, List<Lesson>>>());
 
-                    foreach (var lessonGroup in dateTimeLessons.Groups)
+                    foreach (var lessonGroup in dateTimeLessons.Groups.OrderBy(lg => lg.Lessons.First().TeacherForDiscipline.Discipline.StudentGroup.Name))
                     {
                         var weekList = lessonGroup.Lessons
                             .Select(lesson => _repo.CommonFunctions.CalculateWeekNumber(lesson.Calendar.Date.Date))

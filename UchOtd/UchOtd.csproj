@@ -256,6 +256,7 @@
     <Compile Include="Schedule\Core\PDFExport.cs" />
     <Compile Include="Schedule\Core\ScheduleChange.cs" />
     <Compile Include="Schedule\Core\ScheduleChangeType.cs" />
+    <Compile Include="Schedule\Core\ThreadSleep.cs" />
     <Compile Include="Schedule\Core\Utilities.cs" />
     <Compile Include="Schedule\Forms\AllChanges.cs">
       <SubType>Form</SubType>

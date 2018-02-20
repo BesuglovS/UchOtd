@@ -83,7 +83,7 @@ namespace UchOtd.Schedule
         {
             var groupName = groupList.Text;
             var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
-            var auds = Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId);
+            List<Auditorium> auds = building != null ? Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList() : Repo.Auditoriums.GetAll().ToList();
 
             editSchedule.DropDownItems.Clear();
 
@@ -1704,9 +1704,9 @@ namespace UchOtd.Schedule
         private void DownloadAndRestore_Click(object sender, EventArgs e)
         {
             var wc = new WebClient();
-            wc.DownloadFile("http://wiki.nayanova.edu/upload/DB-Backup/" + FromDBName.Text + ".bak",
-                Application.StartupPath + "\\" + ToDBName.Text + ".bak");
-            Repo.RestoreDb(ToDBName.Text, Application.StartupPath + "\\" + ToDBName.Text + ".bak");
+            wc.DownloadFile("http://wiki.nayanova.edu/upload/DB-Backup/" + ToDBName.Text + ".bak",
+                Application.StartupPath + "\\" + FromDBName.Text + ".bak");
+            Repo.RestoreDb(FromDBName.Text, Application.StartupPath + "\\" + FromDBName.Text + ".bak", ToDBName.Text);
         }
 
         private void WholeScheduleDatesExport_Click(object sender, EventArgs e)
@@ -2068,12 +2068,96 @@ namespace UchOtd.Schedule
         {
             //MessageBox.Show("Пусто тут, барин!)");
             var exportFilename = "schoolDisciplines.txt";
-            //await Task.Run(() => { ImportSchoolDiscNames(exportFilename); });
+            await Task.Run(() =>
+            {
+                TextFileUtilities.CreateOrEmptyFile(exportFilename);
+
+                var fNames = new List<string>
+                {
+                    "5-е классы",
+                    "6-е классы",
+                    "7-е классы"
+                };
+
+                var timePairs = new Dictionary<TimeSpan, TimeSpan>
+                {
+                    { new TimeSpan(13, 15, 0), new TimeSpan(13, 5, 0) }
+                };
+                var ringPairs = new Dictionary<int, Ring>();
+
+                var timeKeys = timePairs.Keys.ToList();
+                foreach (var timeFrom in timeKeys)
+                {
+                    
+                    var ring = Repo.Rings.GetFirstFiltredRing(r => r.Time.TimeOfDay == timeFrom);
+                    var ring2 = Repo.Rings.GetFirstFiltredRing(r => r.Time.TimeOfDay == timePairs[timeFrom]);
+                    if (ring != null && ring2 != null)
+                    {
+                        ringPairs.Add(ring.RingId, ring2);
+                    }
+                }
+
+                var ringFromIds = ringPairs.Keys.ToList();
+
+                var faculties = Repo.Faculties.GetFiltredFaculties(f => fNames.Contains(f.Name)).OrderBy(f => f.SortingOrder)
+                    .ToList();
+
+                foreach (var faculty in faculties.OrderBy(f => f.SortingOrder))
+                {
+                    var facultyGroups = Repo.GroupsInFaculties
+                        .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                        .Select(gif => gif.StudentGroup);
+
+                    foreach (var studentGroup in facultyGroups)
+                    {
+                        var grouIds = Utilities.StudentGroupIdsFromGroupId(Repo, studentGroup.StudentGroupId);
+                        var groupDisciplines = Repo.Disciplines.GetFiltredDisciplines(
+                            d => grouIds.Contains(d.StudentGroup.StudentGroupId));
+
+                        foreach (var discipline in groupDisciplines)
+                        {
+                            var tfd = Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tefd =>
+                                tefd.Discipline.DisciplineId == discipline.DisciplineId);
+
+                            if (tfd != null)
+                            {
+                                var satRingLessons = Repo.Lessons.GetFiltredLessons(l =>
+                                    l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId &&
+                                    l.State == 1)
+                                    .ToList()
+                                    .Where(l => l.Calendar.Date.DayOfWeek == DayOfWeek.Saturday && ringFromIds.Contains(l.Ring.RingId))
+                                    .ToList();
+
+                                foreach (var lesson in satRingLessons)
+                                {
+                                    var newRing = ringPairs[lesson.Ring.RingId];
+                                    lesson.Ring = newRing;
+                                    Repo.Lessons.UpdateLesson(lesson);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
 
             status.Text = "Готово";
         }
 
-       
+        private void SetRepoSemester(string semesterDBName)
+        {
+            var connectionString = GetConnectionString(semesterDBName);
+            Repo.SetConnectionString(connectionString);
+        }
+
+        private static string GetConnectionString(string dbName)
+        {
+            var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                   dbName +
+                                   "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+            return connectionString;
+        }
+
+
         private void SameAud()
         {
             TextFileUtilities.CreateOrEmptyFile("SameAud.txt");
@@ -2410,7 +2494,7 @@ namespace UchOtd.Schedule
                 Dictionary<int, string> audIdsDictionaryReverse,
                 List<int> excludeGroupTfds, List<Dictionary<string, List<string>>> audsList, int initialDepth,
                 int depth, bool excludeCurrentAud)
-            // 0 - не получилось; 1 - простой перенос; 2 - обемн аудиториями
+        // 0 - не получилось; 1 - простой перенос; 2 - обмен аудиториями
         {
             LogInFile(logFilename,
                 "Неверная аудитория " + "\t" +
@@ -3159,7 +3243,7 @@ namespace UchOtd.Schedule
             string toDbName = (ToDBName.Text == "") ? Repo.ExtractDbName(Repo.GetConnectionString()) : ToDBName.Text;
             toDbName = StartupForm.School ? "s_" : "" + toDbName;
 
-            Repo.BackupDb(Application.StartupPath + "\\" + dbName + ".bak");
+            Repo.BackupDb(Application.StartupPath + "\\" + dbName + ".bak", dbName);
             WnuUpload.UploadFile(Application.StartupPath + "\\" + dbName + ".bak",
                 "upload/DB-Backup/" + toDbName + ".bak");
         }
@@ -3816,7 +3900,7 @@ namespace UchOtd.Schedule
         {
             try
             {
-                var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA"};
+                var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA", "S17181AA"};
 
                 await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Философский факультет (магистратура)",
                         @"D:\GitHub\Export\Export АА Журналы БМ.docx", true, true),
@@ -3846,7 +3930,7 @@ namespace UchOtd.Schedule
         {
             try
             {
-                var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA"};
+                var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA", "S17181AA" };
 
                 await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Юридический факультет (магистратура)",
                         @"D:\GitHub\Export\Export АА Журналы ДМ.docx", true, true),
@@ -3872,7 +3956,8 @@ namespace UchOtd.Schedule
                     "S15161AA",
                     "S15162AA",
                     "S16171AA",
-                    "S16172AA"
+                    "S16172AA",
+                    "S17181AA"
                 };
 
                 await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Факультет математики",
@@ -3896,7 +3981,8 @@ namespace UchOtd.Schedule
                 "S15161AA",
                 "S15162AA",
                 "S16171AA",
-                "S16172AA"
+                "S16172AA",
+                "S17181AA"
             };
 
             for (int i = 0; i < dbNames.Count; i++)
@@ -3918,12 +4004,13 @@ namespace UchOtd.Schedule
                 "S15161AA",
                 "S15162AA",
                 "S16171AA",
-                "S16172AA"
+                "S16172AA",
+                "S17181AA"
             };
 
             for (int i = 0; i < dbNames.Count; i++)
             {
-                Repo.RestoreDb(dbNames[i], @"D:\GitHub\10AA\" + dbNames[i] + ".bak");
+                Repo.RestoreDb(dbNames[i], @"D:\GitHub\10AA\" + dbNames[i] + ".bak", dbNames[i]);
             }
         }
 
@@ -3956,7 +4043,8 @@ namespace UchOtd.Schedule
                     "S15161AA",
                     "S15162AA",
                     "S16171AA",
-                    "S16172AA"
+                    "S16172AA",
+                    "S17181AA"
                 };
 
                 await Task.Run(() =>
@@ -4133,7 +4221,8 @@ namespace UchOtd.Schedule
                     "S15161AA",
                     "S15162AA",
                     "S16171AA",
-                    "S16172AA"
+                    "S16172AA",
+                    "S17181AA"
                 };
 
                 await Task.Run(() =>
@@ -4184,7 +4273,8 @@ namespace UchOtd.Schedule
                     "S14152AA",
                     "S15161AA",
                     "S15162AA",
-                    "S16171AA"
+                    "S16171AA",
+                    "S17181AA"
                 };
 
                 await Task.Run(() =>
@@ -4292,7 +4382,8 @@ namespace UchOtd.Schedule
                     "S14152AA",
                     "S15161AA",
                     "S15162AA",
-                    "S16171AA"
+                    "S16171AA",
+                    "S17181AA"
                 };
 
                 await Task.Run(() =>
@@ -4351,7 +4442,8 @@ namespace UchOtd.Schedule
                     "S15161AA",
                     "S15162AA",
                     "S16171AA",
-                    "S16172AA"
+                    "S16172AA",
+                    "S17181AA"
                 };
 
                 await Task.Run(() =>
@@ -4398,7 +4490,8 @@ namespace UchOtd.Schedule
                     "S14152AA",
                     "S15161AA",
                     "S15162AA",
-                    "S16171AA"
+                    "S16171AA",
+                    "S17181AA"
                 };
 
                 await Task.Run(() =>
@@ -4494,7 +4587,8 @@ namespace UchOtd.Schedule
                     "S14152AA",
                     "S15161AA",
                     "S15162AA",
-                    "S16171AA"
+                    "S16171AA",
+                    "S17181AA"
                 };
 
                 await Task.Run(() =>
@@ -4545,7 +4639,8 @@ namespace UchOtd.Schedule
                 "S15161AA",
                 "S15162AA",
                 "S16171AA",
-                "S16172AA"
+                "S16172AA",
+                "S17181AA"
             };
 
             await Task.Run(() =>
@@ -4563,7 +4658,8 @@ namespace UchOtd.Schedule
                 "S14152AA",
                 "S15161AA",
                 "S15162AA",
-                "S16171AA"
+                "S16171AA",
+                "S17181AA"
             };
 
             await Task.Run(() =>
@@ -4599,7 +4695,8 @@ namespace UchOtd.Schedule
                 "S14152AA",
                 "S15161AA",
                 "S15162AA",
-                "S16171AA"
+                "S16171AA",
+                "S17181AA"
             };
 
             await Task.Run(() =>
@@ -4610,11 +4707,6 @@ namespace UchOtd.Schedule
         }
 
         private void Math4Files(object sender, EventArgs e)
-
-
-
-
-
         {
             MathJournalDates(sender, e);
             MathSchedule(sender, e);
@@ -6384,7 +6476,7 @@ namespace UchOtd.Schedule
         private void ElevenTwelveWeek_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "16-17";
+            WeekFilter.Text = "3-4";
         }
 
         private async void неточности811ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6480,13 +6572,13 @@ namespace UchOtd.Schedule
         private void week16_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "16";
+            WeekFilter.Text = "3";
         }
 
         private void week17_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "17";
+            WeekFilter.Text = "4";
         }
 
         private async void BitrixScheduleExport_Click(object sender, EventArgs e)
@@ -6570,7 +6662,7 @@ namespace UchOtd.Schedule
 
                     foreach (var studentGroup in facultyGroups)
                     {
-                        GoogleCalendarService.UploadGroupLessonEvents(Repo, studentGroup);
+                        GoogleCalendarService.UploadGroupLessonEvents(Repo, studentGroup, this, status);
 
                         Invoke((MethodInvoker)delegate
                         {
@@ -6580,6 +6672,37 @@ namespace UchOtd.Schedule
                     }
                 }
 
+                Invoke((MethodInvoker)delegate
+                {
+                    status.Text = "Готово";
+                    // runs on UI thread
+                });
+
+            });
+        }
+
+        private void ScheduleView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void очиститьКаледнарьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Task.Run(() => {
+                var service = GoogleCalendarService.InitService(GoogleCalendarService.NACredentials);
+
+                var calendars = GoogleCalendarService.GetList();
+
+                foreach (var calendarListEntry in calendars)
+                {
+                    GoogleCalendarService.ClearCalendar(calendarListEntry, this.status, this);
+
+                    Invoke((MethodInvoker)delegate
+                    {
+                        status.Text = calendarListEntry.Summary;
+                        // runs on UI thread
+                    });
+                }
             });
         }
 
@@ -6614,3 +6737,4 @@ namespace UchOtd.Schedule
         }
     }
 }
+

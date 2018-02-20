@@ -171,7 +171,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 l => _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date), 
                 l => l.Auditorium.Name);
             var newAuds = Utilities.GetAudWeeksList(auditoriums.Text);
-            var singleNewAud = newAuds.FirstOrDefault(a => a.Key == 0);
+            var singleNewAud = newAuds.FirstOrDefault(a => a.Key == int.MinValue);
             if (singleNewAud.Value != null)
             {
                 newAuds.Clear();

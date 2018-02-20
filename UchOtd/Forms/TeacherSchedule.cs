@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using Schedule.Repositories.Common;
 using UchOtd.Core;
 using UchOtd.NUDS.Core;
 using UchOtd.NUDS.View;
@@ -122,6 +123,7 @@ namespace UchOtd.Forms
                     foreach (var tfdBundle in timeDowLessons.Value
                         .OrderBy(tfd => tfd.Value.Select(l => l.Calendar.Date).Min()))
                     {
+                        var cf = new CommonFunctions(_repo);
                         message += tfdBundle.Value[0].TeacherForDiscipline.Discipline.StudentGroup.Name;
                         message += Environment.NewLine;
                         message += tfdBundle.Value[0].TeacherForDiscipline.Discipline.Name;
@@ -129,9 +131,9 @@ namespace UchOtd.Forms
                         var semesterStartsDate = DateTime.ParseExact(semesterStartsOption.Value, "yyyy-MM-dd",
                             CultureInfo.InvariantCulture);
                         var weekList = tfdBundle.Value
-                            .Select(l => Utilities.WeekFromDate(l.Calendar.Date, semesterStartsDate))
+                            .Select(l => cf.CalculateWeekNumber(l.Calendar.Date))
                             .ToList();
-                        message += "(" + Utilities.GatherWeeksToString(weekList) + ")";
+                        message += "(" + CommonFunctions.CombineWeeks(weekList) + ")";
                         message += Environment.NewLine;
                         var audWeeks = new Dictionary<Auditorium, List<int>>();
                         foreach (var lesson in tfdBundle.Value)
@@ -141,7 +143,7 @@ namespace UchOtd.Forms
                                 audWeeks.Add(lesson.Auditorium, new List<int>());
                             }
 
-                            audWeeks[lesson.Auditorium].Add(Utilities.WeekFromDate(lesson.Calendar.Date, semesterStartsDate));
+                            audWeeks[lesson.Auditorium].Add(cf.CalculateWeekNumber(lesson.Calendar.Date));
                         }
                         var sortedWeeks = audWeeks.OrderBy(aw => aw.Value.Min());
                         if (sortedWeeks.Count() == 1)
@@ -158,7 +160,7 @@ namespace UchOtd.Forms
                             message = sortedWeeks
                                 .Aggregate(message, (current, kvp) =>
                                     current +
-                                    (Utilities.GatherWeeksToString(kvp.Value) + " - " + kvp.Key.Name +
+                                    (CommonFunctions.CombineWeeks(kvp.Value) + " - " + kvp.Key.Name +
                                     ((teacherBuildingsCount != 1) ? (" (" + kvp.Key.Building.Name + ")") : "") +
                                      Environment.NewLine));
                         }

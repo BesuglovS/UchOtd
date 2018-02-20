@@ -48,16 +48,37 @@ namespace UchOtd.Forms
 
         }
 
-        private void Go_Click(object sender, EventArgs e)
+        private async void Go_Click(object sender, EventArgs e)
         {
+            var group = (StudentGroup)groupList.SelectedItem;
+            
             List<int> dow = GetDow();
 
             var weekFrom = -1;
             var weekTo = -1;
+            var weekToList = new List<int>();
+            var isWeekToList = false;
+            
             try
             {
                 weekFrom = int.Parse(fromWeek.Text);
-                weekTo = int.Parse(toWeek.Text);
+                if (toWeek.Text.Contains('-'))
+                {
+                    var list = toWeek.Text.Split('-');
+                    var start = int.Parse(list[0]);
+                    var end = int.Parse(list[1]);
+
+                    for (int i = start; i <= end; i++)
+                    {
+                        weekToList.Add(i);
+                    }
+
+                    isWeekToList = true;
+                }
+                else
+                {
+                    weekTo = int.Parse(toWeek.Text);
+                }
             }
             catch
             {
@@ -68,12 +89,32 @@ namespace UchOtd.Forms
 
             if (copyGroup.Checked)
             {
-                CopyGroupSchedule();
+                if (isWeekToList)
+                {
+                    foreach (var weekToItem in weekToList)
+                    {
+                        await Task.Run(() => { CopyGroupSchedule(group, weekFrom, weekToItem, dow); });
+                    }
+                }
+                else
+                {
+                    CopyGroupSchedule(group, weekFrom, weekTo, dow);
+                }
             }
 
             if (copyFaculty.Checked)
             {
-                CopyFacultySchedule(faculty, weekFrom, weekTo, dow);
+                if (isWeekToList)
+                {
+                    foreach (var weekToItem in weekToList)
+                    {
+                        await Task.Run(() => { CopyFacultySchedule(faculty, weekFrom, weekToItem, dow); });
+                    }
+                }
+                else
+                {
+                    CopyFacultySchedule(faculty, weekFrom, weekTo, dow);
+                }
             }
         }
 
@@ -94,23 +135,8 @@ namespace UchOtd.Forms
             return groupsListIds;
         }
 
-        private async void CopyGroupSchedule()
+        private async void CopyGroupSchedule(StudentGroup group, int weekFrom, int weekTo, List<int> dow)
         {
-            List<int> dow = GetDow();
-            var weekFrom = -1;
-            var weekTo = -1;
-            try
-            {
-                weekFrom = int.Parse(fromWeek.Text);
-                weekTo = int.Parse(toWeek.Text);
-            }
-            catch
-            {
-                return;
-            }
-
-            var group = (StudentGroup) groupList.SelectedItem;
-
             await Task.Run(() =>
             {
                 CopyGroupWeekSchedule(@group, weekFrom, weekTo, dow);
@@ -280,7 +306,7 @@ namespace UchOtd.Forms
 
             foreach (var lesson in weekLessons)
             {
-                _repo.Lessons.RemoveLessonWoLog(lesson.LessonId);
+                _repo.Lessons.RemoveLesson(lesson.LessonId);
             }
             
             Invoke((MethodInvoker)delegate

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Deployment.Application;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
@@ -12,6 +14,8 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using UchOtd.Schedule;
+using UchOtd.Schedule.Core;
 using Calendar = Google.Apis.Calendar.v3.Data.Calendar;
 
 namespace UchOtd.Core
@@ -62,10 +66,17 @@ namespace UchOtd.Core
             return Service.CalendarList.List().Execute().Items;
         }
 
+        public static CalendarListEntry GetCalendarBySummary(string summary)
+        {
+            var calendars = GetList();
+            var calendar = calendars.FirstOrDefault(cal => cal.Summary == summary);
+            return calendar;
+        }
+
         public static bool DeleteBySummary(string summary)
         {
             var calendars = GetList();
-            var calendar = calendars.FirstOrDefault(cal => cal.Summary == "15 А");
+            var calendar = calendars.FirstOrDefault(cal => cal.Summary == summary);
             if (calendar != null)
             {
                 Service.Calendars.Delete(calendar.Id).Execute();
@@ -85,9 +96,9 @@ namespace UchOtd.Core
             return Service.Calendars.Insert(calendar).Execute();
         }
 
-        public static void AddEventsToCalendar(CalendarListEntry calendar, List<Lesson> groupLessons, StudentGroup group)
+        public static void AddEventsToCalendar(CalendarListEntry calendar, List<Lesson> groupLessons, StudentGroup group, MainEditForm mainForm, ToolStripStatusLabel status)
         {
-            var lessonLengthInMinutes = Utilities.GetLessonLengthFromGroupname(group.Name);
+            var lessonLengthInMinutes = 90; //Utilities.GetLessonLengthFromGroupname(group.Name);
 
             var oldEvents = GetCalendarEvents(calendar);
             var lessonsToDelete = (oldEvents.Count > 0) ? (Enumerable.Range(0, oldEvents.Count-1).ToList()) : (new List<int>());
@@ -134,19 +145,40 @@ namespace UchOtd.Core
                         End = edtEnd
                     };
 
-                    var newEvent = Service.Events.Insert(evt, calendar.Id).Execute();
+                    bool OK = true;
+                    do
+                    {
+                        OK = true;
 
-                    Thread.Sleep(1000);
+                        try
+                        {
+                            var newEvent = Service.Events.Insert(evt, calendar.Id).Execute();
+                        }
+                        catch (Exception e)
+                        {
+                            OK = false;
+                            ThreadSleep.Run(ThreadSleep.Up);
+                        }
+
+                        
+                    } while (!OK);
+
+                    mainForm.Invoke((MethodInvoker)delegate
+                    {
+                        status.Text = calendar.Summary + " " + (i+1) + " / " + groupLessons.Count + " = " + String.Format("{0:#,0.000}", ((i + 1) * 100 / groupLessons.Count)) + "%";
+                        // runs on UI thread
+                    });
+
+
+                    ThreadSleep.Run(ThreadSleep.Reset);
                 }
+            }
 
-                foreach (var lessonIndex in lessonsToDelete)
-                {
-                    var eventToDelete = oldEvents[lessonIndex];
+            foreach (var lessonIndex in lessonsToDelete)
+            {
+                var eventToDelete = oldEvents[lessonIndex];
 
-                    Service.Events.Delete(calendar.Id, eventToDelete.Id);
-                }
-
-                var eprst = 999;
+                Service.Events.Delete(calendar.Id, eventToDelete.Id);
             }
         }
 
@@ -180,11 +212,30 @@ namespace UchOtd.Core
             return GetList().FirstOrDefault(c => c.Summary == groupName);
         }
 
-        public static void UploadGroupLessonEvents(ScheduleRepository repo, StudentGroup @group)
+        public static void UploadGroupLessonEvents(ScheduleRepository repo, StudentGroup @group, MainEditForm mainForm, ToolStripStatusLabel status)
         {
             var calendar = InsertIfNotExistsWithSummary(group.Name);
             var groupLessons = Utilities.GetGroupActiveLessons(repo, group);
-            AddEventsToCalendar(calendar, groupLessons, group);
+            AddEventsToCalendar(calendar, groupLessons, group, mainForm, status);
+        }
+
+        public static void ClearCalendar(CalendarListEntry calendar, ToolStripStatusLabel status, MainEditForm form)
+        {
+            var eventList = GetCalendarEvents(calendar).OrderBy(evt => evt.Start.DateTime).ToList();
+
+            for (int i = 0; i < eventList.Count; i++)
+            {
+                var evt = eventList[i];
+                Service.Events.Delete(calendar.Id, evt.Id).Execute();
+
+                form.Invoke((MethodInvoker)delegate
+                {
+                    status.Text = calendar.Summary + " " + (i + 1) + " / " + eventList.Count + " =  " + String.Format("{0:#,0.000}", ((i + 1) * 100 / eventList.Count)) + "%";
+                    // runs on UI thread
+                });
+
+                Thread.Sleep(1000);
+            }
         }
     }
 }
