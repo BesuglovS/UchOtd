@@ -86,7 +86,7 @@ namespace Schedule.Repositories.Common
 
                 if (!boolWeeks[i] && ((i - baseNum) > 4))
                 {
-                    result.Add(baseNum + "-" + (i - 2) + ((baseNum % 2 == 1) ? " (нечёт.)": " (чёт.)"));
+                    result.Add(baseNum + "-" + (i - 2) + ((baseNum % 2 == 0) ? " (чёт.)": " (нечёт.)"));
 
                     for (var k = baseNum; k < i; k += 2)
                     {
@@ -113,7 +113,7 @@ namespace Schedule.Repositories.Common
 
                 if (!boolWeeks[i] && ((i - baseNum) > 4))
                 {
-                    result.Add(baseNum + "-" + (i - 2) + ((baseNum % 2 == 1) ? " (нечёт.)" : " (чёт.)"));
+                    result.Add(baseNum + "-" + (i - 2) + ((baseNum % 2 == 0) ? " (чёт.)" : " (нечёт.)"));
 
                     for (var k = baseNum; k < i; k += 2)
                     {
