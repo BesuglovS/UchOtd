@@ -31,5 +31,22 @@ namespace UchOtd.Core
             }
             sw.Close();
         }
+
+        public static List<string> ReadFileInStringList(string filename)
+        {
+            using (StreamReader sr = new StreamReader(filename))
+            {
+                var result = new List<string>();
+                string line;
+                // Read and display lines from the file until the end of 
+                // the file is reached.
+                while ((line = sr.ReadLine()) != null)
+                {
+                    result.Add(line);
+                }
+
+                return result;
+            }
+        }
     }
 }

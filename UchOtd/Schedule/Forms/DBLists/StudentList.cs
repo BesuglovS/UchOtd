@@ -20,14 +20,9 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             _repo = repo;
 
-            var groups = _repo.StudentGroups.GetAllStudentGroups()
-                .OrderBy(sg => sg.Semester.StartingYear)
-                .ThenBy(sg => sg.Semester.SemesterInYear)
-                .ThenBy(sg => sg.Name)
-                .ToList();
-            var sgView = StudentGroupView.ViewFromList(groups);
-            studentGroups.DataSource = sgView;
-            studentGroups.DisplayMember = "NameWithSemester";
+            var groups = _repo.StudentGroups.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
+            studentGroups.DataSource = groups;
+            studentGroups.DisplayMember = "Name";
             studentGroups.ValueMember = "StudentGroupId";
         }
 
@@ -46,11 +41,11 @@ namespace UchOtd.Schedule.Forms.DBLists
                     .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == (int)studentGroups.SelectedValue)
                     .Select(sig => sig.Student.StudentId)
                     .ToList();
-                studentList = _repo.Students.GetAllStudents().Where(s => studentIds.Contains(s.StudentId)).OrderBy(s => s.F).ToList();
+                studentList = _repo.Students.GetAllStudents().Where(s => studentIds.Contains(s.StudentId)).OrderBy(s => s.Expelled).ThenBy(s => s.F).ToList();
             }
             else
             {
-                studentList = _repo.Students.GetAllStudents().OrderBy(s => s.F).ToList();
+                studentList = _repo.Students.GetAllStudents().OrderBy(s => s.Expelled).ThenBy(s => s.F).ToList();
             }
 
             if (fFilter != "")
@@ -85,6 +80,8 @@ namespace UchOtd.Schedule.Forms.DBLists
             StudentListView.Columns["NFactor"].HeaderText = "Наяновец";
             StudentListView.Columns["PaidEdu"].Width = 50;
             StudentListView.Columns["PaidEdu"].HeaderText = "Платное обучение";
+            StudentListView.Columns["Expelled"].Width = 50;
+            StudentListView.Columns["Expelled"].HeaderText = "Отчислен";
             
             StudentListView.ClearSelection();
         }
@@ -104,6 +101,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             Starosta.Checked = student.Starosta;
             NFactor.Checked = student.NFactor;
             PayForThis.Checked = student.PaidEdu;
+            Expelled.Checked = student.Expelled;
             OrderList.Text = student.Orders;
         }
 
@@ -124,6 +122,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 O = OBox.Text, 
                 Address = Address.Text, 
                 BirthDate = BirthDate.Value, 
+                Expelled = Expelled.Checked, 
                 NFactor = NFactor.Checked, 
                 Orders = OrderList.Text,
                 PaidEdu = PayForThis.Checked,
@@ -149,6 +148,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 student.O = OBox.Text;
                 student.Address = Address.Text;
                 student.BirthDate = BirthDate.Value;
+                student.Expelled = Expelled.Checked;
                 student.NFactor = NFactor.Checked;
                 student.Orders = OrderList.Text;
                 student.PaidEdu = PayForThis.Checked;
@@ -282,7 +282,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             OpenFileDialog ofd = new OpenFileDialog
             {
-                Title = "Import StudentFioZachNum List",
+                Title = "Import Student List",
                 Filter = "All files|*.*"
             };
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -305,14 +305,14 @@ namespace UchOtd.Schedule.Forms.DBLists
             }
         }
 
-        private void saveToJson_Click(object sender, EventArgs e)
+        private void jsonExport_Click(object sender, EventArgs e)
         {
             var studentList = new List<Student>();
 
             if (StudentListView.SelectedCells.Count > 0)
             {
                 var rowList = new List<int>();
-                var cells = (List<StudentView>)StudentListView.DataSource;
+                var cells = (List<StudentView>) StudentListView.DataSource;
 
                 for (int i = 0; i < StudentListView.SelectedCells.Count; i++)
                 {
@@ -320,7 +320,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                     if (!rowList.Contains(cell.RowIndex))
                     {
-                        var studentView = ((List<StudentView>)StudentListView.DataSource)[cell.RowIndex];
+                        var studentView = ((List<StudentView>) StudentListView.DataSource)[cell.RowIndex];
                         var student = _repo.Students.GetStudent(studentView.StudentId);
                         studentList.Add(student);
 

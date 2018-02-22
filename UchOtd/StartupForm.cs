@@ -26,11 +26,11 @@ namespace UchOtd
     public partial class StartupForm : Form
     {
         public const bool School = false;
-        private const string DefaultDbName = "Schedule";
+        private const string DefaultDbName = "Schedule17182";
 
         public static List<string> serverList = School ?
             new List<string> { @"127.0.0.1\SQLEXPRESS" } :
-            new List<string> { @"UCH-OTD-DISP\SQLEXPRESS", @".\SQLEXPRESS", };
+            new List<string> { @"uch-otd-disp\SQLEXPRESS" };
 
         public static string CurrentServerName = "";
         //public static string DefaultDbName = "School";
@@ -384,7 +384,7 @@ namespace UchOtd
                 return;
             }
 
-            EditForm = new MainEditForm(Repo);
+            EditForm = new MainEditForm(Repo, this);
             _mainEditFormOpened = true;
             EditForm.Show();
             _mainEditFormOpened = false;
@@ -658,6 +658,11 @@ namespace UchOtd
                     // ignored
                 }
             }, cToken);
+        }
+
+        private void StartupForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -37,8 +37,7 @@ namespace UchOtd.Schedule.Forms
             this.ExportInWord = new System.Windows.Forms.CheckBox();
             this.buildingList = new System.Windows.Forms.ComboBox();
             this.oneBuilding = new System.Windows.Forms.CheckBox();
-            this.weekNumber = new System.Windows.Forms.NumericUpDown();
-            this.oneWeek = new System.Windows.Forms.CheckBox();
+            this.weekFiltered = new System.Windows.Forms.CheckBox();
             this.Sat = new System.Windows.Forms.Button();
             this.Fri = new System.Windows.Forms.Button();
             this.Thu = new System.Windows.Forms.Button();
@@ -47,25 +46,21 @@ namespace UchOtd.Schedule.Forms
             this.Mon = new System.Windows.Forms.Button();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.audView = new System.Windows.Forms.DataGridView();
-            this.label1 = new System.Windows.Forms.Label();
-            this.semesterList = new System.Windows.Forms.ComboBox();
+            this.weekFilter = new System.Windows.Forms.ComboBox();
             this.controlsPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.weekNumber)).BeginInit();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.audView)).BeginInit();
             this.SuspendLayout();
             // 
             // controlsPanel
             // 
-            this.controlsPanel.Controls.Add(this.semesterList);
-            this.controlsPanel.Controls.Add(this.label1);
+            this.controlsPanel.Controls.Add(this.weekFilter);
             this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.PlusTeacherFIO);
             this.controlsPanel.Controls.Add(this.ExportInWord);
             this.controlsPanel.Controls.Add(this.buildingList);
             this.controlsPanel.Controls.Add(this.oneBuilding);
-            this.controlsPanel.Controls.Add(this.weekNumber);
-            this.controlsPanel.Controls.Add(this.oneWeek);
+            this.controlsPanel.Controls.Add(this.weekFiltered);
             this.controlsPanel.Controls.Add(this.Sat);
             this.controlsPanel.Controls.Add(this.Fri);
             this.controlsPanel.Controls.Add(this.Thu);
@@ -75,7 +70,7 @@ namespace UchOtd.Schedule.Forms
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(870, 106);
+            this.controlsPanel.Size = new System.Drawing.Size(870, 76);
             this.controlsPanel.TabIndex = 0;
             // 
             // showProposed
@@ -126,37 +121,15 @@ namespace UchOtd.Schedule.Forms
             this.oneBuilding.Text = "Один корпус";
             this.oneBuilding.UseVisualStyleBackColor = true;
             // 
-            // weekNumber
+            // weekFiltered
             // 
-            this.weekNumber.Location = new System.Drawing.Point(109, 39);
-            this.weekNumber.Maximum = new decimal(new int[] {
-            18,
-            0,
-            0,
-            0});
-            this.weekNumber.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.weekNumber.Name = "weekNumber";
-            this.weekNumber.Size = new System.Drawing.Size(45, 20);
-            this.weekNumber.TabIndex = 7;
-            this.weekNumber.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // oneWeek
-            // 
-            this.oneWeek.AutoSize = true;
-            this.oneWeek.Location = new System.Drawing.Point(12, 41);
-            this.oneWeek.Name = "oneWeek";
-            this.oneWeek.Size = new System.Drawing.Size(91, 17);
-            this.oneWeek.TabIndex = 6;
-            this.oneWeek.Text = "Одна неделя";
-            this.oneWeek.UseVisualStyleBackColor = true;
+            this.weekFiltered.AutoSize = true;
+            this.weekFiltered.Location = new System.Drawing.Point(12, 41);
+            this.weekFiltered.Name = "weekFiltered";
+            this.weekFiltered.Size = new System.Drawing.Size(105, 17);
+            this.weekFiltered.TabIndex = 6;
+            this.weekFiltered.Text = "Фильтр недель";
+            this.weekFiltered.UseVisualStyleBackColor = true;
             // 
             // Sat
             // 
@@ -222,9 +195,9 @@ namespace UchOtd.Schedule.Forms
             // 
             this.viewPanel.Controls.Add(this.audView);
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.viewPanel.Location = new System.Drawing.Point(0, 106);
+            this.viewPanel.Location = new System.Drawing.Point(0, 76);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(870, 365);
+            this.viewPanel.Size = new System.Drawing.Size(870, 395);
             this.viewPanel.TabIndex = 1;
             // 
             // audView
@@ -237,25 +210,17 @@ namespace UchOtd.Schedule.Forms
             this.audView.Name = "audView";
             this.audView.ReadOnly = true;
             this.audView.RowHeadersWidth = 20;
-            this.audView.Size = new System.Drawing.Size(870, 365);
+            this.audView.Size = new System.Drawing.Size(870, 395);
             this.audView.TabIndex = 0;
+            this.audView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.audView_MouseDown);
             // 
-            // label1
+            // weekFilter
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 72);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(51, 13);
-            this.label1.TabIndex = 13;
-            this.label1.Text = "Семестр";
-            // 
-            // semesterList
-            // 
-            this.semesterList.FormattingEnabled = true;
-            this.semesterList.Location = new System.Drawing.Point(69, 69);
-            this.semesterList.Name = "semesterList";
-            this.semesterList.Size = new System.Drawing.Size(149, 21);
-            this.semesterList.TabIndex = 14;
+            this.weekFilter.FormattingEnabled = true;
+            this.weekFilter.Location = new System.Drawing.Point(118, 38);
+            this.weekFilter.Name = "weekFilter";
+            this.weekFilter.Size = new System.Drawing.Size(53, 21);
+            this.weekFilter.TabIndex = 13;
             // 
             // Auditoriums
             // 
@@ -270,7 +235,6 @@ namespace UchOtd.Schedule.Forms
             this.ResizeEnd += new System.EventHandler(this.Auditoriums_ResizeEnd);
             this.controlsPanel.ResumeLayout(false);
             this.controlsPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.weekNumber)).EndInit();
             this.viewPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.audView)).EndInit();
             this.ResumeLayout(false);
@@ -288,14 +252,12 @@ namespace UchOtd.Schedule.Forms
         private Button Mon;
         private Panel viewPanel;
         private DataGridView audView;
-        private NumericUpDown weekNumber;
-        private CheckBox oneWeek;
+        private CheckBox weekFiltered;
         private ComboBox buildingList;
         private CheckBox oneBuilding;
         private CheckBox ExportInWord;
         private CheckBox PlusTeacherFIO;
         private CheckBox showProposed;
-        private ComboBox semesterList;
-        private Label label1;
+        private ComboBox weekFilter;
     }
 }

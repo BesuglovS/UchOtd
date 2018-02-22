@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using Schedule.DomainClasses.Logs;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using Schedule.Repositories.Common;
@@ -20,12 +21,11 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
         private readonly string _time;
         private readonly Ring _ring;
         private readonly bool _putProposedLesson;
-        private readonly Semester _semester;
 
         int _curTfdIndex;
         Dictionary<string, Tuple<string, List<Lesson>>> _curLessons;
 
-        public EditLesson(ScheduleRepository repo, int groupId, int dow, string time, bool putProposedLessons, Semester semester)
+        public EditLesson(ScheduleRepository repo, int groupId, int dow, string time, bool putProposedLessons)
         {
             InitializeComponent();
 
@@ -35,14 +35,13 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             _time = time;
             _ring = _repo.Rings.FindRing(DateTime.ParseExact(_time, "H:mm", CultureInfo.InvariantCulture));
             _putProposedLesson = putProposedLessons;
-            _semester = semester;
         }
 
         private void EditLesson_Load(object sender, EventArgs e)
         {
-            var sStarts = _repo.CommonFunctions.GetSemesterStarts(_semester);
+            var sStarts = _repo.CommonFunctions.GetSemesterStarts();
 
-            var gl = _repo.Lessons.GetGroupedGroupLessons(_semester, _groupId, -1, _putProposedLesson, false);
+            var gl = _repo.Lessons.GetGroupedGroupLessons(_groupId, sStarts, null, _putProposedLesson, false);
 
             _curLessons = new Dictionary<string, Tuple<string, List<Lesson>>>();
             if (gl.ContainsKey(_dow + " " + _time))
@@ -76,34 +75,10 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
             // Weeks
             lessonWeeks.Text = _curLessons[curTfd].Item1;
-            
+
             // Auds
-            string audString = "";
-            var audWeekList = _curLessons[curTfd].Item2.ToDictionary(l => 
-                _repo.CommonFunctions.CalculateWeekNumber(
-                    _semester, l.Calendar.Date), l => l.Auditorium.Name);
-            var grouped = audWeekList.GroupBy(a => a.Value);
-
-            var enumerable = grouped as IList<IGrouping<string, KeyValuePair<int, string>>> ?? grouped.ToList();
-            var gcount = enumerable.Count();
-            if (gcount == 1)
-            {
-                audString += enumerable.ElementAt(0).Key;
-            }
-            else
-            {
-                for (int j = 0; j < gcount; j++)
-                {
-                    var jItem = enumerable.ElementAt(j);
-                    audString += CommonFunctions.CombineWeeks(jItem.Select(ag => ag.Key).ToList()) + " - " + jItem.Key;
-
-                    if (j != gcount - 1)
-                    {
-                        audString += Environment.NewLine;
-                    }
-                }
-            }
-            auditoriums.Text = audString;            
+            
+            auditoriums.Text = AudStringsFromLessonList(_curLessons[curTfd].Item2);
 
             // isProposed
             if (_curLessons[curTfd].Item2[0].State == 2)
@@ -119,6 +94,39 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 saveChanges.Enabled = true;
             }
 
+        }
+
+        private string AudStringsFromLessonList(List<Lesson> lessons)
+        {
+            KeyValuePair<string, Tuple<string, List<Lesson>>> item;
+            var audStrings = "";
+            Dictionary<string, List<int>> AudWeeks = new Dictionary<string, List<int>>();
+            for (int j = 0; j < lessons.Count; j++)
+            {
+                var lesson = lessons[j];
+                if (!AudWeeks.ContainsKey(lesson.Auditorium.Name))
+                {
+                    AudWeeks.Add(lesson.Auditorium.Name, new List<int>());
+                }
+
+                AudWeeks[lesson.Auditorium.Name].Add(_repo.CommonFunctions.CalculateWeekNumber(lesson.Calendar.Date));
+            }
+
+            if (AudWeeks.Count == 1)
+            {
+                audStrings += AudWeeks.Keys.First();
+            }
+            else
+            {
+                var l = new List<string>();
+                foreach (KeyValuePair<string, List<int>> audWeek in AudWeeks.OrderBy(aw => aw.Value.Min()))
+                {
+                    l.Add(CommonFunctions.CombineWeeks(audWeek.Value) + " - " + audWeek.Key);
+                }
+
+                audStrings += l.Aggregate((a, b) => a + Environment.NewLine + b);
+            }
+            return audStrings;
         }
 
         private void NextTfdClick(object sender, EventArgs e)
@@ -156,16 +164,14 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
         private void SaveChangesClick(object sender, EventArgs e)
         {
-            var oldWeeks = _curLessons[_curLessons.Keys.ElementAt(_curTfdIndex)].Item2.Select(l => 
-                _repo.CommonFunctions.CalculateWeekNumber(
-                    _semester, l.Calendar.Date)).ToList();
+            var oldWeeks = _curLessons[_curLessons.Keys.ElementAt(_curTfdIndex)].Item2.Select(l => _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)).ToList();
             var newWeeks = CommonFunctions.WeeksStringToList(lessonWeeks.Text);
 
             var oldAuds = _curLessons[_curLessons.Keys.ElementAt(_curTfdIndex)].Item2.ToDictionary(
-                l => _repo.CommonFunctions.CalculateWeekNumber(_semester, l.Calendar.Date), 
+                l => _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date), 
                 l => l.Auditorium.Name);
             var newAuds = Utilities.GetAudWeeksList(auditoriums.Text);
-            var singleNewAud = newAuds.FirstOrDefault(a => a.Key == 0);
+            var singleNewAud = newAuds.FirstOrDefault(a => a.Key == int.MinValue);
             if (singleNewAud.Value != null)
             {
                 newAuds.Clear();
@@ -175,29 +181,27 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 }
             }
 
-            var keys = oldAuds.Keys.ToList();
-            foreach (var audKey in keys)            
+            var oldWeeksList = oldAuds.Keys.ToList();
+            foreach (var oldWeeksListKey in oldWeeksList)            
             {
-                if (newAuds.ContainsKey(audKey) && (oldAuds[audKey] == newAuds[audKey]))
+                if (newAuds.ContainsKey(oldWeeksListKey) && (oldAuds[oldWeeksListKey] == newAuds[oldWeeksListKey].Item1))
                 {
-                    oldAuds[audKey] = "-1";
-                    oldWeeks.Remove(audKey);
-                    newWeeks.Remove(audKey);
-                    newAuds.Remove(audKey);
+                    oldAuds[oldWeeksListKey] = "-1";
+                    oldWeeks.Remove(oldWeeksListKey);
+                    newWeeks.Remove(oldWeeksListKey);
+                    newAuds.Remove(oldWeeksListKey);
                 }
 
-                if (newAuds.ContainsKey(audKey) && (oldAuds[audKey] != newAuds[audKey]))
+                if (newAuds.ContainsKey(oldWeeksListKey) && (oldAuds[oldWeeksListKey] != newAuds[oldWeeksListKey].Item1))
                 {
 
                     var oldLesson = _curLessons[_curLessons.Keys.ElementAt(_curTfdIndex)].Item2
-                        .FirstOrDefault(l => audKey == 
-                            _repo.CommonFunctions.CalculateWeekNumber(_semester, l.Calendar.Date));
+                        .FirstOrDefault(l => oldWeeksListKey == _repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date));
 
                     var weekNumber = -1;
                     if (oldLesson != null)
                     {
-                        weekNumber = _repo.CommonFunctions.CalculateWeekNumber(
-                            _semester, _repo.Lessons.GetLesson(oldLesson.LessonId).Calendar.Date);
+                        weekNumber = _repo.CommonFunctions.CalculateWeekNumber(_repo.Lessons.GetLesson(oldLesson.LessonId).Calendar.Date);
                         _repo.Lessons.RemoveLessonActiveStateWoLog(oldLesson.LessonId);
                     }
 
@@ -205,12 +209,12 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                     {
                         TeacherForDiscipline = _repo.TeacherForDisciplines.GetTeacherForDiscipline(int.Parse(_curLessons.Keys.ElementAt(_curTfdIndex).Split('+')[0])),
                         Ring = _ring,
-                        Auditorium = _repo.Auditoriums.Find(newAuds[weekNumber]),
+                        Auditorium = _repo.Auditoriums.Find(newAuds[weekNumber].Item1),
                         State = 1
                     };
 
                     // lesson.Calendar
-                    var date = _repo.CommonFunctions.GetDateFromDowAndWeek(weekNumber, _dow, _semester);
+                    var date = _repo.CommonFunctions.GetDateFromDowAndWeek(_dow, weekNumber);
                     var calendar = _repo.Calendars.FindCalendar(date) ?? new Calendar(date);
                     newLesson.Calendar = calendar;
 
@@ -225,10 +229,10 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                                                     HiddenComment = ""
                                                 });
 
-                    oldAuds[audKey] = "-1";
-                    oldWeeks.Remove(audKey);
-                    newWeeks.Remove(audKey);
-                    newAuds.Remove(audKey);
+                    oldAuds[oldWeeksListKey] = "-1";
+                    oldWeeks.Remove(oldWeeksListKey);
+                    newWeeks.Remove(oldWeeksListKey);
+                    newAuds.Remove(oldWeeksListKey);
                 }
             }
 
@@ -240,8 +244,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
             }
 
             var oldLessonsIdToDelete = _curLessons[_curLessons.Keys.ElementAt(_curTfdIndex)].Item2
-                .Where(l => oldWeeks.Contains(_repo.CommonFunctions.CalculateWeekNumber(
-                    _semester, l.Calendar.Date)))
+                .Where(l => oldWeeks.Contains(_repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date)))
                 .Select(l => l.LessonId);
             foreach (var lessonId in oldLessonsIdToDelete)
             {
@@ -254,12 +257,12 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                 var lesson = new Lesson { 
                     TeacherForDiscipline = curTfd,
                     Ring = _ring,
-                    Auditorium = _repo.Auditoriums.Find(newAuds[week]),
+                    Auditorium = _repo.Auditoriums.Find(newAuds[week].Item1),
                     State = 1
                 };
 
                 // lesson.Calendar
-                var date = _repo.CommonFunctions.GetDateFromDowAndWeek(week, _dow, _semester);
+                var date = _repo.CommonFunctions.GetDateFromDowAndWeek(_dow, week);
                 var calendar = _repo.Calendars.FindCalendar(date) ?? new Calendar(date);
                 lesson.Calendar = calendar;
 

@@ -18,12 +18,12 @@ namespace Schedule.Repositories.Repositories.Logs
                     .Include(e => e.OldLesson.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(e => e.OldLesson.Calendar)
                     .Include(e => e.OldLesson.Ring)
-                    .Include(e => e.OldLesson.Auditorium)
+                    .Include(e => e.OldLesson.Auditorium.Building)
                     .Include(e => e.NewLesson.TeacherForDiscipline.Teacher)
                     .Include(e => e.NewLesson.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(e => e.NewLesson.Calendar)
                     .Include(e => e.NewLesson.Ring)
-                    .Include(e => e.NewLesson.Auditorium)
+                    .Include(e => e.NewLesson.Auditorium.Building)
                     .ToList();
             }
         }

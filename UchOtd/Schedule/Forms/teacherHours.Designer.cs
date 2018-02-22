@@ -32,11 +32,13 @@ namespace UchOtd.Schedule.Forms
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.update = new System.Windows.Forms.Button();
             this.teachersList = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.view = new System.Windows.Forms.DataGridView();
-            this.update = new System.Windows.Forms.Button();
+            this.hoursWeekFiltered = new System.Windows.Forms.CheckBox();
+            this.HoursWeekFilter = new System.Windows.Forms.ComboBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view)).BeginInit();
@@ -44,14 +46,26 @@ namespace UchOtd.Schedule.Forms
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.HoursWeekFilter);
+            this.controlsPanel.Controls.Add(this.hoursWeekFiltered);
             this.controlsPanel.Controls.Add(this.update);
             this.controlsPanel.Controls.Add(this.teachersList);
             this.controlsPanel.Controls.Add(this.label1);
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(731, 49);
+            this.controlsPanel.Size = new System.Drawing.Size(898, 49);
             this.controlsPanel.TabIndex = 0;
+            // 
+            // update
+            // 
+            this.update.Location = new System.Drawing.Point(615, 13);
+            this.update.Name = "update";
+            this.update.Size = new System.Drawing.Size(104, 23);
+            this.update.TabIndex = 2;
+            this.update.Text = "Обновить";
+            this.update.UseVisualStyleBackColor = true;
+            this.update.Click += new System.EventHandler(this.update_Click);
             // 
             // teachersList
             // 
@@ -77,7 +91,7 @@ namespace UchOtd.Schedule.Forms
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 49);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(731, 455);
+            this.viewPanel.Size = new System.Drawing.Size(898, 455);
             this.viewPanel.TabIndex = 1;
             // 
             // view
@@ -89,26 +103,34 @@ namespace UchOtd.Schedule.Forms
             this.view.Location = new System.Drawing.Point(0, 0);
             this.view.Name = "view";
             this.view.ReadOnly = true;
-            this.view.Size = new System.Drawing.Size(731, 455);
+            this.view.Size = new System.Drawing.Size(898, 455);
             this.view.TabIndex = 0;
             this.view.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.view_CellFormatting);
             this.view.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.view_CellMouseDoubleClick);
             // 
-            // update
+            // hoursWeekFiltered
             // 
-            this.update.Location = new System.Drawing.Point(615, 13);
-            this.update.Name = "update";
-            this.update.Size = new System.Drawing.Size(104, 23);
-            this.update.TabIndex = 2;
-            this.update.Text = "Обновить";
-            this.update.UseVisualStyleBackColor = true;
-            this.update.Click += new System.EventHandler(this.update_Click);
+            this.hoursWeekFiltered.AutoSize = true;
+            this.hoursWeekFiltered.Location = new System.Drawing.Point(789, 17);
+            this.hoursWeekFiltered.Name = "hoursWeekFiltered";
+            this.hoursWeekFiltered.Size = new System.Drawing.Size(108, 17);
+            this.hoursWeekFiltered.TabIndex = 3;
+            this.hoursWeekFiltered.Text = "Часы на недели";
+            this.hoursWeekFiltered.UseVisualStyleBackColor = true;
             // 
-            // teacherHours
+            // HoursWeekFilter
+            // 
+            this.HoursWeekFilter.FormattingEnabled = true;
+            this.HoursWeekFilter.Location = new System.Drawing.Point(729, 15);
+            this.HoursWeekFilter.Name = "HoursWeekFilter";
+            this.HoursWeekFilter.Size = new System.Drawing.Size(54, 21);
+            this.HoursWeekFilter.TabIndex = 4;
+            // 
+            // TeacherHours
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(731, 504);
+            this.ClientSize = new System.Drawing.Size(898, 504);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.Name = "TeacherHours";
@@ -130,5 +152,7 @@ namespace UchOtd.Schedule.Forms
         private Panel viewPanel;
         private DataGridView view;
         private Button update;
+        private ComboBox HoursWeekFilter;
+        private CheckBox hoursWeekFiltered;
     }
 }

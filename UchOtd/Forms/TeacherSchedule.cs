@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using Schedule.Repositories.Common;
 using UchOtd.Core;
 using UchOtd.NUDS.Core;
 using UchOtd.NUDS.View;
@@ -22,7 +23,7 @@ namespace UchOtd.Forms
 
         CancellationTokenSource _tokenSource;
         CancellationToken _cToken;
-        
+
         public TeacherSchedule(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -39,25 +40,7 @@ namespace UchOtd.Forms
         private void TeacherScheduleLoad(object sender, EventArgs e)
         {
             _tokenSource = new CancellationTokenSource();
-
-            var semesters = _repo
-                .Semesters
-                .GetAllSemesters()
-                .OrderBy(s => s.StartingYear)
-                .ThenBy(s => s.SemesterInYear)
-                .ToList();
-
-            semesterList.ValueMember = "SemesterId";
-            semesterList.DisplayMember = "DisplayName";
-            semesterList.DataSource = semesters;
-
-            if (semesters.Count == 0)
-            {
-                return;
-            }
-
-            semesterList.SelectedIndex = semesterList.Items.Count - 1;
-
+            
             Left = (Screen.PrimaryScreen.Bounds.Width - Width) / 2;
             Top = (Screen.PrimaryScreen.Bounds.Height - Height) / 2;
 
@@ -74,8 +57,7 @@ namespace UchOtd.Forms
 
         }
         
-        public List<TeacherScheduleTimeView> GetTeacherScheduleToView(Semester semester, int teacherId, bool isWeekFiltered, int weekNumber, 
-            bool showingProposed, bool onlyFutureDates, CancellationToken cToken)
+        public List<TeacherScheduleTimeView> GetTeacherScheduleToView(int teacherId, bool isWeekFiltered, List<int> weekFilterList, bool showingProposed, bool OnlyFutureDates, CancellationToken cToken)
         {
             cToken.ThrowIfCancellationRequested();
             
@@ -87,28 +69,25 @@ namespace UchOtd.Forms
             {
                 lessonList = _repo
                     .Lessons
-                    .GetFiltredLessons(l =>
-                        l.TeacherForDiscipline.Discipline.Semester.SemesterId == semester.SemesterId &&
+                    .GetFiltredLessons(l => 
                         l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
-                        ((l.State == 1) || ((l.State == 2) && showingProposed)) && 
-                        _repo.CommonFunctions.CalculateWeekNumber(semester, l.Calendar.Date.Date) == weekNumber)
-                    .ToList();
-            }
+                        ((l.State == 1) || ((l.State == 2) && showingProposed)) &&
+                        weekFilterList.Contains(_repo.CommonFunctions.CalculateWeekNumber(l.Calendar.Date.Date)))
+                    .ToList();            }
             else
             {
                 lessonList = _repo
                     .Lessons
-                    .GetFiltredLessons(l =>
-                        l.TeacherForDiscipline.Discipline.Semester.SemesterId == semester.SemesterId &&
+                    .GetFiltredLessons(l => 
                         l.TeacherForDiscipline.Teacher.TeacherId == teacherId &&
                         ((l.State == 1) || ((l.State == 2) && showingProposed)))
                     .ToList();
             }
 
-            if (onlyFutureDates)
+            if (OnlyFutureDates)
             {
-                var dayStart = DateTime.Now.Date;
-                lessonList = lessonList.Where(l => l.Calendar.Date >= dayStart).ToList();
+                var DayStart = DateTime.Now.Date;
+                lessonList = lessonList.Where(l => l.Calendar.Date >= DayStart).ToList();
             }
 
             var teacherBuildingsCount = lessonList.Select(l => l.Auditorium.Building.BuildingId).Distinct().Count();
@@ -124,9 +103,7 @@ namespace UchOtd.Forms
 
             cToken.ThrowIfCancellationRequested();
 
-            var semesterStartsOption = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => 
-                co.Key == "Semester Starts" && 
-                co.Semester.SemesterId == semester.SemesterId);
+            var semesterStartsOption = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts");
             if (semesterStartsOption == null)
             {
                 return result;
@@ -146,6 +123,7 @@ namespace UchOtd.Forms
                     foreach (var tfdBundle in timeDowLessons.Value
                         .OrderBy(tfd => tfd.Value.Select(l => l.Calendar.Date).Min()))
                     {
+                        var cf = new CommonFunctions(_repo);
                         message += tfdBundle.Value[0].TeacherForDiscipline.Discipline.StudentGroup.Name;
                         message += Environment.NewLine;
                         message += tfdBundle.Value[0].TeacherForDiscipline.Discipline.Name;
@@ -153,9 +131,9 @@ namespace UchOtd.Forms
                         var semesterStartsDate = DateTime.ParseExact(semesterStartsOption.Value, "yyyy-MM-dd",
                             CultureInfo.InvariantCulture);
                         var weekList = tfdBundle.Value
-                            .Select(l => Utilities.WeekFromDate(l.Calendar.Date, semesterStartsDate))
+                            .Select(l => cf.CalculateWeekNumber(l.Calendar.Date))
                             .ToList();
-                        message += "(" + Utilities.GatherWeeksToString(weekList) + ")";
+                        message += "(" + CommonFunctions.CombineWeeks(weekList) + ")";
                         message += Environment.NewLine;
                         var audWeeks = new Dictionary<Auditorium, List<int>>();
                         foreach (var lesson in tfdBundle.Value)
@@ -165,7 +143,7 @@ namespace UchOtd.Forms
                                 audWeeks.Add(lesson.Auditorium, new List<int>());
                             }
 
-                            audWeeks[lesson.Auditorium].Add(Utilities.WeekFromDate(lesson.Calendar.Date, semesterStartsDate));
+                            audWeeks[lesson.Auditorium].Add(cf.CalculateWeekNumber(lesson.Calendar.Date));
                         }
                         var sortedWeeks = audWeeks.OrderBy(aw => aw.Value.Min());
                         if (sortedWeeks.Count() == 1)
@@ -182,7 +160,7 @@ namespace UchOtd.Forms
                             message = sortedWeeks
                                 .Aggregate(message, (current, kvp) =>
                                     current +
-                                    (Utilities.GatherWeeksToString(kvp.Value) + " - " + kvp.Key.Name +
+                                    (CommonFunctions.CombineWeeks(kvp.Value) + " - " + kvp.Key.Name +
                                     ((teacherBuildingsCount != 1) ? (" (" + kvp.Key.Building.Name + ")") : "") +
                                      Environment.NewLine));
                         }
@@ -344,44 +322,58 @@ namespace UchOtd.Forms
             }
         }
 
+        private bool getWeekFilter(out List<int> weekFilterList)
+        {
+            weekFilterList = new List<int>();
+            try
+            {
+                if (!weekFilter.Text.Contains("-"))
+                {
+                    weekFilterList.Add(int.Parse(weekFilter.Text));
+                }
+                else
+                {
+                    var split = weekFilter.Text.Split('-');
+                    var start = int.Parse(split[0]);
+                    var finish = int.Parse(split[1]);
+                    for (int i = start; i <= finish; i++)
+                    {
+                        weekFilterList.Add(i);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private async void refresh_Click(object sender, EventArgs e)
         {
             List<TeacherScheduleTimeView> result = null;
-
+            
             if (refresh.Text == "Обновить")
             {
                 _cToken = _tokenSource.Token;
-
-                Semester semester = null;
-
-                if (semesterList.SelectedValue == null)
-                {
-                    return;
-                }
-
-                semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
-
-                if (semester == null)
-                {
-                    return;
-                }
 
                 refresh.Image = Resources.Loading;
                 refresh.Text = "";
 
                 var teacherId = (int) teacherList.SelectedValue;
                 var isWeekFiltered = weekFiltered.Checked;
-                int weekNum = -1;
+
+                List<int> weekFilterList = null;
                 if (isWeekFiltered)
                 {
-                    int.TryParse(weekFilter.Text, out weekNum);
+                    if (getWeekFilter(out weekFilterList)) return;
                 }
                 var isShowProposed = showProposed.Checked;
 
                 try
                 {
                     result = await Task.Run(() =>
-                        GetTeacherScheduleToView(semester, teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
+                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekFilterList, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
                         _cToken);
                 }
                 catch (OperationCanceledException)
@@ -411,28 +403,14 @@ namespace UchOtd.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                Semester semester = null;
-
-                if (semesterList.SelectedValue == null)
-                {
-                    return;
-                }
-
-                semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
-
-                if (semester == null)
-                {
-                    return;
-                }
-
                 ExportInWordPortrait.Text = "";
                 ExportInWordPortrait.Image = Resources.Loading;
 
                 var isWeekFiltered = weekFiltered.Checked;
-                int weekNum = -1;
+                List<int> weekFilterList = null;
                 if (isWeekFiltered)
                 {
-                    int.TryParse(weekFilter.Text, out weekNum);
+                    if (getWeekFilter(out weekFilterList)) return;
                 }
                 var isShowProposed = showProposed.Checked;
 
@@ -441,7 +419,7 @@ namespace UchOtd.Forms
                     var teacherId = (int)teacherList.SelectedValue;
 
                     var result = await Task.Run(() => 
-                        GetTeacherScheduleToView(semester, teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
+                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekFilterList, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
                         _cToken);
 
                     var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
@@ -467,28 +445,14 @@ namespace UchOtd.Forms
             {
                 _cToken = _tokenSource.Token;
 
-                Semester semester = null;
-
-                if (semesterList.SelectedValue == null)
-                {
-                    return;
-                }
-
-                semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
-
-                if (semester == null)
-                {
-                    return;
-                }
-
                 ExportInWordLandscape.Text = "";
                 ExportInWordLandscape.Image = Resources.Loading;
 
                 var isWeekFiltered = weekFiltered.Checked;
-                int weekNum = -1;
+                List<int> weekFilterList = null;
                 if (isWeekFiltered)
                 {
-                    int.TryParse(weekFilter.Text, out weekNum);
+                    if (getWeekFilter(out weekFilterList)) return;
                 }
                 var isShowProposed = showProposed.Checked;
                 
@@ -497,7 +461,7 @@ namespace UchOtd.Forms
                     var teacherId = (int)teacherList.SelectedValue;
 
                     var result = await Task.Run(() => 
-                        GetTeacherScheduleToView(semester, teacherId, isWeekFiltered, weekNum, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
+                        GetTeacherScheduleToView(teacherId, isWeekFiltered, weekFilterList, isShowProposed, OnlyFutureDatesExportInWord.Checked, _cToken),
                         _cToken);
 
                     var teacher = _repo.Teachers.GetTeacher((int)(teacherList.SelectedValue));
@@ -521,20 +485,6 @@ namespace UchOtd.Forms
         {
             if (ExportAllTeachersInWord.Text == "Word (все преподаватели)")
             {
-                Semester semester = null;
-
-                if (semesterList.SelectedValue == null)
-                {
-                    return;
-                }
-
-                semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
-
-                if (semester == null)
-                {
-                    return;
-                }
-
                 _cToken = _tokenSource.Token;
                 var repo = _repo;
 
@@ -543,7 +493,7 @@ namespace UchOtd.Forms
                 
                 try
                 {
-                    await Task.Run(() => WordExport.TeachersSchedule(repo, semester, this, OnlyFutureDatesExportInWord.Checked, _cToken), _cToken);
+                    await Task.Run(() => WordExport.TeachersSchedule(repo, this, OnlyFutureDatesExportInWord.Checked, _cToken), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -556,6 +506,12 @@ namespace UchOtd.Forms
 
             ExportAllTeachersInWord.Image = null;
             ExportAllTeachersInWord.Text = "Word (все преподаватели)";
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            weekFiltered.Checked = true;
+            weekFilter.Text = "16-17";
         }
     }
 }

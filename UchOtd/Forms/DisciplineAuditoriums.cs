@@ -16,7 +16,7 @@ namespace UchOtd.Forms
     public partial class DisciplineAuditoriums : Form
     {
         private readonly ScheduleRepository _initialRepo;
-        private readonly string filename = "DisciplineAuditoriums.txt";
+        private readonly string filename = "D:\\Github\\DisciplineAuditoriums.txt";
 
         public DisciplineAuditoriums(ScheduleRepository repo)
         {
@@ -49,11 +49,16 @@ namespace UchOtd.Forms
             {
                 await Task.Run(() =>
                 {
+                    var result = new Dictionary<string, List<string>>(); // DiscName + List<audName>
+
                     foreach (var semester in allSemesters.OrderBy(a => a))
                     {
-                        var dbName = "Schedule" + semester;
+                        var dbName = "S" + semester.Trim() + "AA";
+                        
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" + dbName +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
 
-                        var repo = new ScheduleRepository("Server=uch-otd-disp,1433;Database=" + dbName + "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True");
+                        var repo = new ScheduleRepository(connectionString);
 
                         TextFileUtilities.WriteString(filename, "Семестр - " + semester);
 
@@ -85,12 +90,12 @@ namespace UchOtd.Forms
                             {
                                 var group = facultyGroups[j];
 
-                                TextFileUtilities.WriteString(filename, "Группа " + @group.Name);
+                                TextFileUtilities.WriteString(filename, "Группа " + group.Name);
 
                                 var studentIds = repo
                                     .StudentsInGroups
                                     .GetFiltredStudentsInGroups(
-                                        sig => sig.StudentGroup.StudentGroupId == @group.StudentGroupId)
+                                        sig => sig.StudentGroup.StudentGroupId == group.StudentGroupId && !sig.Student.Expelled)
                                     .ToList()
                                     .Select(stig => stig.Student.StudentId);
 
@@ -115,12 +120,39 @@ namespace UchOtd.Forms
                                                     l.State == 1 &&
                                                     l.TeacherForDiscipline.TeacherForDisciplineId == tfd1.TeacherForDisciplineId)
                                             .ToList();
-                                    var auds = (tfdLessons.Count == 0) ? "" : tfdLessons.Select(l => l.Auditorium.Name).Distinct().OrderBy(a => a).ToList().Aggregate((a, b) => a + "\t" + b);
+                                    var auds = (tfdLessons.Count == 0) ? new List<string>() : 
+                                        tfdLessons
+                                        .Select(l => l.Auditorium.Name)
+                                        .Distinct()
+                                        .OrderBy(a => a)
+                                        .ToList();
 
-                                    TextFileUtilities.WriteString(filename, tfd.Discipline.Name + "\t" + auds);
+                                    if (!result.ContainsKey(tfd1.Discipline.Name))
+                                    {
+                                        result.Add(tfd1.Discipline.Name, new List<string>());
+                                    }
+
+                                    foreach (var aud in auds)
+                                    {
+                                        if (!result[tfd1.Discipline.Name].Contains(aud))
+                                        {
+                                            result[tfd1.Discipline.Name].Add(aud);
+                                        }
+                                    }
+
+                                    //TextFileUtilities.WriteString(filename, tfd.Discipline.Name + "\t" + auds);
                                 }
                             }
                         }
+                    }
+
+
+                    foreach (string discName in result.Keys.OrderBy(a => a).ToList())
+                    {
+                        var auds = (result[discName].Count == 0)
+                            ? ""
+                            : result[discName].OrderBy(a => a).Aggregate((a, b) => a + "\t" + b);
+                        TextFileUtilities.WriteString(filename, discName + "\t" + auds);
                     }
 
                 });

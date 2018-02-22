@@ -21,7 +21,7 @@ namespace Schedule.Repositories.Repositories.Main
                     .Include(sn => sn.Lesson.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(sn => sn.Lesson.Calendar)
                     .Include(sn => sn.Lesson.Ring)
-                    .Include(sn => sn.Lesson.Auditorium)
+                    .Include(sn => sn.Lesson.Auditorium.Building)
                     .ToList();
             }
         }
@@ -36,7 +36,7 @@ namespace Schedule.Repositories.Repositories.Main
                     .Include(sn => sn.Lesson.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(sn => sn.Lesson.Calendar)
                     .Include(sn => sn.Lesson.Ring)
-                    .Include(sn => sn.Lesson.Auditorium)
+                    .Include(sn => sn.Lesson.Auditorium.Building)
                     .ToList()
                     .Where(condition)
                     .ToList();
@@ -53,7 +53,7 @@ namespace Schedule.Repositories.Repositories.Main
                     .Include(sn => sn.Lesson.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(sn => sn.Lesson.Calendar)
                     .Include(sn => sn.Lesson.Ring)
-                    .Include(sn => sn.Lesson.Auditorium)
+                    .Include(sn => sn.Lesson.Auditorium.Building)
                     .ToList()
                     .FirstOrDefault(condition);
             }
@@ -69,7 +69,7 @@ namespace Schedule.Repositories.Repositories.Main
                     .Include(sn => sn.Lesson.TeacherForDiscipline.Discipline.StudentGroup)
                     .Include(sn => sn.Lesson.Calendar)
                     .Include(sn => sn.Lesson.Ring)
-                    .Include(sn => sn.Lesson.Auditorium)
+                    .Include(sn => sn.Lesson.Auditorium.Building)
                     .FirstOrDefault(sn => sn.ScheduleNoteId == scheduleNoteId);
             }
         }

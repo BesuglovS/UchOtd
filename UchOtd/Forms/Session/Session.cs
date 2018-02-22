@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
@@ -12,6 +13,7 @@ using Microsoft.Office.Interop.Word;
 using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
+using UchOtd.Core;
 using UchOtd.Properties;
 using UchOtd.Schedule.wnu;
 using UchOtd.Schedule.wnu.MySQLViews;
@@ -206,290 +208,18 @@ namespace UchOtd.Forms.Session
         {
             if (oneFaculty.Checked)
             {
-                SaveAsWordDocument((int)FacultyList.SelectedValue);
+                WordExport.ExportCustomSessionSchedule(_repo, new List<int> { (int)FacultyList.SelectedValue }, "", false, false, true);
             }
             else
             {
-                SaveAsWordDocument(-1);
+                WordExport.ExportCustomSessionSchedule(_repo, null, "", false, false, true);
             }
             
         }
 
-        private void SaveAsWordDocument(int facultyFilter)
-        {
-            DateTime beginSessionDate, endSessionDate;
-            DetectSessionDates(out beginSessionDate, out endSessionDate);
+        
 
-
-            object oMissing = Missing.Value;
-            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
-
-            //Start Word and create a new document.
-
-            _Application oWord = new Application();
-            oWord.Visible = true;
-            _Document oDoc =
-                oWord.Documents.Add(ref oMissing, ref oMissing, ref oMissing, ref oMissing);
-
-            oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
-            oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
-            oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
-            oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
-
-            List<Faculty> faculties;
-
-            if (facultyFilter != -1)
-            {
-                var onefaculty = _repo.Faculties.GetFaculty((int)FacultyList.SelectedValue);
-                faculties = oneFaculty == null ? 
-                    _repo.Faculties.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList() : 
-                    new List<Faculty> {onefaculty};
-            }
-            else
-            {
-                faculties = _repo.Faculties.GetAllFaculties().OrderBy(f => f.SortingOrder).ToList();
-            }
-            
-            foreach (var faculty in faculties)
-            {
-                /*
-                var groupIds = new List<int>();                
-                foreach (var group in Constants.facultyGroups.ElementAt(facCounter).Value)
-                {
-                    var groupId = _repo.FindStudentGroup(group);
-                    if (groupId != null)
-                    {
-                        groupIds.Add(groupId.StudentGroupId);
-                    }
-                }*/
-
-                var localFaculty = faculty;
-                var groupIds = _repo
-                    .GroupsInFaculties
-                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == localFaculty.FacultyId)
-                    .Select(gif => gif.StudentGroup.StudentGroupId)
-                    .ToList();
-
-                var facultyExams = _repo.Exams.GetFacultyExams(_repo, groupIds);
-
-                facultyExams = facultyExams
-                    .OrderBy(fe => fe.Key)
-                    .ToDictionary(keyItem => keyItem.Key, valueItem => valueItem.Value);
-
-                Paragraph oPara1 =
-                    oDoc.Content.Paragraphs.Add(ref oMissing);
-                oPara1.Range.Font.Size = 24;
-                oPara1.Format.LineSpacing = oWord.LinesToPoints(1);
-                oPara1.Range.Text = "Расписание";
-                oPara1.Format.SpaceAfter = 0;
-                oPara1.Range.InsertParagraphAfter();
-
-                oPara1 = oDoc.Content.Paragraphs.Add(ref oMissing);
-                oPara1.Range.Font.Size = 14;
-                oPara1.Format.SpaceAfter = 0;
-                if (beginSessionDate.Month < 3)
-                {
-                    var startYear = beginSessionDate.Year - 1;
-                    oPara1.Range.Text = "зимней сессии " + startYear + "-" + (startYear + 1) + " учебного года" +
-                        Environment.NewLine +
-                        faculty.Name;
-                }
-                else
-                {
-                    var startYear = beginSessionDate.Year - 1;
-                    oPara1.Range.Text = "летней сессии " + startYear + "-" + (startYear + 1) + " учебного года" +
-                        Environment.NewLine +
-                        faculty.Name;
-                }
-                oPara1.Range.InsertParagraphAfter();
-
-                Shape signBox = oDoc.Shapes
-                    .AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 350, 15, 200, 75, oPara1.Range);
-
-                signBox.Line.Visible = MsoTriState.msoFalse;
-                signBox.TextFrame.ContainingRange.ParagraphFormat.Alignment =
-                    WdParagraphAlignment.wdAlignParagraphRight;
-
-                var prorUchRabNameOption = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Проректор по учебной работе");
-                var prorUchRabName = (prorUchRabNameOption == null) ? "" : prorUchRabNameOption.Value;
-
-                signBox.TextFrame.ContainingRange.InsertAfter("«УТВЕРЖДАЮ»");
-                signBox.TextFrame.ContainingRange.InsertParagraphAfter();
-                signBox.TextFrame.ContainingRange.InsertAfter("Проректор по учебной работе");
-                signBox.TextFrame.ContainingRange.InsertParagraphAfter();
-                signBox.TextFrame.ContainingRange.InsertAfter("____________  " + prorUchRabName);
-
-                Faculty local2Faculty = faculty;
-                List<StudentGroup> groups = _repo
-                    .GroupsInFaculties
-                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == local2Faculty.FacultyId)
-                    .Select(gif => gif.StudentGroup)
-                    .ToList();
-
-                Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
-                Table oTable = oDoc.Tables.Add(wrdRng, 1 + facultyExams.Keys.Count, 1 + groups.Count());
-
-                //oTable.Rows(1).HeadingFormat = True;
-                //oTable.ApplyStyleHeadingRows = True;
-                oTable.Rows[1].HeadingFormat = -1;
-                oTable.ApplyStyleHeadingRows = true;
-
-                oTable.Borders.Enable = 1;
-
-                for (int i = 1; i <= oTable.Rows.Count; i++)
-                {
-                    oTable.Rows[i].AllowBreakAcrossPages = (int)MsoTriState.msoFalse;
-                }
-
-
-                oTable.Cell(1, 1).Range.Text = "Дата";
-                oTable.Cell(1, 1).Range.ParagraphFormat.Alignment =
-                        WdParagraphAlignment.wdAlignParagraphCenter;
-                for (var column = 1; column <= groups.Count(); column++)
-                {
-                    oTable.Cell(1, column + 1).Range.Text = groups[column - 1].Name;
-                    oTable.Cell(1, column + 1).Range.ParagraphFormat.Alignment =
-                        WdParagraphAlignment.wdAlignParagraphCenter;
-                }
-
-                for (var row = 2; row <= 1 + facultyExams.Keys.Count; row++)
-                {
-                    oTable.Cell(row, 1).Range.Text = facultyExams.Keys.ElementAt(row - 2).ToString("dd MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"));
-                    oTable.Cell(row, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
-                    oTable.Cell(row, 1).Range.ParagraphFormat.Alignment =
-                        WdParagraphAlignment.wdAlignParagraphCenter;
-                }
-
-                for (var row = 2; row <= 1 + facultyExams.Keys.Count; row++)
-                {
-                    DateTime currentDate = facultyExams.Keys.ElementAt(row - 2);
-
-                    for (var column = 1; column <= groups.Count; column++)
-                    {
-                        if (facultyExams.ContainsKey(currentDate))
-                        {
-                            if (facultyExams[currentDate].ContainsKey(groupIds[column - 1]))
-                            {
-                                var eventCount = facultyExams[currentDate][groupIds[column - 1]].Count;
-
-                                oTable.Cell(row, column + 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
-
-                                var timeTable = oDoc.Tables.Add(oTable.Cell(row, column + 1).Range, 1, 1);
-                                timeTable.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitWindow);
-                                if (eventCount > 1)
-                                {
-                                    for (int i = 1; i < eventCount; i++)
-                                    {
-                                        timeTable.Rows.Add();
-                                    }
-                                }
-
-                                for (int i = 0; i < eventCount; i++)
-                                {
-                                    string cellText = "";
-
-                                    var evt = facultyExams[currentDate][groupIds[column - 1]][i];
-
-                                    // Консультация || Экзамен                                                                
-                                    if (evt.IsExam)
-                                    {
-                                        cellText += "Экзамен";
-                                    }
-                                    else
-                                    {
-                                        cellText += "Консультация";
-                                    }
-
-                                    cellText += Environment.NewLine;
-                                    cellText += evt.DisciplineName + Environment.NewLine;
-                                    cellText += evt.TeacherFio + Environment.NewLine;
-                                    cellText += evt.Time.ToString("H:mm") + Environment.NewLine;
-                                    cellText += evt.Auditorium;
-
-                                    oPara1 = oDoc.Content.Paragraphs.Add(timeTable.Cell(i + 1, 1).Range);
-                                    oPara1.Range.Font.Size = 10;
-                                    oPara1.Format.SpaceAfter = 0;
-                                    oPara1.Range.Text = cellText;
-
-                                    if (i != eventCount - 1)
-                                    {
-                                        timeTable.Cell(i + 1, 1).Borders[WdBorderType.wdBorderBottom].Visible = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-
-                oTable.Columns[1].Width = oWord.CentimetersToPoints(3);
-                for (int i = 0; i < groups.Count; i++)
-                {
-                    oTable.Columns[i + 2].Width = oWord.CentimetersToPoints(16f / groups.Count);
-                }
-
-                oTable.Rows.Alignment = WdRowAlignment.wdAlignRowCenter;
-
-                Paragraph oPara2 =
-                    oDoc.Content.Paragraphs.Add(ref oMissing);
-                oPara2.Range.Font.Size = 12;
-                oPara2.Format.LineSpacing = oWord.LinesToPoints(1);
-                oPara2.Range.Text = "";
-                oPara2.Format.SpaceAfter = 0;
-                oPara2.Range.InsertParagraphAfter();
-
-
-                var headUchOtdNameOption = _repo
-                    .ConfigOptions
-                    .GetFirstFiltredConfigOption(co => co.Key == "Начальник учебного отдела");
-                var headUchOtdName = (headUchOtdNameOption == null) ? "" : headUchOtdNameOption.Value;
-
-                oPara2 =
-                    oDoc.Content.Paragraphs.Add(ref oMissing);
-                oPara2.Range.Font.Size = 12;
-                oPara2.Format.LineSpacing = oWord.LinesToPoints(1);
-                oPara2.Range.Text = "Начальник учебного отдела\t\t" + "_________________  " + headUchOtdName;
-                oPara2.Format.SpaceAfter = 0;
-                oPara2.Range.InsertParagraphAfter();
-                oPara2.Range.InsertParagraphAfter();
-
-                oPara2 =
-                    oDoc.Content.Paragraphs.Add(ref oMissing);
-                oPara2.Range.Font.Size = 12;
-                oPara2.Format.LineSpacing = oWord.LinesToPoints(1);
-                oPara2.Range.Text = faculty.SessionSigningTitle + "\t\t_________________  " + faculty.DeanSigningSessionSchedule;
-                oPara2.Format.SpaceAfter = 0;
-                oPara2.Range.InsertParagraphAfter();
-                oPara2.Range.InsertParagraphAfter();
-
-                if (faculty.FacultyId != faculties.OrderBy(f => f.SortingOrder).Last().FacultyId)
-                {
-                    oDoc.Words.Last.InsertBreak(WdBreakType.wdPageBreak);
-                }
-
-                System.Windows.Forms.Application.DoEvents();
-            }
-
-            //object fileName = Application.StartupPath + @"\Export2.docx";
-
-            //oDoc.SaveAs(ref fileName);
-
-            //oWord.Quit();
-
-        }
-
-        private void DetectSessionDates(out DateTime beginSessionDate, out DateTime endSessionDate)
-        {
-            var minConsDate = _repo.Exams.GetAllExams().Select(e => e.ConsultationDateTime).Min();
-            var minExamDate = _repo.Exams.GetAllExams().Select(e => e.ExamDateTime).Min();
-
-            beginSessionDate = (minConsDate <= minExamDate) ? minConsDate : minExamDate;
-
-            var maxConsDate = _repo.Exams.GetAllExams().Select(e => e.ConsultationDateTime).Max();
-            var maxExamDate = _repo.Exams.GetAllExams().Select(e => e.ExamDateTime).Max();
-
-            endSessionDate = (maxConsDate <= maxExamDate) ? maxConsDate : maxExamDate;
-        }
+        
 
         private async void Refresh_Click(object sender, EventArgs e)
         {

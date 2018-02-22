@@ -37,7 +37,7 @@ namespace UchOtd.Forms
             facultyFilter.DataSource = faculties;
 
             var groups = MainGroups();
-                        
+
             studentGroupList.DisplayMember = "Name";
             studentGroupList.DataSource = groups;
 
@@ -51,14 +51,11 @@ namespace UchOtd.Forms
 
         private void UpdateData()
         {
-            if (_tokenSource != null)
-            {
-                _tokenSource.Cancel();
-            }
+            _tokenSource?.Cancel();
 
             _tokenSource = new CancellationTokenSource();
             _cToken = _tokenSource.Token;
-            
+
             var isfacultyFiltered = facultyFiltered.Checked;
             var facultyFilterSelectedValue = (int)facultyFilter.SelectedValue;
 
@@ -67,8 +64,8 @@ namespace UchOtd.Forms
             if (isStudentGroupsFiltered)
             {
                 groups = (
-                        from object groupObject in 
-                        studentGroupList.SelectedItems 
+                        from object groupObject in
+                        studentGroupList.SelectedItems
                         select groupObject as StudentGroup)
                     .ToList();
             }
@@ -98,14 +95,14 @@ namespace UchOtd.Forms
 
             if (data.Groups.Count == 0)
             {
-                MessageBox.Show("В итоговом списке нет ни одной группы.", "Незадача");                
+                MessageBox.Show("В итоговом списке нет ни одной группы.", "Незадача");
                 return;
             }
 
             loadingLabel.Visible = true;
-            
+
             var calculateTask = Task.Factory.StartNew(() =>
-            {   
+            {
                 // Dictionary<StudentGroupId,Dictionary<ringId, List<Lessons>>>
                 data.LessonsData = new Dictionary<int, Dictionary<int, List<Lesson>>>();
                 data.Rings = new List<Ring>();
@@ -190,11 +187,9 @@ namespace UchOtd.Forms
 
                             if (lessonsData.LessonsData[group.StudentGroupId].ContainsKey(ring.RingId))
                             {
-                                var lesson = lessonsData.LessonsData[group.StudentGroupId][ring.RingId][0];
-
-                                bool groupsNotEqual = lesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId != group.StudentGroupId;
-
-                                view.Rows[rowIndex].Cells[columnIndex].Value = LessonToString(lesson, groupsNotEqual);
+                                var lessons = lessonsData.LessonsData[group.StudentGroupId][ring.RingId];
+                                
+                                view.Rows[rowIndex].Cells[columnIndex].Value = LessonToString(lessons, group.StudentGroupId);
                             }
                             else
                             {
@@ -217,8 +212,8 @@ namespace UchOtd.Forms
                 TaskContinuationOptions.None,
                 _uiScheduler
             );
-            
-            
+
+
         }
 
         private List<StudentGroup> MainGroups()
@@ -226,17 +221,29 @@ namespace UchOtd.Forms
             return _repo
                 .StudentGroups.GetFiltredStudentGroups(sg =>
                     !(sg.Name.Contains("-") || sg.Name.Contains("+") || sg.Name.Contains("I") ||
-                    sg.Name.Length == 1 || sg.Name.Contains("(Н)") || sg.Name.Contains(".")))
+                      sg.Name.Length == 1 || sg.Name.Contains("(Н)") || sg.Name.Contains(".")))
                 .OrderBy(sg => sg.Name)
                 .ToList();
         }
 
-        private string LessonToString(Lesson lesson, bool groupsNotEqual)
+        private string LessonToString(List<Lesson> lessons, int groupId)
         {
-            return (groupsNotEqual ? lesson.TeacherForDiscipline.Discipline.StudentGroup.Name + Environment.NewLine : "") +
-                lesson.TeacherForDiscipline.Discipline.Name + Environment.NewLine +
-                lesson.TeacherForDiscipline.Teacher.FIO + Environment.NewLine + 
-                lesson.Auditorium.Name;
+            var result = "";
+            for (int i = 0; i < lessons.Count; i++)
+            {
+                var lesson = lessons[i];
+                result += ((lesson.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId != groupId) ?
+                              lesson.TeacherForDiscipline.Discipline.StudentGroup.Name + Environment.NewLine : "") +
+                          lesson.TeacherForDiscipline.Discipline.Name + Environment.NewLine +
+                          lesson.TeacherForDiscipline.Teacher.FIO + Environment.NewLine +
+                          lesson.Auditorium.Name;
+                if (i != lessons.Count - 1)
+                {
+                    result += Environment.NewLine;
+                }
+            }
+
+            return result;
         }
 
         private void ResizeColumns()

@@ -43,6 +43,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.OrderList = new System.Windows.Forms.TextBox();
             this.PayForThis = new System.Windows.Forms.CheckBox();
             this.NFactor = new System.Windows.Forms.CheckBox();
+            this.Expelled = new System.Windows.Forms.CheckBox();
             this.Starosta = new System.Windows.Forms.CheckBox();
             this.Phone = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -64,7 +65,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.label1 = new System.Windows.Forms.Label();
             this.ListPanel = new System.Windows.Forms.Panel();
             this.StudentListView = new System.Windows.Forms.DataGridView();
-            this.saveToJson = new System.Windows.Forms.Button();
+            this.jsonExport = new System.Windows.Forms.Button();
             this.ControlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudentListView)).BeginInit();
@@ -72,7 +73,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // ControlsPanel
             // 
-            this.ControlsPanel.Controls.Add(this.saveToJson);
+            this.ControlsPanel.Controls.Add(this.jsonExport);
             this.ControlsPanel.Controls.Add(this.ImportStudentListFromJson);
             this.ControlsPanel.Controls.Add(this.Filter);
             this.ControlsPanel.Controls.Add(this.showAll);
@@ -84,6 +85,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ControlsPanel.Controls.Add(this.OrderList);
             this.ControlsPanel.Controls.Add(this.PayForThis);
             this.ControlsPanel.Controls.Add(this.NFactor);
+            this.ControlsPanel.Controls.Add(this.Expelled);
             this.ControlsPanel.Controls.Add(this.Starosta);
             this.ControlsPanel.Controls.Add(this.Phone);
             this.ControlsPanel.Controls.Add(this.label7);
@@ -199,7 +201,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // PayForThis
             // 
             this.PayForThis.AutoSize = true;
-            this.PayForThis.Location = new System.Drawing.Point(19, 372);
+            this.PayForThis.Location = new System.Drawing.Point(98, 372);
             this.PayForThis.Name = "PayForThis";
             this.PayForThis.Size = new System.Drawing.Size(118, 17);
             this.PayForThis.TabIndex = 47;
@@ -215,6 +217,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.NFactor.TabIndex = 45;
             this.NFactor.Text = "Наяновец";
             this.NFactor.UseVisualStyleBackColor = true;
+            // 
+            // Expelled
+            // 
+            this.Expelled.AutoSize = true;
+            this.Expelled.Location = new System.Drawing.Point(19, 372);
+            this.Expelled.Name = "Expelled";
+            this.Expelled.Size = new System.Drawing.Size(74, 17);
+            this.Expelled.TabIndex = 44;
+            this.Expelled.Text = "Отчислен";
+            this.Expelled.UseVisualStyleBackColor = true;
             // 
             // Starosta
             // 
@@ -406,15 +418,15 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentListView.TabIndex = 1;
             this.StudentListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.StudentListView_CellClick);
             // 
-            // saveToJson
+            // jsonExport
             // 
-            this.saveToJson.Location = new System.Drawing.Point(14, 714);
-            this.saveToJson.Name = "saveToJson";
-            this.saveToJson.Size = new System.Drawing.Size(206, 23);
-            this.saveToJson.TabIndex = 67;
-            this.saveToJson.Text = "Сохранить в JSON";
-            this.saveToJson.UseVisualStyleBackColor = true;
-            this.saveToJson.Click += new System.EventHandler(this.saveToJson_Click);
+            this.jsonExport.Location = new System.Drawing.Point(14, 714);
+            this.jsonExport.Name = "jsonExport";
+            this.jsonExport.Size = new System.Drawing.Size(206, 23);
+            this.jsonExport.TabIndex = 67;
+            this.jsonExport.Text = "Экспортировать в JSON";
+            this.jsonExport.UseVisualStyleBackColor = true;
+            this.jsonExport.Click += new System.EventHandler(this.jsonExport_Click);
             // 
             // StudentList
             // 
@@ -441,6 +453,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         private TextBox OrderList;
         private CheckBox PayForThis;
         private CheckBox NFactor;
+        private CheckBox Expelled;
         private CheckBox Starosta;
         private TextBox Phone;
         private Label label7;
@@ -469,6 +482,6 @@ namespace UchOtd.Schedule.Forms.DBLists
         private Button showAll;
         private Button Filter;
         private Button ImportStudentListFromJson;
-        private Button saveToJson;
+        private Button jsonExport;
     }
 }

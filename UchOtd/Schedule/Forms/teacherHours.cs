@@ -131,8 +131,44 @@ namespace UchOtd.Schedule.Forms
             }
         }
 
+        private bool getWeekFilter(ComboBox weekList, out List<int> weekFilterList)
+        {
+            var text = weekList.Text;
+            weekFilterList = new List<int>();
+            try
+            {
+                if (!text.Contains("-"))
+                {
+                    weekFilterList.Add(int.Parse(text));
+                }
+                else
+                {
+                    var split = text.Split('-');
+                    var start = int.Parse(split[0]);
+                    var finish = int.Parse(split[1]);
+                    for (int i = start; i <= finish; i++)
+                    {
+                        weekFilterList.Add(i);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private async void update_Click(object sender, EventArgs e)
         {
+
+            List<int> weekFilterList = null;
+            var ishoursWeekFiltered = hoursWeekFiltered.Checked;
+            if (ishoursWeekFiltered)
+            {
+                if (getWeekFilter(HoursWeekFilter, out weekFilterList)) return;
+            }
+
             List<TeacherForDisciplineView> tfdInfo = null;
 
             if (update.Text == "Обновить")
@@ -151,7 +187,7 @@ namespace UchOtd.Schedule.Forms
                         var tfds = _repo.TeacherForDisciplines
                         .GetFiltredTeacherForDiscipline(tfd => tfd.Teacher.TeacherId == teacherId);
 
-                        return TeacherForDisciplineView.FromTfdList(tfds, _repo);
+                        return TeacherForDisciplineView.FromTfdList(tfds, _repo, ishoursWeekFiltered, weekFilterList);
                     }, _cToken);
 
 

@@ -17,8 +17,6 @@ namespace Schedule.Repositories
 {
     public class ScheduleRepository : IDisposable
     {
-        public SemesterRepository Semesters;
-
         public AuditoriumsRepository Auditoriums;
         public BuildingsRepository Buildings;
         public CalendarsRepository Calendars;
@@ -61,7 +59,6 @@ namespace Schedule.Repositories
         {
             _connectionString = value;
 
-            Semesters.ConnectionString = value;
             Auditoriums.ConnectionString = value;
             Buildings.ConnectionString = value;
             Calendars.ConnectionString = value;
@@ -105,7 +102,6 @@ namespace Schedule.Repositories
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<ScheduleContext, Configuration>());
 
-            Semesters = new SemesterRepository();
             Auditoriums = new AuditoriumsRepository();
             Buildings = new BuildingsRepository();
             Calendars = new CalendarsRepository();
@@ -184,21 +180,22 @@ namespace Schedule.Repositories
             return connectionString.Substring(startIndex, endIndex - startIndex);
         }
 
-        public void BackupDb(string databaseName, string filename)
+        public void BackupDb(string filename, string databaseName = null)
         {
-            string dbName = "";
+            string dbName;
+
             if (databaseName == null)
             {
                 dbName = ExtractDbName(GetConnectionString());
-
-                if (dbName == "")
-                {
-                    return;
-                }
             }
             else
             {
                 dbName = databaseName;
+            }
+
+            if (dbName == "")
+            {
+                return;
             }
 
             var backupSql = "BACKUP DATABASE " + dbName + " TO DISK = '" + filename + "' WITH FORMAT, MEDIANAME='" + dbName + "'";
@@ -206,13 +203,20 @@ namespace Schedule.Repositories
             ExecuteQuery(backupSql);
         }
 
-        public void RestoreDb(string dbName, string filename)
+        public void RestoreDb(string dbName, string filename, string dbInternalName)
         {
-            ExecuteQuery("ALTER DATABASE " + dbName + " SET Single_User WITH Rollback Immediate");
+            //ExecuteQuery("ALTER DATABASE " + dbName + " SET Single_User WITH Rollback Immediate");
 
-            ExecuteQuery("use master; RESTORE DATABASE " + dbName + " FROM DISK = '" + filename + "' WITH REPLACE");
+            var dataPath = @"C:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\";
 
-            ExecuteQuery("ALTER DATABASE " + dbName + " SET Multi_User");
+            var restoreQuery = "use master; RESTORE DATABASE " + dbName + " FROM DISK = '" + filename + "' ";
+            restoreQuery += "WITH ";
+            restoreQuery += @"MOVE '" + dbInternalName + @"' TO '" + dataPath + dbName + @"_Data.mdf', ";
+            restoreQuery += @"MOVE '" + dbInternalName + @"_log' TO '" + dataPath + dbName + @"_Log.ldf';";
+
+            ExecuteQuery(restoreQuery);
+
+            //ExecuteQuery("ALTER DATABASE " + dbName + " SET Multi_User");
         }
 
         private void ExecuteQuery(string sqlQuery)
@@ -248,6 +252,19 @@ namespace Schedule.Repositories
         
         public void Dispose()
         {
+        }
+
+        public void TxtBackup(string filename)
+        {
+            var sw = new StreamWriter(filename);
+
+            foreach (var aud in Auditoriums.GetAll())
+            {
+                sw.WriteLine(aud.AuditoriumId);
+                sw.WriteLine(aud.Building.BuildingId);
+            }
+
+            sw.Close();
         }
     }
 }

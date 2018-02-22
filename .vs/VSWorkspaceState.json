@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\UchOtd",
+    "\\UchOtd\\Schedule"
   ],
+  "SelectedNode": "\\UchOtd\\Schedule\\MainEditForm.cs",
   "PreviewInSolutionExplorer": false
 }

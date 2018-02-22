@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Schedule.DataLayer;
 using Schedule.DomainClasses.Main;
+using Calendar = Schedule.DomainClasses.Main.Calendar;
 
 namespace Schedule.Repositories.Repositories.Main
 {
@@ -107,6 +109,60 @@ namespace Schedule.Repositories.Repositories.Main
                 return context.Calendars.ToList()
                     .Where(c => Constants.Constants.DowRemap[(int)c.Date.Date.DayOfWeek] == dow)
                     .ToList();
+            }
+        }
+
+        public int GetWeek(Lesson lesson)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var semesterStartsOption = context
+                    .Config
+                    .FirstOrDefault(co => co.Key == "Semester Starts");
+                if (semesterStartsOption == null)
+                {
+                    return -1;
+                }
+
+                var semesterStarts =  DateTime.ParseExact(semesterStartsOption.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+                var ssDow = (semesterStarts.DayOfWeek != DayOfWeek.Sunday) ? (int)semesterStarts.DayOfWeek : 7;
+
+                var ssWeeksMonday = semesterStarts.AddDays((-1) * (ssDow - 1));
+
+                return (lesson.Calendar.Date - ssWeeksMonday).Days / 7 + 1;
+            }
+        }
+
+        public List<Calendar> GetWeekCalendars(int week)
+        {
+            using (var context = new ScheduleContext(ConnectionString))
+            {
+                var semesterStartsOption = context
+                    .Config
+                    .FirstOrDefault(co => co.Key == "Semester Starts");
+                if (semesterStartsOption == null)
+                {
+                    return null;
+                }
+
+                var semesterStarts = DateTime.ParseExact(semesterStartsOption.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var ssDow = (semesterStarts.DayOfWeek != DayOfWeek.Sunday) ? (int)semesterStarts.DayOfWeek : 7;
+                var ssWeeksMonday = semesterStarts.AddDays((-1) * (ssDow - 1));
+
+                var result = new List<Calendar>();
+                var calendars = context.Calendars.ToList();
+
+                for (int i = 0; i < calendars.Count; i++)
+                {
+                    var c = calendars[i];
+                    if (((c.Date - ssWeeksMonday).Days / 7 + 1) == week)
+                    {
+                        result.Add(c);
+                    }
+                }
+
+                return result;
             }
         }
     }

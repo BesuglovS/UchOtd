@@ -154,3 +154,5 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+/UchOtd/client_secret2.json
+/UchOtd/client_secret2.json

@@ -329,15 +329,17 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                             }
                         }
 
-                        aud = _repo.Auditoriums.Find(audWeekList[week]);
+                        //lesson.LengthInMinutes = audWeekList[week].Item2;
+
+                        aud = _repo.Auditoriums.Find(audWeekList[week].Item1);
                         if (aud == null)
                         {
                             var firstBuilding = _repo.Buildings.GetFirstFiltredBuilding(b => true);
 
                             if (firstBuilding != null)
                             {
-                                _repo.Auditoriums.Add(new Auditorium(audWeekList[week], firstBuilding));
-                                aud = _repo.Auditoriums.Find(audWeekList[week]);
+                                _repo.Auditoriums.Add(new Auditorium(audWeekList[week].Item1, firstBuilding));
+                                aud = _repo.Auditoriums.Find(audWeekList[week].Item1);
                             }
                         }
                     }
@@ -373,7 +375,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
 
             try
             {
-                weekList = Utilities.ConvertWeeksToList(lessonWeeks.Text);
+                weekList = CommonFunctions.WeeksStringToList(lessonWeeks.Text);
             }
             catch
             {

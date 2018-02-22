@@ -12,6 +12,7 @@ namespace UchOtd.Schedule.Views
         public int TfdId { get; set; }
         public int DisciplineId { get; set; }
         public string DisciplineName { get; set; }
+        public int AuditoriumHoursPerWeek { get; set; }
         public string GroupName { get; set; }
         public int PlanHours { get; set; }
         public int HoursDone { get; set; }
@@ -19,17 +20,18 @@ namespace UchOtd.Schedule.Views
         public int PlannedHours { get; set; }
         public string Attestation { get; set; }
 
-        public static List<TeacherForDisciplineView> FromTfdList(List<TeacherForDiscipline> list, ScheduleRepository repo)
+        public static List<TeacherForDisciplineView> FromTfdList(List<TeacherForDiscipline> list, ScheduleRepository repo, bool hoursWeekFiltered, List<int> hoursWeekFilter)
         {
             return list.Select(tfd => new TeacherForDisciplineView
             {
                 TfdId = tfd.TeacherForDisciplineId, 
                 DisciplineId = tfd.Discipline.DisciplineId, 
-                DisciplineName = tfd.Discipline.Name, 
+                DisciplineName = tfd.Discipline.Name,
+                AuditoriumHoursPerWeek = tfd.Discipline.AuditoriumHoursPerWeek,
                 GroupName = tfd.Discipline.StudentGroup.Name, 
                 PlanHours = tfd.Discipline.AuditoriumHours, 
                 Attestation = Constants.Attestation[tfd.Discipline.Attestation],
-                ScheduleHours = repo.CommonFunctions.GetTfdHours(tfd.TeacherForDisciplineId),
+                ScheduleHours = repo.CommonFunctions.GetTfdHours(tfd.TeacherForDisciplineId, false, hoursWeekFiltered, hoursWeekFilter),
                 HoursDone = repo.Lessons.GetFiltredLessons(l => 
                     (l.State == 1) && 
                     l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId && 

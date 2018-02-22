@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Schedule.DomainClasses.Main;
+using Schedule.Repositories.Common;
 
 namespace UchOtd.Schedule.Core
 {
@@ -55,15 +56,38 @@ namespace UchOtd.Schedule.Core
             return num2;
         }
 
-        public static Dictionary<int,string> GetAudWeeksList(string weekAuds)
+        // week + audName/LessonLength
+        public static Dictionary<int,Tuple<string, int>> GetAudWeeksList(string weekAuds)
         {
-            var result = new Dictionary<int, string>();
+            var result = new Dictionary<int, Tuple<string, int>>();
             var audsArray = weekAuds.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var auds = new List<string>(audsArray);
 
             if (auds.Count == 1)
             {
-                result.Add(0, auds[0]);
+
+                var st = auds[0];
+
+                var lessonLength = 0;
+
+                if (st.Contains("("))
+                {
+                    var llb = st.IndexOf("(") + 1;
+                    var lle = st.IndexOf(")") - 1;
+                    var llStr = st.Substring(llb, lle - llb + 1);
+
+                    try
+                    {
+                        lessonLength = int.Parse(llStr);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+
+                    st = st.Substring(0, llb - 2).Trim(' ');
+                }
+
+                result.Add(int.MinValue, new Tuple<string, int>(st, lessonLength));
             }
             else
             {
@@ -71,85 +95,23 @@ namespace UchOtd.Schedule.Core
                 {
                     var dashPos = aud.IndexOf(" - ", StringComparison.Ordinal);
                     var weeksString = aud.Substring(0, dashPos);
-                    var weeks = ConvertWeeksToList(weeksString);
+                    var weeks = CommonFunctions.WeeksStringToList(weeksString);
                     var auditorium = aud.Substring(dashPos + 3, aud.Length - (dashPos + 3));
                     foreach (var week in weeks)
                     {
                         if (!result.ContainsKey(week))
                         {
-                            result.Add(week, auditorium);
+                            result.Add(week, null);
                         }
+
+                        result[week] = new Tuple<string, int>(auditorium, week);
                     }
                 }
             }
 
             return result;
         }
-
-        public static List<int> ConvertWeeksToList(string p, bool removeParentheses = false)
-        {
-            var result = new List<int>();
-
-            string str = p;
-            if (removeParentheses)
-            {
-                str = p.Substring(0, p.Length - 1);
-                str = str.Substring(1, str.Length - 1);
-            }
-
-            int mods = 0; // 0 - нет; 1 - нечётные; 2 - чётные
-
-            foreach (var item in str.Split(','))
-            {
-                var st = item.Trim(' ');
-
-                if (!st.Contains('-'))
-                {
-                    result.Add(int.Parse(st));
-                }
-                else
-                {
-
-                    if (st.EndsWith(" (нечёт.)"))
-                    {
-                        st = st.Substring(0, st.Length - 9);
-                        mods = 1;
-                    }
-
-                    if (st.EndsWith(" (чёт.)"))
-                    {
-                        st = st.Substring(0, st.Length - 7);
-                        mods = 2;
-                    }
-
-                    int start = int.Parse(st.Substring(0, st.IndexOf('-')));
-
-                    int end = int.Parse(
-                        st.Substring(st.IndexOf('-') + 1, st.Length - st.IndexOf('-') - 1));
-
-                    for (int i = start; i <= end; i++)
-                    {
-                        switch (mods)
-                        {
-                            case 0:
-                                result.Add(i);
-                                break;
-                            case 1:
-                                if ((i % 2) == 1)
-                                    result.Add(i);
-                                break;
-                            case 2:
-                                if ((i % 2) == 0)
-                                    result.Add(i);
-                                break;
-                        }
-                    }
-                }
-            }
-
-            return result;
-        }
-
+        
         internal static string ExtractDbOrConnectionName(string connectionString)
         {
             if (connectionString.StartsWith("Name="))

@@ -25,7 +25,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>89</ApplicationRevision>
+    <ApplicationRevision>103</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -81,6 +81,24 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Google.Apis, Version=1.32.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.1.32.0\lib\net45\Google.Apis.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth, Version=1.32.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Auth.1.32.0\lib\net45\Google.Apis.Auth.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth.PlatformServices, Version=1.32.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Auth.1.32.0\lib\net45\Google.Apis.Auth.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Calendar.v3, Version=1.32.0.1076, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Calendar.v3.1.32.0.1076\lib\net45\Google.Apis.Calendar.v3.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Core, Version=1.32.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Core.1.32.0\lib\net45\Google.Apis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.PlatformServices, Version=1.32.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.1.32.0\lib\net45\Google.Apis.PlatformServices.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.IWshRuntimeLibrary">
       <HintPath>.\Interop.IWshRuntimeLibrary.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -94,9 +112,8 @@
     <Reference Include="MigraDoc.RtfRendering">
       <HintPath>..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\MigraDoc.RtfRendering.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PdfSharp">
       <HintPath>..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\PdfSharp.dll</HintPath>
@@ -108,6 +125,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -124,8 +142,11 @@
     <Compile Include="Analysis\LogMessage.cs" />
     <Compile Include="Core\BuildingLessonsData.cs" />
     <Compile Include="Core\DailyLessonsData.cs" />
+    <Compile Include="Core\GoogleCalendarService.cs" />
     <Compile Include="Core\LayoutSupport.cs" />
+    <Compile Include="Core\Prompt.cs" />
     <Compile Include="Core\StudentDetailsMode.cs" />
+    <Compile Include="Core\TeacherList.cs" />
     <Compile Include="Core\TextFileUtilities.cs" />
     <Compile Include="Core\Utilities.cs" />
     <Compile Include="Core\WordExport.cs" />
@@ -134,6 +155,18 @@
     </Compile>
     <Compile Include="Forms\BuildingLessons.Designer.cs">
       <DependentUpon>BuildingLessons.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ChooseRingAndAud.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChooseRingAndAud.Designer.cs">
+      <DependentUpon>ChooseRingAndAud.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CopyWeekSchedule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CopyWeekSchedule.Designer.cs">
+      <DependentUpon>CopyWeekSchedule.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\DailyLessons.cs">
       <SubType>Form</SubType>
@@ -220,8 +253,10 @@
     <Compile Include="NUDS\View\DailyScheduleGroupLessonView.cs" />
     <Compile Include="NUDS\View\LleView.cs" />
     <Compile Include="NUDS\View\TeacherScheduleTimeView.cs" />
-    <Compile Include="Schedule\Core\MainImport.cs" />
     <Compile Include="Schedule\Core\PDFExport.cs" />
+    <Compile Include="Schedule\Core\ScheduleChange.cs" />
+    <Compile Include="Schedule\Core\ScheduleChangeType.cs" />
+    <Compile Include="Schedule\Core\ThreadSleep.cs" />
     <Compile Include="Schedule\Core\Utilities.cs" />
     <Compile Include="Schedule\Forms\AllChanges.cs">
       <SubType>Form</SubType>
@@ -252,6 +287,12 @@
     </Compile>
     <Compile Include="Schedule\Forms\Analysis\DisciplinesWithAud.Designer.cs">
       <DependentUpon>DisciplinesWithAud.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\FreeScheduleSpot.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Schedule\Forms\Analysis\FreeScheduleSpot.Designer.cs">
+      <DependentUpon>FreeScheduleSpot.cs</DependentUpon>
     </Compile>
     <Compile Include="Schedule\Forms\Analysis\GroupPeriods.cs">
       <SubType>Form</SubType>
@@ -367,12 +408,6 @@
     <Compile Include="Schedule\Forms\DBLists\ScheduleNoteList.Designer.cs">
       <DependentUpon>ScheduleNoteList.cs</DependentUpon>
     </Compile>
-    <Compile Include="Schedule\Forms\DBLists\SemesterList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Schedule\Forms\DBLists\SemesterList.Designer.cs">
-      <DependentUpon>SemesterList.cs</DependentUpon>
-    </Compile>
     <Compile Include="Schedule\Forms\DBLists\StudentGroupList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -415,12 +450,6 @@
     <Compile Include="Schedule\Forms\LessonListByTFD.Designer.cs">
       <DependentUpon>LessonListByTFD.cs</DependentUpon>
     </Compile>
-    <Compile Include="Schedule\Forms\Merge\MergeStudents.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Schedule\Forms\Merge\MergeStudents.Designer.cs">
-      <DependentUpon>MergeStudents.cs</DependentUpon>
-    </Compile>
     <Compile Include="Schedule\Forms\MultipleView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -433,11 +462,11 @@
     <Compile Include="Schedule\Forms\OneAuditorium.Designer.cs">
       <DependentUpon>OneAuditorium.cs</DependentUpon>
     </Compile>
-    <Compile Include="Schedule\Forms\teacherHours.cs">
+    <Compile Include="Schedule\Forms\TeacherHours.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Schedule\Forms\teacherHours.Designer.cs">
-      <DependentUpon>teacherHours.cs</DependentUpon>
+    <Compile Include="Schedule\Forms\TeacherHours.Designer.cs">
+      <DependentUpon>TeacherHours.cs</DependentUpon>
     </Compile>
     <Compile Include="Schedule\Forms\Analysis\Wishes.cs">
       <SubType>Form</SubType>
@@ -469,25 +498,6 @@
     <Compile Include="Schedule\MainEditForm.Designer.cs">
       <DependentUpon>MainEditForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Schedule\MainImport\Auditorium.cs" />
-    <Compile Include="Schedule\MainImport\AuditoriumEvent.cs" />
-    <Compile Include="Schedule\MainImport\Building.cs" />
-    <Compile Include="Schedule\MainImport\Calendar.cs" />
-    <Compile Include="Schedule\MainImport\ConfigOption.cs" />
-    <Compile Include="Schedule\MainImport\Discipline.cs" />
-    <Compile Include="Schedule\MainImport\Exam.cs" />
-    <Compile Include="Schedule\MainImport\Faculty.cs" />
-    <Compile Include="Schedule\MainImport\GroupsInFaculty.cs" />
-    <Compile Include="Schedule\MainImport\Lesson.cs" />
-    <Compile Include="Schedule\MainImport\LessonLogEvent.cs" />
-    <Compile Include="Schedule\MainImport\LogEvent.cs" />
-    <Compile Include="Schedule\MainImport\Ring.cs" />
-    <Compile Include="Schedule\MainImport\Student.cs" />
-    <Compile Include="Schedule\MainImport\StudentGroup.cs" />
-    <Compile Include="Schedule\MainImport\StudentsInGroups.cs" />
-    <Compile Include="Schedule\MainImport\Teacher.cs" />
-    <Compile Include="Schedule\MainImport\TeacherForDiscipline.cs" />
-    <Compile Include="Schedule\Views\ConfigOptionView.cs" />
     <Compile Include="Schedule\Views\DBListViews\AuditoriumEventView.cs" />
     <Compile Include="Schedule\Views\DBListViews\AuditoriumView.cs" />
     <Compile Include="Schedule\Views\DBListViews\CalendarView.cs" />
@@ -496,8 +506,6 @@
     <Compile Include="Schedule\Views\DBListViews\GroupView.cs" />
     <Compile Include="Schedule\Views\DBListViews\RingView.cs" />
     <Compile Include="Schedule\Views\DBListViews\ScheduleNoteView.cs" />
-    <Compile Include="Schedule\Views\DBListViews\StudentGroupView.cs" />
-    <Compile Include="Schedule\Views\DBListViews\StudentsInGroupsView.cs" />
     <Compile Include="Schedule\Views\DBListViews\StudentView.cs" />
     <Compile Include="Schedule\Views\DisciplineNameView.cs" />
     <Compile Include="Schedule\Views\DisciplineTextView.cs" />
@@ -537,12 +545,19 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\AudFreeView.cs" />
     <Compile Include="Views\ExamView.cs" />
     <Compile Include="Views\NoteView.cs" />
     <Compile Include="Views\StudentListView.cs" />
     <Compile Include="Views\TeacherWithLocation.cs" />
     <EmbeddedResource Include="Forms\BuildingLessons.resx">
       <DependentUpon>BuildingLessons.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChooseRingAndAud.resx">
+      <DependentUpon>ChooseRingAndAud.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CopyWeekSchedule.resx">
+      <DependentUpon>CopyWeekSchedule.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DailyLessons.resx">
       <DependentUpon>DailyLessons.cs</DependentUpon>
@@ -598,6 +613,9 @@
     <EmbeddedResource Include="Schedule\Forms\Analysis\DisciplinesWithAud.resx">
       <DependentUpon>DisciplinesWithAud.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Schedule\Forms\Analysis\FreeScheduleSpot.resx">
+      <DependentUpon>FreeScheduleSpot.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\Analysis\GroupPeriods.resx">
       <DependentUpon>GroupPeriods.cs</DependentUpon>
     </EmbeddedResource>
@@ -652,12 +670,6 @@
     <EmbeddedResource Include="Schedule\Forms\DBLists\ScheduleNoteList.resx">
       <DependentUpon>ScheduleNoteList.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Schedule\Forms\DBLists\SemesterList.resx">
-      <DependentUpon>SemesterList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Schedule\Forms\DBLists\StudentGroupList.resx">
-      <DependentUpon>StudentGroupList.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\DBLists\StudentList.resx">
       <DependentUpon>StudentList.cs</DependentUpon>
     </EmbeddedResource>
@@ -676,17 +688,14 @@
     <EmbeddedResource Include="Schedule\Forms\LessonListByTFD.resx">
       <DependentUpon>LessonListByTFD.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Schedule\Forms\Merge\MergeStudents.resx">
-      <DependentUpon>MergeStudents.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\MultipleView.resx">
       <DependentUpon>MultipleView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\OneAuditorium.resx">
       <DependentUpon>OneAuditorium.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Schedule\Forms\teacherHours.resx">
-      <DependentUpon>teacherHours.cs</DependentUpon>
+    <EmbeddedResource Include="Schedule\Forms\TeacherHours.resx">
+      <DependentUpon>TeacherHours.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Schedule\Forms\Analysis\Wishes.resx">
       <DependentUpon>Wishes.cs</DependentUpon>
@@ -716,6 +725,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="client_secret.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="client_secret2.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -895,7 +910,6 @@
     <Content Include="NU.ico" />
     <Content Include="Publication-Addresses.txt" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

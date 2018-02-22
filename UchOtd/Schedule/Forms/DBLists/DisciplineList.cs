@@ -75,6 +75,8 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             checkForDoubleDiscsOnAdding.Text = "Проверять дубликаты дисциплин\r\nпри добавлении";
 
+            hoursWeekFilter.Text = "11-12";
+
             //RefreshView();
         }
 
@@ -95,6 +97,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var groupNameF = groupnameFilter.Checked;
                 var hourFitF = HoursFitFiltered.Checked;
                 var mixedGroupsF = mixedGroups.Checked;
+                var sortByDiscname = orderByDisciplineName.Checked;
                 var groupId = -1;
                 if (groupNameList.SelectedValue != null)
                 {
@@ -112,6 +115,29 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var noPostF = noPost.Checked;
                 var withLessonsToday = WithLessonsToday.Checked;
                 var woTypeSequence = withoutTypeSequence.Checked;
+                var hoursCountWeekFiltered = hoursFilteredByWeek.Checked;
+                var hoursCountWeekList = new List<int>();
+                try
+                {
+                    hoursCountWeekList = new List<int>();
+                    if (!hoursWeekFilter.Text.Contains("-"))
+                    {
+                        hoursCountWeekList.Add(int.Parse(hoursWeekFilter.Text));
+                    }
+                    else
+                    {
+                        var split = hoursWeekFilter.Text.Split('-');
+                        var start = int.Parse(split[0]);
+                        var finish = int.Parse(split[1]);
+                        for (int i = start; i <= finish; i++)
+                        {
+                            hoursCountWeekList.Add(i);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                }
 
                 try
                 {
@@ -162,7 +188,8 @@ namespace UchOtd.Schedule.Forms.DBLists
                                     diffList.Add(-1);
                                 }
 
-                                if ((tfd != null) && (!diffList.Contains(disc.AuditoriumHours - _repo.CommonFunctions.GetTfdHours(tfd.TeacherForDisciplineId))))
+                                if ((tfd != null) && (!diffList.Contains(disc.AuditoriumHours - 
+                                    _repo.CommonFunctions.GetTfdHours(tfd.TeacherForDisciplineId, false, false, -1))))
                                 {
                                     discListFiltered.Add(disc);
                                 }
@@ -201,6 +228,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                                           d.StudentGroup.Name.StartsWith("3 "))).ToList();
                         }
 
+                        
                         if (withLessonsToday)
                         {
                             /*
@@ -248,11 +276,17 @@ namespace UchOtd.Schedule.Forms.DBLists
                                     .ToList();
                         }
 
-                        discList = orderbyGroupNameF ?
-                            discList.OrderBy(disc => disc.StudentGroup.Name).ToList() :
-                            discList.OrderBy(disc => disc.Name).ToList();
+                        if (orderbyGroupNameF)
+                        {
+                            discList = discList.OrderBy(disc => disc.StudentGroup.Name).ToList();
+                        }
+                        
+                        if (sortByDiscname)
+                        {
+                            discList = discList.OrderBy(d => d.Name).ToList();
+                        }
 
-                        return DisciplineView.DisciplinesToView(_repo, discList).OrderBy(v => v.TeacherFio).ToList();
+                        return DisciplineView.DisciplinesToView(_repo, discList, hoursCountWeekFiltered, hoursCountWeekList).ToList();
                     }, _cToken);
                 }
                 catch (OperationCanceledException)
@@ -315,6 +349,22 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void DiscipineListViewCellClick(object sender, DataGridViewCellEventArgs e)
         {
             var discView = ((List<DisciplineView>)DisciplinesList.DataSource)[e.RowIndex];
+            var discipline = _repo.Disciplines.GetDiscipline(discView.DisciplineId);
+
+            DisciplineName.Text = discipline.Name;
+            Attestation.SelectedIndex = discipline.Attestation;
+            AuditoriumHours.Text = discipline.AuditoriumHours.ToString(CultureInfo.InvariantCulture);
+            AuditoriumHoursPerWeek.Text = discipline.AuditoriumHoursPerWeek.ToString(CultureInfo.InvariantCulture);
+            LectureHours.Text = discipline.LectureHours.ToString(CultureInfo.InvariantCulture);
+            PracticalHours.Text = discipline.PracticalHours.ToString(CultureInfo.InvariantCulture);
+            TypeSequence.Text = discipline.TypeSequence;
+
+            Group.SelectedValue = discipline.StudentGroup.StudentGroupId;
+        }
+
+        private void DiscipineListViewCellClicked(int rowIndex)
+        {
+            var discView = ((List<DisciplineView>)DisciplinesList.DataSource)[rowIndex];
             var discipline = _repo.Disciplines.GetDiscipline(discView.DisciplineId);
 
             DisciplineName.Text = discipline.Name;
@@ -602,6 +652,15 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 foreach (var lessonId in lessonIds)
                 {
+                    var noteIds = _repo.ScheduleNotes.GetFiltredScheduleNotes(n => n.Lesson.LessonId == lessonId)
+                        .Select(n => n.ScheduleNoteId)
+                        .ToList();
+
+                    foreach (var noteId in noteIds)
+                    {
+                        _repo.ScheduleNotes.RemoveScheduleNote(noteId);
+                    }
+
                     _repo.Lessons.RemoveLessonWoLog(lessonId);
                 }
 
@@ -682,7 +741,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 if (tfd != null)
                 {
-                    if (_repo.CommonFunctions.GetTfdHours(tfd.TeacherForDisciplineId) == 0)
+                    if (_repo.CommonFunctions.GetTfdHours(tfd.TeacherForDisciplineId, false, false, -1) == 0)
                     {
                         discList.Add(disc);
                     }
@@ -695,7 +754,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             Text = "Дисциплины - " + discList.Count();
 
-            var discView = DisciplineView.DisciplinesToView(_repo, discList);
+            var discView = DisciplineView.DisciplinesToView(_repo, discList, false, null);
 
             DisciplinesList.DataSource = discView.OrderBy(dv => dv.TeacherFio).ToList();
 
@@ -718,6 +777,29 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 Group.SelectedIndex = groupNameList.SelectedIndex;
             }
+        }
+        
+        private void DisciplinesList_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && e.Clicks == 1)
+            {
+                DiscipineListViewCellClicked(e.RowIndex);
+
+                var discView = ((List<DisciplineView>) DisciplinesList.DataSource)[e.RowIndex];
+
+                var tefd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
+                    tfd => tfd.Discipline.DisciplineId == discView.DisciplineId);
+
+                if (tefd == null) return;
+
+                DisciplinesList.DoDragDrop("tfd:" + tefd.TeacherForDisciplineId, DragDropEffects.Copy);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            hoursFilteredByWeek.Checked = true;
+            hoursWeekFilter.Text = "16-17";
         }
     }
 }

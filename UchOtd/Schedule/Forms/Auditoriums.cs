@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 using UchOtd.Core;
 using UchOtd.Properties;
@@ -18,6 +17,8 @@ namespace UchOtd.Schedule.Forms
         CancellationTokenSource _tokenSource;
         CancellationToken _cToken;
 
+        private Dictionary<int, Dictionary<int, List<string>>> auds;
+
         public Auditoriums(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -25,13 +26,41 @@ namespace UchOtd.Schedule.Forms
             _repo = repo;
         }
 
+        private bool getWeekFilter(ComboBox weekList, out List<int> weekFilterList)
+        {
+            var text = weekList.Text;
+            weekFilterList = new List<int>();
+            try
+            {
+                if (!text.Contains("-"))
+                {
+                    weekFilterList.Add(int.Parse(text));
+                }
+                else
+                {
+                    var split = text.Split('-');
+                    var start = int.Parse(split[0]);
+                    var finish = int.Parse(split[1]);
+                    for (int i = start; i <= finish; i++)
+                    {
+                        weekFilterList.Add(i);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private async void Mon_Click(object sender, EventArgs e)
         {
-            int weekNum = -1;
             int buildingId = -1;
-            if (oneWeek.Checked)
+            List<int> weekFilterList = null;
+            if (weekFiltered.Checked)
             {
-                weekNum = (int)weekNumber.Value;
+                if (getWeekFilter(weekFilter, out weekFilterList)) return;
             }
             if (oneBuilding.Checked)
             {
@@ -40,10 +69,7 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
-            Semester semester;
-            if (getSemester(out semester)) return;
-
-            Dictionary<int, Dictionary<int, List<string>>> auds = null;
+            auds = null;
 
             if (Mon.Text == "Понедельник")
             {
@@ -56,7 +82,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(semester, DayOfWeek.Monday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Monday, weekFilterList, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -86,31 +112,13 @@ namespace UchOtd.Schedule.Forms
             }
         }
 
-        private bool getSemester(out Semester semester)
-        {
-            semester = null;
-
-            if (semesterList.SelectedValue == null)
-            {
-                return true;
-            }
-
-            semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int) semesterList.SelectedValue);
-
-            if (semester == null)
-            {
-                return true;
-            }
-            return false;
-        }
-
         private async void Tue_Click(object sender, EventArgs e)
         {
-            int weekNum = -1;
             int buildingId = -1;
-            if (oneWeek.Checked)
+            List<int> weekFilterList = null;
+            if (weekFiltered.Checked)
             {
-                weekNum = (int)weekNumber.Value;
+                if (getWeekFilter(weekFilter, out weekFilterList)) return;
             }
             if (oneBuilding.Checked)
             {
@@ -119,10 +127,7 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
-            Dictionary<int, Dictionary<int, List<string>>> auds = null;
-
-            Semester semester;
-            if (getSemester(out semester)) return;
+            auds = null;
 
             if (Tue.Text == "Вторник")
             {
@@ -135,7 +140,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(semester, DayOfWeek.Tuesday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Tuesday, weekFilterList, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -167,11 +172,11 @@ namespace UchOtd.Schedule.Forms
 
         private async void Wed_Click(object sender, EventArgs e)
         {
-            int weekNum = -1;
             int buildingId = -1;
-            if (oneWeek.Checked)
+            List<int> weekFilterList = null;
+            if (weekFiltered.Checked)
             {
-                weekNum = (int)weekNumber.Value;
+                if (getWeekFilter(weekFilter, out weekFilterList)) return;
             }
             if (oneBuilding.Checked)
             {
@@ -180,10 +185,7 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
-            Dictionary<int, Dictionary<int, List<string>>> auds = null;
-
-            Semester semester;
-            if (getSemester(out semester)) return;
+            auds = null;
 
             if (Wed.Text == "Среда")
             {
@@ -196,7 +198,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(semester, DayOfWeek.Wednesday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Wednesday, weekFilterList, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -228,11 +230,11 @@ namespace UchOtd.Schedule.Forms
 
         private async void Thu_Click(object sender, EventArgs e)
         {
-            int weekNum = -1;
             int buildingId = -1;
-            if (oneWeek.Checked)
+            List<int> weekFilterList = null;
+            if (weekFiltered.Checked)
             {
-                weekNum = (int)weekNumber.Value;
+                if (getWeekFilter(weekFilter, out weekFilterList)) return;
             }
             if (oneBuilding.Checked)
             {
@@ -241,10 +243,7 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
-            Dictionary<int, Dictionary<int, List<string>>> auds = null;
-
-            Semester semester;
-            if (getSemester(out semester)) return;
+            auds = null;
 
             if (Thu.Text == "Четверг")
             {
@@ -257,7 +256,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(semester, DayOfWeek.Thursday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Thursday, weekFilterList, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -289,11 +288,11 @@ namespace UchOtd.Schedule.Forms
 
         private async void Fri_Click(object sender, EventArgs e)
         {
-            int weekNum = -1;
             int buildingId = -1;
-            if (oneWeek.Checked)
+            List<int> weekFilterList = null;
+            if (weekFiltered.Checked)
             {
-                weekNum = (int)weekNumber.Value;
+                if (getWeekFilter(weekFilter, out weekFilterList)) return;
             }
             if (oneBuilding.Checked)
             {
@@ -302,10 +301,7 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
-            Dictionary<int, Dictionary<int, List<string>>> auds = null;
-
-            Semester semester;
-            if (getSemester(out semester)) return;
+            auds = null;
 
             if (Fri.Text == "Пятница")
             {
@@ -318,7 +314,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(semester, DayOfWeek.Friday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Friday, weekFilterList, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -350,11 +346,11 @@ namespace UchOtd.Schedule.Forms
 
         private async void Sat_Click(object sender, EventArgs e)
         {
-            int weekNum = -1;
             int buildingId = -1;
-            if (oneWeek.Checked)
+            List<int> weekFilterList = null;
+            if (weekFiltered.Checked)
             {
-                weekNum = (int)weekNumber.Value;
+                if (getWeekFilter(weekFilter, out weekFilterList)) return;
             }
             if (oneBuilding.Checked)
             {
@@ -363,10 +359,7 @@ namespace UchOtd.Schedule.Forms
             var isShowProposed = showProposed.Checked;
             var wordExport = ExportInWord.Checked;
 
-            Dictionary<int, Dictionary<int, List<string>>> auds = null;
-
-            Semester semester;
-            if (getSemester(out semester)) return;
+            auds = null;
 
             if (Sat.Text == "Суббота")
             {
@@ -379,7 +372,7 @@ namespace UchOtd.Schedule.Forms
                 {
                     auds = await Task.Run(() =>
                     {
-                        var localAuds = _repo.CommonFunctions.GetDowAuds(semester, DayOfWeek.Saturday, weekNum, buildingId, isShowProposed);
+                        var localAuds = _repo.CommonFunctions.GetDowAuds(DayOfWeek.Saturday, weekFilterList, buildingId, isShowProposed);
 
                         if (wordExport)
                         {
@@ -502,17 +495,6 @@ namespace UchOtd.Schedule.Forms
         {
             _tokenSource = new CancellationTokenSource();
 
-            var semesters = _repo
-                .Semesters
-                .GetAllSemesters()
-                .OrderBy(s => s.StartingYear)
-                .ThenBy(s => s.SemesterInYear)
-                .ToList();
-
-            semesterList.ValueMember = "SemesterId";
-            semesterList.DisplayMember = "DisplayName";
-            semesterList.DataSource = semesters;
-
             var buildings = _repo.Buildings.GetAllBuildings()
                 .OrderBy(b => b.Name)
                 .ToList();
@@ -527,11 +509,45 @@ namespace UchOtd.Schedule.Forms
             {
                 buildingList.SelectedValue = mainBuilding.BuildingId;
             }
+
+            weekFilter.Items.Clear();
+            for (int i = 1; i < 18; i++)
+            {
+                weekFilter.Items.Add(i);
+            }
         }
 
         private void Auditoriums_ResizeEnd(object sender, EventArgs e)
         {
             AdjustColumnWidth();
+        }
+
+        private void audView_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && e.Clicks == 1)
+            {
+                //var source = (List<GroupTableView>)ScheduleView.DataSource;
+                //var timeString = source[e.RowIndex].Time;
+                //var ring = RingFromTimeString(timeString);
+                //var ringId = -1;
+                //if (ring != null)
+                //{
+                //    ringId = ring.RingId;
+                //}
+                //var dow = e.ColumnIndex;
+                //var eprst = 999;
+                //var week = 1;
+                //try
+                //{
+                //    week = int.Parse(WeekFilter.Text);
+                //}
+                //catch (Exception exc)
+                //{
+                //    return;
+                //}
+
+                //ScheduleView.DoDragDrop("lesson:" + ringId + ":" + dow, DragDropEffects.Copy);
+            }
         }
     }
 }

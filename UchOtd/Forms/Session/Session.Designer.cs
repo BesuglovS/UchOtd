@@ -38,7 +38,7 @@ namespace UchOtd.Forms.Session
             this.TeacherSchedule = new System.Windows.Forms.Button();
             this.TeacherList = new System.Windows.Forms.ComboBox();
             this.UpdateView = new System.Windows.Forms.Button();
-            this.WordExport = new System.Windows.Forms.Button();
+            this.WordExportButton = new System.Windows.Forms.Button();
             this.upload = new System.Windows.Forms.Button();
             this.showAll = new System.Windows.Forms.Button();
             this.BigRedButton = new System.Windows.Forms.Button();
@@ -46,10 +46,10 @@ namespace UchOtd.Forms.Session
             this.label1 = new System.Windows.Forms.Label();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.uploadPrefix = new System.Windows.Forms.TextBox();
             this.siteToUpload = new System.Windows.Forms.ComboBox();
             this.oneFaculty = new System.Windows.Forms.CheckBox();
             this.FacultyList = new System.Windows.Forms.ComboBox();
-            this.uploadPrefix = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.examsView)).BeginInit();
             this.viewPanel.SuspendLayout();
             this.controlsPanel.SuspendLayout();
@@ -127,15 +127,15 @@ namespace UchOtd.Forms.Session
             this.UpdateView.UseVisualStyleBackColor = true;
             this.UpdateView.Click += new System.EventHandler(this.Refresh_Click);
             // 
-            // WordExport
+            // WordExportButton
             // 
-            this.WordExport.Location = new System.Drawing.Point(241, 71);
-            this.WordExport.Name = "WordExport";
-            this.WordExport.Size = new System.Drawing.Size(77, 39);
-            this.WordExport.TabIndex = 5;
-            this.WordExport.Text = "Экспорт в Word";
-            this.WordExport.UseVisualStyleBackColor = true;
-            this.WordExport.Click += new System.EventHandler(this.WordExport_Click);
+            this.WordExportButton.Location = new System.Drawing.Point(241, 71);
+            this.WordExportButton.Name = "WordExportButton";
+            this.WordExportButton.Size = new System.Drawing.Size(77, 39);
+            this.WordExportButton.TabIndex = 5;
+            this.WordExportButton.Text = "Экспорт в Word";
+            this.WordExportButton.UseVisualStyleBackColor = true;
+            this.WordExportButton.Click += new System.EventHandler(this.WordExport_Click);
             // 
             // upload
             // 
@@ -205,7 +205,7 @@ namespace UchOtd.Forms.Session
             this.controlsPanel.Controls.Add(this.TeacherSchedule);
             this.controlsPanel.Controls.Add(this.TeacherList);
             this.controlsPanel.Controls.Add(this.UpdateView);
-            this.controlsPanel.Controls.Add(this.WordExport);
+            this.controlsPanel.Controls.Add(this.WordExportButton);
             this.controlsPanel.Controls.Add(this.upload);
             this.controlsPanel.Controls.Add(this.showAll);
             this.controlsPanel.Controls.Add(this.BigRedButton);
@@ -216,6 +216,13 @@ namespace UchOtd.Forms.Session
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(763, 124);
             this.controlsPanel.TabIndex = 2;
+            // 
+            // uploadPrefix
+            // 
+            this.uploadPrefix.Location = new System.Drawing.Point(221, 43);
+            this.uploadPrefix.Name = "uploadPrefix";
+            this.uploadPrefix.Size = new System.Drawing.Size(87, 20);
+            this.uploadPrefix.TabIndex = 17;
             // 
             // siteToUpload
             // 
@@ -242,13 +249,6 @@ namespace UchOtd.Forms.Session
             this.FacultyList.Name = "FacultyList";
             this.FacultyList.Size = new System.Drawing.Size(53, 21);
             this.FacultyList.TabIndex = 14;
-            // 
-            // uploadPrefix
-            // 
-            this.uploadPrefix.Location = new System.Drawing.Point(221, 43);
-            this.uploadPrefix.Name = "uploadPrefix";
-            this.uploadPrefix.Size = new System.Drawing.Size(87, 20);
-            this.uploadPrefix.TabIndex = 17;
             // 
             // Session
             // 
@@ -277,7 +277,7 @@ namespace UchOtd.Forms.Session
         private Button TeacherSchedule;
         private ComboBox TeacherList;
         private Button UpdateView;
-        private Button WordExport;
+        private Button WordExportButton;
         private Button upload;
         private Button showAll;
         private Button BigRedButton;
