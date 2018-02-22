@@ -18,7 +18,7 @@ namespace UchOtd.Schedule.Forms.Analysis
         {
             InitializeComponent();
 
-            _repo = repo;            
+            _repo = repo;
         }
 
         private void RefreshView()
@@ -80,8 +80,8 @@ namespace UchOtd.Schedule.Forms.Analysis
         {
             itemsListView.Columns["StudentGroupId"].Visible = false;
 
-            itemsListView.Columns["StudentGroupName"].Width = 70;
-            itemsListView.Columns["StudentGroupName"].HeaderText = "Группа";
+            itemsListView.Columns["StudentGroup"].Width = 70;
+            itemsListView.Columns["StudentGroup"].HeaderText = "Группа";
 
             itemsListView.Columns["Building"].Width = 250;
             itemsListView.Columns["Building"].HeaderText = "Корпус";
@@ -92,7 +92,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             itemsListView.Columns["Shift"].Width = 80;
             itemsListView.Columns["Shift"].HeaderText = "Смена";
         }
-        
+
         private void itemsListView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             var view = ((List<GroupAttributesView>)itemsListView.DataSource)[e.RowIndex];
@@ -133,9 +133,9 @@ namespace UchOtd.Schedule.Forms.Analysis
                 return;
             }
 
-            var newBuildingAttribute = new CustomStudentGroupAttribute 
-            { 
-                StudentGroup = (StudentGroup)group.SelectedItem, 
+            var newBuildingAttribute = new CustomStudentGroupAttribute
+            {
+                StudentGroup = (StudentGroup)group.SelectedItem,
                 Key = "Building",
                 Value = ((int)building.SelectedValue).ToString(CultureInfo.InvariantCulture)
             };
@@ -220,7 +220,7 @@ namespace UchOtd.Schedule.Forms.Analysis
                     _repo
                         .CustomStudentGroupAttributes
                         .RemoveCustomStudentGroupAttribute(csgaId);
-                }                
+                }
 
                 RefreshView();
             }

@@ -2,7 +2,6 @@
 using System.Data.Entity.Infrastructure;
 using Schedule.DomainClasses.Analyse;
 using Schedule.DomainClasses.Config;
-using Schedule.DomainClasses.Logs;
 using Schedule.DomainClasses.Main;
 using Schedule.DomainClasses.Session;
 

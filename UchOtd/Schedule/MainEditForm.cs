@@ -28,7 +28,6 @@ using UchOtd.Schedule.wnu;
 using StudentList = UchOtd.Schedule.Forms.DBLists.StudentList;
 using Utilities = UchOtd.Core.Utilities;
 using Newtonsoft.Json;
-using Schedule.DomainClasses.Logs;
 using TeacherList = UchOtd.Schedule.Forms.DBLists.TeacherList;
 using DomainCalendar = Schedule.DomainClasses.Main.Calendar;
 using Google.Apis.Calendar.v3;

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Forms;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
-using UchOtd.Schedule.Views.DBListViews;
 
 namespace UchOtd.Schedule.Forms.DBLists
 {
@@ -72,42 +71,28 @@ namespace UchOtd.Schedule.Forms.DBLists
                     .GroupsInFaculties
                     .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
                     .Select(gif => gif.StudentGroup)
-                    .OrderBy(sg => sg.Semester.StartingYear)
-                    .ThenBy(sg => sg.Semester.SemesterInYear)
-                    .ThenBy(sg => sg.Name)
                     .ToList();
 
-                var facultyGroupsView = StudentGroupView.ViewFromList(facultyGroups);
-
-                GroupsView.DataSource = facultyGroupsView;
+                GroupsView.DataSource = facultyGroups;
 
                 GroupsView.Columns["StudentGroupId"].Visible = false;
 
-                GroupsView.Columns["Name"].Width = 80;
-                GroupsView.Columns["SemesterDisplayName"].Width = 80;
-
-                GroupsView.Columns["NameWithSemester"].Visible = false;
+                GroupsView.Columns["Name"].Width = GroupsView.Width - 50;
             }
         }
 
         private void LoadStudentGroupList()
         {
-            var studentGroupList = _repo.StudentGroups.GetAllStudentGroups()
-                .OrderBy(sg => sg.Semester.StartingYear)
-                .ThenBy(sg => sg.Semester.SemesterInYear)
-                .ThenBy(sg => sg.Name)
-                .ToList();
+            var studentGroupList = _repo.StudentGroups.GetAllStudentGroups().OrderBy(sg => sg.Name).ToList();
 
-            var studentGroupsView = StudentGroupView.ViewFromList(studentGroupList);
-
-            GroupList.DisplayMember = "NameWithSemester";
+            GroupList.DisplayMember = "Name";
             GroupList.ValueMember = "StudentGroupId";
-            GroupList.DataSource = studentGroupsView;
+            GroupList.DataSource = studentGroupList;
         }
 
         private void FacultiesListViewCellClick(object sender, DataGridViewCellEventArgs e)
         {
-            var faculty = ((List<Faculty>) FacultiesListView.DataSource)[e.RowIndex];
+            var faculty = ((List<Faculty>)FacultiesListView.DataSource)[e.RowIndex];
 
             FacultyName.Text = faculty.Name;
             FacultyLetter.Text = faculty.Letter;
@@ -118,15 +103,14 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             TitleOfSessionScheduleSigner.Text = faculty.SessionSigningTitle;
             SessionScheduleSigner.Text = faculty.DeanSigningSessionSchedule;
-            
-            RefreshView(RefreshType.GroupsOnly);
 
-            //var facultyGroups = _repo.Faculties.GetFacultyGroups(faculty.FacultyId).OrderBy(sg => sg.Name).ToList();
 
-            //GroupsView.DataSource = facultyGroups;
+            var facultyGroups = _repo.Faculties.GetFacultyGroups(faculty.FacultyId).OrderBy(sg => sg.Name).ToList();
 
-            //GroupsView.Columns["StudentGroupId"].Visible = false;
-            //GroupsView.Columns["Name"].Width = GroupListPanel.Width - 20;
+            GroupsView.DataSource = facultyGroups;
+
+            GroupsView.Columns["StudentGroupId"].Visible = false;
+            GroupsView.Columns["Name"].Width = GroupListPanel.Width - 20;
         }
 
         private void AddClick(object sender, EventArgs e)
@@ -135,7 +119,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             int.TryParse(SortingOrder.Text, out sOrder);
 
             var newFaculty = new Faculty(FacultyName.Text, FacultyLetter.Text, sOrder,
-                TitleOfSemesterScheduleSigner.Text, SemesterScheduleSigner.Text, 
+                TitleOfSemesterScheduleSigner.Text, SemesterScheduleSigner.Text,
                 TitleOfSessionScheduleSigner.Text, SessionScheduleSigner.Text);
             _repo.Faculties.AddFaculty(newFaculty);
 
@@ -241,14 +225,14 @@ namespace UchOtd.Schedule.Forms.DBLists
             {
                 var faculty = ((List<Faculty>)FacultiesListView.DataSource)[FacultiesListView.SelectedCells[0].RowIndex];
 
-                var studentGroupId = ((List<StudentGroupView>)GroupsView.DataSource)[GroupsView.SelectedCells[0].RowIndex].StudentGroupId;
-                
-                var grif = _repo.GroupsInFaculties.GetFirstFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId && gif.StudentGroup.StudentGroupId == studentGroupId);
+                var studentGroup = ((List<StudentGroup>)GroupsView.DataSource)[GroupsView.SelectedCells[0].RowIndex];
 
-                _repo.GroupsInFaculties.RemoveGroupsInFaculty(grif.GroupsInFacultyId);
+                var gif = _repo.GroupsInFaculties.FindGroupsInFaculty(studentGroup.Name, faculty.Name);
+
+                _repo.GroupsInFaculties.RemoveGroupsInFaculty(gif.GroupsInFacultyId);
 
                 RefreshView(RefreshType.GroupsOnly);
-            }  
+            }
         }
 
         private void GroupList_KeyPress(object sender, KeyPressEventArgs e)
@@ -258,6 +242,6 @@ namespace UchOtd.Schedule.Forms.DBLists
                 addGroupToFaculty.PerformClick();
             }
         }
-        
+
     }
 }

@@ -41,8 +41,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.optionValue = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.showInternalOptions = new System.Windows.Forms.CheckBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.semesterList = new System.Windows.Forms.ComboBox();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OptionsListView)).BeginInit();
             this.SuspendLayout();
@@ -75,7 +73,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // remove
             // 
-            this.remove.Location = new System.Drawing.Point(174, 178);
+            this.remove.Location = new System.Drawing.Point(174, 130);
             this.remove.Name = "remove";
             this.remove.Size = new System.Drawing.Size(75, 23);
             this.remove.TabIndex = 14;
@@ -85,7 +83,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // update
             // 
-            this.update.Location = new System.Drawing.Point(93, 178);
+            this.update.Location = new System.Drawing.Point(93, 130);
             this.update.Name = "update";
             this.update.Size = new System.Drawing.Size(75, 23);
             this.update.TabIndex = 13;
@@ -95,7 +93,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(12, 178);
+            this.add.Location = new System.Drawing.Point(12, 130);
             this.add.Name = "add";
             this.add.Size = new System.Drawing.Size(75, 23);
             this.add.TabIndex = 12;
@@ -138,7 +136,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // showInternalOptions
             // 
             this.showInternalOptions.AutoSize = true;
-            this.showInternalOptions.Location = new System.Drawing.Point(14, 214);
+            this.showInternalOptions.Location = new System.Drawing.Point(14, 166);
             this.showInternalOptions.Name = "showInternalOptions";
             this.showInternalOptions.Size = new System.Drawing.Size(232, 17);
             this.showInternalOptions.TabIndex = 17;
@@ -146,30 +144,11 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.showInternalOptions.UseVisualStyleBackColor = true;
             this.showInternalOptions.CheckedChanged += new System.EventHandler(this.showInternalOptions_CheckedChanged);
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(11, 123);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(51, 13);
-            this.label3.TabIndex = 18;
-            this.label3.Text = "Семестр";
-            // 
-            // semesterList
-            // 
-            this.semesterList.FormattingEnabled = true;
-            this.semesterList.Location = new System.Drawing.Point(12, 139);
-            this.semesterList.Name = "semesterList";
-            this.semesterList.Size = new System.Drawing.Size(234, 21);
-            this.semesterList.TabIndex = 19;
-            // 
             // ConfigOptionsList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(562, 451);
-            this.Controls.Add(this.semesterList);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.showInternalOptions);
             this.Controls.Add(this.optionValue);
             this.Controls.Add(this.label2);
@@ -201,7 +180,5 @@ namespace UchOtd.Schedule.Forms.DBLists
         private TextBox optionValue;
         private Label label2;
         private CheckBox showInternalOptions;
-        private Label label3;
-        private ComboBox semesterList;
     }
 }

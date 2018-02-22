@@ -7,16 +7,13 @@ using Schedule.DomainClasses.Main;
 
 namespace Schedule.Repositories.Repositories.Main
 {
-    public class StudentsInGroupsRepository:BaseRepository<StudentsInGroups>
+    public class StudentsInGroupsRepository : BaseRepository<StudentsInGroups>
     {
         public List<StudentsInGroups> GetAllStudentsInGroups()
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.StudentsInGroups
-                    .Include(sig => sig.Student)
-                    .Include(sig => sig.StudentGroup.Semester)
-                    .ToList();
+                return context.StudentsInGroups.Include(sig => sig.Student).Include(sig => sig.StudentGroup).ToList();
             }
         }
 
@@ -24,10 +21,7 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.StudentsInGroups
-                    .Include(sig => sig.Student)
-                    .Include(sig => sig.StudentGroup.Semester)
-                    .ToList().Where(condition).ToList();
+                return context.StudentsInGroups.Include(sig => sig.Student).Include(sig => sig.StudentGroup).ToList().Where(condition).ToList();
             }
         }
 
@@ -35,10 +29,7 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.StudentsInGroups
-                    .Include(sig => sig.Student)
-                    .Include(sig => sig.StudentGroup.Semester)
-                    .ToList().FirstOrDefault(condition);
+                return context.StudentsInGroups.Include(sig => sig.Student).Include(sig => sig.StudentGroup).ToList().FirstOrDefault(condition);
             }
         }
 
@@ -46,10 +37,7 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.StudentsInGroups
-                    .Include(sig => sig.Student)
-                    .Include(sig => sig.StudentGroup.Semester)
-                    .FirstOrDefault(sig => sig.StudentsInGroupsId == studentsInGroupsId);
+                return context.StudentsInGroups.Include(sig => sig.Student).Include(sig => sig.StudentGroup).FirstOrDefault(sig => sig.StudentsInGroupsId == studentsInGroupsId);
             }
         }
 
@@ -57,10 +45,7 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.StudentsInGroups
-                    .Include(sig => sig.Student)
-                    .Include(sig => sig.StudentGroup.Semester)
-                    .FirstOrDefault(sig => sig.Student.StudentId == s.StudentId && sig.StudentGroup.StudentGroupId == sg.StudentGroupId);
+                return context.StudentsInGroups.Include(sig => sig.Student).Include(sig => sig.StudentGroup).FirstOrDefault(sig => sig.Student.StudentId == s.StudentId && sig.StudentGroup.StudentGroupId == sg.StudentGroupId);
             }
         }
 
@@ -68,10 +53,7 @@ namespace Schedule.Repositories.Repositories.Main
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.StudentsInGroups
-                    .Include(sig => sig.Student)
-                    .Include(sig => sig.StudentGroup.Semester)
-                    .FirstOrDefault(sig =>
+                return context.StudentsInGroups.Include(sig => sig.Student).Include(sig => sig.StudentGroup).FirstOrDefault(sig =>
                     sig.Student.F == studentF &&
                     sig.Student.I == studentI &&
                     sig.Student.O == studentO &&
@@ -103,9 +85,6 @@ namespace Schedule.Repositories.Repositories.Main
                 {
                     curStudentsInGroups.Student = context.Students.FirstOrDefault(s => s.StudentId == studentsInGroups.Student.StudentId);
                     curStudentsInGroups.StudentGroup = context.StudentGroups.FirstOrDefault(sg => sg.StudentGroupId == studentsInGroups.StudentGroup.StudentGroupId);
-
-                    curStudentsInGroups.PeriodFrom = studentsInGroups.PeriodFrom;
-                    curStudentsInGroups.PeriodTo = studentsInGroups.PeriodTo;
                 }
 
                 context.SaveChanges();
@@ -118,11 +97,8 @@ namespace Schedule.Repositories.Repositories.Main
             {
                 var studentsInGroups = context.StudentsInGroups.FirstOrDefault(sig => sig.StudentsInGroupsId == studentsInGroupsId);
 
-                if (studentsInGroups != null)
-                {
-                    context.StudentsInGroups.Remove(studentsInGroups);
-                    context.SaveChanges();
-                }
+                context.StudentsInGroups.Remove(studentsInGroups);
+                context.SaveChanges();
             }
         }
 

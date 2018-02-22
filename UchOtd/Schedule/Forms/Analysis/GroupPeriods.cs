@@ -49,8 +49,8 @@ namespace UchOtd.Schedule.Forms.Analysis
             {
                 periodsList = _repo
                     .CustomStudentGroupAttributes
-                    .GetFiltredCustomStudentGroupAttributes(csga => 
-                        csga.Key == "StudentGroupPeriod" && 
+                    .GetFiltredCustomStudentGroupAttributes(csga =>
+                        csga.Key == "StudentGroupPeriod" &&
                         csga.Value.Split('@')[0].Contains(filter.Text));
             }
             else
@@ -64,7 +64,7 @@ namespace UchOtd.Schedule.Forms.Analysis
             {
                 var studentIds = _repo
                     .StudentsInGroups
-                    .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == (int)groupNameList.SelectedValue)
+                    .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == (int)groupNameList.SelectedValue && !sig.Student.Expelled)
                     .ToList()
                     .Select(stig => stig.Student.StudentId);
                 var groupsListIds = _repo
@@ -92,14 +92,14 @@ namespace UchOtd.Schedule.Forms.Analysis
             PeriodsListView.Columns["CustomStudentGroupAttributeId"].Visible = false;
 
             PeriodsListView.Columns["Name"].Width = 250;
-            PeriodsListView.Columns["StudentGroupName"].Width = 80;
+            PeriodsListView.Columns["StudentGroup"].Width = 80;
             PeriodsListView.Columns["Start"].Width = 100;
             PeriodsListView.Columns["End"].Width = 100;
         }
 
         private void PeriodsListView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            var view = ((List<GroupPeriodView>) PeriodsListView.DataSource)[e.RowIndex];
+            var view = ((List<GroupPeriodView>)PeriodsListView.DataSource)[e.RowIndex];
             var groupPeriodAttribute = _repo
                 .CustomStudentGroupAttributes
                 .GetCustomStudentGroupAttribute(view.CustomStudentGroupAttributeId);

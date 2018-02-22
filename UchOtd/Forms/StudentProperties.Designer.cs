@@ -52,6 +52,8 @@ namespace UchOtd.Forms
             this.NameLabel = new System.Windows.Forms.Label();
             this.FamilyBox = new System.Windows.Forms.TextBox();
             this.FamilyLabel = new System.Windows.Forms.Label();
+            this.Cancel = new System.Windows.Forms.Button();
+            this.Save = new System.Windows.Forms.Button();
             this.StudentGroupLabel = new System.Windows.Forms.Label();
             this.StudentGroupBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
@@ -255,6 +257,27 @@ namespace UchOtd.Forms
             this.FamilyLabel.TabIndex = 54;
             this.FamilyLabel.Text = "Фамилия";
             // 
+            // Cancel
+            // 
+            this.Cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.Cancel.Location = new System.Drawing.Point(209, 448);
+            this.Cancel.Name = "Cancel";
+            this.Cancel.Size = new System.Drawing.Size(94, 38);
+            this.Cancel.TabIndex = 65;
+            this.Cancel.Text = "Отмена";
+            this.Cancel.UseVisualStyleBackColor = true;
+            this.Cancel.Click += new System.EventHandler(this.CancelClick);
+            // 
+            // Save
+            // 
+            this.Save.Location = new System.Drawing.Point(12, 448);
+            this.Save.Name = "Save";
+            this.Save.Size = new System.Drawing.Size(94, 38);
+            this.Save.TabIndex = 64;
+            this.Save.Text = "Сохранить";
+            this.Save.UseVisualStyleBackColor = true;
+            this.Save.Click += new System.EventHandler(this.SaveClick);
+            // 
             // StudentGroupLabel
             // 
             this.StudentGroupLabel.AutoSize = true;
@@ -278,7 +301,7 @@ namespace UchOtd.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(320, 447);
+            this.ClientSize = new System.Drawing.Size(320, 495);
             this.Controls.Add(this.ExpelledBox);
             this.Controls.Add(this.PaidLearningBox);
             this.Controls.Add(this.FromSchoolBox);
@@ -302,6 +325,8 @@ namespace UchOtd.Forms
             this.Controls.Add(this.NameLabel);
             this.Controls.Add(this.FamilyBox);
             this.Controls.Add(this.FamilyLabel);
+            this.Controls.Add(this.Cancel);
+            this.Controls.Add(this.Save);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "StudentProperties";
@@ -336,6 +361,8 @@ namespace UchOtd.Forms
         private Label NameLabel;
         private TextBox FamilyBox;
         private Label FamilyLabel;
+        private Button Cancel;
+        private Button Save;
         private Label StudentGroupLabel;
         internal TextBox StudentGroupBox;
     }

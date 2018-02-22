@@ -4,7 +4,6 @@ using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using Schedule.DataLayer;
-using Schedule.DomainClasses.Logs;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories.Common;
 

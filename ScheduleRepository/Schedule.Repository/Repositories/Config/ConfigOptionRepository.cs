@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Globalization;
 using System.Linq;
 using Schedule.DataLayer;
 using Schedule.DomainClasses.Config;
-using Schedule.DomainClasses.Main;
 
 namespace Schedule.Repositories.Repositories.Config
 {
     public class ConfigOptionRepository : BaseRepository<ConfigOption>
     {
 
+        #region ConfigOptionRepository
         public List<ConfigOption> GetAllConfigOptions()
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Config.Include(co => co.Semester).ToList();
+                return context.Config.ToList();
             }
         }
 
@@ -24,7 +22,7 @@ namespace Schedule.Repositories.Repositories.Config
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Config.Include(co => co.Semester).ToList().Where(condition).ToList();
+                return context.Config.ToList().Where(condition).ToList();
             }
         }
 
@@ -32,7 +30,7 @@ namespace Schedule.Repositories.Repositories.Config
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Config.Include(co => co.Semester).ToList().FirstOrDefault(condition);
+                return context.Config.ToList().FirstOrDefault(condition);
             }
         }
 
@@ -40,7 +38,7 @@ namespace Schedule.Repositories.Repositories.Config
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Config.Include(co => co.Semester).FirstOrDefault(co => co.ConfigOptionId == configOptionId);
+                return context.Config.FirstOrDefault(co => co.ConfigOptionId == configOptionId);
             }
         }
 
@@ -48,7 +46,7 @@ namespace Schedule.Repositories.Repositories.Config
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Config.Include(co => co.Semester).FirstOrDefault(co => co.Key == key);
+                return context.Config.FirstOrDefault(co => co.Key == key);
             }
         }
 
@@ -56,8 +54,6 @@ namespace Schedule.Repositories.Repositories.Config
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                co.Semester = context.Semesters.FirstOrDefault(coo => coo.SemesterId == co.Semester.SemesterId);
-
                 context.Config.Add(co);
                 context.SaveChanges();
             }
@@ -73,7 +69,6 @@ namespace Schedule.Repositories.Repositories.Config
                 {
                     curCo.Key = co.Key;
                     curCo.Value = co.Value;
-                    curCo.Semester = context.Semesters.FirstOrDefault(coo => coo.SemesterId == co.Semester.SemesterId);
                 }
 
                 context.SaveChanges();
@@ -98,8 +93,6 @@ namespace Schedule.Repositories.Repositories.Config
                 foreach (var co in coList)
                 {
                     co.ConfigOptionId = 0;
-                    co.Semester = context.Semesters.FirstOrDefault(coo => coo.SemesterId == co.Semester.SemesterId);
-
                     context.Config.Add(co);
                 }
 
@@ -107,56 +100,14 @@ namespace Schedule.Repositories.Repositories.Config
             }
         }
 
-        public ConfigOption FindConfigOption(string key, Semester semester)
+        public ConfigOption FindConfigOption(string key)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
-                return context.Config.FirstOrDefault(op => (op.Key == key) && (op.Semester.SemesterId == semester.SemesterId));
+                return context.Config.FirstOrDefault(op => op.Key == key);
             }
         }
-        
-        public ConfigOption GetSemesterStart(Semester semester)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.Config.FirstOrDefault(op => (op.Key == "Semester Starts") && (op.Semester.SemesterId == semester.SemesterId));
-            }
-        }
+        #endregion
 
-        public DomainClasses.Main.Calendar GetSemesterStartCalendar(Semester semester)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                var date = context.Config.FirstOrDefault(op => (op.Key == "Semester Starts") && (op.Semester.SemesterId == semester.SemesterId));
-                if (date == null) return null;
-
-                var dt = DateTime.ParseExact(date.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-
-                return context.Calendars.FirstOrDefault(c => c.Date.Year == dt.Year && c.Date.Month == dt.Month &&
-                                                             c.Date.Day == dt.Day);
-            }
-        }
-
-        public ConfigOption GetSemesterEnd(Semester semester)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                return context.Config.FirstOrDefault(op => (op.Key == "Semester Ends") && (op.Semester.SemesterId == semester.SemesterId));
-            }
-        }
-
-        public DomainClasses.Main.Calendar GetSemesterEndCalendar(Semester semester)
-        {
-            using (var context = new ScheduleContext(ConnectionString))
-            {
-                var date = context.Config.FirstOrDefault(op => (op.Key == "Semester Ends") && (op.Semester.SemesterId == semester.SemesterId));
-                if (date == null) return null;
-
-                var dt = DateTime.ParseExact(date.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-
-                return context.Calendars.FirstOrDefault(c => c.Date.Year == dt.Year && c.Date.Month == dt.Month &&
-                                                             c.Date.Day == dt.Day);
-            }
-        }
     }
 }

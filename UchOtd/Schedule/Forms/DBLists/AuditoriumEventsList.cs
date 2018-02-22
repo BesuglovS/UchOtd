@@ -20,7 +20,7 @@ namespace UchOtd.Schedule.Forms.DBLists
         }
 
         private void add_Click(object sender, EventArgs e)
-        {            
+        {
             if (useDataSet.Checked)
             {
                 var dow = startDate.Value.DayOfWeek;
@@ -50,7 +50,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                     }
 
                     date = date.AddDays(1);
-                } while(date <= finishDate.Value);
+                } while (date <= finishDate.Value);
 
             }
             else
@@ -75,7 +75,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             }
             RefreshView();
         }
-        
+
         private void RefreshView(DateTime? date = null)
         {
             List<AuditoriumEvent> eventsList;
@@ -86,7 +86,6 @@ namespace UchOtd.Schedule.Forms.DBLists
                 {
                     date = eventsDate.Value;
                 }
-
                 eventsList = _repo
                     .AuditoriumEvents
                     .GetAllAuditoriumEvents()
@@ -99,11 +98,6 @@ namespace UchOtd.Schedule.Forms.DBLists
                     .AuditoriumEvents
                     .GetAllAuditoriumEvents();
             }
-
-            eventsList = eventsList.OrderBy(ev => ev.Calendar.Date.Date)
-                .ThenBy(ev => ev.Ring.Time.TimeOfDay)
-                .ThenBy(ev => ev.Name)
-                .ToList();
 
             eventsView.DataSource = AuditoriumEventView.AuditoriumEventsToView(eventsList);
 
@@ -144,7 +138,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             eventAuditorium.DisplayMember = "Name";
             eventAuditorium.ValueMember = "AuditoriumId";
 
-            RefreshView();            
+            RefreshView();
         }
 
         private void update_Click(object sender, EventArgs e)
@@ -213,7 +207,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             eventDate.Value = evt.Calendar.Date.Date;
             eventTime.Text = evt.Ring.Time.ToString("H:mm");
             eventAuditorium.Text = evt.Auditorium.Name;
-            
+
         }
 
         private void filter_Click(object sender, EventArgs e)

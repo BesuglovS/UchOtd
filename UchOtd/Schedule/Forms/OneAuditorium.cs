@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Schedule.Constants;
-using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
 
 namespace UchOtd.Schedule.Forms
@@ -26,17 +25,6 @@ namespace UchOtd.Schedule.Forms
 
         private void OneAuditorium_Load(object sender, EventArgs e)
         {
-            var semesters = _repo
-                .Semesters
-                .GetAllSemesters()
-                .OrderBy(s => s.StartingYear)
-                .ThenBy(s => s.SemesterInYear)
-                .ToList();
-
-            semesterList.ValueMember = "SemesterId";
-            semesterList.DisplayMember = "DisplayName";
-            semesterList.DataSource = semesters;
-
             var auds = _repo
                 .Auditoriums
                 .GetAll()
@@ -50,34 +38,23 @@ namespace UchOtd.Schedule.Forms
 
         private async void auditoriumList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _tokenSource?.Cancel();
+            if (_tokenSource != null)
+            {
+                _tokenSource.Cancel();
+            }
 
             _tokenSource = new CancellationTokenSource();
             _cToken = _tokenSource.Token;
 
             Dictionary<int, Dictionary<int, List<string>>> data = null;
-            
-            var auditoriumId = (int) auditoriumList.SelectedValue;
+
+            var auditoriumId = (int)auditoriumList.SelectedValue;
             var isShowProposed = showProposed.Checked;
-
-            Semester semester = null;
-
-            if (semesterList.SelectedValue == null)
-            {
-                return;
-            }
-
-            semester = _repo.Semesters.GetFirstFiltredSemester(s => s.SemesterId == (int)semesterList.SelectedValue);
-
-            if (semester == null)
-            {
-                return;
-            }
 
             try
             {
-                data = await Task.Run(() => 
-                    _repo.CommonFunctions.GetAud(semester, auditoriumId, isShowProposed, _cToken), _cToken);
+                data = await Task.Run(() =>
+                    _repo.CommonFunctions.GetAud(auditoriumId, isShowProposed, _cToken), _cToken);
             }
             catch (OperationCanceledException)
             {
@@ -91,8 +68,8 @@ namespace UchOtd.Schedule.Forms
 
         private void PutAudsOnGrid(Dictionary<int, Dictionary<int, List<string>>> data)
         {
-            var rings = _repo.Rings.GetAllRings();            
-                        
+            var rings = _repo.Rings.GetAllRings();
+
 
             view.RowCount = 0;
             view.ColumnCount = 0;
@@ -107,7 +84,7 @@ namespace UchOtd.Schedule.Forms
             }
             for (int j = 0; j < 7; j++)
             {
-                view.Columns[j].HeaderText = Constants.DowLocal[j+1];
+                view.Columns[j].HeaderText = Constants.DowLocal[j + 1];
             }
 
             for (int i = 0; i < data.Count; i++)
@@ -122,21 +99,21 @@ namespace UchOtd.Schedule.Forms
                         {
                             if (kvp.Contains('@'))
                             {
-                                view.Rows[i].Cells[j-1].Value += kvp.Split('@')[0];
-                                view.Rows[i].Cells[j-1].ToolTipText += kvp.Substring(kvp.Split('@')[0].Length + 1);
+                                view.Rows[i].Cells[j - 1].Value += kvp.Split('@')[0];
+                                view.Rows[i].Cells[j - 1].ToolTipText += kvp.Substring(kvp.Split('@')[0].Length + 1);
 
                                 if (ii != cnt - 1)
                                 {
-                                    view.Rows[i].Cells[j-1].Value += Environment.NewLine;
-                                    view.Rows[i].Cells[j-1].ToolTipText += Environment.NewLine;
+                                    view.Rows[i].Cells[j - 1].Value += Environment.NewLine;
+                                    view.Rows[i].Cells[j - 1].ToolTipText += Environment.NewLine;
                                 }
                             }
                             else
                             {
-                                view.Rows[i].Cells[j-1].Value += kvp;
+                                view.Rows[i].Cells[j - 1].Value += kvp;
                                 if (ii != cnt - 1)
                                 {
-                                    view.Rows[i].Cells[j-1].Value += Environment.NewLine;
+                                    view.Rows[i].Cells[j - 1].Value += Environment.NewLine;
                                 }
                             }
 
@@ -145,8 +122,8 @@ namespace UchOtd.Schedule.Forms
                     }
                     else
                     {
-                        view.Rows[i].Cells[j-1].Value = "";
-                        view.Rows[i].Cells[j-1].ToolTipText = "";
+                        view.Rows[i].Cells[j - 1].Value = "";
+                        view.Rows[i].Cells[j - 1].ToolTipText = "";
                     }
                 }
             }

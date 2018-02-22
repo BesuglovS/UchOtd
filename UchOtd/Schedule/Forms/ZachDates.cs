@@ -45,7 +45,7 @@ namespace UchOtd.Schedule.Forms
         {
             var studentIds = repo
                 .StudentsInGroups
-                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
+                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
                 .Select(stig => stig.Student.StudentId)
                 .ToList();
 
@@ -102,8 +102,9 @@ namespace UchOtd.Schedule.Forms
 
                         if (teacherFilter)
                         {
-                            disciplines = (from d in disciplines let 
-                                           dTfd = repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == d.DisciplineId)
+                            disciplines = (from d in disciplines
+                                           let
+                     dTfd = repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == d.DisciplineId)
                                            where dTfd != null && dTfd.Teacher.TeacherId == teacherId
                                            select d)
                                            .ToList();
@@ -130,12 +131,12 @@ namespace UchOtd.Schedule.Forms
                                 DisciplineName = discipline.Name,
                                 dtDate = lessons.Count != 0 ? lessons.Last().Calendar.Date : new DateTime(2100, 1, 1),
                                 Date = lessons.Count != 0 ? lessons.Last().Calendar.Date.ToString("dd.MM.yyyy") : "",
-                                ScheduleCompleted = lessons.Count*2 == discipline.AuditoriumHours
+                                ScheduleCompleted = lessons.Count * 2 == discipline.AuditoriumHours
                             };
 
                             result.Add(zd);
 
-                            statusStrip.Invoke((MethodInvoker)(() => status.Text = (index+1) + " / " + disciplines.Count));
+                            statusStrip.Invoke((MethodInvoker)(() => status.Text = (index + 1) + " / " + disciplines.Count));
                         }
 
                         if (dateFilter)
@@ -188,9 +189,9 @@ namespace UchOtd.Schedule.Forms
                 ZachDatesView.Columns["ScheduleCompleted"].HeaderText = "Все ли пары стоят в расписании";
                 ZachDatesView.Columns["ScheduleCompleted"].Width = 100;
             }
-            catch 
+            catch
             {
-                
+
             }
         }
 

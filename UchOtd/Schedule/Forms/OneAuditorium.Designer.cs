@@ -32,13 +32,11 @@ namespace UchOtd.Schedule.Forms
         private void InitializeComponent()
         {
             this.controlsPanel = new System.Windows.Forms.Panel();
-            this.showProposed = new System.Windows.Forms.CheckBox();
             this.auditoriumList = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.view = new System.Windows.Forms.DataGridView();
-            this.label2 = new System.Windows.Forms.Label();
-            this.semesterList = new System.Windows.Forms.ComboBox();
+            this.showProposed = new System.Windows.Forms.CheckBox();
             this.controlsPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view)).BeginInit();
@@ -46,26 +44,14 @@ namespace UchOtd.Schedule.Forms
             // 
             // controlsPanel
             // 
-            this.controlsPanel.Controls.Add(this.semesterList);
-            this.controlsPanel.Controls.Add(this.label2);
             this.controlsPanel.Controls.Add(this.showProposed);
             this.controlsPanel.Controls.Add(this.auditoriumList);
             this.controlsPanel.Controls.Add(this.label1);
             this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.controlsPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsPanel.Name = "controlsPanel";
-            this.controlsPanel.Size = new System.Drawing.Size(844, 44);
+            this.controlsPanel.Size = new System.Drawing.Size(611, 44);
             this.controlsPanel.TabIndex = 0;
-            // 
-            // showProposed
-            // 
-            this.showProposed.AutoSize = true;
-            this.showProposed.Location = new System.Drawing.Point(252, 11);
-            this.showProposed.Name = "showProposed";
-            this.showProposed.Size = new System.Drawing.Size(217, 17);
-            this.showProposed.TabIndex = 2;
-            this.showProposed.Text = "Показывать преполагаемые занятия";
-            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // auditoriumList
             // 
@@ -91,7 +77,7 @@ namespace UchOtd.Schedule.Forms
             this.viewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.viewPanel.Location = new System.Drawing.Point(0, 44);
             this.viewPanel.Name = "viewPanel";
-            this.viewPanel.Size = new System.Drawing.Size(844, 439);
+            this.viewPanel.Size = new System.Drawing.Size(611, 439);
             this.viewPanel.TabIndex = 1;
             // 
             // view
@@ -103,31 +89,24 @@ namespace UchOtd.Schedule.Forms
             this.view.Location = new System.Drawing.Point(0, 0);
             this.view.Name = "view";
             this.view.ReadOnly = true;
-            this.view.Size = new System.Drawing.Size(844, 439);
+            this.view.Size = new System.Drawing.Size(611, 439);
             this.view.TabIndex = 0;
             // 
-            // label2
+            // showProposed
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(475, 11);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(51, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Семестр";
-            // 
-            // semesterList
-            // 
-            this.semesterList.FormattingEnabled = true;
-            this.semesterList.Location = new System.Drawing.Point(532, 9);
-            this.semesterList.Name = "semesterList";
-            this.semesterList.Size = new System.Drawing.Size(140, 21);
-            this.semesterList.TabIndex = 4;
+            this.showProposed.AutoSize = true;
+            this.showProposed.Location = new System.Drawing.Point(252, 11);
+            this.showProposed.Name = "showProposed";
+            this.showProposed.Size = new System.Drawing.Size(217, 17);
+            this.showProposed.TabIndex = 2;
+            this.showProposed.Text = "Показывать преполагаемые занятия";
+            this.showProposed.UseVisualStyleBackColor = true;
             // 
             // OneAuditorium
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(844, 483);
+            this.ClientSize = new System.Drawing.Size(611, 483);
             this.Controls.Add(this.viewPanel);
             this.Controls.Add(this.controlsPanel);
             this.Name = "OneAuditorium";
@@ -149,7 +128,5 @@ namespace UchOtd.Schedule.Forms
         private Panel viewPanel;
         private DataGridView view;
         private CheckBox showProposed;
-        private ComboBox semesterList;
-        private Label label2;
     }
 }

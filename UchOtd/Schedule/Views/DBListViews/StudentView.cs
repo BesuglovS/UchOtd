@@ -16,6 +16,7 @@ namespace UchOtd.Schedule.Views.DBListViews
         public bool Starosta { get; set; }
         public bool NFactor { get; set; }
         public bool PaidEdu { get; set; }
+        public bool Expelled { get; set; }
 
         public string Summary { get; set; }
 
@@ -27,16 +28,17 @@ namespace UchOtd.Schedule.Views.DBListViews
         {
             StudentId = st.StudentId;
             Fio = st.F + " " + st.I + " " + st.O;
-            ZachNumber  = st.ZachNumber;
+            ZachNumber = st.ZachNumber;
             BirthDate = st.BirthDate.ToShortDateString();
             Address = st.Address;
             Phone = st.Phone;
             Orders = st.Orders;
+            Expelled = st.Expelled;
             NFactor = st.NFactor;
             PaidEdu = st.PaidEdu;
             Starosta = st.Starosta;
 
-            Summary = Fio + " " + " (" + ZachNumber + ")";
+            Summary = Fio + " " + " (" + (Expelled ? "+" : "-") + ZachNumber + ")";
         }
 
         public static List<StudentView> StudentsToView(List<Student> list)

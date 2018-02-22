@@ -16,11 +16,9 @@ namespace UchOtd.Forms
         readonly ScheduleRepository _repo;
 
         private readonly TaskScheduler _uiScheduler;
-        
+
         CancellationTokenSource _tokenSource;
         CancellationToken _cToken;
-
-        private Semester _semester;
 
         public BuildingLessons(ScheduleRepository repo)
         {
@@ -33,25 +31,6 @@ namespace UchOtd.Forms
 
         private void BuildingLessonsLoad(object sender, EventArgs e)
         {
-            var semesters = _repo
-                .Semesters
-                .GetAllSemesters()
-                .OrderBy(s => s.StartingYear)
-                .ThenBy(s => s.SemesterInYear)
-                .ToList();
-
-            semesterList.ValueMember = "SemesterId";
-            semesterList.DisplayMember = "DisplayName";
-            semesterList.DataSource = semesters;
-            _semester = null;
-
-            if (semesters.Count == 0)
-            {
-                return;
-            }
-
-            _semester = semesters[semesters.Count-1];
-
             var buildings = _repo.Buildings.GetAllBuildings()
                 .OrderBy(b => b.Name)
                 .ToList();
@@ -70,7 +49,7 @@ namespace UchOtd.Forms
             var initialCalendar = _repo.Calendars.GetFirstFiltredCalendar(c => c.Date.Date == DateTime.Now.Date);
             if (initialCalendar == null)
             {
-                var ss = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts" && co.Semester.SemesterId == _semester.SemesterId);
+                var ss = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts");
                 initialCalendar = _repo.Calendars.GetFirstFiltredCalendar(c => c.Date == DateTime.ParseExact(ss.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture));
             }
 
@@ -89,7 +68,10 @@ namespace UchOtd.Forms
 
         private void UpdateBuildingAuditoriums()
         {
-            _tokenSource?.Cancel();
+            if (_tokenSource != null)
+            {
+                _tokenSource.Cancel();
+            }
 
             _tokenSource = new CancellationTokenSource();
             _cToken = _tokenSource.Token;
@@ -111,8 +93,7 @@ namespace UchOtd.Forms
                 var lessons = _repo
                     .Lessons
                     .GetFiltredLessons(l =>
-                        (l.TeacherForDiscipline.Discipline.Semester.SemesterId == _semester.SemesterId &&
-                        ((l.State == 1) || ((l.State == 2) && showProposed.Checked))) &&
+                        ((l.State == 1) || ((l.State == 2) && showProposed.Checked)) &&
                         l.Auditorium.Building.BuildingId == buildingId &&
                         l.Calendar.Date.Date == viewDate);
                 _cToken.ThrowIfCancellationRequested();
@@ -299,7 +280,7 @@ namespace UchOtd.Forms
                     result.AddRange(list.OrderBy(a => a.Name));
                     return result;
                 }
-            }            
+            }
 
             return list.OrderBy(a => a.Name).ToList();
         }

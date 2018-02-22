@@ -18,7 +18,6 @@ namespace UchOtd.NUDS.Forms
         private int _groupId;
         private readonly int _initialGroupId;
         private int _calendarId = -1;
-        private Semester _semester;
 
 
         private readonly TaskScheduler _uiScheduler;
@@ -28,7 +27,7 @@ namespace UchOtd.NUDS.Forms
             InitializeComponent();
 
             Icon = Resources.diffIcon;
-                        
+
             _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
             _repo = repo;
@@ -41,37 +40,16 @@ namespace UchOtd.NUDS.Forms
             Left = (Screen.PrimaryScreen.Bounds.Width - Width) / 2;
             Top = (Screen.PrimaryScreen.Bounds.Height - Height) / 2;
 
-            var semesters = _repo
-                .Semesters
-                .GetAllSemesters()
-                .OrderBy(s => s.StartingYear)
-                .ThenBy(s => s.SemesterInYear)
-                .ToList();
-
-            semesterList.ValueMember = "SemesterId";
-            semesterList.DisplayMember = "DisplayName";
-            semesterList.DataSource = semesters;
-            _semester = null;
-
-            if (semesters.Count == 0)
-            {
-                return;
-            }
-
-            _semester = semesters[semesters.Count - 1];
-
             var initialCalendar = _repo.Calendars.GetFirstFiltredCalendar(c => c.Date.Date == DateTime.Now.Date);
             if (initialCalendar == null)
             {
-                var ss = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => 
-                    co.Key == "Semester Starts" &&
-                    co.Semester.SemesterId == _semester.SemesterId);
+                var ss = _repo.ConfigOptions.GetFirstFiltredConfigOption(co => co.Key == "Semester Starts");
                 initialCalendar = _repo.Calendars.GetFirstFiltredCalendar(c => c.Date == DateTime.ParseExact(ss.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture));
             }
 
             SetGroupListFromSchedule();
 
-            datePicker.Value = initialCalendar.Date;            
+            datePicker.Value = initialCalendar.Date;
         }
 
         private void SetGroupChangesView(List<LleView> evtsView)
@@ -85,7 +63,7 @@ namespace UchOtd.NUDS.Forms
         {
             var studentIds = _repo
                 .StudentsInGroups
-                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
+                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
                 .Select(stig => stig.Student.StudentId)
                 .ToList();
 
@@ -196,7 +174,7 @@ namespace UchOtd.NUDS.Forms
                 .StudentGroups.GetFiltredStudentGroups(sg => !sg.Name.Contains('I') && !sg.Name.Contains('-') && !sg.Name.Contains('+'))
                 .OrderBy(sg => sg.Name)
                 .ToList();
-            
+
             groupList.DataSource = filteredGroups;
             groupList.DisplayMember = "Name";
             groupList.ValueMember = "StudentGroupId";

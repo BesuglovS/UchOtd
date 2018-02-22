@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using Schedule.Constants;
 using Schedule.DomainClasses.Main;
 using Schedule.Repositories;
-using UchOtd.Core;
 using UchOtd.Properties;
 using UchOtd.Schedule.Forms.DBLists.Lessons;
 using UchOtd.Schedule.Views.DBListViews;
@@ -40,37 +39,22 @@ namespace UchOtd.Schedule.Forms.DBLists
                 Attestation.Items.Add(attestationForm.Value);
             }
 
-            var semesters = _repo
-                .Semesters
-                .GetAllSemesters()
-                .OrderBy(s => s.StartingYear)
-                .ThenBy(s => s.SemesterInYear)
-                .ToList();
-
-            semesterList.ValueMember = "SemesterId";
-            semesterList.DisplayMember = "DisplayName";
-            semesterList.DataSource = semesters;
 
             var groups = _repo.StudentGroups.GetAllStudentGroups()
-                .OrderBy(sg => sg.Semester.StartingYear)
-                .ThenBy(sg => sg.Semester.SemesterInYear)
-                .ThenBy(sg => sg.Name)
+                .OrderBy(g => g.Name)
                 .ToList();
-            var sgView = StudentGroupView.ViewFromList(groups);
-            Group.DataSource = sgView;
-            Group.DisplayMember = "NameWithSemester";
+
             Group.ValueMember = "StudentGroupId";
+            Group.DisplayMember = "Name";
+            Group.DataSource = groups;
 
             var groups2 = _repo.StudentGroups.GetAllStudentGroups()
-                .OrderBy(sg => sg.Semester.StartingYear)
-                .ThenBy(sg => sg.Semester.SemesterInYear)
-                .ThenBy(sg => sg.Name)
+                .OrderBy(g => g.Name)
                 .ToList();
-            var sgView2 = StudentGroupView.ViewFromList(groups2);
 
-            groupNameList.DisplayMember = "NameWithSemester";
             groupNameList.ValueMember = "StudentGroupId";
-            groupNameList.DataSource = sgView2;
+            groupNameList.DisplayMember = "Name";
+            groupNameList.DataSource = groups2;
 
 
             checkForDoubleDiscsOnAdding.Text = "Проверять дубликаты дисциплин\r\nпри добавлении";
@@ -101,13 +85,13 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var groupId = -1;
                 if (groupNameList.SelectedValue != null)
                 {
-                    groupId = (int) groupNameList.SelectedValue;
+                    groupId = (int)groupNameList.SelectedValue;
                 }
                 else
                 {
                     groupNameF = false;
                 }
-                
+
                 var noCultureF = noCulture.Checked;
                 var withExamsOnlyF = WithExamsOnly.Checked;
                 var orderbyGroupNameF = orderByGroupname.Checked;
@@ -141,31 +125,22 @@ namespace UchOtd.Schedule.Forms.DBLists
 
                 try
                 {
-                    var semester = (Semester) semesterList.SelectedItem;
-
                     discView = await Task.Run(() =>
                     {
-                        List<Discipline> discList;
+                        List<Discipline> discList = null;
 
-                        if (semesterFiletered.Checked)
+                        if ((filterText != "") && discnameFilter.Checked)
                         {
-                            discList =
-                                _repo.Disciplines.GetFiltredDisciplines(
-                                    disc => disc.Semester.SemesterId == semester.SemesterId);
+                            discList = _repo.Disciplines.GetFiltredDisciplines(disc => disc.Name.Contains(filter.Text));
                         }
                         else
                         {
                             discList = _repo.Disciplines.GetAllDisciplines();
                         }
 
-                        if ((filterText != "") && discnameFilter.Checked)
-                        {
-                            discList = discList.Where(disc => disc.Name.Contains(filter.Text)).ToList();
-                        }
-
                         if (groupNameF)
                         {
-                            var groupsListIds = Utilities.StudentGroupIdsFromGroupId(_repo, groupId);
+                            var groupsListIds = StudentGroupIdsFromGroupId(groupId);
 
                             discList = discList
                                 .Where(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId))
@@ -188,7 +163,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                                     diffList.Add(-1);
                                 }
 
-                                if ((tfd != null) && (!diffList.Contains(disc.AuditoriumHours - 
+                                if ((tfd != null) && (!diffList.Contains(disc.AuditoriumHours -
                                     _repo.CommonFunctions.GetTfdHours(tfd.TeacherForDisciplineId, false, false, -1))))
                                 {
                                     discListFiltered.Add(disc);
@@ -228,7 +203,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                                           d.StudentGroup.Name.StartsWith("3 "))).ToList();
                         }
 
-                        
+
                         if (withLessonsToday)
                         {
                             /*
@@ -280,7 +255,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                         {
                             discList = discList.OrderBy(disc => disc.StudentGroup.Name).ToList();
                         }
-                        
+
                         if (sortByDiscname)
                         {
                             discList = discList.OrderBy(d => d.Name).ToList();
@@ -309,7 +284,24 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             DisciplinesList.ClearSelection();
         }
-        
+
+        private List<int> StudentGroupIdsFromGroupId(int groupId)
+        {
+            var studentIds = _repo
+                .StudentsInGroups
+                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
+                .Select(stig => stig.Student.StudentId)
+                .ToList();
+
+            var groupsListIds = _repo
+                .StudentsInGroups
+                .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                .Select(stig => stig.StudentGroup.StudentGroupId)
+                .Distinct()
+                .ToList();
+            return groupsListIds;
+        }
+
         private void FormatView()
         {
             DisciplinesList.Columns["DisciplineId"].Visible = false;
@@ -409,8 +401,12 @@ namespace UchOtd.Schedule.Forms.DBLists
                 Attestation.SelectedIndex = Constants.Attestation.FirstOrDefault(a => a.Value == "-").Key;
             }
 
-            var disciplineGroup = _repo.StudentGroups.GetStudentGroup(((StudentGroupView)Group.SelectedItem).StudentGroupId);
-            var semester = (Semester) semesterList.SelectedItem;
+            var disciplineGroup = _repo.StudentGroups.FindStudentGroup(Group.Text);
+            if (disciplineGroup == null)
+            {
+                disciplineGroup = new StudentGroup { Name = Group.Text };
+                _repo.StudentGroups.AddStudentGroup(disciplineGroup);
+            }
 
             var newDiscipline = new Discipline
             {
@@ -421,8 +417,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 PracticalHours = practHours,
                 Name = DisciplineName.Text,
                 StudentGroup = disciplineGroup,
-                TypeSequence = TypeSequence.Text,
-                Semester = semester
+                TypeSequence = TypeSequence.Text
             };
 
             _repo.Disciplines.AddDiscipline(newDiscipline);
@@ -446,7 +441,6 @@ namespace UchOtd.Schedule.Forms.DBLists
                 discipline.TypeSequence = TypeSequence.Text;
 
                 discipline.StudentGroup = _repo.StudentGroups.GetStudentGroup((int)Group.SelectedValue);
-                discipline.Semester = _repo.Semesters.GetSemester((int)semesterList.SelectedItem);
 
                 _repo.Disciplines.UpdateDiscipline(discipline);
 
@@ -563,11 +557,10 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void DiscipineListView_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             var discId = ((List<DisciplineView>)DisciplinesList.DataSource)[e.RowIndex].DisciplineId;
-            var disc = _repo.Disciplines.GetFirstFiltredDisciplines(d => d.DisciplineId == discId);
             var tefd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
             if (tefd != null)
             {
-                var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId, disc.Semester);
+                var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId);
                 addLessonForm.Show();
             }
             else
@@ -579,7 +572,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void DiscipineListView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.ColumnIndex == 5)
+            if (e.ColumnIndex == 4)
             {
                 var discView = ((List<DisciplineView>)DisciplinesList.DataSource)[e.RowIndex];
 
@@ -778,14 +771,14 @@ namespace UchOtd.Schedule.Forms.DBLists
                 Group.SelectedIndex = groupNameList.SelectedIndex;
             }
         }
-        
+
         private void DisciplinesList_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left && e.Clicks == 1)
             {
                 DiscipineListViewCellClicked(e.RowIndex);
 
-                var discView = ((List<DisciplineView>) DisciplinesList.DataSource)[e.RowIndex];
+                var discView = ((List<DisciplineView>)DisciplinesList.DataSource)[e.RowIndex];
 
                 var tefd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(
                     tfd => tfd.Discipline.DisciplineId == discView.DisciplineId);

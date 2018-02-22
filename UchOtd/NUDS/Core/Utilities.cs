@@ -42,7 +42,7 @@ namespace UchOtd.NUDS.Core
             {
                 var studentIds = repo
                     .StudentsInGroups
-                    .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
+                    .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
                     .Select(stig => stig.Student.StudentId)
                     .ToList();
 

@@ -22,7 +22,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         CancellationTokenSource _tokenSource;
         CancellationToken _cToken;
-        
+
         public DisciplineNameList(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -37,22 +37,18 @@ namespace UchOtd.Schedule.Forms.DBLists
             var discs = _repo.Disciplines.GetAllDisciplines();
 
             var discsViewList = DisciplineTextView.DisciplinesToView(discs);
-            
+
             DisciplinesList.DisplayMember = "DisciplineSummary";
             DisciplinesList.ValueMember = "DisciplineId";
             DisciplinesList.DataSource = discsViewList;
 
             var groups = _repo.StudentGroups.GetAllStudentGroups()
-                .OrderBy(g => g.Semester.StartingYear)
-                .ThenBy(g => g.Semester.SemesterInYear)
-                .ThenBy(g => g.Name)
+                .OrderBy(g => g.Name)
                 .ToList();
 
-            var sgView = StudentGroupView.ViewFromList(groups);
-
             StudentGroupList.ValueMember = "StudentGroupId";
-            StudentGroupList.DisplayMember = "NameWithSemester";
-            StudentGroupList.DataSource = sgView;
+            StudentGroupList.DisplayMember = "Name";
+            StudentGroupList.DataSource = groups;
 
             var groups2 = _repo.StudentGroups.GetAllStudentGroups()
                 .OrderBy(g => g.Name)
@@ -103,7 +99,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                         {
                             var studentIds = _repo
                                 .StudentsInGroups
-                                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupNameFilter)
+                                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupNameFilter && !sig.Student.Expelled)
                                 .ToList()
                                 .Select(stig => stig.Student.StudentId);
                             var groupsListIds = _repo
@@ -116,7 +112,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                                 .Where(dn => groupsListIds.Contains(dn.StudentGroup.StudentGroupId))
                                 .ToList();
                         }
-                        
+
 
                         return discNameList.OrderBy(dn => dn.Name).ToList();
                     }, _cToken);
@@ -161,11 +157,11 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void add_Click(object sender, EventArgs e)
         {
             var discipline =
-                _repo.Disciplines.GetFirstFiltredDisciplines(d => d.DisciplineId == (int) DisciplinesList.SelectedValue);
+                _repo.Disciplines.GetFirstFiltredDisciplines(d => d.DisciplineId == (int)DisciplinesList.SelectedValue);
 
             var studentGroup =
                 _repo.StudentGroups.GetFirstFiltredStudentGroups(
-                    sg => sg.StudentGroupId == (int) StudentGroupList.SelectedValue);
+                    sg => sg.StudentGroupId == (int)StudentGroupList.SelectedValue);
 
             var newDisciplineName = new DisciplineName
             {
@@ -187,7 +183,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 var disciplineName = _repo.DisciplineNames.GetDisciplineName(discNameView.DisciplineId);
 
                 disciplineName.Name = DisciplineName.Text;
-                
+
                 disciplineName.Discipline =
                     _repo.Disciplines.GetFirstFiltredDisciplines(d => d.DisciplineId == (int)DisciplinesList.SelectedValue);
                 disciplineName.StudentGroup =
@@ -222,7 +218,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             if (DiscipineNameListView.SelectedCells.Count > 0)
             {
                 var discView = ((List<DisciplineNameView>)DiscipineNameListView.DataSource)[DiscipineNameListView.SelectedCells[0].RowIndex];
-                
+
                 _repo.DisciplineNames.RemoveDisciplineName(discView.DisciplineNameId);
 
                 RefreshView();

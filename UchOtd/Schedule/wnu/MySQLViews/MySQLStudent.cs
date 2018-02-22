@@ -18,6 +18,7 @@ namespace UchOtd.Schedule.wnu.MySQLViews
         public int Starosta { get; set; }
         public int NFactor { get; set; }
         public int PaidEdu { get; set; }
+        public int Expelled { get; set; }
 
         public MySqlStudent(Student student)
         {
@@ -33,6 +34,7 @@ namespace UchOtd.Schedule.wnu.MySQLViews
             Starosta = student.Starosta ? 1 : 0;
             NFactor = student.NFactor ? 1 : 0;
             PaidEdu = student.PaidEdu ? 1 : 0;
+            Expelled = student.Expelled ? 1 : 0;
         }
 
         public static List<MySqlStudent> FromStudentList(IEnumerable<Student> list)

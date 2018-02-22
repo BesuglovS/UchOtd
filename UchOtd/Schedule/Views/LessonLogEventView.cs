@@ -12,11 +12,11 @@ namespace UchOtd.Schedule.Views
         public string NewLesson { get; set; }
         public string DateTime { get; set; }
         public string PublicComment { get; set; }
-        public string HiddenComment { get; set; }        
+        public string HiddenComment { get; set; }
 
         public LessonLogEventView()
         {
-            
+
         }
 
         public LessonLogEventView(LessonLogEvent evt)

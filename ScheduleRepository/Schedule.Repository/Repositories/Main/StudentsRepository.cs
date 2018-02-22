@@ -6,7 +6,7 @@ using Schedule.DomainClasses.Main;
 
 namespace Schedule.Repositories.Repositories.Main
 {
-    public class StudentsRepository: BaseRepository<Student>
+    public class StudentsRepository : BaseRepository<Student>
     {
         public List<Student> GetAllStudents()
         {
@@ -100,6 +100,7 @@ namespace Schedule.Repositories.Repositories.Main
                     curStudent.Starosta = student.Starosta;
                     curStudent.NFactor = student.NFactor;
                     curStudent.PaidEdu = student.PaidEdu;
+                    curStudent.Expelled = student.Expelled;
                     curStudent.Orders = student.Orders;
                 }
 

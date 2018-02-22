@@ -39,7 +39,7 @@ namespace UchOtd.Schedule.Forms
         {
             var studentIds = _repo
                 .StudentsInGroups
-                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
+                .GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
                 .Select(stig => stig.Student.StudentId)
                 .ToList();
 
@@ -69,7 +69,7 @@ namespace UchOtd.Schedule.Forms
                 var TeacherFioFilter = (int)TeacherFIOFilter.SelectedValue;
                 var filteredByGroup = FilteredByStudentGroup.Checked;
                 var GroupFilter = (int)StudentGroupFilter.SelectedValue;
-                
+
                 try
                 {
                     resultView = await Task.Run(() =>
@@ -167,8 +167,8 @@ namespace UchOtd.Schedule.Forms
                             }
 
                             result.Add(resultItem);
-                            
-                            Invoke((MethodInvoker)delegate { Text = "Дисциплины - " + (i+1) + " / " + tfdList.Count;});
+
+                            Invoke((MethodInvoker)delegate { Text = "Дисциплины - " + (i + 1) + " / " + tfdList.Count; });
                         }
 
 
@@ -244,7 +244,7 @@ namespace UchOtd.Schedule.Forms
 
             if (colVisible > 0)
             {
-                var monthColWidth = (ByMonthView.Width - 380)/colVisible;
+                var monthColWidth = (ByMonthView.Width - 380) / colVisible;
 
                 ByMonthView.Columns["JanHours"].Width = monthColWidth;
                 ByMonthView.Columns["FebHours"].Width = monthColWidth;

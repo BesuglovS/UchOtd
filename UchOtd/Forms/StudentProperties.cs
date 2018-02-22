@@ -74,6 +74,7 @@ namespace UchOtd.Forms
             StarostaBox.Checked = studentToSet.Starosta;
             FromSchoolBox.Checked = studentToSet.NFactor;
             PaidLearningBox.Checked = studentToSet.PaidEdu;
+            ExpelledBox.Checked = studentToSet.Expelled;
 
             var studentGroupIds = _repo
                 .StudentsInGroups
@@ -83,9 +84,9 @@ namespace UchOtd.Forms
 
             var studentGroup = _repo
                 .StudentGroups
-                .GetFiltredStudentGroups(sg => 
-                    studentGroupIds.Contains(sg.StudentGroupId) && 
-                    !sg.Name.Contains('I') && !sg.Name.Contains('-') && 
+                .GetFiltredStudentGroups(sg =>
+                    studentGroupIds.Contains(sg.StudentGroupId) &&
+                    !sg.Name.Contains('I') && !sg.Name.Contains('-') &&
                     !sg.Name.Contains('+') && !sg.Name.Contains(".)"))
                 .OrderBy(g => g.Name)
                 .ToList();
@@ -105,7 +106,7 @@ namespace UchOtd.Forms
 
             if (groupsList.Count > 0)
             {
-                StudentGroupBox.Text += Resources.OpenParenthesis + groupsList.Aggregate((a,b) => a + ", " + b) + Resources.CloseParenthesis;
+                StudentGroupBox.Text += Resources.OpenParenthesis + groupsList.Aggregate((a, b) => a + ", " + b) + Resources.CloseParenthesis;
             }
             StudentGroupBox.ReadOnly = true;
         }
@@ -114,6 +115,65 @@ namespace UchOtd.Forms
         {
             DialogResult = DialogResult.Cancel;
             Close();
+        }
+
+        private void SaveClick(object sender, EventArgs e)
+        {
+            if (_mode == StudentDetailsMode.New)
+            {
+                var s = new Student
+                {
+                    Address = AddressBox.Text,
+                    BirthDate = BirthDateBox.Value,
+                    Expelled = ExpelledBox.Checked,
+                    F = FamilyBox.Text,
+                    I = NameBox.Text,
+                    NFactor = FromSchoolBox.Checked,
+                    O = PatronymicBox.Text,
+                    Orders = OrdersBox.Text,
+                    PaidEdu = PaidLearningBox.Checked,
+                    Phone = PhoneBox.Text,
+                    Starosta = StarostaBox.Checked,
+                    ZachNumber = IdNumBox.Text
+                };
+
+                _repo.Students.AddStudent(s);
+
+                var group = _repo.StudentGroups.FindStudentGroup(StudentGroupBox.Text);
+                if (group != null)
+                {
+                    var sig = new StudentsInGroups(s, group);
+                    _repo.StudentsInGroups.AddStudentsInGroups(sig);
+                }
+
+                _studentList.UpdateSearchBoxItems();
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+
+            if (_mode == StudentDetailsMode.Edit)
+            {
+                var s = _repo.Students.GetStudent(_student.StudentId);
+
+                s.Address = AddressBox.Text;
+                s.BirthDate = BirthDateBox.Value;
+                s.Expelled = ExpelledBox.Checked;
+                s.F = FamilyBox.Text;
+                s.I = NameBox.Text;
+                s.NFactor = FromSchoolBox.Checked;
+                s.O = PatronymicBox.Text;
+                s.Orders = OrdersBox.Text;
+                s.PaidEdu = PaidLearningBox.Checked;
+                s.Phone = PhoneBox.Text;
+                s.Starosta = StarostaBox.Checked;
+                s.ZachNumber = IdNumBox.Text;
+
+                _repo.Students.UpdateStudent(s);
+
+                _studentList.UpdateSearchBoxItems();
+                DialogResult = DialogResult.OK;
+                Close();
+            }
         }
 
         private void FamilyBox_KeyDown(object sender, KeyEventArgs e)

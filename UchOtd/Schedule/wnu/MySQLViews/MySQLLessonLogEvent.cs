@@ -42,6 +42,6 @@ namespace UchOtd.Schedule.wnu.MySQLViews
         {
             return list.Select(logEvent => new MySqlLessonLogEvent(logEvent)).ToList();
         }
-    
+
     }
 }

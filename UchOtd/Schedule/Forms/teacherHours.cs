@@ -18,7 +18,7 @@ namespace UchOtd.Schedule.Forms
 
         CancellationTokenSource _tokenSource;
         CancellationToken _cToken;
-        
+
         public TeacherHours(ScheduleRepository repo)
         {
             InitializeComponent();
@@ -45,7 +45,7 @@ namespace UchOtd.Schedule.Forms
         {
             //RefreshView();
         }
-        
+
         private void FormatView()
         {
             view.Columns["TfdId"].Visible = false;
@@ -73,7 +73,7 @@ namespace UchOtd.Schedule.Forms
             view.Columns["Attestation"].HeaderText = "Форма отчётности";
             view.Columns["Attestation"].Width = 80;
         }
-        
+
         private Color PickPercentColor(int planHours, int scheduleHours)
         {
             if (scheduleHours > planHours + 1)
@@ -117,11 +117,10 @@ namespace UchOtd.Schedule.Forms
         private void view_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             var discId = ((List<TeacherForDisciplineView>)view.DataSource)[e.RowIndex].DisciplineId;
-            var disc = _repo.Disciplines.GetFirstFiltredDisciplines(d => d.DisciplineId == discId);
             var tefd = _repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tfd => tfd.Discipline.DisciplineId == discId);
             if (tefd != null)
             {
-                var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId, disc.Semester);
+                var addLessonForm = new AddLesson(_repo, tefd.TeacherForDisciplineId);
                 addLessonForm.Show();
             }
             else

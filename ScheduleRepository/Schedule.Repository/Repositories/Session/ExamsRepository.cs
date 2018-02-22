@@ -7,7 +7,7 @@ using Schedule.DomainClasses.Session;
 
 namespace Schedule.Repositories.Repositories.Session
 {
-    public class ExamsRepository:BaseRepository<Exam>
+    public class ExamsRepository : BaseRepository<Exam>
     {
         public void ClearAllExams()
         {
@@ -229,7 +229,7 @@ namespace Schedule.Repositories.Repositories.Session
             }
             else
             {
-                var studentIds = sRepo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId)
+                var studentIds = sRepo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == groupId && !sig.Student.Expelled)
                 .ToList()
                 .Select(stig => stig.Student.StudentId);
 
@@ -295,7 +295,7 @@ namespace Schedule.Repositories.Repositories.Session
 
                     if (!groupIds.Contains(discipline.StudentGroup.StudentGroupId))
                     {
-                        var studentIds = repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == discipline.StudentGroup.StudentGroupId)
+                        var studentIds = repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.StudentGroup.StudentGroupId == discipline.StudentGroup.StudentGroupId && !sig.Student.Expelled)
                             .ToList()
                             .Select(stig => stig.Student.StudentId);
 

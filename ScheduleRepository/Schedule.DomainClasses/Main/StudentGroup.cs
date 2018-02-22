@@ -6,14 +6,12 @@
         {
         }
 
-        public StudentGroup(string name, Semester semester)
+        public StudentGroup(string name)
         {
             Name = name;
-            Semester = semester;
         }
 
         public int StudentGroupId { get; set; }
         public string Name { get; set; }
-        public virtual Semester Semester { get; set; }
     }
 }
