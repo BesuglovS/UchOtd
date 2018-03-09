@@ -98,7 +98,7 @@ namespace UchOtd.Core
 
         public static void AddEventsToCalendar(CalendarListEntry calendar, List<Lesson> groupLessons, StudentGroup group, MainEditForm mainForm, ToolStripStatusLabel status)
         {
-            var lessonLengthInMinutes = 90; //Utilities.GetLessonLengthFromGroupname(group.Name);
+            var lessonLengthInMinutes = 80; //Utilities.GetLessonLengthFromGroupname(group.Name);
 
             var oldEvents = GetCalendarEvents(calendar);
             var lessonsToDelete = (oldEvents.Count > 0) ? (Enumerable.Range(0, oldEvents.Count-1).ToList()) : (new List<int>());

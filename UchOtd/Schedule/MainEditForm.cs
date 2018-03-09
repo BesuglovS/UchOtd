@@ -1672,7 +1672,7 @@ namespace UchOtd.Schedule
             cToken.ThrowIfCancellationRequested();
 
             var facultyDowLessons = Repo.Lessons
-                .GetFacultyDowSchedule(facultyId, ruDow, false, null, false, false);
+                .GetFacultyDowSchedule(facultyId, ruDow, false, null, false, false, null);
 
             cToken.ThrowIfCancellationRequested();
 
@@ -3901,8 +3901,17 @@ namespace UchOtd.Schedule
             {
                 var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA", "S17181AA"};
 
+                var restrictions = new Dictionary<String, List<String>>
+                {
+                    {"S15161AA", new List<String> {"16 Б"}},
+                    {"S15162AA", new List<String> {"16 Б"}},
+                    {"S16171AA", new List<String> {"17 Б"}},
+                    {"S16172AA", new List<String> {"17 Б"}},
+                    {"S17181AA", new List<String> {"16 Б"}}
+                };
+
                 await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Философский факультет (магистратура)",
-                        @"D:\GitHub\Export\Export АА Журналы БМ.docx", true, true),
+                        @"D:\GitHub\Export\Export АА Журналы БМ.docx", true, true, restrictions),
                     _cToken);
             }
             catch (OperationCanceledException)
@@ -3916,8 +3925,17 @@ namespace UchOtd.Schedule
             {
                 var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA"};
 
+                var restrictions = new Dictionary<String, List<String>>
+                {
+                    {"S14151AA", new List<String> {"16 Г"}},
+                    {"S14152AA", new List<String> {"16 Г"}},
+                    {"S15161AA", new List<String> {"16 Г", "17 Г"}},
+                    {"S15162AA", new List<String> {"16 Г", "17 Г"}},
+                    {"S17181AA", new List<String> {"17 Г"}}
+                };
+
                 await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Экономический факультет (магистратура)",
-                        @"D:\GitHub\Export\Export АА Журналы ГМ.docx", true, true),
+                        @"D:\GitHub\Export\Export АА Журналы ГМ.docx", true, true, restrictions),
                     _cToken);
             }
             catch (OperationCanceledException)
@@ -3931,8 +3949,17 @@ namespace UchOtd.Schedule
             {
                 var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA", "S17181AA" };
 
+                var restrictions = new Dictionary<String, List<String>>
+                {
+                    {"S15161AA", new List<String> {"16 Д"}},
+                    {"S15162AA", new List<String> {"16 Д"}},
+                    {"S16171AA", new List<String> {"17 Д"}},
+                    {"S16172AA", new List<String> {"17 Д"}},
+                    {"S17181AA", new List<String> {"16 Д"}}
+                };
+
                 await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Юридический факультет (магистратура)",
-                        @"D:\GitHub\Export\Export АА Журналы ДМ.docx", true, true),
+                        @"D:\GitHub\Export\Export АА Журналы ДМ.docx", true, true, restrictions),
                     _cToken);
             }
             catch (OperationCanceledException)
@@ -3959,8 +3986,21 @@ namespace UchOtd.Schedule
                     "S17181AA"
                 };
 
+                var restrictions = new Dictionary<String, List<String>>
+                {
+                    {"S13141AA", new List<String> {"12 А"}},
+                    {"S13142AA", new List<String> {"12 А"}},
+                    {"S14151AA", new List<String> {"12 А", "13 А"}},
+                    {"S14152AA", new List<String> {"12 А", "13 А"}},
+                    {"S15161AA", new List<String> {"12 А", "13 А", "14 А"}},
+                    {"S15162AA", new List<String> {"12 А", "13 А", "14 А"}},
+                    {"S16171AA", new List<String> {"13 А", "14 А", "15 А"}},
+                    {"S16172AA", new List<String> {"13 А", "14 А", "15 А"}},
+                    {"S17181AA", new List<String> {"14 А", "15 А"}}
+                };
+
                 await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Факультет математики",
-                    @"D:\GitHub\Export\Export АА Журналы А.docx", true, true), _cToken);
+                    @"D:\GitHub\Export\Export АА Журналы А.docx", true, true, restrictions), _cToken);
             }
             catch (OperationCanceledException)
             {
@@ -4224,11 +4264,32 @@ namespace UchOtd.Schedule
                     "S17181AA"
                 };
 
+                var restrictions = new Dictionary<String, List<String>>
+                {
+                    {"S13141AA", new List<String> {"12 А"}},
+                    {"S13142AA", new List<String> {"12 А"}},
+                    {"S14151AA", new List<String> {"12 А", "13 А"}},
+                    {"S14152AA", new List<String> {"12 А", "13 А"}},
+                    {"S15161AA", new List<String> {"12 А", "13 А", "14 А"}},
+                    {"S15162AA", new List<String> {"12 А", "13 А", "14 А"}},
+                    {"S16171AA", new List<String> {"13 А", "14 А", "15 А"}},
+                    {"S16172AA", new List<String> {"13 А", "14 А", "15 А"}},
+                    {"S17181AA", new List<String> {"14 А", "15 А"}}
+                };
+
                 await Task.Run(() =>
                 {
                     var scheduleFilenames = new List<string>();
                     for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
                     {
+                        if (restrictions != null)
+                        {
+                            if (!restrictions.ContainsKey(dbNames[semIndex]))
+                            {
+                                continue;
+                            }
+                        }
+
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
                                                dbNames[semIndex] +
                                                "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
@@ -4247,8 +4308,19 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА А " + dbNames[semIndex] + ".docx";
 
+                        if (restrictions.ContainsKey(dbNames[semIndex]))
+                        {
+                            var item = restrictions[dbNames[semIndex]];
+                            restrictions.Clear();
+                            restrictions.Add(dbNames[semIndex], item);
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken);
+                            false, null, false, _cToken, restrictions);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4301,8 +4373,27 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА БМ " + dbNames[semIndex] +
                                        ".docx";
 
+                        var restrictions = new Dictionary<String, List<String>>
+                        {
+                            {"S15161AA", new List<String> {"16 Б"}},
+                            {"S15162AA", new List<String> {"16 Б"}},
+                            {"S16171AA", new List<String> {"17 Б"}},
+                            {"S17181AA", new List<String> {"16 Б"}}
+                        };
+
+                        if (restrictions.ContainsKey(dbNames[semIndex]))
+                        {
+                            var item = restrictions[dbNames[semIndex]];
+                            restrictions.Clear();
+                            restrictions.Add(dbNames[semIndex], item);
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken);
+                            false, null, false, _cToken, restrictions);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4355,8 +4446,28 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА ГМ " + dbNames[semIndex] +
                                        ".docx";
 
+                        var restrictions = new Dictionary<String, List<String>>
+                        {
+                            {"S14151AA", new List<String> {"16 Г"}},
+                            {"S14152AA", new List<String> {"16 Г"}},
+                            {"S15161AA", new List<String> {"16 Г", "17 Г"}},
+                            {"S15162AA", new List<String> {"16 Г", "17 Г"}},
+                            {"S16171AA", new List<String> {"17 Г"}}
+                        };
+
+                        if (restrictions.ContainsKey(dbNames[semIndex]))
+                        {
+                            var item = restrictions[dbNames[semIndex]];
+                            restrictions.Clear();
+                            restrictions.Add(dbNames[semIndex], item);
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken);
+                            false, null, false, _cToken, restrictions);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4410,8 +4521,27 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА ДМ " + dbNames[semIndex] +
                                        ".docx";
 
+                        var restrictions = new Dictionary<String, List<String>>
+                        {
+                            {"S15161AA", new List<String> {"16 Д"}},
+                            {"S15162AA", new List<String> {"16 Д"}},
+                            {"S16171AA", new List<String> {"17 Д"}},
+                            {"S17181AA", new List<String> {"16 Д"}}
+                        };
+
+                        if (restrictions.ContainsKey(dbNames[semIndex]))
+                        {
+                            var item = restrictions[dbNames[semIndex]];
+                            restrictions.Clear();
+                            restrictions.Add(dbNames[semIndex], item);
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken);
+                            false, null, false, _cToken, restrictions);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4445,6 +4575,19 @@ namespace UchOtd.Schedule
                     "S17181AA"
                 };
 
+                var restrictions = new Dictionary<String, List<String>>
+                {
+                    {"S13141AA", new List<String> {"12 А"}},
+                    {"S13142AA", new List<String> {"12 А"}},
+                    {"S14151AA", new List<String> {"12 А", "13 А"}},
+                    {"S14152AA", new List<String> {"12 А", "13 А"}},
+                    {"S15161AA", new List<String> {"12 А", "13 А", "14 А"}},
+                    {"S15162AA", new List<String> {"12 А", "13 А", "14 А"}},
+                    {"S16171AA", new List<String> {"13 А", "14 А", "15 А"}},
+                    {"S16172AA", new List<String> {"13 А", "14 А", "15 А"}},
+                    {"S17181AA", new List<String> {"14 А", "15 А"}}
+                };
+
                 await Task.Run(() =>
                 {
                     var scheduleFilenames = new List<string>();
@@ -4453,6 +4596,19 @@ namespace UchOtd.Schedule
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
                                                dbNames[semIndex] +
                                                "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        List<String> groupsRestriction = null;
+                        if (restrictions != null)
+                        {
+                            if (!restrictions.ContainsKey(dbNames[semIndex]))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                groupsRestriction = restrictions[dbNames[semIndex]];
+                            }
+                        }
 
                         var repo = new ScheduleRepository(connectionString);
 
@@ -4465,7 +4621,7 @@ namespace UchOtd.Schedule
                                        ".docx";
 
                         WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyMath.FacultyId}, filename,
-                            true, true, false);
+                            true, true, false, groupsRestriction);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4493,6 +4649,15 @@ namespace UchOtd.Schedule
                     "S17181AA"
                 };
 
+                var restrictions = new Dictionary<String, List<String>>
+                {
+                    {"S15161AA", new List<String> {"16 Б"}},
+                    {"S15162AA", new List<String> {"16 Б"}},
+                    {"S16171AA", new List<String> {"17 Б"}},
+                    {"S16172AA", new List<String> {"17 Б"}},
+                    {"S17181AA", new List<String> {"16 Б"}}
+                };
+
                 await Task.Run(() =>
                 {
                     var scheduleFilenames = new List<string>();
@@ -4501,6 +4666,19 @@ namespace UchOtd.Schedule
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
                                                dbNames[semIndex] +
                                                "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        List<String> groupsRestriction = null;
+                        if (restrictions != null)
+                        {
+                            if (!restrictions.ContainsKey(dbNames[semIndex]))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                groupsRestriction = restrictions[dbNames[semIndex]];
+                            }
+                        }
 
                         var repo = new ScheduleRepository(connectionString);
 
@@ -4514,7 +4692,7 @@ namespace UchOtd.Schedule
                                        ".docx";
 
                         WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyPhil.FacultyId}, filename,
-                            true, true, false);
+                            true, true, false, groupsRestriction);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4541,6 +4719,15 @@ namespace UchOtd.Schedule
                     "S16171AA"
                 };
 
+                var restrictions = new Dictionary<String, List<String>>
+                {
+                    {"S14151AA", new List<String> {"16 Г"}},
+                    {"S14152AA", new List<String> {"16 Г"}},
+                    {"S15161AA", new List<String> {"16 Г", "17 Г"}},
+                    {"S15162AA", new List<String> {"16 Г", "17 Г"}},
+                    {"S17181AA", new List<String> {"17 Г"}}
+                };
+
                 await Task.Run(() =>
                 {
                     var scheduleFilenames = new List<string>();
@@ -4549,6 +4736,19 @@ namespace UchOtd.Schedule
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
                                                dbNames[semIndex] +
                                                "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        List<String> groupsRestriction = null;
+                        if (restrictions != null)
+                        {
+                            if (!restrictions.ContainsKey(dbNames[semIndex]))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                groupsRestriction = restrictions[dbNames[semIndex]];
+                            }
+                        }
 
                         var repo = new ScheduleRepository(connectionString);
 
@@ -4562,7 +4762,7 @@ namespace UchOtd.Schedule
                                        ".docx";
 
                         WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyEconM.FacultyId}, filename,
-                            true, true, false);
+                            true, true, false, groupsRestriction);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4590,6 +4790,15 @@ namespace UchOtd.Schedule
                     "S17181AA"
                 };
 
+                var restrictions = new Dictionary<String, List<String>>
+                {
+                    {"S15161AA", new List<String> {"16 Д"}},
+                    {"S15162AA", new List<String> {"16 Д"}},
+                    {"S16171AA", new List<String> {"17 Д"}},
+                    {"S16172AA", new List<String> {"17 Д"}},
+                    {"S17181AA", new List<String> {"16 Д"}}
+                };
+
                 await Task.Run(() =>
                 {
                     var scheduleFilenames = new List<string>();
@@ -4598,6 +4807,19 @@ namespace UchOtd.Schedule
                         var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
                                                dbNames[semIndex] +
                                                "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                        List<String> groupsRestriction = null;
+                        if (restrictions != null)
+                        {
+                            if (!restrictions.ContainsKey(dbNames[semIndex]))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                groupsRestriction = restrictions[dbNames[semIndex]];
+                            }
+                        }
 
                         var repo = new ScheduleRepository(connectionString);
 
@@ -4611,7 +4833,7 @@ namespace UchOtd.Schedule
                                        ".docx";
 
                         WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyLawM.FacultyId}, filename,
-                            true, true, false);
+                            true, true, false, groupsRestriction);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4642,10 +4864,23 @@ namespace UchOtd.Schedule
                 "S17181AA"
             };
 
+            var restrictions = new Dictionary<String, List<String>>
+            {
+                {"S13141AA", new List<String> {"12 А"}},
+                {"S13142AA", new List<String> {"12 А"}},
+                {"S14151AA", new List<String> {"12 А", "13 А"}},
+                {"S14152AA", new List<String> {"12 А", "13 А"}},
+                {"S15161AA", new List<String> {"12 А", "13 А", "14 А"}},
+                {"S15162AA", new List<String> {"12 А", "13 А", "14 А"}},
+                {"S16171AA", new List<String> {"13 А", "14 А", "15 А"}},
+                {"S16172AA", new List<String> {"13 А", "14 А", "15 А"}},
+                {"S17181AA", new List<String> {"14 А", "15 А"}}
+            };
+
             await Task.Run(() =>
             {
                 WordExport.ExportAADisciplineList(dbNames, "Факультет математики и компьютерных наук",
-                    @"D:\GitHub\Export\Export AA Дисциплины А.docx", true, true, true, true);
+                    @"D:\GitHub\Export\Export AA Дисциплины А.docx", true, true, false, true, restrictions);
             });
         }
 
@@ -4661,10 +4896,18 @@ namespace UchOtd.Schedule
                 "S17181AA"
             };
 
+            var restrictions = new Dictionary<String, List<String>>
+            {
+                {"S15161AA", new List<String> {"16 Б"}},
+                {"S15162AA", new List<String> {"16 Б"}},
+                {"S16171AA", new List<String> {"17 Б"}},
+                {"S17181AA", new List<String> {"16 Б"}}
+            };
+
             await Task.Run(() =>
             {
                 WordExport.ExportAADisciplineList(dbNames, "Философский факультет (магистратура)",
-                    @"D:\GitHub\Export\Export AA Дисциплины БМ.docx", true, true, false, false);
+                    @"D:\GitHub\Export\Export AA Дисциплины БМ.docx", true, true, false, false, restrictions);
             });
         }
 
@@ -4679,10 +4922,19 @@ namespace UchOtd.Schedule
                 "S16171AA"
             };
 
+            var restrictions = new Dictionary<String, List<String>>
+            {
+                {"S14151AA", new List<String> {"16 Г"}},
+                {"S14152AA", new List<String> {"16 Г"}},
+                {"S15161AA", new List<String> {"16 Г", "17 Г"}},
+                {"S15162AA", new List<String> {"16 Г", "17 Г"}},
+                {"S16171AA", new List<String> {"17 Г"}}
+            };
+
             await Task.Run(() =>
             {
                 WordExport.ExportAADisciplineList(dbNames, "Экономический факультет (магистратура)",
-                    @"D:\GitHub\Export\Export AA Дисциплины ГМ.docx", true, true, false, false);
+                    @"D:\GitHub\Export\Export AA Дисциплины ГМ.docx", true, true, false, false, restrictions);
             });
         }
 
@@ -4698,43 +4950,51 @@ namespace UchOtd.Schedule
                 "S17181AA"
             };
 
+            var restrictions = new Dictionary<String, List<String>>
+            {
+                {"S15161AA", new List<String> {"16 Д"}},
+                {"S15162AA", new List<String> {"16 Д"}},
+                {"S16171AA", new List<String> {"17 Д"}},
+                {"S17181AA", new List<String> {"16 Д"}}
+            };
+
             await Task.Run(() =>
             {
                 WordExport.ExportAADisciplineList(dbNames, "Юридический факультет (магистратура)",
-                    @"D:\GitHub\Export\Export AA Дисциплины ДМ.docx", true, true, false, false);
+                    @"D:\GitHub\Export\Export AA Дисциплины ДМ.docx", true, true, false, false, restrictions);
             });
         }
 
-        private void Math4Files(object sender, EventArgs e)
+        private async void Math4Files(object sender, EventArgs e)
         {
-            MathJournalDates(sender, e);
-            MathSchedule(sender, e);
-            MathSessionSchedule(sender, e);
-            MathDisciplines(sender, e);
+            await Task.Run(() => { MathJournalDates(sender, e); });
+            await Task.Run(() => { MathSchedule(sender, e); });
+            await Task.Run(() => { MathSessionSchedule(sender, e); });
+            await Task.Run(() => { MathDisciplines(sender, e); });
         }
 
-        private void Phil4Files(object sender, EventArgs e)
+        private async void Phil4Files(object sender, EventArgs e)
         {
-            PhilJournalDates(sender, e);
-            PhilSchedule(sender, e);
-            PhilSessionSchedule(sender, e);
-            PhilDisciplines(sender, e);
+            await Task.Run(() => { PhilJournalDates(sender, e); });
+            await Task.Run(() => { PhilSchedule(sender, e); });
+            await Task.Run(() => { PhilSessionSchedule(sender, e); });
+            await Task.Run(() => { PhilDisciplines(sender, e); });
         }
 
-        private void EconM4Files(object sender, EventArgs e)
+        private async void EconM4Files(object sender, EventArgs e)
         {
-            EconMJournalDates(sender, e);
-            EconMSchedule(sender, e);
-            EconMSessionSchedule(sender, e);
-            EconMDisciplines(sender, e);
+            await Task.Run(() => { EconMJournalDates(sender, e); });
+            await Task.Run(() => { EconMSchedule(sender, e); });
+            await Task.Run(() => { EconMSessionSchedule(sender, e); });
+            await Task.Run(() => { EconMDisciplines(sender, e); });
         }
 
-        private void LawM4Files(object sender, EventArgs e)
+        private async void LawM4Files(object sender, EventArgs e)
         {
-            LawMJournalDates(sender, e);
-            LawMSchedule(sender, e);
-            LawMSessionSchedule(sender, e);
-            LawMDisciplines(sender, e);
+            await Task.Run(() => { LawMJournalDates(sender, e); });
+            await Task.Run(() => { LawMSchedule(sender, e); });
+            await Task.Run(() => { LawMSessionSchedule(sender, e); });
+            await Task.Run(() => { LawMDisciplines(sender, e); });
         }
 
         private async void ArtJournalDates(object sender, EventArgs e)
@@ -4743,18 +5003,30 @@ namespace UchOtd.Schedule
             {
                 var dbNames = new List<string>
                 {
-                    "Schedule13141",
-                    "Schedule13142",
-                    "Schedule14151",
-                    "Schedule14152",
-                    "Schedule15161",
-                    "Schedule15162",
-                    "Schedule16171",
-                    "Schedule16172",
+                    "S13141AA",
+                    "S13142AA",
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA",
+                };
+
+                var restrictions = new Dictionary<String, List<String>>
+                {
+                    {"S13141AA", new List<String> {"12 И"}},
+                    {"S13142AA", new List<String> {"12 И"}},
+                    {"S14151AA", new List<String> {"13 И"}},
+                    {"S14152AA", new List<String> {"13 И"}},
+                    {"S15161AA", new List<String> {"14 И"}},
+                    {"S15162AA", new List<String> {"14 И"}},
+                    {"S16171AA", new List<String> {"15 И"}},
+                    {"S16172AA", new List<String> {"15 И"}},
                 };
 
                 await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Факультет искусств",
-                    @"D:\GitHub\Export\Export АА Журналы И.docx", true, true), _cToken);
+                    @"D:\GitHub\Export\Export АА Журналы И.docx", true, true, restrictions), _cToken);
             }
             catch (OperationCanceledException)
             {
@@ -4767,14 +5039,14 @@ namespace UchOtd.Schedule
             {
                 var dbNames = new List<string>
                 {
-                    "Schedule13141",
-                    "Schedule13142",
-                    "Schedule14151",
-                    "Schedule14152",
-                    "Schedule15161",
-                    "Schedule15162",
-                    "Schedule16171",
-                    "Schedule16172",
+                    "S13141AA",
+                    "S13142AA",
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA",
                 };
 
                 await Task.Run(() =>
@@ -4800,8 +5072,31 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА И " + dbNames[semIndex] + ".docx";
 
+                        var restrictions = new Dictionary<String, List<String>>
+                        {
+                            {"S13141AA", new List<String> {"12 И"}},
+                            {"S13142AA", new List<String> {"12 И"}},
+                            {"S14151AA", new List<String> {"13 И"}},
+                            {"S14152AA", new List<String> {"13 И"}},
+                            {"S15161AA", new List<String> {"14 И"}},
+                            {"S15162AA", new List<String> {"14 И"}},
+                            {"S16171AA", new List<String> {"15 И"}},
+                            {"S16172AA", new List<String> {"15 И"}},
+                        };
+
+                        if (restrictions.ContainsKey(dbNames[semIndex]))
+                        {
+                            var item = restrictions[dbNames[semIndex]];
+                            restrictions.Clear();
+                            restrictions.Add(dbNames[semIndex], item);
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken);
+                            false, null, false, _cToken, restrictions);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4821,15 +5116,16 @@ namespace UchOtd.Schedule
             {
                 var dbNames = new List<string>
                 {
-                    "Schedule13141",
-                    "Schedule13142",
-                    "Schedule14151",
-                    "Schedule14152",
-                    "Schedule15161",
-                    "Schedule15162",
-                    "Schedule16171",
-                    "Schedule16172",
+                    "S13141AA",
+                    "S13142AA",
+                    "S14151AA",
+                    "S14152AA",
+                    "S15161AA",
+                    "S15162AA",
+                    "S16171AA",
+                    "S16172AA",
                 };
+
 
                 await Task.Run(() =>
                 {
@@ -4851,7 +5147,7 @@ namespace UchOtd.Schedule
                                        ".docx";
 
                         WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyArt.FacultyId}, filename,
-                            true, true, false);
+                            true, true, false, null);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4869,20 +5165,20 @@ namespace UchOtd.Schedule
         {
             var dbNames = new List<string>
             {
-                "Schedule13141",
-                "Schedule13142",
-                "Schedule14151",
-                "Schedule14152",
-                "Schedule15161",
-                "Schedule15162",
-                "Schedule16171",
-                "Schedule16172",
+                "S13141AA",
+                "S13142AA",
+                "S14151AA",
+                "S14152AA",
+                "S15161AA",
+                "S15162AA",
+                "S16171AA",
+                "S16172AA",
             };
 
             await Task.Run(() =>
             {
                 WordExport.ExportAADisciplineList(dbNames, "Факультет искусств",
-                    @"D:\GitHub\Export\Export AA Дисциплины И.docx", true, true, false, false);
+                    @"D:\GitHub\Export\Export AA Дисциплины И.docx", true, true, false, false, null);
             });
         }
 
@@ -4914,8 +5210,16 @@ namespace UchOtd.Schedule
                     "S16172AA",
                 };
 
+                var restrictions = new Dictionary<String, List<String>>
+                {
+                    {"S15161AA", new List<String> {"14 И"}},
+                    {"S15162AA", new List<String> {"14 И"}},
+                    {"S16171AA", new List<String> {"15 И"}},
+                    {"S16172AA", new List<String> {"15 И"}},
+                };
+
                 await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Горюшкин (факультет искусств)",
-                    @"D:\GitHub\Export\Export АА Журналы Горюшкин.docx", true, true), _cToken);
+                    @"D:\GitHub\Export\Export АА Журналы Горюшкин.docx", true, true, restrictions), _cToken);
             }
             catch (OperationCanceledException)
             {
@@ -4959,8 +5263,31 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Горюшкин " + dbNames[semIndex] +
                                        ".docx";
 
+                        var restrictions = new Dictionary<String, List<String>>
+                        {
+                            {"S13141AA", new List<String> {"12 И"}},
+                            {"S13142AA", new List<String> {"12 И"}},
+                            {"S14151AA", new List<String> {"13 И"}},
+                            {"S14152AA", new List<String> {"13 И"}},
+                            {"S15161AA", new List<String> {"14 И"}},
+                            {"S15162AA", new List<String> {"14 И"}},
+                            {"S16171AA", new List<String> {"15 И"}},
+                            {"S16172AA", new List<String> {"15 И"}},
+                        };
+
+                        if (restrictions.ContainsKey(dbNames[semIndex]))
+                        {
+                            var item = restrictions[dbNames[semIndex]];
+                            restrictions.Clear();
+                            restrictions.Add(dbNames[semIndex], item);
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken);
+                            false, null, false, _cToken, restrictions);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -5008,7 +5335,7 @@ namespace UchOtd.Schedule
                                        dbNames[semIndex] + ".docx";
 
                         WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyArt.FacultyId}, filename,
-                            true, true, false);
+                            true, true, false, null);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -5036,7 +5363,7 @@ namespace UchOtd.Schedule
             await Task.Run(() =>
             {
                 WordExport.ExportAADisciplineList(dbNames, "Горюшкин (факультет искусств)",
-                    @"D:\GitHub\Export\Export AA Дисциплины Горюшкин.docx", true, true, false, false);
+                    @"D:\GitHub\Export\Export AA Дисциплины Горюшкин.docx", true, true, false, false, null);
             });
         }
 
@@ -6624,7 +6951,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 await Task.Run(() => WordExport.ExportCustomSchedule(Repo, facultyDowIds,
-                    fileName, true, true, 90, 6, SchoolHeader, false, false, new List<int> { }, false, _cToken), _cToken);
+                    fileName, true, true, 90, 6, SchoolHeader, false, false, new List<int> { }, false, _cToken, null), _cToken);
             }
             catch (OperationCanceledException exception)
             {
@@ -6640,7 +6967,7 @@ namespace UchOtd.Schedule
         private void GoogleCalendarExport_Click(object sender, EventArgs e)
         {
             Task.Run(() => { 
-                var service = GoogleCalendarService.InitService(GoogleCalendarService.NACredentials);
+                var service = GoogleCalendarService.InitService(GoogleCalendarService.NUCredentials);
 
                 //var studentGroup = Repo.StudentGroups
                 //    .GetFirstFiltredStudentGroups(sg =>
@@ -6688,7 +7015,7 @@ namespace UchOtd.Schedule
         private void очиститьКаледнарьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Task.Run(() => {
-                var service = GoogleCalendarService.InitService(GoogleCalendarService.NACredentials);
+                var service = GoogleCalendarService.InitService(GoogleCalendarService.NUCredentials);
 
                 var calendars = GoogleCalendarService.GetList();
 

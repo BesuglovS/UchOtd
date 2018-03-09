@@ -156,7 +156,7 @@ namespace UchOtd.Schedule.Forms
                 try
                 {
                     await Task.Run(() => WordExport.ExportCustomSchedule(_repo, _choice, "Расписание.docx", false,
-                        false, lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, weekFilteredF, weekFilterList, true, _cToken), _cToken);
+                        false, lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, weekFilteredF, weekFilterList, true, _cToken, null), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -244,7 +244,7 @@ namespace UchOtd.Schedule.Forms
                 try
                 {
                     await Task.Run(() => WordExport.ExportCustomSchedule(_repo, _choice, "Расписание.docx", false,
-                                false, lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, weekFilteredF, weekFilterList, true, _cToken), _cToken);
+                                false, lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, weekFilteredF, weekFilterList, true, _cToken, null), _cToken);
                 }
                 catch (OperationCanceledException)
                 {

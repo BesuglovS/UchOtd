@@ -355,18 +355,26 @@ namespace Schedule.Repositories.Repositories.Main
 
         // GroupId - 08:00 - {tfdId - {weeks + List<Lesson, LessonType> + weeksAndTypes}}
         public Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>>
-            GetFacultyDowSchedule(int facultyId, int dowRu, bool weekFiltered, List<int> weekFilterList, bool includeProposed, bool onlyFutureDates)
+            GetFacultyDowSchedule(int facultyId, int dowRu, bool weekFiltered, List<int> weekFilterList,
+                bool includeProposed, bool onlyFutureDates, List<string> groupRestrictions)
         {
             using (var context = new ScheduleContext(ConnectionString))
             {
                 // GroupId - 08:00 - {tfdId - {weeks + List<Lesson, LessonType> + weeksAndTypes}}
                 var result = new Dictionary<int, Dictionary<string, Dictionary<int, Tuple<string, List<Tuple<Lesson, int>>, string>>>>();
 
-                var facultyGroupIds = context
+                var facultyGroups = context
                     .GroupsInFaculties
                     .Where(gif => gif.Faculty.FacultyId == facultyId)
-                    .Select(gif => gif.StudentGroup.StudentGroupId)
+                    .Select(gif => gif.StudentGroup)
                     .ToList();
+
+                if (groupRestrictions != null)
+                {
+                    facultyGroups = facultyGroups.Where(sg => groupRestrictions.Contains(sg.Name)).ToList();
+                }
+
+                var facultyGroupIds = facultyGroups.Select(sg => sg.StudentGroupId).ToList();
 
                 foreach (var facultyGroupId in facultyGroupIds)
                 {

@@ -53,7 +53,6 @@ namespace Schedule.Repositories
         public CommonFunctions CommonFunctions;
 
         private string _connectionString;
-
         
         public void SetConnectionString(string value)
         {
