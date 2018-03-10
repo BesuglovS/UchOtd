@@ -311,7 +311,7 @@ namespace UchOtd.Schedule.Forms.DBLists.Lessons
                     {
                         if (audWeekList.Keys.Count == 1)
                         {
-                            var lessonAud = audWeekList[0];
+                            var lessonAud = audWeekList[Int32.MinValue];
                             audWeekList.Clear();
                             foreach (var localWeek in weekList)
                             {
