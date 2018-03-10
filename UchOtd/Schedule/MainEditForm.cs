@@ -4308,11 +4308,10 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА А " + dbNames[semIndex] + ".docx";
 
+                        var restrictionsItem = new Dictionary<String, List<String>>();
                         if (restrictions.ContainsKey(dbNames[semIndex]))
                         {
-                            var item = restrictions[dbNames[semIndex]];
-                            restrictions.Clear();
-                            restrictions.Add(dbNames[semIndex], item);
+                            restrictionsItem.Add(dbNames[semIndex], restrictions[dbNames[semIndex]]);
                         }
                         else
                         {
@@ -4320,7 +4319,7 @@ namespace UchOtd.Schedule
                         }
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, restrictions);
+                            false, null, false, _cToken, restrictionsItem);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4381,11 +4380,10 @@ namespace UchOtd.Schedule
                             {"S17181AA", new List<String> {"16 Б"}}
                         };
 
+                        var restrictionsItem = new Dictionary<String, List<String>>();
                         if (restrictions.ContainsKey(dbNames[semIndex]))
                         {
-                            var item = restrictions[dbNames[semIndex]];
-                            restrictions.Clear();
-                            restrictions.Add(dbNames[semIndex], item);
+                            restrictionsItem.Add(dbNames[semIndex], restrictions[dbNames[semIndex]]);
                         }
                         else
                         {
@@ -4393,7 +4391,7 @@ namespace UchOtd.Schedule
                         }
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, restrictions);
+                            false, null, false, _cToken, restrictionsItem);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4455,11 +4453,10 @@ namespace UchOtd.Schedule
                             {"S16171AA", new List<String> {"17 Г"}}
                         };
 
+                        var restrictionsItem = new Dictionary<String, List<String>>();
                         if (restrictions.ContainsKey(dbNames[semIndex]))
                         {
-                            var item = restrictions[dbNames[semIndex]];
-                            restrictions.Clear();
-                            restrictions.Add(dbNames[semIndex], item);
+                            restrictionsItem.Add(dbNames[semIndex], restrictions[dbNames[semIndex]]);
                         }
                         else
                         {
@@ -4529,11 +4526,10 @@ namespace UchOtd.Schedule
                             {"S17181AA", new List<String> {"16 Д"}}
                         };
 
+                        var restrictionsItem = new Dictionary<String, List<String>>();
                         if (restrictions.ContainsKey(dbNames[semIndex]))
                         {
-                            var item = restrictions[dbNames[semIndex]];
-                            restrictions.Clear();
-                            restrictions.Add(dbNames[semIndex], item);
+                            restrictionsItem.Add(dbNames[semIndex], restrictions[dbNames[semIndex]]);
                         }
                         else
                         {
@@ -5084,11 +5080,10 @@ namespace UchOtd.Schedule
                             {"S16172AA", new List<String> {"15 И"}},
                         };
 
+                        var restrictionsItem = new Dictionary<String, List<String>>();
                         if (restrictions.ContainsKey(dbNames[semIndex]))
                         {
-                            var item = restrictions[dbNames[semIndex]];
-                            restrictions.Clear();
-                            restrictions.Add(dbNames[semIndex], item);
+                            restrictionsItem.Add(dbNames[semIndex], restrictions[dbNames[semIndex]]);
                         }
                         else
                         {
