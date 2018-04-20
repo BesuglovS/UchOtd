@@ -4156,6 +4156,19 @@ namespace UchOtd.Core
         {
             var discs = repo.Disciplines.GetFiltredDisciplines(d => d.Name.Contains("изическ")).ToList();
 
+            discs = discs.Where(d => !d.StudentGroup.Name.StartsWith("1 ") &&
+                                     !d.StudentGroup.Name.StartsWith("2 ") &&
+                                     !d.StudentGroup.Name.StartsWith("3 ") &&
+                                     !d.StudentGroup.Name.StartsWith("4 ") &&
+                                     !d.StudentGroup.Name.StartsWith("5 ") &&
+                                     !d.StudentGroup.Name.StartsWith("6 ") &&
+                                     !d.StudentGroup.Name.StartsWith("7 ") &&
+                                     !d.StudentGroup.Name.StartsWith("8 ") &&
+                                     !d.StudentGroup.Name.StartsWith("9 ") &&
+                                     !d.StudentGroup.Name.StartsWith("10 ") &&
+                                     !d.StudentGroup.Name.StartsWith("11 ")
+            ).ToList();
+
             discs.Sort((x, y) =>
             {
                 var teacherFIO1 = "";

@@ -259,7 +259,7 @@ namespace UchOtd.Schedule.wnu
             var mySqlNotes = MySQLScheduleNote.FromNotes(notes);
             var wud = new WnuUploadData { dbPrefix = "", tableSelector = "scheduleNotes", data = jsonSerializer.Serialize(mySqlNotes) };
             string json = jsonSerializer.Serialize(wud);
-            UploadTableData(json, @"http://wiki.nayanova.edu/_php/includes/");
+            UploadTableData(json, @"http://wiki.nayanova.edu/_php/includes/import.php");
         }
     }
 }

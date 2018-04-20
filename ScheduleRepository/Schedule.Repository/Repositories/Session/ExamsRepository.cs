@@ -458,6 +458,11 @@ namespace Schedule.Repositories.Repositories.Session
             {
                 var disc = sRepo.Disciplines.GetDiscipline(exam.DisciplineId);
 
+                if (disc == null)
+                {
+                    continue;
+                }
+
 
                 if (!result.ContainsKey(exam.ConsultationDateTime.Date))
                 {

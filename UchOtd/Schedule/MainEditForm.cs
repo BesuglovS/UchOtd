@@ -4721,7 +4721,7 @@ namespace UchOtd.Schedule
                     {"S14152AA", new List<String> {"16 Г"}},
                     {"S15161AA", new List<String> {"16 Г", "17 Г"}},
                     {"S15162AA", new List<String> {"16 Г", "17 Г"}},
-                    {"S17181AA", new List<String> {"17 Г"}}
+                    {"S16171AA", new List<String> {"17 Г"}}
                 };
 
                 await Task.Run(() =>
@@ -5068,30 +5068,30 @@ namespace UchOtd.Schedule
 
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА И " + dbNames[semIndex] + ".docx";
 
-                        var restrictions = new Dictionary<String, List<String>>
-                        {
-                            {"S13141AA", new List<String> {"12 И"}},
-                            {"S13142AA", new List<String> {"12 И"}},
-                            {"S14151AA", new List<String> {"13 И"}},
-                            {"S14152AA", new List<String> {"13 И"}},
-                            {"S15161AA", new List<String> {"14 И"}},
-                            {"S15162AA", new List<String> {"14 И"}},
-                            {"S16171AA", new List<String> {"15 И"}},
-                            {"S16172AA", new List<String> {"15 И"}},
-                        };
+                        //var restrictions = new Dictionary<String, List<String>>
+                        //{
+                        //    {"S13141AA", new List<String> {"12 И"}},
+                        //    {"S13142AA", new List<String> {"12 И"}},
+                        //    {"S14151AA", new List<String> {"13 И"}},
+                        //    {"S14152AA", new List<String> {"13 И"}},
+                        //    {"S15161AA", new List<String> {"14 И"}},
+                        //    {"S15162AA", new List<String> {"14 И"}},
+                        //    {"S16171AA", new List<String> {"15 И"}},
+                        //    {"S16172AA", new List<String> {"15 И"}},
+                        //};
 
-                        var restrictionsItem = new Dictionary<String, List<String>>();
-                        if (restrictions.ContainsKey(dbNames[semIndex]))
-                        {
-                            restrictionsItem.Add(dbNames[semIndex], restrictions[dbNames[semIndex]]);
-                        }
-                        else
-                        {
-                            continue;
-                        }
+                        //var restrictionsItem = new Dictionary<String, List<String>>();
+                        //if (restrictions.ContainsKey(dbNames[semIndex]))
+                        //{
+                        //    restrictionsItem.Add(dbNames[semIndex], restrictions[dbNames[semIndex]]);
+                        //}
+                        //else
+                        //{
+                        //    continue;
+                        //}
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, restrictions);
+                            false, null, false, _cToken, null);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -5205,16 +5205,16 @@ namespace UchOtd.Schedule
                     "S16172AA",
                 };
 
-                var restrictions = new Dictionary<String, List<String>>
-                {
-                    {"S15161AA", new List<String> {"14 И"}},
-                    {"S15162AA", new List<String> {"14 И"}},
-                    {"S16171AA", new List<String> {"15 И"}},
-                    {"S16172AA", new List<String> {"15 И"}},
-                };
+                //var restrictions = new Dictionary<String, List<String>>
+                //{
+                //    {"S15161AA", new List<String> {"14 И"}},
+                //    {"S15162AA", new List<String> {"14 И"}},
+                //    {"S16171AA", new List<String> {"15 И"}},
+                //    {"S16172AA", new List<String> {"15 И"}},
+                //};
 
                 await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Горюшкин (факультет искусств)",
-                    @"D:\GitHub\Export\Export АА Журналы Горюшкин.docx", true, true, restrictions), _cToken);
+                    @"D:\GitHub\Export\Export АА Журналы Горюшкин.docx", true, true, null), _cToken);
             }
             catch (OperationCanceledException)
             {
@@ -5258,31 +5258,31 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Горюшкин " + dbNames[semIndex] +
                                        ".docx";
 
-                        var restrictions = new Dictionary<String, List<String>>
-                        {
-                            {"S13141AA", new List<String> {"12 И"}},
-                            {"S13142AA", new List<String> {"12 И"}},
-                            {"S14151AA", new List<String> {"13 И"}},
-                            {"S14152AA", new List<String> {"13 И"}},
-                            {"S15161AA", new List<String> {"14 И"}},
-                            {"S15162AA", new List<String> {"14 И"}},
-                            {"S16171AA", new List<String> {"15 И"}},
-                            {"S16172AA", new List<String> {"15 И"}},
-                        };
+                        //var restrictions = new Dictionary<String, List<String>>
+                        //{
+                        //    {"S13141AA", new List<String> {"12 И"}},
+                        //    {"S13142AA", new List<String> {"12 И"}},
+                        //    {"S14151AA", new List<String> {"13 И"}},
+                        //    {"S14152AA", new List<String> {"13 И"}},
+                        //    {"S15161AA", new List<String> {"14 И"}},
+                        //    {"S15162AA", new List<String> {"14 И"}},
+                        //    {"S16171AA", new List<String> {"15 И"}},
+                        //    {"S16172AA", new List<String> {"15 И"}},
+                        //};
 
-                        if (restrictions.ContainsKey(dbNames[semIndex]))
-                        {
-                            var item = restrictions[dbNames[semIndex]];
-                            restrictions.Clear();
-                            restrictions.Add(dbNames[semIndex], item);
-                        }
-                        else
-                        {
-                            continue;
-                        }
+                        //if (restrictions.ContainsKey(dbNames[semIndex]))
+                        //{
+                        //    var item = restrictions[dbNames[semIndex]];
+                        //    restrictions.Clear();
+                        //    restrictions.Add(dbNames[semIndex], item);
+                        //}
+                        //else
+                        //{
+                        //    continue;
+                        //}
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, restrictions);
+                            false, null, false, _cToken, null);
 
                         scheduleFilenames.Add(filename);
                     }
