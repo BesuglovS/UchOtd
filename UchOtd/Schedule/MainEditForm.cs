@@ -2066,80 +2066,118 @@ namespace UchOtd.Schedule
         private async void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
             //MessageBox.Show("Пусто тут, барин!)");
-            var exportFilename = "schoolDisciplines.txt";
             await Task.Run(() =>
             {
-                TextFileUtilities.CreateOrEmptyFile(exportFilename);
+                var logfn = @"D:\Github\AudCorrectionItems.txt";
+                var MolAuds = "Ауд. 300@Ауд. 301@Ауд. 302@Ауд. 303@Ауд. 304@Ауд. 305@Ауд. 306@Ауд. 307@Ауд. 308@Ауд. 102@Ауд. 103@Ауд. 109@Ауд. 112@Ауд. 99@Ауд. 213";
 
-                var fNames = new List<string>
+                var bigList = new List<string>();
+
+                TextFileUtilities.CreateOrEmptyFile(logfn);
+
+                var dbNames = new List<string> { "S16171A0718", "S16172A0718", "S17181A0718", "S17182A0718" };
+                var faculties = new List<string>
                 {
-                    "5-е классы",
-                    "6-е классы",
-                    "7-е классы"
+                    "Философский факультет",
+                    "Химико-биологический факультет",
+                    "Экономический факультет",
+                    "Юридический факультет",
+                    "Факультет международных отношений",
+                    "Факультет управления",
+                    "Факультета туризма"
                 };
 
-                var timePairs = new Dictionary<TimeSpan, TimeSpan>
+                for (int j = 0; j < faculties.Count; j++)
                 {
-                    { new TimeSpan(13, 15, 0), new TimeSpan(13, 5, 0) }
-                };
-                var ringPairs = new Dictionary<int, Ring>();
-
-                var timeKeys = timePairs.Keys.ToList();
-                foreach (var timeFrom in timeKeys)
-                {
+                    var facultyName = faculties[j];
                     
-                    var ring = Repo.Rings.GetFirstFiltredRing(r => r.Time.TimeOfDay == timeFrom);
-                    var ring2 = Repo.Rings.GetFirstFiltredRing(r => r.Time.TimeOfDay == timePairs[timeFrom]);
-                    if (ring != null && ring2 != null)
+                    var distinctDisciplineNames = new HashSet<string>();
+                    var distinctGroupNames = new HashSet<string>();
+
+                    for (int i = 0; i < dbNames.Count; i++)
                     {
-                        ringPairs.Add(ring.RingId, ring2);
-                    }
-                }
+                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                               dbNames[i] +
+                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
 
-                var ringFromIds = ringPairs.Keys.ToList();
+                        var repo = new ScheduleRepository(connectionString);
 
-                var faculties = Repo.Faculties.GetFiltredFaculties(f => fNames.Contains(f.Name)).OrderBy(f => f.SortingOrder)
-                    .ToList();
+                        var faculty = repo.Faculties.GetFirstFiltredFaculty(f => f.Name == facultyName);
 
-                foreach (var faculty in faculties.OrderBy(f => f.SortingOrder))
-                {
-                    var facultyGroups = Repo.GroupsInFaculties
-                        .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
-                        .Select(gif => gif.StudentGroup);
-
-                    foreach (var studentGroup in facultyGroups)
-                    {
-                        var grouIds = Utilities.StudentGroupIdsFromGroupId(Repo, studentGroup.StudentGroupId);
-                        var groupDisciplines = Repo.Disciplines.GetFiltredDisciplines(
-                            d => grouIds.Contains(d.StudentGroup.StudentGroupId));
-
-                        foreach (var discipline in groupDisciplines)
+                        if (faculty == null)
                         {
-                            var tfd = Repo.TeacherForDisciplines.GetFirstFiltredTeacherForDiscipline(tefd =>
-                                tefd.Discipline.DisciplineId == discipline.DisciplineId);
+                            continue;
+                        }
 
-                            if (tfd != null)
+                        var facultyGroups = repo.GroupsInFaculties
+                            .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                            .Select(gif => gif.StudentGroup)
+                            .ToList();
+                        var groupNamesList = facultyGroups.Select(sg => sg.Name).Distinct().ToList();
+                        foreach (var groupName in groupNamesList)
+                        {
+                            distinctGroupNames.Add(groupName);
+                            bigList.Add(groupName);
+                        }
+                        
+                        var groupIds = new HashSet<int>();
+
+                        foreach (var facultyGroup in facultyGroups)
+                        {
+                            var gIds = Utilities.StudentGroupIdsFromGroupId(repo, facultyGroup.StudentGroupId);
+                            foreach (var gId in gIds)
                             {
-                                var satRingLessons = Repo.Lessons.GetFiltredLessons(l =>
-                                    l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId &&
-                                    l.State == 1)
-                                    .ToList()
-                                    .Where(l => l.Calendar.Date.DayOfWeek == DayOfWeek.Saturday && ringFromIds.Contains(l.Ring.RingId))
-                                    .ToList();
-
-                                foreach (var lesson in satRingLessons)
-                                {
-                                    var newRing = ringPairs[lesson.Ring.RingId];
-                                    lesson.Ring = newRing;
-                                    Repo.Lessons.UpdateLesson(lesson);
-                                }
+                                groupIds.Add(gId);
                             }
                         }
+
+                        var facultyDiscipines =
+                            repo.Disciplines.GetFiltredDisciplines(
+                                d => groupIds.Contains(d.StudentGroup.StudentGroupId));
+
+                        var disciplineNamesSemesterList = facultyDiscipines.Select(d => d.Name).Distinct().OrderBy(n => n).ToList();
+
+                        foreach (var disciplineName in disciplineNamesSemesterList)
+                        {
+                            distinctDisciplineNames.Add(disciplineName);
+                        }
+
+                        Invoke((MethodInvoker)delegate
+                        {
+                            status.Text = faculty.Name + " " + dbNames[i];
+                        });
+                    }
+
+                    TextFileUtilities.WriteString(logfn, "==========Группы");
+                    List<string> groupNames = distinctGroupNames.OrderBy(n => n).ToList();
+                    foreach (var groupName in groupNames)
+                    {
+                        TextFileUtilities.WriteString(logfn, groupName);
+                    }
+
+                    TextFileUtilities.WriteString(logfn, "==========Аудитории");
+                    List<string> discNames = distinctDisciplineNames.OrderBy(n => n).ToList();
+                    foreach (var disciplineName in discNames)
+                    {
+                        TextFileUtilities.WriteString(logfn, disciplineName);
+                        TextFileUtilities.WriteString(logfn, MolAuds);
                     }
                 }
-            });
 
-            status.Text = "Готово";
+                TextFileUtilities.WriteString(logfn, "==========");
+                List<string> bigListSorted = bigList.OrderBy(n => n).ToList();
+                foreach (var groupName in bigListSorted)
+                {
+                    TextFileUtilities.WriteString(logfn, groupName);
+                }
+
+                Invoke((MethodInvoker)delegate
+                {
+                    status.Text = "Готово";
+                });
+            }); 
+
+            
         }
 
         private void SetRepoSemester(string semesterDBName)
@@ -2420,6 +2458,11 @@ namespace UchOtd.Schedule
                     int discCounter = 0;
                     foreach (KeyValuePair<string, List<string>> discAuds in auds)
                     {
+                        //if (discCounter < 4)
+                        //{
+                        //    discCounter++;
+                        //    continue;
+                        //}
                         var discName = discAuds.Key;
 
                         LogInFile(logFilename, "DB: " + dbName + " " + "Gr" + (grIndex + 1).ToString() + "/" +
@@ -6390,16 +6433,25 @@ namespace UchOtd.Schedule
                             continue;
                         }
 
-                        var ChapGroups = new List<string> {"1", "2", "3", "4", "5", "6", "7"};
+                        var ChapGroups = new List<string> {"1", "2", "3", "4"};
+                        var Groups40 = new List<string> { "5", "6", "7" };
 
                         var lesson1Length = 80;
                         if (ChapGroups.Contains(lesson1.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
+                        {
+                            lesson1Length = 30;
+                        }
+                        if (Groups40.Contains(lesson1.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
                         {
                             lesson1Length = 40;
                         }
 
                         var lesson2Length = 80;
                         if (ChapGroups.Contains(lesson2.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
+                        {
+                            lesson2Length = 30;
+                        }
+                        if (Groups40.Contains(lesson2.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
                         {
                             lesson2Length = 40;
                         }
@@ -7027,6 +7079,395 @@ namespace UchOtd.Schedule
             });
         }
 
+        private void restoreA0718OriginalDbsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Task.Run(() => {
+                var dbNames = new Dictionary<string, string> { 
+                    { "S16171A0718", "Schedule16171"},
+                    { "S16172A0718", "Schedule16172"},
+                    { "S17181A0718", "Schedule17181"},
+                    { "S17182A0718", "Schedule17182"}
+                };
+
+                var newDbNames = dbNames.Keys.ToList();
+
+                for (int i = 0; i < dbNames.Count; i++)
+                {
+                    Repo.RestoreDb(newDbNames[i], @"D:\Github\A0718\Original\" + dbNames[newDbNames[i]] + ".bak", dbNames[newDbNames[i]]);
+                }
+            });
+        }
+
+        private async void датыЗанятийToolStripMenuItem6_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S16171A0718",
+                    "S16172A0718",
+                    "S17181A0718",
+                    "S17182A0718"
+                };
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Факультет математики и компьютерных наук",
+                    @"D:\GitHub\Export\Export АА Журналы А.docx", true, true, null), _cToken);
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Философский факультет",
+                    @"D:\GitHub\Export\Export АА Журналы Б.docx", true, true, null), _cToken);
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Химико-биологический факультет",
+                    @"D:\GitHub\Export\Export АА Журналы В.docx", true, true, null), _cToken);
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Экономический факультет",
+                    @"D:\GitHub\Export\Export АА Журналы Г.docx", true, true, null), _cToken);
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Юридический факультет",
+                    @"D:\GitHub\Export\Export АА Журналы Д.docx", true, true, null), _cToken);
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Факультет международных отношений",
+                    @"D:\GitHub\Export\Export АА Журналы Е.docx", true, true, null), _cToken);
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Факультет управления",
+                    @"D:\GitHub\Export\Export АА Журналы У.docx", true, true, null), _cToken);
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Факультета туризма",
+                    @"D:\GitHub\Export\Export АА Журналы Т.docx", true, true, null), _cToken);
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Факультета искусств",
+                    @"D:\GitHub\Export\Export АА Журналы И.docx", true, true, null), _cToken);
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Философский факультет (магистратура)",
+                    @"D:\GitHub\Export\Export АА Журналы БМ.docx", true, true, null), _cToken);
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Экономический факультет (магистратура)",
+                    @"D:\GitHub\Export\Export АА Журналы ГМ.docx", true, true, null), _cToken);
+
+                await Task.Run(() => WordExport.ExportFacultyDates(dbNames, "Юридический факультет (магистратура)",
+                    @"D:\GitHub\Export\Export АА Журналы ДМ.docx", true, true, null), _cToken);
+
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void расписаниеToolStripMenuItem6_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S16171A0718",
+                    "S16172A0718",
+                    "S17181A0718",
+                    "S17182A0718"
+                };
+                
+                await Task.Run(() =>
+                {
+                    List<string> facultyNames = new List<string>
+                    {
+                        "Факультет математики и компьютерных наук",
+                        "Философский факультет",
+                        "Химико-биологический факультет",
+                        "Экономический факультет",
+                        "Юридический факультет",
+                        "Факультет международных отношений",
+                        "Факультет управления",
+                        "Факультета туризма",
+                        "Факультета искусств",
+                        "Философский факультет (магистратура)",
+                        "Экономический факультет (магистратура)",
+                        "Юридический факультет (магистратура)"
+                    };
+                    for (int i = 0; i < facultyNames.Count; i++)
+                    {
+                        var facultyLetter = "";
+                        var scheduleFilenames = new List<string>();
+                        for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                        {
+                            var connectionString = "data source=tcp:" + StartupForm.CurrentServerName +
+                                                   ",1433; Database=" +
+                                                   dbNames[semIndex] +
+                                                   "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                            var repo = new ScheduleRepository(connectionString);
+
+                            var faculty =
+                                repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains(facultyNames[i]));
+
+                            if (faculty != null)
+                            {
+                                facultyLetter = faculty.Letter;
+                                _cToken = this._tokenSource.Token;
+
+                                var choice = new Dictionary<int, List<int>>
+                                {
+                                    {faculty.FacultyId, new List<int> {1, 2, 3, 4, 5, 6}}
+                                };
+
+                                var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА " + faculty.Letter + " " + dbNames[semIndex] +
+                                               ".docx";
+
+                                WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
+                                    false, null, false, _cToken, null);
+
+                                scheduleFilenames.Add(filename);
+                            }
+
+                        }
+
+                        WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Расписание " + facultyLetter + ".docx",
+                            true);
+                    }
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void расписаниеСессииToolStripMenuItem6_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var dbNames = new List<string>
+                {
+                    "S16171A0718",
+                    "S16172A0718",
+                    "S17181A0718",
+                    "S17182A0718"
+                };
+                
+
+                await Task.Run(() =>
+                {
+                    List<string> facultyNames = new List<string>
+                    {
+                        "Факультет математики и компьютерных наук",
+                        "Философский факультет",
+                        "Химико-биологический факультет",
+                        "Экономический факультет",
+                        "Юридический факультет",
+                        "Факультет международных отношений",
+                        "Факультет управления",
+                        "Факультета туризма",
+                        "Факультета искусств",
+                        "Философский факультет (магистратура)",
+                        "Экономический факультет (магистратура)",
+                        "Юридический факультет (магистратура)"
+                    };
+                    for (int i = 0; i < facultyNames.Count; i++)
+                    {
+                        var facultyLetter = "";
+
+                        var scheduleFilenames = new List<string>();
+                        for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+                        {
+                            var connectionString = "data source=tcp:" + StartupForm.CurrentServerName +
+                                                   ",1433; Database=" +
+                                                   dbNames[semIndex] +
+                                                   "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                            List<String> groupsRestriction = null;
+
+                            var repo = new ScheduleRepository(connectionString);
+
+                            var faculty =
+                                repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains(facultyNames[i]));
+                            if (faculty != null)
+                            {
+                                facultyLetter = faculty.Letter;
+                                _cToken = this._tokenSource.Token;
+
+                                var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия " +
+                                               faculty.Letter + " " +
+                                               dbNames[semIndex] +
+                                               ".docx";
+
+                                WordExport.ExportCustomSessionSchedule(repo, new List<int> {faculty.FacultyId},
+                                    filename,
+                                    true, true, false, groupsRestriction);
+
+                                scheduleFilenames.Add(filename);
+                            }
+                        }
+
+                        WordExport.MergeDocuments(scheduleFilenames, @"D:\GitHub\Export\Export AA Сессия " + facultyLetter + ".docx",
+                            false);
+                    }
+
+                }, _cToken);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        private async void дисциплиныРасписанияToolStripMenuItem5_Click(object sender, EventArgs e)
+        {
+            var dbNames = new List<string>
+            {
+                "S16171A0718",
+                "S16172A0718",
+                "S17181A0718",
+                "S17182A0718"
+            };
+            
+            await Task.Run(() =>
+            {
+                var facultyNames = new Dictionary<string, string>()
+                {
+                    { "Факультет математики и компьютерных наук", "А"},
+                    { "Философский факультет", "Б"},
+                    { "Химико-биологический факультет", "В"},
+                    { "Экономический факультет", "Г"},
+                    { "Юридический факультет", "Д"},
+                    { "Факультет международных отношений", "Е"},
+                    { "Факультет управления", "У"},
+                    { "Факультета туризма", "Т"},
+                    { "Факультета искусств", "И"},
+                    { "Философский факультет (магистратура)", "БМ"},
+                    { "Экономический факультет (магистратура)", "ГМ"},
+                    { "Юридический факультет (магистратура)", "ДМ"}
+                };
+
+                foreach (var facultyPair in facultyNames)
+                {
+                    WordExport.ExportAADisciplineList(dbNames, facultyPair.Key,
+                        @"D:\GitHub\Export\Export AA Дисциплины " + facultyPair.Value + ".docx", true, true, false, false, null);
+                }
+            });
+        }
+
+        private async void аудиторииДисциплинToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            var dbNames = new List<string>
+            {
+                "S16171A0718",
+                "S16172A0718",
+                "S17181A0718",
+                "S17182A0718"
+            };
+
+            await Task.Run(() =>
+            {
+                var facultyNames = new Dictionary<string, string>()
+                {
+                    { "Факультет математики и компьютерных наук", "А"},
+                    { "Философский факультет", "Б"},
+                    { "Химико-биологический факультет", "В"},
+                    { "Экономический факультет", "Г"},
+                    { "Юридический факультет", "Д"},
+                    { "Факультет международных отношений", "Е"},
+                    { "Факультет управления", "У"},
+                    { "Факультета туризма", "Т"},
+                    { "Факультета искусств", "И"},
+                    { "Философский факультет (магистратура)", "БМ"},
+                    { "Экономический факультет (магистратура)", "ГМ"},
+                    { "Юридический факультет (магистратура)", "ДМ"}
+                };
+
+                foreach (var facultyPair in facultyNames)
+                {
+                    ExportAAAuditoriumListByDiscipline(dbNames, facultyPair.Key,
+                        @"D:\GitHub\Export\Export AA Аудитории " + facultyPair.Value + ".txt");
+                }
+            });
+        }
+
+        private void ExportAAAuditoriumListByDiscipline(List<string> dbNames, string facultyName, string filename)
+        {
+            var result = new Dictionary<string, List<string>>();
+
+            for (int semIndex = 0; semIndex < dbNames.Count; semIndex++)
+            {
+                var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
+                                       dbNames[semIndex] +
+                                       "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
+
+                var repo = new ScheduleRepository(connectionString);
+                
+                var faculty = repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains(facultyName));
+
+                if (faculty == null)
+                {
+                    continue;
+                }
+
+                var groups = repo
+                        .GroupsInFaculties
+                        .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                        .Select(gif => gif.StudentGroup)
+                        .ToList();
+                
+                for (int i = 0; i < groups.Count; i++)
+                {
+                    var studentGroup = groups[i];
+
+                    var studentIds = repo.StudentsInGroups
+                        .GetFiltredStudentsInGroups(
+                            sig => sig.StudentGroup.StudentGroupId == studentGroup.StudentGroupId &&
+                                   !sig.Student.Expelled)
+                        .Select(stig => stig.Student.StudentId);
+
+                    var groupsListIds = repo.StudentsInGroups
+                        .GetFiltredStudentsInGroups(sig => studentIds.Contains(sig.Student.StudentId))
+                        .Select(stig => stig.StudentGroup.StudentGroupId);
+
+                    var discs = repo.Disciplines
+                        .GetFiltredDisciplines(d => groupsListIds.Contains(d.StudentGroup.StudentGroupId)).ToList();
+
+                    var tfds = new List<TeacherForDiscipline>();
+                    foreach (var discipline in discs)
+                    {
+                        var tefd = repo.TeacherForDisciplines
+                            .GetFirstFiltredTeacherForDiscipline(
+                                tfd => tfd.Discipline.DisciplineId == discipline.DisciplineId);
+                        if (tefd != null)
+                        {
+                            tfds.Add(tefd);
+                        }
+                    }
+
+                    for (int j = 0; j < tfds.Count; j++)
+                    {
+                        var tfd = tfds[j];
+                        var lessons = repo.Lessons.GetFiltredLessons(l =>
+                            l.State == 1 && l.TeacherForDiscipline.TeacherForDisciplineId ==
+                            tfd.TeacherForDisciplineId);
+
+                        var auditoriums = lessons.Select(l => l.Auditorium.Name).Distinct().ToList();
+
+                        if (!result.ContainsKey(tfd.Discipline.Name))
+                        {
+                            result.Add(tfd.Discipline.Name, auditoriums);
+                        }
+                        else
+                        {
+                            auditoriums.AddRange(result[tfd.Discipline.Name]);
+                            result[tfd.Discipline.Name] = auditoriums.Distinct().ToList();
+                        }
+                    }
+                }
+            }
+
+            var orderedDiscipliens = result.Keys.OrderBy(n => n).ToList();
+
+            TextFileUtilities.CreateOrEmptyFile(filename);
+
+            for (int i = 0; i < orderedDiscipliens.Count; i++)
+            {
+                var disciplineName = orderedDiscipliens[i];
+                var auds = result[disciplineName].OrderBy(n => n).ToList();
+                TextFileUtilities.WriteString(filename, disciplineName);
+                var audsString = auds.Count == 0 ? "" : auds.Aggregate((x,y) => x + "@" + y);
+                TextFileUtilities.WriteString(filename, audsString);
+            }
+        }
+
         public void ringsChosen(List<int> ringIds, Auditorium aud)
         {
             List<int> weekFilterList = null;
@@ -7058,4 +7499,6 @@ namespace UchOtd.Schedule
         }
     }
 }
+
+
 

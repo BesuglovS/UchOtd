@@ -176,15 +176,22 @@ namespace UchOtd.Schedule
             this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.неточности811ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.освободитьМестоВРасписанииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restoreA0718OriginalDbsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.googleCalendarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GoogleCalendarExport = new System.Windows.Forms.ToolStripMenuItem();
+            this.очиститьКаледнарьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
-            this.очиститьКаледнарьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
+            this.датыЗанятийToolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
+            this.расписаниеToolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
+            this.расписаниеСессииToolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
+            this.дисциплиныРасписанияToolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
+            this.аудиторииДисциплинToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -981,7 +988,8 @@ namespace UchOtd.Schedule
             this.датыЗанятийЮристовмагистратураToolStripMenuItem,
             this.вставитьПоследовательностиТиповЗанятияИзФайлаToolStripMenuItem,
             this.искусствоToolStripMenuItem,
-            this.горюшкинToolStripMenuItem});
+            this.горюшкинToolStripMenuItem,
+            this.toolStripMenuItem5});
             this.экспортВWordToolStripMenuItem.Name = "экспортВWordToolStripMenuItem";
             this.экспортВWordToolStripMenuItem.Size = new System.Drawing.Size(108, 20);
             this.экспортВWordToolStripMenuItem.Text = "Экспорт в Word ";
@@ -1312,7 +1320,8 @@ namespace UchOtd.Schedule
             this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem,
             this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem,
             this.неточности811ToolStripMenuItem,
-            this.освободитьМестоВРасписанииToolStripMenuItem});
+            this.освободитьМестоВРасписанииToolStripMenuItem,
+            this.restoreA0718OriginalDbsToolStripMenuItem});
             this.bigRedButtonToolStripMenuItem.Name = "bigRedButtonToolStripMenuItem";
             this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
             this.bigRedButtonToolStripMenuItem.Text = "BIG RED BUTTON";
@@ -1464,6 +1473,13 @@ namespace UchOtd.Schedule
             this.освободитьМестоВРасписанииToolStripMenuItem.Text = "Освободить место в расписании";
             this.освободитьМестоВРасписанииToolStripMenuItem.Click += new System.EventHandler(this.освободитьМестоВРасписанииToolStripMenuItem_Click);
             // 
+            // restoreA0718OriginalDbsToolStripMenuItem
+            // 
+            this.restoreA0718OriginalDbsToolStripMenuItem.Name = "restoreA0718OriginalDbsToolStripMenuItem";
+            this.restoreA0718OriginalDbsToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.restoreA0718OriginalDbsToolStripMenuItem.Text = "Restore A0718 Original DBs";
+            this.restoreA0718OriginalDbsToolStripMenuItem.Click += new System.EventHandler(this.restoreA0718OriginalDbsToolStripMenuItem_Click);
+            // 
             // googleCalendarToolStripMenuItem
             // 
             this.googleCalendarToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1479,6 +1495,13 @@ namespace UchOtd.Schedule
             this.GoogleCalendarExport.Size = new System.Drawing.Size(187, 22);
             this.GoogleCalendarExport.Text = "Экспорт расписания";
             this.GoogleCalendarExport.Click += new System.EventHandler(this.GoogleCalendarExport_Click);
+            // 
+            // очиститьКаледнарьToolStripMenuItem
+            // 
+            this.очиститьКаледнарьToolStripMenuItem.Name = "очиститьКаледнарьToolStripMenuItem";
+            this.очиститьКаледнарьToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.очиститьКаледнарьToolStripMenuItem.Text = "Очистить каледнарь";
+            this.очиститьКаледнарьToolStripMenuItem.Click += new System.EventHandler(this.очиститьКаледнарьToolStripMenuItem_Click);
             // 
             // viewPanel
             // 
@@ -1540,12 +1563,52 @@ namespace UchOtd.Schedule
             this.editSchedule.Text = "Аудитория";
             this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
             // 
-            // очиститьКаледнарьToolStripMenuItem
+            // toolStripMenuItem5
             // 
-            this.очиститьКаледнарьToolStripMenuItem.Name = "очиститьКаледнарьToolStripMenuItem";
-            this.очиститьКаледнарьToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.очиститьКаледнарьToolStripMenuItem.Text = "Очистить каледнарь";
-            this.очиститьКаледнарьToolStripMenuItem.Click += new System.EventHandler(this.очиститьКаледнарьToolStripMenuItem_Click);
+            this.toolStripMenuItem5.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.датыЗанятийToolStripMenuItem6,
+            this.расписаниеToolStripMenuItem6,
+            this.расписаниеСессииToolStripMenuItem6,
+            this.дисциплиныРасписанияToolStripMenuItem5,
+            this.аудиторииДисциплинToolStripMenuItem1});
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(394, 22);
+            this.toolStripMenuItem5.Text = "0718";
+            // 
+            // датыЗанятийToolStripMenuItem6
+            // 
+            this.датыЗанятийToolStripMenuItem6.Name = "датыЗанятийToolStripMenuItem6";
+            this.датыЗанятийToolStripMenuItem6.Size = new System.Drawing.Size(214, 22);
+            this.датыЗанятийToolStripMenuItem6.Text = "Даты занятий";
+            this.датыЗанятийToolStripMenuItem6.Click += new System.EventHandler(this.датыЗанятийToolStripMenuItem6_Click);
+            // 
+            // расписаниеToolStripMenuItem6
+            // 
+            this.расписаниеToolStripMenuItem6.Name = "расписаниеToolStripMenuItem6";
+            this.расписаниеToolStripMenuItem6.Size = new System.Drawing.Size(214, 22);
+            this.расписаниеToolStripMenuItem6.Text = "Расписание";
+            this.расписаниеToolStripMenuItem6.Click += new System.EventHandler(this.расписаниеToolStripMenuItem6_Click);
+            // 
+            // расписаниеСессииToolStripMenuItem6
+            // 
+            this.расписаниеСессииToolStripMenuItem6.Name = "расписаниеСессииToolStripMenuItem6";
+            this.расписаниеСессииToolStripMenuItem6.Size = new System.Drawing.Size(214, 22);
+            this.расписаниеСессииToolStripMenuItem6.Text = "Расписание сессии";
+            this.расписаниеСессииToolStripMenuItem6.Click += new System.EventHandler(this.расписаниеСессииToolStripMenuItem6_Click);
+            // 
+            // дисциплиныРасписанияToolStripMenuItem5
+            // 
+            this.дисциплиныРасписанияToolStripMenuItem5.Name = "дисциплиныРасписанияToolStripMenuItem5";
+            this.дисциплиныРасписанияToolStripMenuItem5.Size = new System.Drawing.Size(214, 22);
+            this.дисциплиныРасписанияToolStripMenuItem5.Text = "Дисциплины расписания";
+            this.дисциплиныРасписанияToolStripMenuItem5.Click += new System.EventHandler(this.дисциплиныРасписанияToolStripMenuItem5_Click);
+            // 
+            // аудиторииДисциплинToolStripMenuItem1
+            // 
+            this.аудиторииДисциплинToolStripMenuItem1.Name = "аудиторииДисциплинToolStripMenuItem1";
+            this.аудиторииДисциплинToolStripMenuItem1.Size = new System.Drawing.Size(214, 22);
+            this.аудиторииДисциплинToolStripMenuItem1.Text = "Аудитории дисциплин";
+            this.аудиторииДисциплинToolStripMenuItem1.Click += new System.EventHandler(this.аудиторииДисциплинToolStripMenuItem1_Click);
             // 
             // MainEditForm
             // 
@@ -1730,6 +1793,13 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem googleCalendarToolStripMenuItem;
         private ToolStripMenuItem GoogleCalendarExport;
         private ToolStripMenuItem очиститьКаледнарьToolStripMenuItem;
+        private ToolStripMenuItem restoreA0718OriginalDbsToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem5;
+        private ToolStripMenuItem датыЗанятийToolStripMenuItem6;
+        private ToolStripMenuItem расписаниеToolStripMenuItem6;
+        private ToolStripMenuItem расписаниеСессииToolStripMenuItem6;
+        private ToolStripMenuItem дисциплиныРасписанияToolStripMenuItem5;
+        private ToolStripMenuItem аудиторииДисциплинToolStripMenuItem1;
     }
 }
 

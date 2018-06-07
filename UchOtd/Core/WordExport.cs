@@ -1482,10 +1482,28 @@ namespace UchOtd.Core
                                             cellText += "(" + tfdData.Value.Item1 + ")" + Environment.NewLine;
                                         }
 
-                                        var audWeekList =
-                                            tfdData.Value.Item2.ToDictionary(
-                                                l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date),
-                                                l => l.Item1.Auditorium.Name);
+                                        //var audWeekList =
+                                        //    tfdData.Value.Item2.ToDictionary(
+                                        //        l => repo.CommonFunctions.CalculateWeekNumber(l.Item1.Calendar.Date),
+                                        //        l => l.Item1.Auditorium.Name);
+
+                                        Dictionary<int, string> audWeekList = new Dictionary<int, string>();
+
+                                        foreach (var tuple in tfdData.Value.Item2)
+                                        {
+                                            var weekNumber =
+                                                repo.CommonFunctions.CalculateWeekNumber(tuple.Item1.Calendar.Date);
+
+                                            if (!audWeekList.ContainsKey(weekNumber))
+                                            {
+                                                audWeekList.Add(weekNumber, tuple.Item1.Auditorium.Name);
+                                            }
+                                            else
+                                            {
+                                                audWeekList[weekNumber] = tuple.Item1.Auditorium.Name;
+                                            }
+                                        }
+                                        
                                         var grouped = audWeekList.GroupBy(a => a.Value);
 
                                         var enumerable =
