@@ -5035,5 +5035,319 @@ namespace UchOtd.Core
 
             Marshal.ReleaseComObject(oWord);
         }
+
+        public static void ExportAAAuditorium(KeyValuePair<string, string> facultyNameLetter, string InputPath, string descriptionsFilename, string OutputPath, bool appVisible, bool save, bool quit)
+        {
+            var inputFilename2 = InputPath + "Порядок дисциплин " + facultyNameLetter.Value + ".txt";
+            
+            var disciplineOrder = new List<string>();
+            var pairedDisciplines = new List<string>();
+            var disciplinePairs = new Dictionary<string, string>();
+            var orderfileExists = false;
+
+            if (File.Exists(inputFilename2))
+            {
+                orderfileExists = true;
+                String pair1 = "", pair2 = "";
+
+                using (StreamReader sr = new StreamReader(inputFilename2))
+                {
+                    string line;
+                    string disciplineName = "";
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if (line.StartsWith("*"))
+                        {
+                            line = line.Substring(1);
+                            if (pair1 == "")
+                            {
+                                pair1 = line;
+                            }
+                            else
+                            {
+                                pair2 = line;
+                                disciplinePairs.Add(pair1, pair2);
+                                disciplinePairs.Add(pair2, pair1);
+                                pairedDisciplines.Add(pair1);
+                                pairedDisciplines.Add(pair2);
+                                pair1 = "";
+                                pair2 = "";
+                            }
+                        }
+
+                        disciplineOrder.Add(line);
+                    }
+                }
+            }
+
+            var inputFilename = InputPath + "Export AA Аудитории " + facultyNameLetter.Value + ".txt";
+
+            var result = new Dictionary<string, List<string>>();
+            
+            var status = 0; // 0 - discName; 1 - auds
+            using (StreamReader sr = new StreamReader(inputFilename))
+            {
+                string line;
+                string disciplineName = "";
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (status == 0)
+                    {
+                        disciplineName = line;
+                    }
+
+                    if (status == 1)
+                    {
+                        var auditoriums = line.Split('@').OrderBy(n => n).ToList();
+
+                        if (!result.ContainsKey(disciplineName))
+                        {
+                            result[disciplineName] = auditoriums;
+                        }
+                        else
+                        {
+                            var curAuds = result[disciplineName];
+                            curAuds.AddRange(auditoriums);
+                            curAuds = curAuds.Distinct().OrderBy(n => n).ToList();
+                            result[disciplineName] = curAuds;
+                        }
+                    }
+
+                    status = (status == 0) ? 1 : 0;
+                }
+            }
+            
+            var description = new Dictionary<string, Tuple<string, string>>();
+
+            status = 0; // 0 - discName; 1 - description 1; 2 - description 2
+            using (StreamReader sr = new StreamReader(descriptionsFilename))
+            {
+                string line;
+                string audName = "", description1 = "", description2 = "";
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (status == 0)
+                    {
+                        audName = line;
+                    }
+
+                    if (status == 1)
+                    {
+                        description1 = line;
+                    }
+
+                    if (status == 2)
+                    {
+                        description2 = line;
+
+                        if (audName != "")
+                        {
+                            description[audName] = Tuple.Create(description1, description2);
+                        }
+                    }
+
+                    status = (status == 0) ? 1 : (status == 1) ? 2 : (status == 2) ? 0 : -1;
+                }
+            }
+
+            var totalAuditoriumCount = 0;
+            var allAuds = new List<string>
+            {
+                "Ауд. 300", "Ауд. 301", "Ауд. 302", "Ауд. 303", "Ауд. 304", "Ауд. 305",
+                "Ауд. 306", "Ауд. 307", "Ауд. 308", "Ауд. 102", "Ауд. 103", "Ауд. 109",
+                "Ауд. 112", "Ауд. 213", "Ауд. 205", "Ауд. 206", "Ауд. 207"
+            };
+            List<string> disciplines = null;
+            if (orderfileExists)
+            {
+                disciplines = new List<string>();
+                var existingDisciplines = result.Keys.ToList();
+                for (int i = 0; i < disciplineOrder.Count; i++)
+                {
+                    var discipline = disciplineOrder[i];
+
+                    disciplines.Add(discipline);
+
+                    if (!existingDisciplines.Contains(discipline))
+                    {
+                        var r = new Random();
+                        var a1 = r.Next(allAuds.Count);
+                        int a2 = -1;
+                        do
+                        {
+                            a2 = r.Next(allAuds.Count);
+                        } while (a2 == a1);
+
+                        result.Add(discipline, new List<string> {allAuds[a1], allAuds[a2]});
+                    }
+                }
+            }
+            else
+            {
+                disciplines = result.Keys.OrderBy(n => n).ToList();
+            }
+
+            for (int j = 0; j < disciplines.Count; j++)
+            {
+                var discipline = disciplines[j];
+                
+                totalAuditoriumCount += result[discipline].Count;
+            }
+
+
+
+            object oMissing = Missing.Value;
+            object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+            //Start Word and create a new document.
+            _Application oWord = new Application();
+            if (appVisible)
+            {
+                oWord.Visible = true;
+            }
+            _Document oDoc = oWord.Documents.Add();
+
+            oDoc.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+            oDoc.PageSetup.TopMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.BottomMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.LeftMargin = oWord.CentimetersToPoints(1);
+            oDoc.PageSetup.RightMargin = oWord.CentimetersToPoints(1);
+
+
+
+            Paragraph oPara1 = oDoc.Content.Paragraphs.Add();
+            oPara1.Range.Text = "1.5.2. Обеспечение образовательной программы специальными помещениями" +
+                " (учебные аудитории для проведения занятий лекционного типа, занятий семинарского типа," +
+                " курсового проектирования (выполнения курсовых работ), групповых и индивидуальных" +
+                " консультаций, текущего контроля и промежуточной аттестации, а также помещения" +
+                " для самостоятельной работы и помещения для хранения и профилактического обслуживания" +
+                " учебного оборудования.";
+            oPara1.Range.Font.Bold = 0;
+            oPara1.Range.Font.Size = 14;
+            oPara1.Range.ParagraphFormat.LineSpacingRule =
+                WdLineSpacing.wdLineSpaceSingle;
+            oPara1.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+            oPara1.SpaceAfter = 0;
+            oPara1.Range.InsertParagraphAfter();
+            oPara1.Range.InsertParagraphAfter();
+
+            Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+            Table oTable = oDoc.Tables.Add(wrdRng, 2 + totalAuditoriumCount, 6);
+            oTable.Borders.Enable = 1;
+            oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
+            oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+            oTable.Range.Font.Size = 14;
+            oTable.Range.Font.Bold = 0;
+
+            oTable.Cell(1, 1).Range.Text = "№" + Environment.NewLine + "п.п";
+            oTable.Cell(1, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Columns[1].Width = oWord.CentimetersToPoints(1.5f);
+            oTable.Cell(1, 2).Range.Text = "Наименование дисциплины (модуля), практики в соответствии с" +
+                " учебным планом";
+            oTable.Cell(1, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Columns[2].Width = oWord.CentimetersToPoints(7.25f);
+            oTable.Cell(1, 3).Range.Text = "Наименование оборудованных учебных кабинетов, объектов для" +
+                " проведения практических занятий, объектов физической культуры и спорта с перечнем" +
+                " основного оборудования";
+            oTable.Cell(1, 3).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Columns[3].Width = oWord.CentimetersToPoints(8.5f);
+            oTable.Cell(1, 4).Range.Text = "Адрес (местоположение) учебных кабинетов, объектов для проведения" +
+                "практических занятий, объектов физической культуры и спорта (с ук номера помещения в соответствии" +
+                " с документами бюро технической инвернтаризации)";
+            oTable.Cell(1, 4).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Columns[4].Width = oWord.CentimetersToPoints(3.25f);
+            oTable.Cell(1, 5).Range.Text = "Собственность или иное вещное право (оперативное управление," +
+                "хозяйственное ведение), аренда, субаренда, безвозмездное пользование";
+            oTable.Cell(1, 5).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Columns[5].Width = oWord.CentimetersToPoints(3.5f);
+            oTable.Cell(1, 6).Range.Text = "Документ-основание возникновения права (указываются реквизиты и сроки действия)";
+            oTable.Cell(1, 6).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Columns[6].Width = oWord.CentimetersToPoints(4.0f);
+
+            oTable.Cell(2, 1).Range.Text = "1";
+            oTable.Cell(2, 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Cell(2, 2).Range.Text = "2";
+            oTable.Cell(2, 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Cell(2, 3).Range.Text = "3";
+            oTable.Cell(2, 3).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Cell(2, 4).Range.Text = "4";
+            oTable.Cell(2, 4).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Cell(2, 5).Range.Text = "5";
+            oTable.Cell(2, 5).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            oTable.Cell(2, 6).Range.Text = "6";
+            oTable.Cell(2, 6).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+
+            var lineIndex = 1;
+
+            for (int j = 0; j < disciplines.Count; j++)
+            {
+                var discipline = disciplines[j];
+
+                var disciplineAuditoriums = result[discipline];
+                
+                for (int i = 0; i < disciplineAuditoriums.Count; i++)
+                {
+                    var audName = disciplineAuditoriums[i];
+                    var audDescription1 = "???";
+                    var audDescription2 = "???";
+                    if (description.ContainsKey(audName))
+                    {
+                        audDescription1 = description[audName].Item1;
+                        audDescription2 = description[audName].Item2;
+                    }
+
+                    oTable.Cell(lineIndex + 2, 1).Range.Text = (lineIndex).ToString();
+                    oTable.Cell(lineIndex + 2, 1).Range.ParagraphFormat.Alignment =
+                        WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    oTable.Cell(lineIndex + 2, 2).Range.Text = discipline;
+                    oTable.Cell(lineIndex + 2, 2).Range.ParagraphFormat.Alignment =
+                        WdParagraphAlignment.wdAlignParagraphLeft;
+
+                    oTable.Cell(lineIndex + 2, 3).Range.Text = audDescription1;
+                    oTable.Cell(lineIndex + 2, 3).Range.ParagraphFormat.Alignment =
+                        WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    oTable.Cell(lineIndex + 2, 4).Range.Text = (audDescription2.StartsWith("443")) ? audDescription2 :
+                        "443001, г.Самара, ул. Молодогвардейская, д.196;" + " Номер помещения в соответствии с паспортом: " + audDescription2;
+                    oTable.Cell(lineIndex + 2, 4).Range.ParagraphFormat.Alignment =
+                        WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    oTable.Cell(lineIndex + 2, 5).Range.Text = "Оперативное управление";
+                    oTable.Cell(lineIndex + 2, 5).Range.ParagraphFormat.Alignment =
+                        WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    oTable.Cell(lineIndex + 2, 6).Range.Text = "Свидетельство о государственной регистрации права 63-АГ" +
+                                                       " № 157507 от 13.01.2009 г.; Сведения о сроке действия в документе отсутствуют.";
+                    oTable.Cell(lineIndex + 2, 6).Range.ParagraphFormat.Alignment =
+                        WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    lineIndex++;
+                }
+                
+            }
+
+            var endOfDoc = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
+            endOfDoc.Font.Size = 1;
+            endOfDoc.InsertBreak(WdBreakType.wdSectionBreakNextPage);
+
+
+
+            oDoc.Undo();
+
+            if (save)
+            {
+                object fileName = OutputPath + "Export AA Аудитории " + facultyNameLetter.Value + ".docx";
+                oDoc.SaveAs(ref fileName);
+            }
+
+            if (quit)
+            {
+                oWord.Quit();
+            }
+
+            Marshal.ReleaseComObject(oWord);
+        }
     }
 }
+

@@ -175,16 +175,20 @@ namespace UchOtd.Schedule
         {
             var sList = new List<string>
             {
-                "Schedule13141",
-                "Schedule13142",
-                "Schedule14151",
-                "Schedule14152",
-                "Schedule15161",
-                "Schedule15162",
-                "Schedule16171",
-                "Schedule16172",
-                "Schedule17181",
-                "Schedule17182",
+                //"Schedule13141",
+                //"Schedule13142",
+                //"Schedule14151",
+                //"Schedule14152",
+                //"Schedule15161",
+                //"Schedule15162",
+                //"Schedule16171",
+                //"Schedule16172",
+                //"Schedule17181",
+                //"Schedule17182",
+                "S16171A0718",
+                "S16172A0718",
+                "S17181A0718",
+                "S17182A0718",
             };
 
             semester.Items.Clear();
@@ -7436,7 +7440,8 @@ namespace UchOtd.Schedule
                     {
                         var tfd = tfds[j];
                         var lessons = repo.Lessons.GetFiltredLessons(l =>
-                            l.State == 1 && l.TeacherForDiscipline.TeacherForDisciplineId ==
+                            (l.State == 1 || l.State == 2) &&
+                            l.TeacherForDiscipline.TeacherForDisciplineId ==
                             tfd.TeacherForDisciplineId);
 
                         var auditoriums = lessons.Select(l => l.Auditorium.Name).Distinct().ToList();
@@ -7466,6 +7471,37 @@ namespace UchOtd.Schedule
                 var audsString = auds.Count == 0 ? "" : auds.Aggregate((x,y) => x + "@" + y);
                 TextFileUtilities.WriteString(filename, audsString);
             }
+        }
+
+        private async void перевестиАудиторииВФорматООПToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                var facultyNames = new Dictionary<string, string>()
+                {
+                    { "Факультет математики и компьютерных наук", "А"},
+                    { "Философский факультет", "Б"},
+                    { "Химико-биологический факультет", "В"},
+                    { "Экономический факультет", "Г"},
+                    { "Юридический факультет", "Д"},
+                    { "Факультет международных отношений", "Е"},
+                    { "Факультет управления", "У"},
+                    { "Факультета туризма", "Т"},
+                    { "Факультета искусств", "И"},
+                    { "Философский факультет (магистратура)", "БМ"},
+                    { "Экономический факультет (магистратура)", "ГМ"},
+                    { "Юридический факультет (магистратура)", "ДМ"}
+                };
+
+                foreach (var facultyPair in facultyNames)
+                {
+                    WordExport.ExportAAAuditorium(facultyPair,
+                        @"D:\Github\Export\11-06-18\",
+                        @"D:\Github\Export\AuditoriumDescriptions.txt",
+                        @"D:\GitHub\Export\", 
+                        false, true, true);
+                }
+            });
         }
 
         public void ringsChosen(List<int> ringIds, Auditorium aud)
