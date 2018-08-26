@@ -17,7 +17,7 @@ namespace UchOtd.DataLayer
 
         private static string GetConnectionString()
         {
-            return "data source=tcp:" + @"UCH-OTD-DISP\SQLEXPRESS" +
+            return "data source=tcp:" + @".\SQLEXPRESS" +
                    ",1433;Database=UchOtd; User Id=sa; Password=ghjuhfvvf; multipleactiveresultsets=True";
         }
 

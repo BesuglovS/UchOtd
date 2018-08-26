@@ -32,6 +32,8 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void InitializeComponent()
         {
             this.ControlsPanel = new System.Windows.Forms.Panel();
+            this.ParsePhoneMultiline = new System.Windows.Forms.Button();
+            this.jsonExport = new System.Windows.Forms.Button();
             this.ImportStudentListFromJson = new System.Windows.Forms.Button();
             this.Filter = new System.Windows.Forms.Button();
             this.showAll = new System.Windows.Forms.Button();
@@ -65,7 +67,8 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.label1 = new System.Windows.Forms.Label();
             this.ListPanel = new System.Windows.Forms.Panel();
             this.StudentListView = new System.Windows.Forms.DataGridView();
-            this.jsonExport = new System.Windows.Forms.Button();
+            this.ParseOneStudent = new System.Windows.Forms.Button();
+            this.ParseIsertStudentList = new System.Windows.Forms.Button();
             this.ControlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudentListView)).BeginInit();
@@ -73,6 +76,9 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // ControlsPanel
             // 
+            this.ControlsPanel.Controls.Add(this.ParseIsertStudentList);
+            this.ControlsPanel.Controls.Add(this.ParseOneStudent);
+            this.ControlsPanel.Controls.Add(this.ParsePhoneMultiline);
             this.ControlsPanel.Controls.Add(this.jsonExport);
             this.ControlsPanel.Controls.Add(this.ImportStudentListFromJson);
             this.ControlsPanel.Controls.Add(this.Filter);
@@ -110,6 +116,27 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ControlsPanel.Name = "ControlsPanel";
             this.ControlsPanel.Size = new System.Drawing.Size(230, 821);
             this.ControlsPanel.TabIndex = 10;
+            // 
+            // ParsePhoneMultiline
+            // 
+            this.ParsePhoneMultiline.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ParsePhoneMultiline.Location = new System.Drawing.Point(180, 315);
+            this.ParsePhoneMultiline.Name = "ParsePhoneMultiline";
+            this.ParsePhoneMultiline.Size = new System.Drawing.Size(36, 20);
+            this.ParsePhoneMultiline.TabIndex = 68;
+            this.ParsePhoneMultiline.Text = "Parse";
+            this.ParsePhoneMultiline.UseVisualStyleBackColor = true;
+            this.ParsePhoneMultiline.Click += new System.EventHandler(this.ParsePhoneMultiline_Click);
+            // 
+            // jsonExport
+            // 
+            this.jsonExport.Location = new System.Drawing.Point(14, 714);
+            this.jsonExport.Name = "jsonExport";
+            this.jsonExport.Size = new System.Drawing.Size(206, 23);
+            this.jsonExport.TabIndex = 67;
+            this.jsonExport.Text = "Экспортировать в JSON";
+            this.jsonExport.UseVisualStyleBackColor = true;
+            this.jsonExport.Click += new System.EventHandler(this.jsonExport_Click);
             // 
             // ImportStudentListFromJson
             // 
@@ -242,7 +269,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             this.Phone.Location = new System.Drawing.Point(15, 315);
             this.Phone.Name = "Phone";
-            this.Phone.Size = new System.Drawing.Size(198, 20);
+            this.Phone.Size = new System.Drawing.Size(159, 20);
             this.Phone.TabIndex = 42;
             // 
             // label7
@@ -418,15 +445,25 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentListView.TabIndex = 1;
             this.StudentListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.StudentListView_CellClick);
             // 
-            // jsonExport
+            // ParseOneStudent
             // 
-            this.jsonExport.Location = new System.Drawing.Point(14, 714);
-            this.jsonExport.Name = "jsonExport";
-            this.jsonExport.Size = new System.Drawing.Size(206, 23);
-            this.jsonExport.TabIndex = 67;
-            this.jsonExport.Text = "Экспортировать в JSON";
-            this.jsonExport.UseVisualStyleBackColor = true;
-            this.jsonExport.Click += new System.EventHandler(this.jsonExport_Click);
+            this.ParseOneStudent.Location = new System.Drawing.Point(16, 743);
+            this.ParseOneStudent.Name = "ParseOneStudent";
+            this.ParseOneStudent.Size = new System.Drawing.Size(94, 23);
+            this.ParseOneStudent.TabIndex = 69;
+            this.ParseOneStudent.Text = "Вставить 1";
+            this.ParseOneStudent.UseVisualStyleBackColor = true;
+            this.ParseOneStudent.Click += new System.EventHandler(this.ParseOneStudent_Click);
+            // 
+            // ParseIsertStudentList
+            // 
+            this.ParseIsertStudentList.Location = new System.Drawing.Point(116, 743);
+            this.ParseIsertStudentList.Name = "ParseIsertStudentList";
+            this.ParseIsertStudentList.Size = new System.Drawing.Size(104, 23);
+            this.ParseIsertStudentList.TabIndex = 70;
+            this.ParseIsertStudentList.Text = "Вставить всех";
+            this.ParseIsertStudentList.UseVisualStyleBackColor = true;
+            this.ParseIsertStudentList.Click += new System.EventHandler(this.ParseIsertStudentList_Click);
             // 
             // StudentList
             // 
@@ -483,5 +520,8 @@ namespace UchOtd.Schedule.Forms.DBLists
         private Button Filter;
         private Button ImportStudentListFromJson;
         private Button jsonExport;
+        private Button ParsePhoneMultiline;
+        private Button ParseIsertStudentList;
+        private Button ParseOneStudent;
     }
 }

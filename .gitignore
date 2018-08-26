@@ -156,3 +156,5 @@ $RECYCLE.BIN/
 .DS_Store
 /UchOtd/client_secret2.json
 /UchOtd/client_secret2.json
+/.vs/UchOtd/v15/Server/sqlite3
+/.vs/UchOtd/DesignTimeBuild

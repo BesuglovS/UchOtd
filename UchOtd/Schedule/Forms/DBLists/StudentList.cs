@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Schedule.DomainClasses.Main;
@@ -347,6 +349,140 @@ namespace UchOtd.Schedule.Forms.DBLists
                 sw.WriteLine(output);
                 sw.Close();
             }
+        }
+
+        private void ParsePhoneMultiline_Click(object sender, EventArgs e)
+        {
+            if (Clipboard.ContainsText())
+            {
+                var text = Clipboard.GetText(TextDataFormat.UnicodeText);
+                Phone.Text = FormatPhones(text);
+            }
+        }
+
+        private string FormatPhones(string text)
+        {
+            var split = text.Split('\n')
+                .Select(str => str.Replace("\r", ""))
+                .Where(str => str != "")
+                .ToList();
+            if (split.Count > 0)
+            {
+                var sb = new StringBuilder(split[0]);
+                for (int i = 1; i < split.Count; i++)
+                {
+                    if (!split[i].StartsWith("(") && !char.IsLetter(split[i][0]))
+                    {
+                        sb.Append("; ");
+                    }
+                    else
+                    {
+                        sb.Append(" ");
+                    }
+
+                    sb.Append(split[i]);
+                }
+
+                var phoneText = sb.ToString();
+
+                return phoneText;
+            }
+
+            return "";
+        }
+
+        private void ParseOneStudent_Click(object sender, EventArgs e)
+        {
+            if (Clipboard.ContainsText())
+            {
+                var text = Clipboard.GetText(TextDataFormat.UnicodeText);
+                var split = text.Split('\t').ToList();
+                if (split.Count != 6)
+                {
+                    return;
+                }
+                var enterIndex = split[0].IndexOf("\r\n", StringComparison.Ordinal);
+                var F = split[0].Substring(0, enterIndex).Trim();
+                var IO = split[0].Substring(enterIndex+2, split[0].Length - enterIndex - 2);
+                var IOList = IO.Split(new[] {' '}, 2).ToList();
+                F = char.ToUpper(F.First()) + F.Substring(1).ToLower();
+
+                FBox.Text = F;
+                IBox.Text = IOList[0].Trim();
+                OBox.Text = IOList[1].Trim();
+                ZachNumber.Text = split[1].Trim();
+                BirthDate.Value = DateTime.ParseExact(split[2], "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                Address.Text = split[3].Trim();
+                Phone.Text = FormatPhones(split[4]);
+                OrderList.Text = split[5].Replace("\r\n", "");
+            }
+        }
+
+        public Student ParseStudentInfo(List<String> split)
+        {
+            if (split.Count != 6)
+            {
+                return null;
+            }
+            var enterIndex = split[0].IndexOf("\r\n", StringComparison.Ordinal);
+            var F = split[0].Substring(0, enterIndex).Trim();
+            var IO = split[0].Substring(enterIndex + 2, split[0].Length - enterIndex - 2);
+            var IOList = IO.Split(new[] { ' ' }, 2).ToList();
+            F = char.ToUpper(F.First()) + F.Substring(1).ToLower();
+
+            var student = new Student
+            {
+                F = F,
+                I = IOList[0].Trim(),
+                O = IOList[1].Trim(),
+                ZachNumber = split[1].Trim(),
+                BirthDate = DateTime.ParseExact(split[2], "dd.MM.yyyy", CultureInfo.InvariantCulture),
+                Address = split[3].Trim(),
+                Phone = FormatPhones(split[4]),
+                Orders = split[5].Replace("\r\n", "")
+            };
+
+            return student;
+        }
+
+        private void ParseIsertStudentList_Click(object sender, EventArgs e)
+        {
+            if (Clipboard.ContainsText())
+            {
+                var text = Clipboard.GetText(TextDataFormat.UnicodeText);
+                var split = text.Split('\t').ToList();
+                int state = 1;
+                for (int i = 5; i < split.Count-1; i += 5)
+                {
+                    var fIndex = split[i].IndexOf("\r\n", StringComparison.Ordinal);
+                    var order = split[i].Substring(0, fIndex).Trim();
+                    var fio = split[i].Substring(fIndex + 2, split[i].Length - fIndex - 2);
+
+                    split[i] = order;
+                    split.Insert(i+1, fio);
+                    i++;
+                }
+
+                var studentsSplit = splitList(split);
+
+                for (int i = 0; i < studentsSplit.Count; i++)
+                {
+                    var student = ParseStudentInfo(studentsSplit[i]);
+                    _repo.Students.AddStudent(student);
+                }
+            }
+        }
+
+        private static List<List<string>> splitList(List<string> locations, int nSize = 6)
+        {
+            var list = new List<List<string>>();
+
+            for (int i = 0; i < locations.Count; i += nSize)
+            {
+                list.Add(locations.GetRange(i, Math.Min(nSize, locations.Count - i)));
+            }
+
+            return list;
         }
     }
 }

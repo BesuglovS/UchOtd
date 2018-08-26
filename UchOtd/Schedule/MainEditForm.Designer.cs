@@ -160,6 +160,7 @@ namespace UchOtd.Schedule
             this.расписаниеСессииToolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
             this.дисциплиныРасписанияToolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
             this.аудиторииДисциплинToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.перевестиАудиторииВФорматООПToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bigRedButtonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.удалитьРасписаниеТекущейГруппыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.процентЗанятийПоДатамToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -192,7 +193,6 @@ namespace UchOtd.Schedule
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
-            this.перевестиАудиторииВФорматООПToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -414,7 +414,7 @@ namespace UchOtd.Schedule
             this.ToDBName.Name = "ToDBName";
             this.ToDBName.Size = new System.Drawing.Size(88, 20);
             this.ToDBName.TabIndex = 61;
-            this.ToDBName.Text = "Schedule17182";
+            this.ToDBName.Text = "Schedule18191";
             // 
             // DownloadRestore
             // 
@@ -432,7 +432,7 @@ namespace UchOtd.Schedule
             this.FromDBName.Name = "FromDBName";
             this.FromDBName.Size = new System.Drawing.Size(100, 20);
             this.FromDBName.TabIndex = 59;
-            this.FromDBName.Text = "Schedule17182";
+            this.FromDBName.Text = "Schedule18191";
             // 
             // BackupUpload
             // 
@@ -1346,6 +1346,13 @@ namespace UchOtd.Schedule
             this.аудиторииДисциплинToolStripMenuItem1.Text = "Аудитории дисциплин";
             this.аудиторииДисциплинToolStripMenuItem1.Click += new System.EventHandler(this.аудиторииДисциплинToolStripMenuItem1_Click);
             // 
+            // перевестиАудиторииВФорматООПToolStripMenuItem
+            // 
+            this.перевестиАудиторииВФорматООПToolStripMenuItem.Name = "перевестиАудиторииВФорматООПToolStripMenuItem";
+            this.перевестиАудиторииВФорматООПToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
+            this.перевестиАудиторииВФорматООПToolStripMenuItem.Text = "Перевести аудитории в формат ООП";
+            this.перевестиАудиторииВФорматООПToolStripMenuItem.Click += new System.EventHandler(this.перевестиАудиторииВФорматООПToolStripMenuItem_Click);
+            // 
             // bigRedButtonToolStripMenuItem
             // 
             this.bigRedButtonToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1611,13 +1618,6 @@ namespace UchOtd.Schedule
             this.editSchedule.Size = new System.Drawing.Size(133, 22);
             this.editSchedule.Text = "Аудитория";
             this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
-            // 
-            // перевестиАудиторииВФорматООПToolStripMenuItem
-            // 
-            this.перевестиАудиторииВФорматООПToolStripMenuItem.Name = "перевестиАудиторииВФорматООПToolStripMenuItem";
-            this.перевестиАудиторииВФорматООПToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
-            this.перевестиАудиторииВФорматООПToolStripMenuItem.Text = "Перевести аудитории в формат ООП";
-            this.перевестиАудиторииВФорматООПToolStripMenuItem.Click += new System.EventHandler(this.перевестиАудиторииВФорматООПToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 
