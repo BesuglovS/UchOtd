@@ -84,6 +84,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.groupnameFilter = new System.Windows.Forms.CheckBox();
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.filter = new System.Windows.Forms.TextBox();
+            this.importAll = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -93,6 +94,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // controlsPanel
             // 
+            this.controlsPanel.Controls.Add(this.importAll);
             this.controlsPanel.Controls.Add(this.label12);
             this.controlsPanel.Controls.Add(this.label11);
             this.controlsPanel.Controls.Add(this.TypeSequence);
@@ -639,6 +641,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
             // 
+            // importAll
+            // 
+            this.importAll.Location = new System.Drawing.Point(113, 537);
+            this.importAll.Name = "importAll";
+            this.importAll.Size = new System.Drawing.Size(90, 28);
+            this.importAll.TabIndex = 112;
+            this.importAll.Text = "Вставить все";
+            this.importAll.UseVisualStyleBackColor = true;
+            this.importAll.Click += new System.EventHandler(this.importAll_Click);
+            // 
             // DisciplineList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -715,5 +727,6 @@ namespace UchOtd.Schedule.Forms.DBLists
         private CheckBox hoursFilteredByWeek;
         private TextBox hoursWeekFilter;
         private Button button1;
+        private Button importAll;
     }
 }

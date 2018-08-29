@@ -32,6 +32,8 @@ namespace UchOtd.Schedule.Forms.DBLists
         private void InitializeComponent()
         {
             this.ControlsPanel = new System.Windows.Forms.Panel();
+            this.ParseIsertStudentList = new System.Windows.Forms.Button();
+            this.ParseOneStudent = new System.Windows.Forms.Button();
             this.ParsePhoneMultiline = new System.Windows.Forms.Button();
             this.jsonExport = new System.Windows.Forms.Button();
             this.ImportStudentListFromJson = new System.Windows.Forms.Button();
@@ -67,8 +69,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.label1 = new System.Windows.Forms.Label();
             this.ListPanel = new System.Windows.Forms.Panel();
             this.StudentListView = new System.Windows.Forms.DataGridView();
-            this.ParseOneStudent = new System.Windows.Forms.Button();
-            this.ParseIsertStudentList = new System.Windows.Forms.Button();
+            this.importExpelled = new System.Windows.Forms.CheckBox();
             this.ControlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StudentListView)).BeginInit();
@@ -76,6 +77,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             // ControlsPanel
             // 
+            this.ControlsPanel.Controls.Add(this.importExpelled);
             this.ControlsPanel.Controls.Add(this.ParseIsertStudentList);
             this.ControlsPanel.Controls.Add(this.ParseOneStudent);
             this.ControlsPanel.Controls.Add(this.ParsePhoneMultiline);
@@ -116,6 +118,26 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ControlsPanel.Name = "ControlsPanel";
             this.ControlsPanel.Size = new System.Drawing.Size(230, 821);
             this.ControlsPanel.TabIndex = 10;
+            // 
+            // ParseIsertStudentList
+            // 
+            this.ParseIsertStudentList.Location = new System.Drawing.Point(116, 743);
+            this.ParseIsertStudentList.Name = "ParseIsertStudentList";
+            this.ParseIsertStudentList.Size = new System.Drawing.Size(104, 23);
+            this.ParseIsertStudentList.TabIndex = 70;
+            this.ParseIsertStudentList.Text = "Вставить всех";
+            this.ParseIsertStudentList.UseVisualStyleBackColor = true;
+            this.ParseIsertStudentList.Click += new System.EventHandler(this.ParseIsertStudentList_Click);
+            // 
+            // ParseOneStudent
+            // 
+            this.ParseOneStudent.Location = new System.Drawing.Point(16, 743);
+            this.ParseOneStudent.Name = "ParseOneStudent";
+            this.ParseOneStudent.Size = new System.Drawing.Size(94, 23);
+            this.ParseOneStudent.TabIndex = 69;
+            this.ParseOneStudent.Text = "Вставить 1";
+            this.ParseOneStudent.UseVisualStyleBackColor = true;
+            this.ParseOneStudent.Click += new System.EventHandler(this.ParseOneStudent_Click);
             // 
             // ParsePhoneMultiline
             // 
@@ -445,25 +467,15 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.StudentListView.TabIndex = 1;
             this.StudentListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.StudentListView_CellClick);
             // 
-            // ParseOneStudent
+            // importExpelled
             // 
-            this.ParseOneStudent.Location = new System.Drawing.Point(16, 743);
-            this.ParseOneStudent.Name = "ParseOneStudent";
-            this.ParseOneStudent.Size = new System.Drawing.Size(94, 23);
-            this.ParseOneStudent.TabIndex = 69;
-            this.ParseOneStudent.Text = "Вставить 1";
-            this.ParseOneStudent.UseVisualStyleBackColor = true;
-            this.ParseOneStudent.Click += new System.EventHandler(this.ParseOneStudent_Click);
-            // 
-            // ParseIsertStudentList
-            // 
-            this.ParseIsertStudentList.Location = new System.Drawing.Point(116, 743);
-            this.ParseIsertStudentList.Name = "ParseIsertStudentList";
-            this.ParseIsertStudentList.Size = new System.Drawing.Size(104, 23);
-            this.ParseIsertStudentList.TabIndex = 70;
-            this.ParseIsertStudentList.Text = "Вставить всех";
-            this.ParseIsertStudentList.UseVisualStyleBackColor = true;
-            this.ParseIsertStudentList.Click += new System.EventHandler(this.ParseIsertStudentList_Click);
+            this.importExpelled.AutoSize = true;
+            this.importExpelled.Location = new System.Drawing.Point(16, 774);
+            this.importExpelled.Name = "importExpelled";
+            this.importExpelled.Size = new System.Drawing.Size(94, 17);
+            this.importExpelled.TabIndex = 71;
+            this.importExpelled.Text = "Отчисленные";
+            this.importExpelled.UseVisualStyleBackColor = true;
             // 
             // StudentList
             // 
@@ -523,5 +535,6 @@ namespace UchOtd.Schedule.Forms.DBLists
         private Button ParsePhoneMultiline;
         private Button ParseIsertStudentList;
         private Button ParseOneStudent;
+        private CheckBox importExpelled;
     }
 }

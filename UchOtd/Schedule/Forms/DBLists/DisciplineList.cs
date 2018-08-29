@@ -450,14 +450,19 @@ namespace UchOtd.Schedule.Forms.DBLists
 
         private void RemoveClick(object sender, EventArgs e)
         {
-            if (DisciplinesList.SelectedRows.Count > 1)
+            var discIds = new List<int>();
+            for (int i = 0; i < DisciplinesList.SelectedCells.Count; i++)
             {
-                var discIds = new List<int>();
-                for (int i = 0; i < DisciplinesList.SelectedRows.Count; i++)
+                var discId = ((List<DisciplineView>) DisciplinesList.DataSource)[DisciplinesList.SelectedCells[i].RowIndex]
+                    .DisciplineId;
+                if (!discIds.Contains(discId))
                 {
-                    discIds.Add(((List<DisciplineView>)DisciplinesList.DataSource)[DisciplinesList.SelectedRows[i].Index].DisciplineId);
+                    discIds.Add(discId);
                 }
+            }
 
+            if (discIds.Count > 1)
+            {               
                 foreach (var id in discIds)
                 {
                     var discNameIds =
@@ -468,6 +473,16 @@ namespace UchOtd.Schedule.Forms.DBLists
                     foreach (var discNameId in discNameIds)
                     {
                         _repo.DisciplineNames.RemoveDisciplineName(discNameId);
+                    }
+
+                    var tfdIds = _repo.TeacherForDisciplines.GetFiltredTeacherForDiscipline(tfd =>
+                        tfd.Discipline.DisciplineId == id)
+                        .Select(tfd => tfd.TeacherForDisciplineId)
+                        .ToList();
+
+                    foreach (var tfdId in tfdIds)
+                    {
+                        _repo.TeacherForDisciplines.RemoveTeacherForDiscipline(tfdId);
                     }
 
                     var discAttrIds =
@@ -793,6 +808,104 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             hoursFilteredByWeek.Checked = true;
             hoursWeekFilter.Text = "16-17";
+        }
+
+        private void importAll_Click(object sender, EventArgs e)
+        {
+            if (Clipboard.ContainsText())
+            {
+                var text = Clipboard.GetText(TextDataFormat.UnicodeText);
+                var disciplines = text.Split(new[] {"\r\n"}, StringSplitOptions.None).Where(d => d != "").ToList();
+                
+                for (int i = 0; i < disciplines.Count; i++)
+                {
+                    var discipline = disciplines[i].Split('\t').ToList();
+
+                    var lecHours = (discipline[5] == "") ? 0 : int.Parse(discipline[5]);
+                    var praHours = (discipline[7] == "") ? 0 : int.Parse(discipline[7]);
+                    int AttestationValue = 0;
+                    // 0 - ничего; 1 - зачёт; 2 - экзамен; 3 - зачёт и экзамен; 4 - зачёт с оценкой
+                    if (discipline[9] == "1")
+                    {
+                        AttestationValue = 2;
+                    }
+                    if (discipline[10] == "1")
+                    {
+                        AttestationValue = 1;
+                    }
+                    if ((discipline[9] == "1") && (discipline[10] == "1"))
+                    {
+                        AttestationValue = 3;
+                    }
+                    if (discipline[11] == "1")
+                    {
+                        AttestationValue = 4;
+                    }
+
+                    var studentGroup = GetGroupName(discipline[18], discipline[19]);
+                    var teacher = _repo.Teachers.GetFirstFiltredTeachers(t => t.FIO == discipline[29]);
+                    if (teacher == null)
+                    {
+                        teacher = new Teacher(discipline[29], "");
+                        _repo.Teachers.AddTeacher(teacher);
+                    }
+
+                    var newDisc = new Discipline
+                    {
+                        Name = discipline[0],
+                        AuditoriumHours = lecHours + praHours,
+                        LectureHours = lecHours,
+                        PracticalHours = praHours,
+                        Attestation = AttestationValue,
+                        StudentGroup = studentGroup,
+                        CourseProject = discipline[12] == "1",
+                        CourseTask = discipline[13] == "1",
+                        ControlTask = discipline[14] == "1",
+                        Referat = discipline[15] == "1",
+                        Essay = discipline[16] == "1",
+                        TypeSequence = ""
+                    };
+                    _repo.Disciplines.AddDiscipline(newDisc);
+
+                    var newTfd = new TeacherForDiscipline(teacher, newDisc);
+                    _repo.TeacherForDisciplines.AddTeacherForDiscipline(newTfd);
+                }
+
+                RefreshView();
+            }
+        }
+
+        private StudentGroup GetGroupName(string groupDigits, string facultyLetter)
+        {
+            var aspGroups = new Dictionary<string, string> { { "1А" , "18" }, { "2А", "19" }, { "3А", "20" }, { "4А", "21" } };
+            var groupname = "";
+            if (groupDigits.Contains('+'))
+            {
+                var split = groupDigits.Split('+').ToList();
+
+                for (int i = 0; i < split.Count; i++)
+                {
+                    if (aspGroups.Keys.Contains(split[i]))
+                    {
+                        split[i] = aspGroups[split[i]];
+                    }
+                }
+
+                groupname = split
+                    .Select(gn => gn + " " + facultyLetter)
+                    .Aggregate((a,b) => a + " + " + b);
+            }
+            else
+            {
+                if (aspGroups.Keys.Contains(groupDigits))
+                {
+                    groupDigits = aspGroups[groupDigits];
+                }
+                groupname = groupDigits + " " + facultyLetter;
+            }
+
+            var group = _repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupname);
+            return group;
         }
     }
 }

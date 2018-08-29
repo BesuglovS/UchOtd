@@ -2069,119 +2069,51 @@ namespace UchOtd.Schedule
 
         private async void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("Пусто тут, барин!)");
-            await Task.Run(() =>
+            MessageBox.Show("Пусто тут, барин!)");
+            await Task.Run(() => {  }); 
+        }
+
+        private void RemoveStudentDuplicates()
+        {
+            var allstudents = Repo.Students.GetAllStudents();
+            var groupped = allstudents.GroupBy(st => st.ZachNumber).ToDictionary(sg => sg.Key, sg => sg.ToList());
+            var keys = groupped.Keys.ToList();
+            for (int i = 0; i < keys.Count; i++)
             {
-                var logfn = @"D:\Github\AudCorrectionItems.txt";
-                var MolAuds = "Ауд. 300@Ауд. 301@Ауд. 302@Ауд. 303@Ауд. 304@Ауд. 305@Ауд. 306@Ауд. 307@Ауд. 308@Ауд. 102@Ауд. 103@Ауд. 109@Ауд. 112@Ауд. 99@Ауд. 213";
-
-                var bigList = new List<string>();
-
-                TextFileUtilities.CreateOrEmptyFile(logfn);
-
-                var dbNames = new List<string> { "S16171A0718", "S16172A0718", "S17181A0718", "S17182A0718" };
-                var faculties = new List<string>
+                if (groupped[keys[i]].Count > 1)
                 {
-                    "Философский факультет",
-                    "Химико-биологический факультет",
-                    "Экономический факультет",
-                    "Юридический факультет",
-                    "Факультет международных отношений",
-                    "Факультет управления",
-                    "Факультета туризма"
-                };
-
-                for (int j = 0; j < faculties.Count; j++)
-                {
-                    var facultyName = faculties[j];
-                    
-                    var distinctDisciplineNames = new HashSet<string>();
-                    var distinctGroupNames = new HashSet<string>();
-
-                    for (int i = 0; i < dbNames.Count; i++)
+                    var studList = groupped[keys[i]];
+                    var withoutGroups = true;
+                    var withGroups = new Dictionary<int, bool>();
+                    foreach (var student in studList)
                     {
-                        var connectionString = "data source=tcp:" + StartupForm.CurrentServerName + ",1433; Database=" +
-                                               dbNames[i] +
-                                               "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
-
-                        var repo = new ScheduleRepository(connectionString);
-
-                        var faculty = repo.Faculties.GetFirstFiltredFaculty(f => f.Name == facultyName);
-
-                        if (faculty == null)
+                        var studentInGroups = Repo.StudentsInGroups
+                                                  .GetFiltredStudentsInGroups(sig =>
+                                                      sig.Student.StudentId == student.StudentId).Count > 0;
+                        withGroups[student.StudentId] = studentInGroups;
+                        if (studentInGroups)
                         {
-                            continue;
+                            withoutGroups = false;
                         }
-
-                        var facultyGroups = repo.GroupsInFaculties
-                            .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
-                            .Select(gif => gif.StudentGroup)
-                            .ToList();
-                        var groupNamesList = facultyGroups.Select(sg => sg.Name).Distinct().ToList();
-                        foreach (var groupName in groupNamesList)
-                        {
-                            distinctGroupNames.Add(groupName);
-                            bigList.Add(groupName);
-                        }
-                        
-                        var groupIds = new HashSet<int>();
-
-                        foreach (var facultyGroup in facultyGroups)
-                        {
-                            var gIds = Utilities.StudentGroupIdsFromGroupId(repo, facultyGroup.StudentGroupId);
-                            foreach (var gId in gIds)
-                            {
-                                groupIds.Add(gId);
-                            }
-                        }
-
-                        var facultyDiscipines =
-                            repo.Disciplines.GetFiltredDisciplines(
-                                d => groupIds.Contains(d.StudentGroup.StudentGroupId));
-
-                        var disciplineNamesSemesterList = facultyDiscipines.Select(d => d.Name).Distinct().OrderBy(n => n).ToList();
-
-                        foreach (var disciplineName in disciplineNamesSemesterList)
-                        {
-                            distinctDisciplineNames.Add(disciplineName);
-                        }
-
-                        Invoke((MethodInvoker)delegate
-                        {
-                            status.Text = faculty.Name + " " + dbNames[i];
-                        });
                     }
 
-                    TextFileUtilities.WriteString(logfn, "==========Группы");
-                    List<string> groupNames = distinctGroupNames.OrderBy(n => n).ToList();
-                    foreach (var groupName in groupNames)
+                    if (withoutGroups)
                     {
-                        TextFileUtilities.WriteString(logfn, groupName);
+                        studList.RemoveAt(0);
+                    }
+                    else
+                    {
+                        var idsWithGroup = withGroups.Where(stg => stg.Value).Select(stg => stg.Key).ToList();
+                        studList = studList.Where(st => !idsWithGroup.Contains(st.StudentId)).ToList();
                     }
 
-                    TextFileUtilities.WriteString(logfn, "==========Аудитории");
-                    List<string> discNames = distinctDisciplineNames.OrderBy(n => n).ToList();
-                    foreach (var disciplineName in discNames)
+                    var IdsToRemove = studList.Select(st => st.StudentId).ToList();
+                    foreach (var id in IdsToRemove)
                     {
-                        TextFileUtilities.WriteString(logfn, disciplineName);
-                        TextFileUtilities.WriteString(logfn, MolAuds);
+                        Repo.Students.RemoveStudent(id);
                     }
                 }
-
-                TextFileUtilities.WriteString(logfn, "==========");
-                List<string> bigListSorted = bigList.OrderBy(n => n).ToList();
-                foreach (var groupName in bigListSorted)
-                {
-                    TextFileUtilities.WriteString(logfn, groupName);
-                }
-
-                Invoke((MethodInvoker)delegate
-                {
-                    status.Text = "Готово";
-                });
-            }); 
-
-            
+            }
         }
 
         private void SetRepoSemester(string semesterDBName)

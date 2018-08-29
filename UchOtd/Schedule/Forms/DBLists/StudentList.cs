@@ -168,15 +168,25 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             if (StudentListView.SelectedCells.Count > 0)
             {
-                var studentView = ((List<StudentView>)StudentListView.DataSource)[StudentListView.SelectedCells[0].RowIndex];
+                var studentIds = new List<int>();
 
-                if (_repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.Student.StudentId == studentView.StudentId).Count > 0)
+                for (int i = 0; i < StudentListView.SelectedCells.Count; i++)
                 {
-                    MessageBox.Show("Этот студент состоит в группах.");
+                    studentIds.Add(((List<StudentView>)StudentListView.DataSource)[StudentListView.SelectedCells[i].RowIndex].StudentId);
+                }
+
+                var ids = studentIds;
+                if (_repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => ids.Contains(sig.Student.StudentId)).Count > 0)
+                {
+                    MessageBox.Show("Студенты состоят в группах.");
                     return;
                 }
 
-                _repo.Students.RemoveStudent(studentView.StudentId);
+                studentIds = studentIds.OrderBy(a => a).Distinct().ToList();
+                for (int i = 0; i < studentIds.Count; i++)
+                {
+                    _repo.Students.RemoveStudent(studentIds[i]);
+                }
 
                 RefreshView();
             }
@@ -186,19 +196,27 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             if (StudentListView.SelectedCells.Count > 0)
             {
-                var studentView = ((List<StudentView>)StudentListView.DataSource)[StudentListView.SelectedCells[0].RowIndex];
+                var studentIds = new List<int>();
 
-                var studentGroupLinks = _repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.Student.StudentId == studentView.StudentId);
-
-                if (studentGroupLinks.Count > 0)
+                for (int i = 0; i < StudentListView.SelectedCells.Count; i++)
                 {
+                    studentIds.Add(((List<StudentView>)StudentListView.DataSource)[StudentListView.SelectedCells[i].RowIndex].StudentId);
+                }
+
+                var ids = studentIds;
+
+                studentIds = studentIds.OrderBy(a => a).Distinct().ToList();
+                for (int i = 0; i < studentIds.Count; i++)
+                {
+                    var studentGroupLinks = _repo.StudentsInGroups.GetFiltredStudentsInGroups(sig => sig.Student.StudentId == studentIds[i]);
+
                     foreach (var sig in studentGroupLinks)
                     {
                         _repo.StudentsInGroups.RemoveStudentsInGroups(sig.StudentsInGroupsId);
                     }
-                }
 
-                _repo.Students.RemoveStudent(studentView.StudentId);
+                    _repo.Students.RemoveStudent(studentIds[i]);
+                }
 
                 RefreshView();
             }
@@ -426,9 +444,22 @@ namespace UchOtd.Schedule.Forms.DBLists
             }
             var enterIndex = split[0].IndexOf("\r\n", StringComparison.Ordinal);
             var F = split[0].Substring(0, enterIndex).Trim();
-            var IO = split[0].Substring(enterIndex + 2, split[0].Length - enterIndex - 2);
+            var IO = split[0].Substring(enterIndex + 2, split[0].Length - enterIndex - 2).Replace("\r\n", "").Replace("староста", "");
             var IOList = IO.Split(new[] { ' ' }, 2).ToList();
             F = char.ToUpper(F.First()) + F.Substring(1).ToLower();
+
+            DateTime birthDate = new DateTime(1900, 1, 1);
+            try
+            {
+                if (split[2] != "")
+                {
+                    birthDate = DateTime.ParseExact(split[2], "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
 
             var student = new Student
             {
@@ -436,13 +467,24 @@ namespace UchOtd.Schedule.Forms.DBLists
                 I = IOList[0].Trim(),
                 O = IOList[1].Trim(),
                 ZachNumber = split[1].Trim(),
-                BirthDate = DateTime.ParseExact(split[2], "dd.MM.yyyy", CultureInfo.InvariantCulture),
+                BirthDate = birthDate,
                 Address = split[3].Trim(),
                 Phone = FormatPhones(split[4]),
-                Orders = split[5].Replace("\r\n", "")
+                Orders = split[5].Trim('\r').Trim('\n').Trim('\r')
             };
 
             return student;
+        }
+
+        bool IsAllUpper(string input)
+        {
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (!Char.IsUpper(input[i]))
+                    return false;
+            }
+
+            return true;
         }
 
         private void ParseIsertStudentList_Click(object sender, EventArgs e)
@@ -454,9 +496,20 @@ namespace UchOtd.Schedule.Forms.DBLists
                 int state = 1;
                 for (int i = 5; i < split.Count-1; i += 5)
                 {
-                    var fIndex = split[i].IndexOf("\r\n", StringComparison.Ordinal);
-                    var order = split[i].Substring(0, fIndex).Trim();
-                    var fio = split[i].Substring(fIndex + 2, split[i].Length - fIndex - 2);
+                    var tokenIndex = -1;
+                    var tokenSplit = split[i].Split(new[] {"\r\n"}, StringSplitOptions.None).Where(t => t != "").ToList();
+                    for (int j = tokenSplit.Count-1; j >= 0 ; j--)
+                    {
+                        if (IsAllUpper(tokenSplit[j].Split(' ')[0].Trim()))
+                        {
+                            tokenIndex = j;
+                            break;
+                        }
+                    }
+                    var order = (tokenIndex == 1) ? tokenSplit[0] : tokenSplit.GetRange(0, tokenIndex - 1).Aggregate((a, b) => a + "\r\n" + b);
+                    var fio = ((tokenSplit.Count - tokenIndex) == 1) ? 
+                        tokenSplit[tokenIndex] : 
+                        tokenSplit.GetRange(tokenIndex, tokenSplit.Count - tokenIndex).Aggregate((a, b) => a + "\r\n" + b);
 
                     split[i] = order;
                     split.Insert(i+1, fio);
@@ -468,6 +521,7 @@ namespace UchOtd.Schedule.Forms.DBLists
                 for (int i = 0; i < studentsSplit.Count; i++)
                 {
                     var student = ParseStudentInfo(studentsSplit[i]);
+                    student.Expelled = importExpelled.Checked;
                     _repo.Students.AddStudent(student);
                 }
             }
