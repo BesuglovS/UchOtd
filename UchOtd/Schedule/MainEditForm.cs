@@ -6483,9 +6483,10 @@ namespace UchOtd.Schedule
                     //MessageBox.Show(theCol.ToString() + " " + theRow.ToString());
                     dropDow = dow;
 
-                    var groupName = groupList.Text;
-                    var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
+                    //var groupName = groupList.Text;
+                    //var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
                     // var auds = Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList();
+                    var building = Repo.Buildings.GetBuilding(1);
                     List<int> weekFilterList = null;
                     if (getWeekFilter(WeekFilter, out weekFilterList)) return;
 
