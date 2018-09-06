@@ -37,14 +37,18 @@ namespace UchOtd.Forms
             _mef = mef;
             _ring = ring;
             _building = building;
-            _auds = _repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList();
+            _auds = _repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList();            
+
             InitializeComponent();
         }
 
         private void ChooseRing_Load(object sender, EventArgs e)
         {
             audsList.DisplayMember = "FancyName";
-            audsList.DataSource = _auds.Select(a => new AudFreeView(a.AuditoriumId, a.Name, true)).ToList();
+            var audViews = _auds.Select(a => new AudFreeView(a.AuditoriumId, a.Name, true)).ToList();
+            audViews = EmptyOnTop(audViews);
+
+            audsList.DataSource = audViews;
 
             ringsList.DisplayMember = "Time";
             ringsList.DataSource = _rings;
@@ -61,7 +65,7 @@ namespace UchOtd.Forms
                     }
                 }
 
-                
+
                 if (index != -1)
                 {
                     if (_rings.Count > 0)
@@ -74,7 +78,25 @@ namespace UchOtd.Forms
 
             var mp = MousePosition;
 
-            this.SetDesktopLocation(mp.X-100, mp.Y-30);
+            this.SetDesktopLocation(mp.X - 100, mp.Y - 30);
+        }
+
+        private static List<AudFreeView> EmptyOnTop(List<AudFreeView> audViews)
+        {
+            var emptyIndex = 0;
+            for (int i = 0; i < audViews.Count; i++)
+            {
+                if (audViews[i].Name == "")
+                {
+                    emptyIndex = i;
+                    break;
+                }
+            }
+            AudFreeView tmp = audViews[0];
+            audViews[0] = audViews[emptyIndex];
+            audViews[emptyIndex] = tmp;
+
+            return audViews;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -141,6 +163,8 @@ namespace UchOtd.Forms
 
             var finalAuds = buildingAuds
                 .Select(a => new AudFreeView(a.AuditoriumId, a.Name, FreeAudIds.Contains(a.AuditoriumId))).ToList();
+
+            finalAuds = EmptyOnTop(finalAuds);
 
             audsList.DataSource = finalAuds;
 

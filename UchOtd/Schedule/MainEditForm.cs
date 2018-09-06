@@ -81,9 +81,23 @@ namespace UchOtd.Schedule
         private void updateAudsContextMenu()
         {
             var groupName = groupList.Text;
-            var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
+            //var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
+            var building = Repo.Buildings.GetBuilding(1);
             List<Auditorium> auds = building != null ? Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList() : Repo.Auditoriums.GetAll().ToList();
 
+            var emptyIndex = 0;
+            for (int i = 0; i < auds.Count; i++)
+            {
+                if (auds[i].Name == "")
+                {
+                    emptyIndex = i;
+                    break;
+                }
+            }
+            Auditorium tmp = auds[0];
+            auds[0] = auds[emptyIndex];
+            auds[emptyIndex] = tmp;
+            
             editSchedule.DropDownItems.Clear();
 
             foreach (var aud in auds)
@@ -1295,7 +1309,8 @@ namespace UchOtd.Schedule
 
                 try
                 {
-                    await Task.Run(() => PlanCompletionPercentage(_cToken), _cToken);
+                    //await Task.Run(() => PlanCompletionPercentage(_cToken), _cToken);
+                    await Task.Run(() => PlanCompletionPercentage2(_cToken), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -1307,6 +1322,94 @@ namespace UchOtd.Schedule
             }
 
             ActiveLessonsCount.Text = "%";
+        }
+
+        private void PlanCompletionPercentage2(CancellationToken cToken)
+        {
+            cToken.ThrowIfCancellationRequested();
+
+            int allDiscLessonCount = 0, activeLessonsCount = 0;
+            int discCount = 0, touchedDiscs = 0;
+            var faculties = Repo.Faculties.GetAllFaculties();
+            for (int i = 0; i < faculties.Count; i++)
+            {
+                var faculty = faculties[i];                
+
+                if (faculty.Name.Contains("-е классы"))
+                {
+                    continue;
+                }
+
+                var groups = Repo.GroupsInFaculties
+                    .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
+                    .Select(gif => gif.StudentGroup)
+                    .ToList();
+
+                for (int j = 0; j < groups.Count; j++)
+                {
+                    var group = groups[j];
+
+                    var groupDisciplines = Repo.Disciplines
+                        .GetFiltredDisciplines(d => d.StudentGroup.StudentGroupId == group.StudentGroupId);
+
+                    for (int k = 0; k < groupDisciplines.Count; k++)
+                    {
+                        var discipline = groupDisciplines[k];
+
+                        ShowStatus(
+                            faculty.Name + " " + (i+1) + " / " + faculties.Count + " " + 
+                            group.Name + " " + (j+1) + " / " + groups.Count + " " + 
+                            discipline.Name + " " + (k+1) + " / " + groupDisciplines.Count);
+
+                        if ((discipline.Name.ToLower().Contains("физическая культ")) ||
+                            (discipline.Name.ToLower().Contains("физической культ")))
+                        {
+                            continue;
+                        }
+
+                        discCount++;
+
+                        allDiscLessonCount += discipline.AuditoriumHours / 2;
+
+                        var tfd = Repo.TeacherForDisciplines
+                            .GetFirstFiltredTeacherForDiscipline(tefd => tefd.Discipline.DisciplineId == discipline.DisciplineId);
+
+                        if (tfd != null)
+                        {
+                            var disciplineLessonCount = Repo.Lessons
+                                .GetFiltredLessons(l =>
+                                    l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId &&
+                                    l.State == 1)
+                                .Count();
+
+                            activeLessonsCount += disciplineLessonCount;
+
+                            if (disciplineLessonCount > 0)
+                            {
+                                touchedDiscs++;
+                            }
+                        }
+                    }
+                }
+            }
+            
+
+            var diff = allDiscLessonCount - activeLessonsCount;
+            String message = activeLessonsCount + " (" +
+                             $"{(double)activeLessonsCount * 100 / allDiscLessonCount:0.00}%" + ") / " +
+                             allDiscLessonCount
+                             + " =>  " + diff + " (" +
+                             $"{(double)diff * 100 / allDiscLessonCount:0.00}%" + ")";
+
+            var diff2 = discCount - touchedDiscs;
+
+            cToken.ThrowIfCancellationRequested();
+
+            message += Environment.NewLine + touchedDiscs + " (" +
+                       $"{(double)touchedDiscs * 100 / discCount:0.00}%" + ") / " + discCount
+                       + " =>  " + diff2 + " (" + $"{(double)diff2 * 100 / discCount:0.00}%" + ")";
+
+            MessageBox.Show(message, "В парах / В дисциплинах");
         }
 
         private void PlanCompletionPercentage(CancellationToken cToken)
@@ -6369,8 +6472,8 @@ namespace UchOtd.Schedule
                             continue;
                         }
 
-                        var ChapGroups = new List<string> {"1", "2", "3", "4"};
-                        var Groups40 = new List<string> { "5", "6", "7" };
+                        var ChapGroups = new List<string> {"1"};
+                        var Groups40 = new List<string> { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" };
 
                         var lesson1Length = 80;
                         if (ChapGroups.Contains(lesson1.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
@@ -7465,6 +7568,15 @@ namespace UchOtd.Schedule
             }
 
             ShowGroupLessonsClick(this, null);
+        }
+
+        public void ShowStatus(string statusText)
+        {
+            Invoke((MethodInvoker)delegate
+            {
+                status.Text = statusText;
+                // runs on UI thread
+            });
         }
     }
 }
