@@ -244,7 +244,7 @@ namespace UchOtd
             // 
             this.trayIcon.ContextMenuStrip = this.trayIconMenu;
             this.trayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("trayIcon.Icon")));
-            this.trayIcon.Text = "Учебный отдел";
+            this.trayIcon.Text = "Расписание";
             // 
             // uploadTimer
             // 

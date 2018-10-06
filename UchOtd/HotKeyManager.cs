@@ -41,10 +41,7 @@ namespace UchOtd
 
         protected static void OnHotKeyPressed(HotKeyEventArgs e)
         {
-            if (HotKeyPressed != null)
-            {
-                HotKeyPressed(null, e);
-            }
+            HotKeyPressed?.Invoke(null, e);
         }
         
         private class MessageWindow : Form

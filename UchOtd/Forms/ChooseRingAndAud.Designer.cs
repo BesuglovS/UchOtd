@@ -98,9 +98,9 @@
             // audsList
             // 
             this.audsList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.audsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.audsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.audsList.FormattingEnabled = true;
-            this.audsList.ItemHeight = 37;
+            this.audsList.ItemHeight = 25;
             this.audsList.Location = new System.Drawing.Point(0, 0);
             this.audsList.Name = "audsList";
             this.audsList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
@@ -120,9 +120,9 @@
             // ringsList
             // 
             this.ringsList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ringsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ringsList.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ringsList.FormattingEnabled = true;
-            this.ringsList.ItemHeight = 37;
+            this.ringsList.ItemHeight = 25;
             this.ringsList.Location = new System.Drawing.Point(0, 0);
             this.ringsList.Name = "ringsList";
             this.ringsList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;

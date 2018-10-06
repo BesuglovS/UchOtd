@@ -202,4 +202,10 @@
   <data name="SQLUser" xml:space="preserve">
     <value>sa</value>
   </data>
+  <data name="dbBackupPassword" xml:space="preserve">
+    <value>granted1988</value>
+  </data>
+  <data name="dbBackupUser" xml:space="preserve">
+    <value>access</value>
+  </data>
 </root>

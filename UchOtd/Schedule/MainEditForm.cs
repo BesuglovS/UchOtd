@@ -36,6 +36,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Util.Store;
 using Google.Apis.Services;
 using Calendar = Google.Apis.Calendar.v3.Data.Calendar;
+using Settings = UchOtd.Properties.Settings;
 
 namespace UchOtd.Schedule
 {
@@ -1810,6 +1811,7 @@ namespace UchOtd.Schedule
         private void DownloadAndRestore_Click(object sender, EventArgs e)
         {
             var wc = new WebClient();
+            wc.Credentials = new NetworkCredential(Resources.ResourceManager.GetString("dbBackupUser"), Resources.ResourceManager.GetString("dbBackupPassword"));
             wc.DownloadFile("http://wiki.nayanova.edu/upload/DB-Backup/" + ToDBName.Text + ".bak",
                 Application.StartupPath + "\\" + FromDBName.Text + ".bak");
             Repo.RestoreDb(FromDBName.Text, Application.StartupPath + "\\" + FromDBName.Text + ".bak", ToDBName.Text);
@@ -7568,6 +7570,12 @@ namespace UchOtd.Schedule
             }
 
             ShowGroupLessonsClick(this, null);
+        }
+
+        private void быстроДобавитьЗанятияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var qaf = new QuickAdd(Repo);
+            qaf.Show();
         }
 
         public void ShowStatus(string statusText)

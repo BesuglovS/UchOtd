@@ -209,19 +209,10 @@ namespace UchOtd.Forms
         {
             var students = (List<Student>)viewGrid.DataSource;
 
-            var stString = "";
-
-            for (int i = 0; i < students.Count; i++)
-            {
-                var s = students[i];
-                // stString += (i + 1) + ") ";
-                stString += s.F + " " + s.I + " " + s.O;
-                if (i != students.Count - 1)
-                {
-                    stString += Environment.NewLine;
-                }
-            }
-
+            var stString = students
+                .Select(s => s.F + " " + s.I + " " + s.O)
+                .Aggregate((a,b) => a + Environment.NewLine + b);
+            
             Clipboard.SetText(stString);
         }
     }

@@ -242,6 +242,5 @@ namespace UchOtd.Schedule.Forms.DBLists
                 addGroupToFaculty.PerformClick();
             }
         }
-
     }
 }

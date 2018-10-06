@@ -204,7 +204,7 @@ namespace Schedule.Repositories
 
         public void RestoreDb(string dbName, string filename, string dbInternalName)
         {
-            //ExecuteQuery("ALTER DATABASE " + dbName + " SET Single_User WITH Rollback Immediate");
+            ExecuteQuery("ALTER DATABASE " + dbName + " SET Single_User WITH Rollback Immediate");
 
             var dataPath = @"C:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\";
 
@@ -215,7 +215,7 @@ namespace Schedule.Repositories
 
             ExecuteQuery(restoreQuery);
 
-            //ExecuteQuery("ALTER DATABASE " + dbName + " SET Multi_User");
+            ExecuteQuery("ALTER DATABASE " + dbName + " SET Multi_User");
         }
 
         private void ExecuteQuery(string sqlQuery)

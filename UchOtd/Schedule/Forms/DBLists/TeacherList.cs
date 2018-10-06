@@ -408,5 +408,46 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             RefreshTeacherDisciplines(teacher);
         }
+
+        private void fillEmptyPhoneFromClipboard_Click(object sender, EventArgs e)
+        {
+            var ct = Clipboard.GetText();
+            var phoneList = ct
+                .Split(new string[] { Environment.NewLine }, StringSplitOptions.None)
+                .ToList();
+
+            var phones = new Dictionary<string, string>();
+            for (int i = 0; i < phoneList.Count; i++)
+            {
+                var phoneSplit = phoneList[i].Split('*').ToList();
+                if (phoneSplit.Count < 2)
+                {
+                    continue;
+                }
+                if (!phones.ContainsKey(phoneSplit[0])) {
+                    phones.Add(phoneSplit[0], phoneSplit[1]);
+                }
+                else
+                {
+                    phones[phoneSplit[0]] = phoneSplit[1];
+                }
+            }
+
+            var teachers = _repo.Teachers.GetAllTeachers();
+
+            for (int i = 0; i < teachers.Count; i++)
+            {
+                var t = teachers[i];
+
+                if (t.Phone == "")
+                {
+                    if (phones.ContainsKey(t.FIO))
+                    {
+                        t.Phone = phones[t.FIO];
+                        _repo.Teachers.UpdateTeacher(t);
+                    }
+                }
+            }            
+        }
     }
 }

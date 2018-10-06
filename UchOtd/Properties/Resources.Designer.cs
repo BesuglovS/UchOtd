@@ -19,7 +19,7 @@ namespace UchOtd.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -106,6 +106,24 @@ namespace UchOtd.Properties {
             get {
                 object obj = ResourceManager.GetObject("daily", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to granted1988.
+        /// </summary>
+        internal static string dbBackupPassword {
+            get {
+                return ResourceManager.GetString("dbBackupPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to access.
+        /// </summary>
+        internal static string dbBackupUser {
+            get {
+                return ResourceManager.GetString("dbBackupUser", resourceCulture);
             }
         }
         

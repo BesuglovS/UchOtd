@@ -180,6 +180,12 @@
     <Compile Include="Forms\DisciplineAuditoriums.Designer.cs">
       <DependentUpon>DisciplineAuditoriums.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\QuickAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\QuickAdd.Designer.cs">
+      <DependentUpon>QuickAdd.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\TeachersAddLessons.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -550,6 +556,7 @@
     <Compile Include="Views\NoteView.cs" />
     <Compile Include="Views\StudentListView.cs" />
     <Compile Include="Views\TeacherWithLocation.cs" />
+    <Compile Include="Views\tfdView.cs" />
     <EmbeddedResource Include="Forms\BuildingLessons.resx">
       <DependentUpon>BuildingLessons.cs</DependentUpon>
     </EmbeddedResource>
@@ -573,6 +580,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Phones.resx">
       <DependentUpon>Phones.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\QuickAdd.resx">
+      <DependentUpon>QuickAdd.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Session\ExamProperties.resx">
       <DependentUpon>ExamProperties.cs</DependentUpon>

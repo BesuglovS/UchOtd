@@ -193,6 +193,7 @@ namespace UchOtd.Schedule
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
+            this.быстроДобавитьЗанятияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -1377,7 +1378,8 @@ namespace UchOtd.Schedule
             this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem,
             this.неточности811ToolStripMenuItem,
             this.освободитьМестоВРасписанииToolStripMenuItem,
-            this.restoreA0718OriginalDbsToolStripMenuItem});
+            this.restoreA0718OriginalDbsToolStripMenuItem,
+            this.быстроДобавитьЗанятияToolStripMenuItem});
             this.bigRedButtonToolStripMenuItem.Name = "bigRedButtonToolStripMenuItem";
             this.bigRedButtonToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
             this.bigRedButtonToolStripMenuItem.Text = "BIG RED BUTTON";
@@ -1619,6 +1621,13 @@ namespace UchOtd.Schedule
             this.editSchedule.Text = "Аудитория";
             this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
             // 
+            // быстроДобавитьЗанятияToolStripMenuItem
+            // 
+            this.быстроДобавитьЗанятияToolStripMenuItem.Name = "быстроДобавитьЗанятияToolStripMenuItem";
+            this.быстроДобавитьЗанятияToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.быстроДобавитьЗанятияToolStripMenuItem.Text = "Быстро добавить занятия";
+            this.быстроДобавитьЗанятияToolStripMenuItem.Click += new System.EventHandler(this.быстроДобавитьЗанятияToolStripMenuItem_Click);
+            // 
             // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1810,6 +1819,7 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem дисциплиныРасписанияToolStripMenuItem5;
         private ToolStripMenuItem аудиторииДисциплинToolStripMenuItem1;
         private ToolStripMenuItem перевестиАудиторииВФорматООПToolStripMenuItem;
+        private ToolStripMenuItem быстроДобавитьЗанятияToolStripMenuItem;
     }
 }
 
