@@ -200,10 +200,11 @@ namespace UchOtd.Schedule
                 //"Schedule16172",
                 //"Schedule17181",
                 //"Schedule17182",
+                "Schedule18191A1018",
                 "S16171A0718",
                 "S16172A0718",
                 "S17181A0718",
-                "S17182A0718",
+                "S17182A0718",                
             };
 
             semester.Items.Clear();
@@ -2174,8 +2175,19 @@ namespace UchOtd.Schedule
 
         private async void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
+            await Task.Run(() => {
+                var lessons =
+                Repo.Lessons.GetFiltredLessons(l =>
+                (new List<string> { "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 ", "10", "11" }).
+                Contains(l.TeacherForDiscipline.Discipline.StudentGroup.Name.Substring(0, 2)));
+
+                foreach (var lesson in lessons)
+                {
+                    Repo.Lessons.RemoveLesson(lesson.LessonId);
+                }
+            });
+
             MessageBox.Show("Пусто тут, барин!)");
-            await Task.Run(() => {  }); 
         }
 
         private void RemoveStudentDuplicates()
@@ -4403,7 +4415,7 @@ namespace UchOtd.Schedule
                         }
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, restrictionsItem);
+                            false, null, false, _cToken, restrictionsItem, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4475,7 +4487,7 @@ namespace UchOtd.Schedule
                         }
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, restrictionsItem);
+                            false, null, false, _cToken, restrictionsItem, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4548,7 +4560,7 @@ namespace UchOtd.Schedule
                         }
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, restrictions);
+                            false, null, false, _cToken, restrictions, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4621,7 +4633,7 @@ namespace UchOtd.Schedule
                         }
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, restrictions);
+                            false, null, false, _cToken, restrictions, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -5175,7 +5187,7 @@ namespace UchOtd.Schedule
                         //}
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, null);
+                            false, null, false, _cToken, null, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -5366,7 +5378,7 @@ namespace UchOtd.Schedule
                         //}
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, null);
+                            false, null, false, _cToken, null, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -6474,24 +6486,16 @@ namespace UchOtd.Schedule
                             continue;
                         }
 
-                        var ChapGroups = new List<string> {"1"};
-                        var Groups40 = new List<string> { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" };
+                        
+                        var Groups40 = new List<string> { "1", "2", "3", "4", "5", "6", "7" };
 
                         var lesson1Length = 80;
-                        if (ChapGroups.Contains(lesson1.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
-                        {
-                            lesson1Length = 30;
-                        }
                         if (Groups40.Contains(lesson1.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
                         {
                             lesson1Length = 40;
                         }
 
-                        var lesson2Length = 80;
-                        if (ChapGroups.Contains(lesson2.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
-                        {
-                            lesson2Length = 30;
-                        }
+                        var lesson2Length = 80;                        
                         if (Groups40.Contains(lesson2.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
                         {
                             lesson2Length = 40;
@@ -6588,10 +6592,10 @@ namespace UchOtd.Schedule
                     //MessageBox.Show(theCol.ToString() + " " + theRow.ToString());
                     dropDow = dow;
 
-                    //var groupName = groupList.Text;
-                    //var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
+                    var groupName = groupList.Text;
+                    var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
                     // var auds = Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList();
-                    var building = Repo.Buildings.GetBuilding(1);
+                    //var building = Repo.Buildings.GetBuilding(1);
                     List<int> weekFilterList = null;
                     if (getWeekFilter(WeekFilter, out weekFilterList)) return;
 
@@ -6891,7 +6895,7 @@ namespace UchOtd.Schedule
         private void ElevenTwelveWeek_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "3-4";
+            WeekFilter.Text = "10-11";
         }
 
         private async void неточности811ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6987,13 +6991,13 @@ namespace UchOtd.Schedule
         private void week16_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "3";
+            WeekFilter.Text = "10";
         }
 
         private void week17_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "4";
+            WeekFilter.Text = "11";
         }
 
         private async void BitrixScheduleExport_Click(object sender, EventArgs e)
@@ -7040,7 +7044,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 await Task.Run(() => WordExport.ExportCustomSchedule(Repo, facultyDowIds,
-                    fileName, true, true, 90, 6, SchoolHeader, false, false, new List<int> { }, false, _cToken, null), _cToken);
+                    fileName, true, true, 90, 6, SchoolHeader, false, false, new List<int> { }, false, _cToken, null, false), _cToken);
             }
             catch (OperationCanceledException exception)
             {
@@ -7253,7 +7257,7 @@ namespace UchOtd.Schedule
                                                ".docx";
 
                                 WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                                    false, null, false, _cToken, null);
+                                    false, null, false, _cToken, null, false);
 
                                 scheduleFilenames.Add(filename);
                             }
