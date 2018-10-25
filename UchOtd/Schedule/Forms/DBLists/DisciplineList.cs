@@ -61,6 +61,14 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             hoursWeekFilter.Text = "11-12";
 
+            var teachers = _repo.Teachers.GetAllTeachers().OrderBy(t => t.FIO).ToList();
+
+            foreach (var teacher in teachers)
+            {
+                TeacherListMenu.Items.Add(teacher.FIO);
+            }
+            
+
             //RefreshView();
         }
 
@@ -327,6 +335,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             DisciplinesList.Columns["AuditoriumHoursPerWeek"].Width = 80;
             DisciplinesList.Columns["AuditoriumHoursPerWeek"].HeaderText = "Аудиторные часы (в неделю / ШКОЛА)";
+            DisciplinesList.Columns["AuditoriumHoursPerWeek"].Visible = false;
 
             DisciplinesList.Columns["LectureHours"].Width = 80;
             DisciplinesList.Columns["LectureHours"].HeaderText = "Лекции";
@@ -336,6 +345,7 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             DisciplinesList.Columns["TypeSequence"].Width = 80;
             DisciplinesList.Columns["TypeSequence"].HeaderText = "Последовательность Л=1/П=2";
+            DisciplinesList.Columns["TypeSequence"].Visible = false;
         }
 
         private void DiscipineListViewCellClick(object sender, DataGridViewCellEventArgs e)
@@ -906,6 +916,42 @@ namespace UchOtd.Schedule.Forms.DBLists
 
             var group = _repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupname);
             return group;
+        }
+
+        private void TeacherListMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            var teacherFIO = e.ClickedItem.Text;
+            var teacher = _repo.Teachers.GetFirstFiltredTeachers(t => t.FIO == teacherFIO);
+
+            if (teacher != null)
+            {
+                if (DisciplinesList.SelectedCells.Count > 0)
+                {
+                    var discView = ((List<DisciplineView>)DisciplinesList.DataSource)[DisciplinesList.SelectedCells[0].RowIndex];
+                    var discipline = _repo.Disciplines.GetDiscipline(discView.DisciplineId);
+
+                    var tfd = _repo.TeacherForDisciplines
+                        .GetFirstFiltredTeacherForDiscipline(tefd =>
+                            tefd.Discipline.DisciplineId == discipline.DisciplineId);
+
+                    if (tfd != null)
+                    {
+                        tfd.Teacher = teacher;
+
+                        _repo.TeacherForDisciplines.UpdateTeacherForDiscipline(tfd);                        
+                    } else
+                    {
+                        var newTfd = new TeacherForDiscipline {
+                            Teacher = teacher,
+                            Discipline = discipline
+                        };
+
+                        _repo.TeacherForDisciplines.AddTeacherForDiscipline(newTfd);
+                    }
+
+                    RefreshView();
+                }
+            }
         }
     }
 }

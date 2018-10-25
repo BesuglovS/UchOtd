@@ -78,7 +78,20 @@ namespace UchOtd.Forms
 
             var mp = MousePosition;
 
-            this.SetDesktopLocation(mp.X - 100, mp.Y - 30);
+            var x = mp.X - 100;
+            var y = mp.Y - 30;
+
+            if (x + Width > Screen.PrimaryScreen.WorkingArea.Width)
+            {
+                x = Screen.PrimaryScreen.WorkingArea.Width - Width;
+            }
+
+            if (y + Height > Screen.PrimaryScreen.WorkingArea.Height)
+            {
+                y = Screen.PrimaryScreen.WorkingArea.Height - Height;
+            }
+
+            SetDesktopLocation(x, y);
         }
 
         private static List<AudFreeView> EmptyOnTop(List<AudFreeView> audViews)

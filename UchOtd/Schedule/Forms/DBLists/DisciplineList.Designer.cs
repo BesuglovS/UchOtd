@@ -31,7 +31,9 @@ namespace UchOtd.Schedule.Forms.DBLists
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.controlsPanel = new System.Windows.Forms.Panel();
+            this.importAll = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.TypeSequence = new System.Windows.Forms.TextBox();
@@ -61,6 +63,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.ListPanel = new System.Windows.Forms.Panel();
             this.viewPanel = new System.Windows.Forms.Panel();
             this.DisciplinesList = new System.Windows.Forms.DataGridView();
+            this.TeacherListMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.filterPanel = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
             this.hoursWeekFilter = new System.Windows.Forms.TextBox();
@@ -84,7 +87,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.groupnameFilter = new System.Windows.Forms.CheckBox();
             this.discnameFilter = new System.Windows.Forms.CheckBox();
             this.filter = new System.Windows.Forms.TextBox();
-            this.importAll = new System.Windows.Forms.Button();
             this.controlsPanel.SuspendLayout();
             this.ListPanel.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -126,6 +128,16 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.controlsPanel.Name = "controlsPanel";
             this.controlsPanel.Size = new System.Drawing.Size(233, 630);
             this.controlsPanel.TabIndex = 27;
+            // 
+            // importAll
+            // 
+            this.importAll.Location = new System.Drawing.Point(113, 537);
+            this.importAll.Name = "importAll";
+            this.importAll.Size = new System.Drawing.Size(90, 28);
+            this.importAll.TabIndex = 112;
+            this.importAll.Text = "Вставить все";
+            this.importAll.UseVisualStyleBackColor = true;
+            this.importAll.Click += new System.EventHandler(this.importAll_Click);
             // 
             // label12
             // 
@@ -388,6 +400,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.DisciplinesList.AllowUserToDeleteRows = false;
             this.DisciplinesList.AllowUserToResizeRows = false;
             this.DisciplinesList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DisciplinesList.ContextMenuStrip = this.TeacherListMenu;
             this.DisciplinesList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DisciplinesList.Location = new System.Drawing.Point(0, 0);
             this.DisciplinesList.Name = "DisciplinesList";
@@ -398,6 +411,13 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.DisciplinesList.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DiscipineListView_CellFormatting);
             this.DisciplinesList.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DiscipineListView_CellMouseDoubleClick);
             this.DisciplinesList.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DisciplinesList_CellMouseDown);
+            // 
+            // TeacherListMenu
+            // 
+            this.TeacherListMenu.Font = new System.Drawing.Font("Segoe UI", 6F);
+            this.TeacherListMenu.Name = "TeacherListMenu";
+            this.TeacherListMenu.Size = new System.Drawing.Size(181, 26);
+            this.TeacherListMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.TeacherListMenu_ItemClicked);
             // 
             // filterPanel
             // 
@@ -641,16 +661,6 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.filter.Size = new System.Drawing.Size(267, 20);
             this.filter.TabIndex = 0;
             // 
-            // importAll
-            // 
-            this.importAll.Location = new System.Drawing.Point(113, 537);
-            this.importAll.Name = "importAll";
-            this.importAll.Size = new System.Drawing.Size(90, 28);
-            this.importAll.TabIndex = 112;
-            this.importAll.Text = "Вставить все";
-            this.importAll.UseVisualStyleBackColor = true;
-            this.importAll.Click += new System.EventHandler(this.importAll_Click);
-            // 
             // DisciplineList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -728,5 +738,6 @@ namespace UchOtd.Schedule.Forms.DBLists
         private TextBox hoursWeekFilter;
         private Button button1;
         private Button importAll;
+        private ContextMenuStrip TeacherListMenu;
     }
 }

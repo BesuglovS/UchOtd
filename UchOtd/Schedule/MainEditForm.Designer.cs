@@ -184,6 +184,7 @@ namespace UchOtd.Schedule
             this.неточности811ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.освободитьМестоВРасписанииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.restoreA0718OriginalDbsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.быстроДобавитьЗанятияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.googleCalendarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GoogleCalendarExport = new System.Windows.Forms.ToolStripMenuItem();
             this.очиститьКаледнарьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -193,7 +194,6 @@ namespace UchOtd.Schedule
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
-            this.быстроДобавитьЗанятияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -266,7 +266,7 @@ namespace UchOtd.Schedule
             this.week17.Name = "week17";
             this.week17.Size = new System.Drawing.Size(29, 21);
             this.week17.TabIndex = 76;
-            this.week17.Text = "4";
+            this.week17.Text = "11";
             this.week17.UseVisualStyleBackColor = true;
             this.week17.Click += new System.EventHandler(this.week17_Click);
             // 
@@ -276,7 +276,7 @@ namespace UchOtd.Schedule
             this.week16.Name = "week16";
             this.week16.Size = new System.Drawing.Size(29, 21);
             this.week16.TabIndex = 75;
-            this.week16.Text = "3";
+            this.week16.Text = "10";
             this.week16.UseVisualStyleBackColor = true;
             this.week16.Click += new System.EventHandler(this.week16_Click);
             // 
@@ -306,7 +306,7 @@ namespace UchOtd.Schedule
             this.ElevenTwelveWeek.Name = "ElevenTwelveWeek";
             this.ElevenTwelveWeek.Size = new System.Drawing.Size(49, 21);
             this.ElevenTwelveWeek.TabIndex = 72;
-            this.ElevenTwelveWeek.Text = "3-4";
+            this.ElevenTwelveWeek.Text = "10-11";
             this.ElevenTwelveWeek.UseVisualStyleBackColor = true;
             this.ElevenTwelveWeek.Click += new System.EventHandler(this.ElevenTwelveWeek_Click);
             // 
@@ -1538,6 +1538,13 @@ namespace UchOtd.Schedule
             this.restoreA0718OriginalDbsToolStripMenuItem.Text = "Restore A0718 Original DBs";
             this.restoreA0718OriginalDbsToolStripMenuItem.Click += new System.EventHandler(this.restoreA0718OriginalDbsToolStripMenuItem_Click);
             // 
+            // быстроДобавитьЗанятияToolStripMenuItem
+            // 
+            this.быстроДобавитьЗанятияToolStripMenuItem.Name = "быстроДобавитьЗанятияToolStripMenuItem";
+            this.быстроДобавитьЗанятияToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
+            this.быстроДобавитьЗанятияToolStripMenuItem.Text = "Быстро добавить занятия";
+            this.быстроДобавитьЗанятияToolStripMenuItem.Click += new System.EventHandler(this.быстроДобавитьЗанятияToolStripMenuItem_Click);
+            // 
             // googleCalendarToolStripMenuItem
             // 
             this.googleCalendarToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1620,13 +1627,6 @@ namespace UchOtd.Schedule
             this.editSchedule.Size = new System.Drawing.Size(133, 22);
             this.editSchedule.Text = "Аудитория";
             this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
-            // 
-            // быстроДобавитьЗанятияToolStripMenuItem
-            // 
-            this.быстроДобавитьЗанятияToolStripMenuItem.Name = "быстроДобавитьЗанятияToolStripMenuItem";
-            this.быстроДобавитьЗанятияToolStripMenuItem.Size = new System.Drawing.Size(451, 22);
-            this.быстроДобавитьЗанятияToolStripMenuItem.Text = "Быстро добавить занятия";
-            this.быстроДобавитьЗанятияToolStripMenuItem.Click += new System.EventHandler(this.быстроДобавитьЗанятияToolStripMenuItem_Click);
             // 
             // MainEditForm
             // 

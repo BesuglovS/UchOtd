@@ -64,6 +64,12 @@ namespace UchOtd.Schedule.Forms.DBLists
             if ((refreshType == 1) || (refreshType == 3))
             {
                 var teachersList = _repo.Teachers.GetAllTeachers();
+
+                if (teacherFilter.Text != "")
+                {
+                    teachersList = teachersList.Where(t => t.FIO.ToLower().Contains(teacherFilter.Text.ToLower())).ToList();
+                }
+
                 teachersList = teachersList.OrderBy(t => t.FIO).ToList();
 
                 TeacherListView.DataSource = teachersList;
@@ -448,6 +454,11 @@ namespace UchOtd.Schedule.Forms.DBLists
                     }
                 }
             }            
+        }
+
+        private void teacherFilter_TextChanged(object sender, EventArgs e)
+        {
+            RefreshView((int)RefreshType.TeachersOnly);
         }
     }
 }

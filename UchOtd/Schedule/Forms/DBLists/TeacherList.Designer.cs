@@ -35,6 +35,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.TeacherListPanel = new System.Windows.Forms.Panel();
             this.TeacherListView = new System.Windows.Forms.DataGridView();
             this.TeacherControlsPanel = new System.Windows.Forms.Panel();
+            this.fillEmptyPhoneFromClipboard = new System.Windows.Forms.Button();
             this.teacherPhone = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.deletewithlessons = new System.Windows.Forms.Button();
@@ -65,7 +66,7 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.removeWithLessons = new System.Windows.Forms.Button();
             this.removeTFD = new System.Windows.Forms.Button();
             this.addTFD = new System.Windows.Forms.Button();
-            this.fillEmptyPhoneFromClipboard = new System.Windows.Forms.Button();
+            this.teacherFilter = new System.Windows.Forms.TextBox();
             this.LeftPanel.SuspendLayout();
             this.TeacherListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TeacherListView)).BeginInit();
@@ -99,9 +100,9 @@ namespace UchOtd.Schedule.Forms.DBLists
             // 
             this.TeacherListPanel.Controls.Add(this.TeacherListView);
             this.TeacherListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TeacherListPanel.Location = new System.Drawing.Point(0, 296);
+            this.TeacherListPanel.Location = new System.Drawing.Point(0, 349);
             this.TeacherListPanel.Name = "TeacherListPanel";
-            this.TeacherListPanel.Size = new System.Drawing.Size(260, 399);
+            this.TeacherListPanel.Size = new System.Drawing.Size(260, 346);
             this.TeacherListPanel.TabIndex = 1;
             // 
             // TeacherListView
@@ -117,12 +118,13 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.TeacherListView.Name = "TeacherListView";
             this.TeacherListView.ReadOnly = true;
             this.TeacherListView.RowHeadersVisible = false;
-            this.TeacherListView.Size = new System.Drawing.Size(260, 399);
+            this.TeacherListView.Size = new System.Drawing.Size(260, 346);
             this.TeacherListView.TabIndex = 1;
             this.TeacherListView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.TeacherListView_CellClick);
             // 
             // TeacherControlsPanel
             // 
+            this.TeacherControlsPanel.Controls.Add(this.teacherFilter);
             this.TeacherControlsPanel.Controls.Add(this.fillEmptyPhoneFromClipboard);
             this.TeacherControlsPanel.Controls.Add(this.teacherPhone);
             this.TeacherControlsPanel.Controls.Add(this.label2);
@@ -135,8 +137,18 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.TeacherControlsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.TeacherControlsPanel.Location = new System.Drawing.Point(0, 0);
             this.TeacherControlsPanel.Name = "TeacherControlsPanel";
-            this.TeacherControlsPanel.Size = new System.Drawing.Size(260, 296);
+            this.TeacherControlsPanel.Size = new System.Drawing.Size(260, 349);
             this.TeacherControlsPanel.TabIndex = 0;
+            // 
+            // fillEmptyPhoneFromClipboard
+            // 
+            this.fillEmptyPhoneFromClipboard.Location = new System.Drawing.Point(16, 232);
+            this.fillEmptyPhoneFromClipboard.Name = "fillEmptyPhoneFromClipboard";
+            this.fillEmptyPhoneFromClipboard.Size = new System.Drawing.Size(197, 50);
+            this.fillEmptyPhoneFromClipboard.TabIndex = 32;
+            this.fillEmptyPhoneFromClipboard.Text = "Вставить пустые телефоны из буфера обмена";
+            this.fillEmptyPhoneFromClipboard.UseVisualStyleBackColor = true;
+            this.fillEmptyPhoneFromClipboard.Click += new System.EventHandler(this.fillEmptyPhoneFromClipboard_Click);
             // 
             // teacherPhone
             // 
@@ -439,15 +451,14 @@ namespace UchOtd.Schedule.Forms.DBLists
             this.addTFD.UseVisualStyleBackColor = true;
             this.addTFD.Click += new System.EventHandler(this.addTFD_Click);
             // 
-            // fillEmptyPhoneFromClipboard
+            // teacherFilter
             // 
-            this.fillEmptyPhoneFromClipboard.Location = new System.Drawing.Point(16, 232);
-            this.fillEmptyPhoneFromClipboard.Name = "fillEmptyPhoneFromClipboard";
-            this.fillEmptyPhoneFromClipboard.Size = new System.Drawing.Size(197, 50);
-            this.fillEmptyPhoneFromClipboard.TabIndex = 32;
-            this.fillEmptyPhoneFromClipboard.Text = "Вставить пустые телефоны из буфера обмена";
-            this.fillEmptyPhoneFromClipboard.UseVisualStyleBackColor = true;
-            this.fillEmptyPhoneFromClipboard.Click += new System.EventHandler(this.fillEmptyPhoneFromClipboard_Click);
+            this.teacherFilter.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.teacherFilter.Location = new System.Drawing.Point(16, 288);
+            this.teacherFilter.Name = "teacherFilter";
+            this.teacherFilter.Size = new System.Drawing.Size(229, 44);
+            this.teacherFilter.TabIndex = 33;
+            this.teacherFilter.TextChanged += new System.EventHandler(this.teacherFilter_TextChanged);
             // 
             // TeacherList
             // 
@@ -521,5 +532,6 @@ namespace UchOtd.Schedule.Forms.DBLists
         private ComboBox remapToTeacherList;
         private Button remapTfd;
         private Button fillEmptyPhoneFromClipboard;
+        private TextBox teacherFilter;
     }
 }

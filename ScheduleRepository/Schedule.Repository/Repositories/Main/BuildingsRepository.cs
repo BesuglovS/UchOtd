@@ -128,9 +128,9 @@ namespace Schedule.Repositories.Repositories.Main
                 {
                 }
 
-                var chap = new List<int> {1};
-                var jar = new List<int> {2, 3, 4};
-                var mol = new List<int> {5, 6, 7, 8, 9, 10, 11};
+                var chap = new List<int> {1, 2, 3, 4, 6, 7};
+                var jar = new List<int> {};
+                var mol = new List<int> {5, 8, 9, 10, 11};
                 var high = new List<int> { 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 };
 
                 var Mol = context.Buildings.FirstOrDefault(b => b.Name.Contains("Молодогвардейская"));

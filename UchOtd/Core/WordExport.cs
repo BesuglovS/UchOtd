@@ -1085,7 +1085,7 @@ namespace UchOtd.Core
             ScheduleRepository repo, Dictionary<int, List<int>> facultyDow,
             string filename, bool save, bool quit, int lessonLength, int daysOfWeek,
             bool schoolHeader, bool onlyFutureDates, bool weekFiltered, List<int> weekFilterList, bool appVisible,
-            CancellationToken cToken, Dictionary<string, List<string>> restrictions)
+            CancellationToken cToken, Dictionary<string, List<string>> restrictions, bool breakLines)
         {
             object oMissing = Missing.Value;
             object oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
@@ -1314,7 +1314,13 @@ namespace UchOtd.Core
 
                         Range wrdRng = oDoc.Bookmarks.get_Item(ref oEndOfDoc).Range;
 
-                        oTable = oDoc.Tables.Add(wrdRng, 1 + timeList.Count, 1 + schedule.Count);
+                        var breakLinesCount = 0;
+                        if (breakLines)
+                        {
+                            breakLinesCount = timeList.Count - 1;
+                        }
+
+                        oTable = oDoc.Tables.Add(wrdRng, 1 + timeList.Count + breakLinesCount, 1 + schedule.Count);
                         oTable.Borders.Enable = 1;
                         oTable.Range.ParagraphFormat.SpaceAfter = 0.0F;
                         oTable.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
@@ -1381,11 +1387,12 @@ namespace UchOtd.Core
 
                         cToken.ThrowIfCancellationRequested();
 
-                        var timeRowIndexList = new List<int>();
-
                         var timeRowIndex = 2;
-                        foreach (var time in timeList.OrderBy(
-                            t => int.Parse(t.Split(':')[0]) * 60 + int.Parse(t.Split(':')[1])))
+                        var breakLineIndex = 0;
+                        var orderedTimeList = timeList.OrderBy(
+                            t => int.Parse(t.Split(':')[0]) * 60 + int.Parse(t.Split(':')[1]))
+                            .ToList();
+                        foreach (var time in orderedTimeList)
                         {
                             cToken.ThrowIfCancellationRequested();
 
@@ -1400,13 +1407,11 @@ namespace UchOtd.Core
                                 minute -= 60;
                             }
 
-
-                            timeRowIndexList.Add(timeRowIndex);
-                            oTable.Cell(timeRowIndex, 1).Range.Text = time + " - " +
+                            oTable.Cell(timeRowIndex + breakLineIndex, 1).Range.Text = time + " - " +
                                                                       hour.ToString("D2") + ":" + minute.ToString("D2");
-                            oTable.Cell(timeRowIndex, 1).Range.ParagraphFormat.Alignment =
+                            oTable.Cell(timeRowIndex + breakLineIndex, 1).Range.ParagraphFormat.Alignment =
                                 WdParagraphAlignment.wdAlignParagraphCenter;
-                            oTable.Cell(timeRowIndex, 1).VerticalAlignment =
+                            oTable.Cell(timeRowIndex + breakLineIndex, 1).VerticalAlignment =
                                 WdCellVerticalAlignment.wdCellAlignVerticalCenter;
 
                             var columnGroupIndex = 2;
@@ -1414,11 +1419,11 @@ namespace UchOtd.Core
                             {
                                 if (group.Value.ContainsKey(time))
                                 {
-                                    oTable.Cell(timeRowIndex, columnGroupIndex).VerticalAlignment =
+                                    oTable.Cell(timeRowIndex + breakLineIndex, columnGroupIndex).VerticalAlignment =
                                         WdCellVerticalAlignment.wdCellAlignVerticalCenter;
 
                                     var timeTable =
-                                        oDoc.Tables.Add(oTable.Cell(timeRowIndex, columnGroupIndex).Range, 1, 1);
+                                        oDoc.Tables.Add(oTable.Cell(timeRowIndex + breakLineIndex, columnGroupIndex).Range, 1, 1);
                                     for (int i = 0; i < group.Value[time].Count - 1; i++)
                                     {
                                         timeTable.Rows.Add();
@@ -1530,7 +1535,7 @@ namespace UchOtd.Core
                                                 }
                                             }
                                         }
-
+                                                                                
                                         timeTable.Cell(tfdIndex + 1, 1).Range.Text = cellText;
                                         timeTable.Cell(tfdIndex + 1, 1).VerticalAlignment =
                                             WdCellVerticalAlignment.wdCellAlignVerticalCenter;
@@ -1541,6 +1546,31 @@ namespace UchOtd.Core
                                 }
 
                                 columnGroupIndex++;
+                            }
+
+                            // Break Line
+                            if (timeRowIndex != timeList.Count + 1)
+                            {
+                                oTable.Cell(timeRowIndex + breakLineIndex + 1, 1).Range.Text = hour.ToString("D2") + ":" + minute.ToString("D2") 
+                                    + " - " + orderedTimeList[timeRowIndex - 1];
+                                oTable.Cell(timeRowIndex + breakLineIndex + 1, 1).Range.ParagraphFormat.Alignment =
+                                    WdParagraphAlignment.wdAlignParagraphCenter;
+                                oTable.Cell(timeRowIndex + breakLineIndex + 1, 1).VerticalAlignment =
+                                    WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+                                var mergeCount = columnGroupIndex - 3;
+                                for (int i = 0; i < mergeCount; i++)
+                                {
+                                    oTable.Cell(timeRowIndex + breakLineIndex + 1, 2).Merge(oTable.Cell(timeRowIndex + breakLineIndex + 1, 3));
+                                }
+
+                                oTable.Cell(timeRowIndex + breakLineIndex + 1, 2).Range.Text = "ПЕРЕМЕНА";
+                                oTable.Cell(timeRowIndex + breakLineIndex + 1, 2).Range.ParagraphFormat.Alignment =
+                                    WdParagraphAlignment.wdAlignParagraphCenter;
+                                oTable.Cell(timeRowIndex + breakLineIndex + 1, 2).VerticalAlignment =
+                                    WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+
+                                breakLineIndex++;
                             }
 
                             timeRowIndex++;

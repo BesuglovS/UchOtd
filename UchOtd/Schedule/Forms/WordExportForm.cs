@@ -69,9 +69,19 @@ namespace UchOtd.Schedule.Forms
                 Parent = this,
                 Name = "Export17Button",
                 Text = "Экспорт 1-7",
-                Bounds = new Rectangle(230, 10 + (faculties.Count + 1) * 25 + 40, 125, 25)
+                Bounds = new Rectangle(200, 10 + (faculties.Count + 1) * 25 + 40, 125, 25)
             };
             Controls.Add(wordButton2);
+
+            var breakLinesCheckbox = new CheckBox
+            {
+                Parent = this,
+                Name = "cbBreakLines",
+                Text = "строки перемен",
+                Checked = false,
+                Bounds = new Rectangle(360, 10 + (faculties.Count + 1) * 25 + 40, 150, 25)
+            };
+            Controls.Add(breakLinesCheckbox);
 
             wordButton2.Click += ExportButtonClick2;
 
@@ -147,6 +157,7 @@ namespace UchOtd.Schedule.Forms
                 var lesson8090Length = ((CheckBox)Controls.Find("cb90", false).First()).Checked ? 90 : 80;
                 var futureDatesOnly = ((CheckBox)Controls.Find("cbfuture", false).First()).Checked;
                 var weekFilteredF = ((CheckBox)Controls.Find("weekFiltered", false).First()).Checked;
+                var AddBreakLines = ((CheckBox)Controls.Find("cbBreakLines", false).First()).Checked;
                 List<int> weekFilterList = null;
                 if (weekFilteredF)
                 {
@@ -156,7 +167,7 @@ namespace UchOtd.Schedule.Forms
                 try
                 {
                     await Task.Run(() => WordExport.ExportCustomSchedule(_repo, _choice, "Расписание.docx", false,
-                        false, lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, weekFilteredF, weekFilterList, true, _cToken, null), _cToken);
+                        false, lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, weekFilteredF, weekFilterList, true, _cToken, null, AddBreakLines), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -234,7 +245,8 @@ namespace UchOtd.Schedule.Forms
                 var lesson8090Length = ((CheckBox)Controls.Find("cb90", false).First()).Checked ? 90 : 80;
                 var futureDatesOnly = ((CheckBox)Controls.Find("cbfuture", false).First()).Checked;
                 var weekFilteredF = ((CheckBox)Controls.Find("weekFiltered", false).First()).Checked;
-                
+                var AddBreakLines = ((CheckBox)Controls.Find("cbBreakLines", false).First()).Checked;
+
                 List<int> weekFilterList = null;
                 if (weekFilteredF)
                 {
@@ -244,7 +256,8 @@ namespace UchOtd.Schedule.Forms
                 try
                 {
                     await Task.Run(() => WordExport.ExportCustomSchedule(_repo, _choice, "Расписание.docx", false,
-                                false, lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, weekFilteredF, weekFilterList, true, _cToken, null), _cToken);
+                                false, lesson8090Length, 6, MainEditForm.SchoolHeader, futureDatesOnly, weekFilteredF, 
+                                weekFilterList, true, _cToken, null, AddBreakLines), _cToken);
                 }
                 catch (OperationCanceledException)
                 {
