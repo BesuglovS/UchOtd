@@ -9,6 +9,8 @@ namespace UchOtd.Core
 {
     public static class Utilities
     {
+        
+
         public static void Log(string filename, string message)
         {
             var sw = new StreamWriter(filename, true);

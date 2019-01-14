@@ -51,6 +51,17 @@ namespace UchOtd.Schedule.Forms
 
                     checkBox.Click += CheckBoxClicked;
                 }
+
+                var checkBoxAll = new CheckBox
+                {
+                    Parent = this,
+                    Name = "cbAll_" + faculties[i].FacultyId,
+                    Text = faculties[i].Letter + " " + "все",
+                    Bounds = new Rectangle(-50 + 8 * 80, 10 + i * 25, 75, 25)
+                };
+                Controls.Add(checkBoxAll);
+
+                checkBoxAll.Click += CheckBoxAllClicked;
             }
 
             var wordButton = new Button
@@ -140,6 +151,36 @@ namespace UchOtd.Schedule.Forms
             dailyChangesButton.Click += dailyChangesButtonClick;
 
             Height = (faculties.Count + 1) * 25 + 150;
+        }
+
+        private void CheckBoxAllClicked(object sender, EventArgs e)
+        {
+            var checkBox = sender as CheckBox;
+            if (checkBox == null) return;
+
+            var split = checkBox.Name.Split('_');
+            var facultyId = int.Parse(split[1]);
+            
+            if (((CheckBox)sender).Checked)
+            {
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 1, false).First()).Checked = true; _choice[facultyId].Add(1);
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 2, false).First()).Checked = true; _choice[facultyId].Add(2);
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 3, false).First()).Checked = true; _choice[facultyId].Add(3);
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 4, false).First()).Checked = true; _choice[facultyId].Add(4);
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 5, false).First()).Checked = true; _choice[facultyId].Add(5);
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 6, false).First()).Checked = true; _choice[facultyId].Add(6);
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 7, false).First()).Checked = true; _choice[facultyId].Add(7);
+            }
+            else
+            {
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 1, false).First()).Checked = false; _choice[facultyId].Remove(1);
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 2, false).First()).Checked = false; _choice[facultyId].Remove(2);
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 3, false).First()).Checked = false; _choice[facultyId].Remove(3);
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 4, false).First()).Checked = false; _choice[facultyId].Remove(4);
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 5, false).First()).Checked = false; _choice[facultyId].Remove(5);
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 6, false).First()).Checked = false; _choice[facultyId].Remove(6);
+                ((CheckBox)Controls.Find("cb_" + facultyId + "_" + 7, false).First()).Checked = false; _choice[facultyId].Remove(7);
+            }
         }
 
         private async void ExportButtonClick2(object sender, EventArgs e)

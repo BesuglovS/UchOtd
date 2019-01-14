@@ -194,6 +194,7 @@ namespace UchOtd.Schedule
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
+            this.RunAuditoriumCollisionsLog = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -266,7 +267,7 @@ namespace UchOtd.Schedule
             this.week17.Name = "week17";
             this.week17.Size = new System.Drawing.Size(29, 21);
             this.week17.TabIndex = 76;
-            this.week17.Text = "11";
+            this.week17.Text = "12";
             this.week17.UseVisualStyleBackColor = true;
             this.week17.Click += new System.EventHandler(this.week17_Click);
             // 
@@ -276,7 +277,7 @@ namespace UchOtd.Schedule
             this.week16.Name = "week16";
             this.week16.Size = new System.Drawing.Size(29, 21);
             this.week16.TabIndex = 75;
-            this.week16.Text = "10";
+            this.week16.Text = "11";
             this.week16.UseVisualStyleBackColor = true;
             this.week16.Click += new System.EventHandler(this.week16_Click);
             // 
@@ -306,7 +307,7 @@ namespace UchOtd.Schedule
             this.ElevenTwelveWeek.Name = "ElevenTwelveWeek";
             this.ElevenTwelveWeek.Size = new System.Drawing.Size(49, 21);
             this.ElevenTwelveWeek.TabIndex = 72;
-            this.ElevenTwelveWeek.Text = "10-11";
+            this.ElevenTwelveWeek.Text = "11-12";
             this.ElevenTwelveWeek.UseVisualStyleBackColor = true;
             this.ElevenTwelveWeek.Click += new System.EventHandler(this.ElevenTwelveWeek_Click);
             // 
@@ -415,7 +416,7 @@ namespace UchOtd.Schedule
             this.ToDBName.Name = "ToDBName";
             this.ToDBName.Size = new System.Drawing.Size(88, 20);
             this.ToDBName.TabIndex = 61;
-            this.ToDBName.Text = "Schedule18191";
+            this.ToDBName.Text = "Schedule18192";
             // 
             // DownloadRestore
             // 
@@ -433,7 +434,7 @@ namespace UchOtd.Schedule
             this.FromDBName.Name = "FromDBName";
             this.FromDBName.Size = new System.Drawing.Size(100, 20);
             this.FromDBName.TabIndex = 59;
-            this.FromDBName.Text = "Schedule18191";
+            this.FromDBName.Text = "Schedule18192";
             // 
             // BackupUpload
             // 
@@ -1374,6 +1375,7 @@ namespace UchOtd.Schedule
             this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem,
             this.графикПроцессаToolStripMenuItem,
             this.проверитьКоллизииПреподавателейToolStripMenuItem,
+            this.RunAuditoriumCollisionsLog,
             this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem,
             this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem,
             this.неточности811ToolStripMenuItem,
@@ -1628,6 +1630,13 @@ namespace UchOtd.Schedule
             this.editSchedule.Text = "Аудитория";
             this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
             // 
+            // RunAuditoriumCollisionsLog
+            // 
+            this.RunAuditoriumCollisionsLog.Name = "RunAuditoriumCollisionsLog";
+            this.RunAuditoriumCollisionsLog.Size = new System.Drawing.Size(451, 22);
+            this.RunAuditoriumCollisionsLog.Text = "Проверить коллизии аудиторий";
+            this.RunAuditoriumCollisionsLog.Click += new System.EventHandler(this.RunAuditoriumCollisionsLog_Click);
+            // 
             // MainEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1820,6 +1829,7 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem аудиторииДисциплинToolStripMenuItem1;
         private ToolStripMenuItem перевестиАудиторииВФорматООПToolStripMenuItem;
         private ToolStripMenuItem быстроДобавитьЗанятияToolStripMenuItem;
+        private ToolStripMenuItem RunAuditoriumCollisionsLog;
     }
 }
 

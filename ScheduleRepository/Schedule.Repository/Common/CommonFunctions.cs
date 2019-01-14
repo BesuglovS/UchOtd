@@ -35,6 +35,22 @@ namespace Schedule.Repositories.Common
             return offset;
         }
 
+        public static DateTime GetMonday(DateTime date)
+        {
+            var dow = date.DayOfWeek;
+            switch (dow)
+            {
+                case DayOfWeek.Monday: return date; 
+                case DayOfWeek.Tuesday: return date.AddDays(-1); 
+                case DayOfWeek.Wednesday: return date.AddDays(-2);
+                case DayOfWeek.Thursday: return date.AddDays(-3);
+                case DayOfWeek.Friday: return date.AddDays(-4); 
+                case DayOfWeek.Saturday: return date.AddDays(-5);
+                case DayOfWeek.Sunday: return date.AddDays(-6); 
+                default:return date; 
+            }
+        }
+
         public static string CombineWeeks(List<int> list)
         {
             var result = new List<string>();

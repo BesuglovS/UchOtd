@@ -1317,7 +1317,7 @@ namespace UchOtd.Core
                         var breakLinesCount = 0;
                         if (breakLines)
                         {
-                            breakLinesCount = timeList.Count - 1;
+                            breakLinesCount = (timeList.Count == 0) ? 0 : timeList.Count - 1;                            
                         }
 
                         oTable = oDoc.Tables.Add(wrdRng, 1 + timeList.Count + breakLinesCount, 1 + schedule.Count);

@@ -66,5 +66,40 @@ namespace UchOtd.NUDS.Core
 
             return result;
         }
+
+        public static bool getWeeksFromString(out List<int> weekFilterList, string text)
+        {
+            weekFilterList = new List<int>();
+            try
+            {
+                var commaItems = text.Split(',').ToList();
+
+                for (int i = 0; i < commaItems.Count; i++)
+                {
+                    var itemText = commaItems[i];
+
+                    if (!itemText.Contains("-"))
+                    {
+                        weekFilterList.Add(int.Parse(itemText));
+                    }
+                    else
+                    {
+                        var split = itemText.Split('-');
+                        var start = int.Parse(split[0]);
+                        var finish = int.Parse(split[1]);
+                        for (int j = start; j <= finish; j++)
+                        {
+                            weekFilterList.Add(j);
+                        }
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

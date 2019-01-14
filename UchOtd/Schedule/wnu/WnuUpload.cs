@@ -185,11 +185,24 @@ namespace UchOtd.Schedule.wnu
 
             splitCount = 1000;
             var lessons = repo.Lessons.GetFiltredLessons(l => l.State == 0 || l.State == 1);
-            // Загрузка только до 10-й недели вклюючительно
-            //var lessons =
-            //    repo.Lessons.GetFiltredLessons(l => 
-            //    (l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId < 61 || (l.Calendar.CalendarId < 67))
-            //    && (l.State == 0 || l.State == 1));
+
+            // Не загружать высшее звено после 17 декабря
+            //lessons = lessons.Where(l => (!(
+            //(l.TeacherForDiscipline.Discipline.StudentGroup.Name.StartsWith("12 ")) ||
+            //(l.TeacherForDiscipline.Discipline.StudentGroup.Name.StartsWith("13 ")) ||
+            //(l.TeacherForDiscipline.Discipline.StudentGroup.Name.StartsWith("14 ")) ||
+            //(l.TeacherForDiscipline.Discipline.StudentGroup.Name.StartsWith("15 ")) ||
+            //(l.TeacherForDiscipline.Discipline.StudentGroup.Name.StartsWith("16 ")) ||
+            //(l.TeacherForDiscipline.Discipline.StudentGroup.Name.StartsWith("17 ")) ||
+            //(l.TeacherForDiscipline.Discipline.StudentGroup.Name.StartsWith("18 ")) ||
+            //(l.TeacherForDiscipline.Discipline.StudentGroup.Name.StartsWith("19 ")) ||
+            //(l.TeacherForDiscipline.Discipline.StudentGroup.Name.StartsWith("20 ")) ||
+            //(l.TeacherForDiscipline.Discipline.StudentGroup.Name.StartsWith("21 "))
+            //))
+            //||
+            //(l.Calendar.Date < new DateTime(2018, 12, 17)))
+            //.ToList();
+
             partsCount = Math.Ceiling((double)lessons.Count / splitCount);
 
             for (int i = 0; i < partsCount; i++)

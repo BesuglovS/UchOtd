@@ -639,72 +639,85 @@ namespace UchOtd.Schedule.Forms.DBLists
         {
             if (DisciplinesList.SelectedCells.Count > 0)
             {
-                var discView = ((List<DisciplineView>)DisciplinesList.DataSource)[DisciplinesList.SelectedCells[0].RowIndex];
-
-                var tfd = _repo.TeacherForDisciplines
-                    .GetFirstFiltredTeacherForDiscipline(tefd =>
-                        tefd.Discipline.DisciplineId == discView.DisciplineId);
-
-                if (tfd == null)
+                var rowIndexSet = new HashSet<int>();
+                for (int i = 0; i < DisciplinesList.SelectedCells.Count; i++)
                 {
-                    MessageBox.Show("Дисциплина не назначена преподавателю.");
-                    return;
+                    rowIndexSet.Add(DisciplinesList.SelectedCells[i].RowIndex);
                 }
 
-                var lessonIds = _repo
-                    .Lessons
-                    .GetFiltredLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
-                    .Select(l => l.LessonId);
+                var rowIndexesList = rowIndexSet.ToList().OrderBy(a => a).ToList();
 
-                var logEventIds = _repo
-                    .LessonLogEvents
-                    .GetFiltredLessonLogEvents(lle =>
-                    ((lle.OldLesson != null) && (lessonIds.Contains(lle.OldLesson.LessonId))) ||
-                    ((lle.NewLesson != null) && (lessonIds.Contains(lle.NewLesson.LessonId))))
-                    .Select(lle => lle.LessonLogEventId);
-
-                foreach (var lleId in logEventIds)
+                for (int j = 0; j < rowIndexesList.Count; j++)
                 {
-                    _repo.LessonLogEvents.RemoveLessonLogEvent(lleId);
-                }
+                    var rowIndex = rowIndexesList[j];
 
-                foreach (var lessonId in lessonIds)
-                {
-                    var noteIds = _repo.ScheduleNotes.GetFiltredScheduleNotes(n => n.Lesson.LessonId == lessonId)
-                        .Select(n => n.ScheduleNoteId)
-                        .ToList();
+                    var discView = ((List<DisciplineView>)DisciplinesList.DataSource)[rowIndex];
 
-                    foreach (var noteId in noteIds)
+                    var tfd = _repo.TeacherForDisciplines
+                        .GetFirstFiltredTeacherForDiscipline(tefd =>
+                            tefd.Discipline.DisciplineId == discView.DisciplineId);
+
+                    if (tfd == null)
                     {
-                        _repo.ScheduleNotes.RemoveScheduleNote(noteId);
+                        MessageBox.Show("Дисциплина не назначена преподавателю.");
+                        return;
+                    }
+                    
+                    var lessonIds = _repo
+                        .Lessons
+                        .GetFiltredLessons(l => l.TeacherForDiscipline.TeacherForDisciplineId == tfd.TeacherForDisciplineId)
+                        .Select(l => l.LessonId);
+
+                    var logEventIds = _repo
+                        .LessonLogEvents
+                        .GetFiltredLessonLogEvents(lle =>
+                        ((lle.OldLesson != null) && (lessonIds.Contains(lle.OldLesson.LessonId))) ||
+                        ((lle.NewLesson != null) && (lessonIds.Contains(lle.NewLesson.LessonId))))
+                        .Select(lle => lle.LessonLogEventId);
+
+                    foreach (var lleId in logEventIds)
+                    {
+                        _repo.LessonLogEvents.RemoveLessonLogEvent(lleId);
                     }
 
-                    _repo.Lessons.RemoveLessonWoLog(lessonId);
+                    foreach (var lessonId in lessonIds)
+                    {
+                        var noteIds = _repo.ScheduleNotes.GetFiltredScheduleNotes(n => n.Lesson.LessonId == lessonId)
+                            .Select(n => n.ScheduleNoteId)
+                            .ToList();
+
+                        foreach (var noteId in noteIds)
+                        {
+                            _repo.ScheduleNotes.RemoveScheduleNote(noteId);
+                        }
+
+                        _repo.Lessons.RemoveLessonWoLog(lessonId);
+                    }
+
+                    _repo.TeacherForDisciplines.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
+
+                    var discNameIds =
+                        _repo.DisciplineNames.GetFiltredDisciplineNames(
+                            dn => dn.Discipline.DisciplineId == discView.DisciplineId)
+                            .Select(dn => dn.DisciplineNameId)
+                            .ToList();
+                    foreach (var discNameId in discNameIds)
+                    {
+                        _repo.DisciplineNames.RemoveDisciplineName(discNameId);
+                    }
+
+                    var discAttrIds =
+                        _repo.CustomDisciplineAttributes.GetFiltredCustomDisciplineAttributes(
+                            cda => cda.Discipline.DisciplineId == discView.DisciplineId)
+                            .Select(cda => cda.CustomDisciplineAttributeId)
+                            .ToList();
+                    foreach (var discAttrId in discAttrIds)
+                    {
+                        _repo.CustomDisciplineAttributes.RemoveCustomDisciplineAttribute(discAttrId);
+                    }
+
+                    _repo.Disciplines.RemoveDiscipline(discView.DisciplineId);
                 }
-
-                _repo.TeacherForDisciplines.RemoveTeacherForDiscipline(tfd.TeacherForDisciplineId);
-
-                var discNameIds =
-                    _repo.DisciplineNames.GetFiltredDisciplineNames(
-                        dn => dn.Discipline.DisciplineId == discView.DisciplineId)
-                        .Select(dn => dn.DisciplineNameId)
-                        .ToList();
-                foreach (var discNameId in discNameIds)
-                {
-                    _repo.DisciplineNames.RemoveDisciplineName(discNameId);
-                }
-
-                var discAttrIds =
-                    _repo.CustomDisciplineAttributes.GetFiltredCustomDisciplineAttributes(
-                        cda => cda.Discipline.DisciplineId == discView.DisciplineId)
-                        .Select(cda => cda.CustomDisciplineAttributeId)
-                        .ToList();
-                foreach (var discAttrId in discAttrIds)
-                {
-                    _repo.CustomDisciplineAttributes.RemoveCustomDisciplineAttribute(discAttrId);
-                }
-
-                _repo.Disciplines.RemoveDiscipline(discView.DisciplineId);
 
                 RefreshView();
             }

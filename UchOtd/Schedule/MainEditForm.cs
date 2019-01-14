@@ -98,7 +98,7 @@ namespace UchOtd.Schedule
             Auditorium tmp = auds[0];
             auds[0] = auds[emptyIndex];
             auds[emptyIndex] = tmp;
-            
+
             editSchedule.DropDownItems.Clear();
 
             foreach (var aud in auds)
@@ -200,6 +200,7 @@ namespace UchOtd.Schedule
                 //"Schedule16172",
                 //"Schedule17181",
                 //"Schedule17182",
+                "Schedule18191A1018",
                 "S16171A0718",
                 "S16172A0718",
                 "S17181A0718",
@@ -319,7 +320,7 @@ namespace UchOtd.Schedule
                 showGroupLessons.Text = "";
                 showGroupLessons.Image = Resources.Loading;
 
-                var groupId = (int) groupList.SelectedValue;
+                var groupId = (int)groupList.SelectedValue;
                 var showProposed = showProposedLessons.Checked;
                 var isWeekFilered = weekFiltered.Checked;
                 List<int> weekFilterList = null;
@@ -429,7 +430,7 @@ namespace UchOtd.Schedule
                         var gtv = result.FindIndex(grtv => grtv.Time == time);
                         if (gtv == -1)
                         {
-                            result.Add(new GroupTableView {Time = time, MonEvents = gv.Events});
+                            result.Add(new GroupTableView { Time = time, MonEvents = gv.Events });
                         }
                         else
                         {
@@ -440,7 +441,7 @@ namespace UchOtd.Schedule
                         gtv = result.FindIndex(grtv => grtv.Time == time);
                         if (gtv == -1)
                         {
-                            result.Add(new GroupTableView {Time = time, TueEvents = gv.Events});
+                            result.Add(new GroupTableView { Time = time, TueEvents = gv.Events });
                         }
                         else
                         {
@@ -451,7 +452,7 @@ namespace UchOtd.Schedule
                         gtv = result.FindIndex(grtv => grtv.Time == time);
                         if (gtv == -1)
                         {
-                            result.Add(new GroupTableView {Time = time, WenEvents = gv.Events});
+                            result.Add(new GroupTableView { Time = time, WenEvents = gv.Events });
                         }
                         else
                         {
@@ -462,7 +463,7 @@ namespace UchOtd.Schedule
                         gtv = result.FindIndex(grtv => grtv.Time == time);
                         if (gtv == -1)
                         {
-                            result.Add(new GroupTableView {Time = time, ThuEvents = gv.Events});
+                            result.Add(new GroupTableView { Time = time, ThuEvents = gv.Events });
                         }
                         else
                         {
@@ -473,7 +474,7 @@ namespace UchOtd.Schedule
                         gtv = result.FindIndex(grtv => grtv.Time == time);
                         if (gtv == -1)
                         {
-                            result.Add(new GroupTableView {Time = time, FriEvents = gv.Events});
+                            result.Add(new GroupTableView { Time = time, FriEvents = gv.Events });
                         }
                         else
                         {
@@ -484,7 +485,7 @@ namespace UchOtd.Schedule
                         gtv = result.FindIndex(grtv => grtv.Time == time);
                         if (gtv == -1)
                         {
-                            result.Add(new GroupTableView {Time = time, SatEvents = gv.Events});
+                            result.Add(new GroupTableView { Time = time, SatEvents = gv.Events });
                         }
                         else
                         {
@@ -495,7 +496,7 @@ namespace UchOtd.Schedule
                         gtv = result.FindIndex(grtv => grtv.Time == time);
                         if (gtv == -1)
                         {
-                            result.Add(new GroupTableView {Time = time, SunEvents = gv.Events});
+                            result.Add(new GroupTableView { Time = time, SunEvents = gv.Events });
                         }
                         else
                         {
@@ -569,7 +570,7 @@ namespace UchOtd.Schedule
 
                 }
 
-                result.Add(new GroupView {Datetime = dt.Key, Events = eventString});
+                result.Add(new GroupView { Datetime = dt.Key, Events = eventString });
             }
 
             return result;
@@ -649,8 +650,8 @@ namespace UchOtd.Schedule
                             tfd.Discipline.StudentGroup.Name + '\t' +
                             tfd.Teacher.FIO + '\t' +
                             Repo.CommonFunctions.GetTfdHours(tfd.TeacherForDisciplineId, false, false, -1)
-                            /*tfd.Discipline.AuditoriumHours + '\t' +
-                            Constants.Constants.Attestation[tfd.Discipline.Attestation]*/
+                        /*tfd.Discipline.AuditoriumHours + '\t' +
+                        Constants.Constants.Attestation[tfd.Discipline.Attestation]*/
                         );
                     }
                 }
@@ -1185,10 +1186,10 @@ namespace UchOtd.Schedule
 
         private void MainViewCellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            var source = (List<GroupTableView>) ScheduleView.DataSource;
+            var source = (List<GroupTableView>)ScheduleView.DataSource;
             var time = source[e.RowIndex].Time;
 
-            var editLessonForm = new EditLesson(Repo, (int) groupList.SelectedValue, e.ColumnIndex, time,
+            var editLessonForm = new EditLesson(Repo, (int)groupList.SelectedValue, e.ColumnIndex, time,
                 showProposedLessons.Checked);
             editLessonForm.ShowDialog();
         }
@@ -1334,7 +1335,7 @@ namespace UchOtd.Schedule
             var faculties = Repo.Faculties.GetAllFaculties();
             for (int i = 0; i < faculties.Count; i++)
             {
-                var faculty = faculties[i];                
+                var faculty = faculties[i];
 
                 if (faculty.Name.Contains("-е классы"))
                 {
@@ -1358,9 +1359,9 @@ namespace UchOtd.Schedule
                         var discipline = groupDisciplines[k];
 
                         ShowStatus(
-                            faculty.Name + " " + (i+1) + " / " + faculties.Count + " " + 
-                            group.Name + " " + (j+1) + " / " + groups.Count + " " + 
-                            discipline.Name + " " + (k+1) + " / " + groupDisciplines.Count);
+                            faculty.Name + " " + (i + 1) + " / " + faculties.Count + " " +
+                            group.Name + " " + (j + 1) + " / " + groups.Count + " " +
+                            discipline.Name + " " + (k + 1) + " / " + groupDisciplines.Count);
 
                         if ((discipline.Name.ToLower().Contains("физическая культ")) ||
                             (discipline.Name.ToLower().Contains("физической культ")))
@@ -1393,7 +1394,7 @@ namespace UchOtd.Schedule
                     }
                 }
             }
-            
+
 
             var diff = allDiscLessonCount - activeLessonsCount;
             String message = activeLessonsCount + " (" +
@@ -1417,7 +1418,7 @@ namespace UchOtd.Schedule
         {
             cToken.ThrowIfCancellationRequested();
 
-            var allDiscLessonCount = (int) Math.Ceiling((double) Repo.Disciplines.GetAllDisciplines()
+            var allDiscLessonCount = (int)Math.Ceiling((double)Repo.Disciplines.GetAllDisciplines()
                                                             .Where(
                                                                 d =>
                                                                     (!d.Name.ToLower().Contains("физическая культ")) &&
@@ -1429,10 +1430,10 @@ namespace UchOtd.Schedule
 
             var diff = allDiscLessonCount - activeLessonsCount;
             String message = activeLessonsCount + " (" +
-                             $"{(double) activeLessonsCount * 100 / allDiscLessonCount:0.00}%" + ") / " +
+                             $"{(double)activeLessonsCount * 100 / allDiscLessonCount:0.00}%" + ") / " +
                              allDiscLessonCount
                              + " =>  " + diff + " (" +
-                             $"{(double) diff * 100 / allDiscLessonCount:0.00}%" + ")";
+                             $"{(double)diff * 100 / allDiscLessonCount:0.00}%" + ")";
 
             cToken.ThrowIfCancellationRequested();
 
@@ -1453,8 +1454,8 @@ namespace UchOtd.Schedule
             cToken.ThrowIfCancellationRequested();
 
             message += Environment.NewLine + touchedDiscs + " (" +
-                       $"{(double) touchedDiscs * 100 / discCount:0.00}%" + ") / " + discCount
-                       + " =>  " + diff2 + " (" + $"{(double) diff2 * 100 / discCount:0.00}%" + ")";
+                       $"{(double)touchedDiscs * 100 / discCount:0.00}%" + ") / " + discCount
+                       + " =>  " + diff2 + " (" + $"{(double)diff2 * 100 / discCount:0.00}%" + ")";
 
             MessageBox.Show(message, "В парах / В дисциплинах");
         }
@@ -1624,7 +1625,7 @@ namespace UchOtd.Schedule
                         }
                     }
 
-                    Invoke((MethodInvoker) delegate
+                    Invoke((MethodInvoker)delegate
                     {
                         status.Text = (index + 1) + " / " + evts.Count;
                         // runs on UI thread
@@ -1636,7 +1637,7 @@ namespace UchOtd.Schedule
                     .ThenBy(df => df.Item2)
                     .Aggregate("", (current, dowFac) =>
                         current + (Repo.Faculties.GetFaculty(dowFac.Item1).Letter + " - " +
-                                   Constants.DowLocal[Constants.DowRemap[(int) dowFac.Item2]] + Environment.NewLine));
+                                   Constants.DowLocal[Constants.DowRemap[(int)dowFac.Item2]] + Environment.NewLine));
 
                 MessageBox.Show(messageString, "Изменения на сегодня");
             });
@@ -1742,7 +1743,7 @@ namespace UchOtd.Schedule
             disciplineForm.Top = 0;
             disciplineForm.Left = width / 2;
             disciplineForm.Width = width / 2;
-            disciplineForm.Height = (int) Math.Round(height * 0.42);
+            disciplineForm.Height = (int)Math.Round(height * 0.42);
         }
 
         private async void CreatePDF_Click(object sender, EventArgs e)
@@ -1754,7 +1755,7 @@ namespace UchOtd.Schedule
                 CreatePDF.Text = "";
                 CreatePDF.Image = Resources.Loading;
 
-                var facultyId = (int) FacultyList.SelectedValue;
+                var facultyId = (int)FacultyList.SelectedValue;
                 var facultyName = Repo.Faculties.GetFaculty(facultyId).Name;
                 var ruDow = DOWList.SelectedIndex + 1;
 
@@ -1902,7 +1903,7 @@ namespace UchOtd.Schedule
             if (WordOneFaculty.Checked)
             {
                 WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, 90,
-                    (int) WordFacultyFilter.SelectedValue, 6, SchoolHeader, OnlyFutureDatesExportInWord.Checked);
+                    (int)WordFacultyFilter.SelectedValue, 6, SchoolHeader, OnlyFutureDatesExportInWord.Checked);
             }
             else
             {
@@ -1917,7 +1918,7 @@ namespace UchOtd.Schedule
             if (WordOneFaculty.Checked)
             {
                 WordExport.ExportWholeSchedule(Repo, "Расписание.docx", false, false, cb90.Checked ? 90 : 80,
-                    (int) WordFacultyFilter.SelectedValue, 6, SchoolHeader, OnlyFutureDatesExportInWord.Checked);
+                    (int)WordFacultyFilter.SelectedValue, 6, SchoolHeader, OnlyFutureDatesExportInWord.Checked);
             }
             else
             {
@@ -1970,7 +1971,7 @@ namespace UchOtd.Schedule
 
             foreach (var lesson in activeLessons)
             {
-                var lessonDow = ((int) lesson.Calendar.Date.DayOfWeek == 0) ? 7 : (int) lesson.Calendar.Date.DayOfWeek;
+                var lessonDow = ((int)lesson.Calendar.Date.DayOfWeek == 0) ? 7 : (int)lesson.Calendar.Date.DayOfWeek;
 
                 var lessonTime = lesson.Ring.Time.ToString("H:mm");
 
@@ -2012,7 +2013,7 @@ namespace UchOtd.Schedule
 
                 var repo = Repo;
                 var length80Or90 = cb90.Checked ? 90 : 80;
-                var facultyId = (int) FacultyList.SelectedValue;
+                var facultyId = (int)FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
                 var wordWeekFiltered = wordExportWeekFiltered.Checked;
                 List<int> weekFilterList = null;
@@ -2049,7 +2050,7 @@ namespace UchOtd.Schedule
 
         private void TwoDaysWord_Click(object sender, EventArgs e)
         {
-            var facultyId = (int) FacultyList.SelectedValue;
+            var facultyId = (int)FacultyList.SelectedValue;
             var ruDow = DOWList.SelectedIndex + 1;
             List<int> weekFilterList = null;
             if (wordExportWeekFiltered.Checked)
@@ -2064,7 +2065,7 @@ namespace UchOtd.Schedule
 
         private void FacultyTwoDaysInList_Click(object sender, EventArgs e)
         {
-            var facultyId = (int) WordFacultyFilter.SelectedValue;
+            var facultyId = (int)WordFacultyFilter.SelectedValue;
             List<int> weekFilterList = null;
             if (wordExportWeekFiltered.Checked)
             {
@@ -2174,8 +2175,11 @@ namespace UchOtd.Schedule
 
         private async void BIGREDBUTTON_Click(object sender, EventArgs e)
         {
+            await Task.Run(() => {               
+                
+            });
+
             MessageBox.Show("Пусто тут, барин!)");
-            await Task.Run(() => {  }); 
         }
 
         private void RemoveStudentDuplicates()
@@ -2324,10 +2328,10 @@ namespace UchOtd.Schedule
                         }
                     }
 
-                    Invoke((MethodInvoker) delegate
+                    Invoke((MethodInvoker)delegate
                     {
                         status.Text = (i + 1) + " / " + lessons.Count + " = " +
-                                      (((double) i + 1) * 100 / lessons.Count).ToString("0.00") + "%";
+                                      (((double)i + 1) * 100 / lessons.Count).ToString("0.00") + "%";
                         // runs on UI thread
                     });
                 }
@@ -2511,7 +2515,7 @@ namespace UchOtd.Schedule
                                                " Disc " + (discCounter + 1).ToString() + " / " + auds.Keys.Count);
 
                         var discNameVariations =
-                            new List<string> {discName, discName.Replace("е", "ё"), discName.Replace("ё", "е")};
+                            new List<string> { discName, discName.Replace("е", "ё"), discName.Replace("ё", "е") };
 
                         var discs = disciplinesList[grIndex].Where(d => discNameVariations.Contains(d.Name)).ToList();
 
@@ -2748,7 +2752,7 @@ namespace UchOtd.Schedule
             {
                 foreach (KeyValuePair<string, List<string>> disciplineAuds in audsList[j])
                 {
-                    if (new List<string> {discName, discName.Replace("е", "ё"), discName.Replace("ё", "е")}
+                    if (new List<string> { discName, discName.Replace("е", "ё"), discName.Replace("ё", "е") }
                         .Contains(disciplineAuds.Key))
                     {
                         audList = disciplineAuds.Value;
@@ -3048,7 +3052,7 @@ namespace UchOtd.Schedule
                 Repo.Lessons.GetFiltredLessons(l => l.Auditorium.Building.BuildingId == buidingId && l.State == 1);
             var times = lessonsBuilding2.Select(l => l.Ring.Time).OrderBy(t => t.TimeOfDay).Distinct().ToList();
             var group = lessonsBuilding2
-                .GroupBy(l => (int) l.Calendar.Date.DayOfWeek)
+                .GroupBy(l => (int)l.Calendar.Date.DayOfWeek)
                 .ToDictionary(
                     l => l.Key,
                     l2 => l2.GroupBy(l3 => l3.Ring.Time)
@@ -3153,7 +3157,7 @@ namespace UchOtd.Schedule
                 WordSchool.Text = "";
                 WordSchool.Image = Resources.Loading;
 
-                var facultyId = (int) FacultyList.SelectedValue;
+                var facultyId = (int)FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
                 var wordWeekFiltered = wordExportWeekFiltered.Checked;
                 List<int> weekFilterList = null;
@@ -3193,9 +3197,9 @@ namespace UchOtd.Schedule
                 WordSchool2.Text = "";
                 WordSchool2.Image = Resources.Loading;
 
-                var facultyId = (int) FacultyList.SelectedValue;
+                var facultyId = (int)FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
-                
+
                 var wordWeekFiltered = wordExportWeekFiltered.Checked;
                 List<int> weekFilterList = null;
                 if (wordWeekFiltered)
@@ -3265,7 +3269,7 @@ namespace UchOtd.Schedule
                 OnePageGroupScheduleWordExport.Text = "";
                 OnePageGroupScheduleWordExport.Image = Resources.Loading;
 
-                var groupId = (int) groupList.SelectedValue;
+                var groupId = (int)groupList.SelectedValue;
 
                 try
                 {
@@ -3340,9 +3344,9 @@ namespace UchOtd.Schedule
                 startSchoolWordExport.Text = "";
                 startSchoolWordExport.Image = Resources.Loading;
 
-                var facultyId = (int) FacultyList.SelectedValue;
+                var facultyId = (int)FacultyList.SelectedValue;
                 var ruDow = DOWList.SelectedIndex + 1;
-                
+
                 var wordWeekFiltered = wordExportWeekFiltered.Checked;
                 List<int> weekFilterList = null;
                 if (wordWeekFiltered)
@@ -3522,7 +3526,7 @@ namespace UchOtd.Schedule
 
         private async void удалитьРасписаниеТекущейГруппыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var groupId = (int) groupList.SelectedValue;
+            var groupId = (int)groupList.SelectedValue;
 
             await Task.Run(() => DeleteGroupLessons(groupId));
 
@@ -3531,7 +3535,7 @@ namespace UchOtd.Schedule
 
         private void DeleteGroupLessons(int groupId)
         {
-            var groupIds = new List<int> {groupId};
+            var groupIds = new List<int> { groupId };
             var groupName = Repo.StudentGroups.GetStudentGroup(groupId);
 
             var gIdOne = Repo.StudentGroups.GetFirstFiltredStudentGroups(sg => sg.Name == groupName + "1");
@@ -3566,7 +3570,7 @@ namespace UchOtd.Schedule
         {
             await Task.Run(() =>
             {
-                var allDiscLessonCount = (int) Math.Ceiling((double) Repo.Disciplines.GetAllDisciplines()
+                var allDiscLessonCount = (int)Math.Ceiling((double)Repo.Disciplines.GetAllDisciplines()
                                                                 .Where(
                                                                     d => (d.Name != "Физическая культура") &&
                                                                          (d.Name !=
@@ -3614,7 +3618,7 @@ namespace UchOtd.Schedule
                 var keys = percentageByDateTime.Keys.OrderBy(d => d).ToList();
                 for (int i = 0; i < keys.Count; i++)
                 {
-                    double percent = (double) percentageByDateTime[keys[i]].Item1 / allDiscLessonCount;
+                    double percent = (double)percentageByDateTime[keys[i]].Item1 / allDiscLessonCount;
                     total += percent;
                     percentageByDateTime[keys[i]] = new Tuple<int, double>(percentageByDateTime[keys[i]].Item1, total);
 
@@ -3983,7 +3987,7 @@ namespace UchOtd.Schedule
         {
             try
             {
-                var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA", "S17181AA"};
+                var dbNames = new List<string> { "S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA", "S17181AA" };
 
                 var restrictions = new Dictionary<String, List<String>>
                 {
@@ -4007,7 +4011,7 @@ namespace UchOtd.Schedule
         {
             try
             {
-                var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA"};
+                var dbNames = new List<string> { "S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA" };
 
                 var restrictions = new Dictionary<String, List<String>>
                 {
@@ -4031,7 +4035,7 @@ namespace UchOtd.Schedule
         {
             try
             {
-                var dbNames = new List<string> {"S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA", "S17181AA" };
+                var dbNames = new List<string> { "S14151AA", "S14152AA", "S15161AA", "S15162AA", "S16171AA", "S17181AA" };
 
                 var restrictions = new Dictionary<String, List<String>>
                 {
@@ -4403,7 +4407,7 @@ namespace UchOtd.Schedule
                         }
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, restrictionsItem);
+                            false, null, false, _cToken, restrictionsItem, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4475,7 +4479,7 @@ namespace UchOtd.Schedule
                         }
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, restrictionsItem);
+                            false, null, false, _cToken, restrictionsItem, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4548,7 +4552,7 @@ namespace UchOtd.Schedule
                         }
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, restrictions);
+                            false, null, false, _cToken, restrictions, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4621,7 +4625,7 @@ namespace UchOtd.Schedule
                         }
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, restrictions);
+                            false, null, false, _cToken, restrictions, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -4700,7 +4704,7 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия А " + dbNames[semIndex] +
                                        ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyMath.FacultyId}, filename,
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyMath.FacultyId }, filename,
                             true, true, false, groupsRestriction);
 
                         scheduleFilenames.Add(filename);
@@ -4771,7 +4775,7 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия БМ " + dbNames[semIndex] +
                                        ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyPhil.FacultyId}, filename,
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyPhil.FacultyId }, filename,
                             true, true, false, groupsRestriction);
 
                         scheduleFilenames.Add(filename);
@@ -4841,7 +4845,7 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия ГМ " + dbNames[semIndex] +
                                        ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyEconM.FacultyId}, filename,
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyEconM.FacultyId }, filename,
                             true, true, false, groupsRestriction);
 
                         scheduleFilenames.Add(filename);
@@ -4912,7 +4916,7 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия ДМ " + dbNames[semIndex] +
                                        ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyLawM.FacultyId}, filename,
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyLawM.FacultyId }, filename,
                             true, true, false, groupsRestriction);
 
                         scheduleFilenames.Add(filename);
@@ -5175,7 +5179,7 @@ namespace UchOtd.Schedule
                         //}
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, null);
+                            false, null, false, _cToken, null, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -5225,7 +5229,7 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия И " + dbNames[semIndex] +
                                        ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyArt.FacultyId}, filename,
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyArt.FacultyId }, filename,
                             true, true, false, null);
 
                         scheduleFilenames.Add(filename);
@@ -5366,7 +5370,7 @@ namespace UchOtd.Schedule
                         //}
 
                         WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                            false, null, false, _cToken, null);
+                            false, null, false, _cToken, null, false);
 
                         scheduleFilenames.Add(filename);
                     }
@@ -5413,7 +5417,7 @@ namespace UchOtd.Schedule
                         var filename = @"D:\GitHub\Export\По семестрам\" + "Export АА Сессия Горюшкин " +
                                        dbNames[semIndex] + ".docx";
 
-                        WordExport.ExportCustomSessionSchedule(repo, new List<int> {facultyArt.FacultyId}, filename,
+                        WordExport.ExportCustomSessionSchedule(repo, new List<int> { facultyArt.FacultyId }, filename,
                             true, true, false, null);
 
                         scheduleFilenames.Add(filename);
@@ -5901,7 +5905,7 @@ namespace UchOtd.Schedule
                                                discName);
 
                         var discNameVariations =
-                            new List<string> {discName, discName.Replace("е", "ё"), discName.Replace("ё", "е")};
+                            new List<string> { discName, discName.Replace("е", "ё"), discName.Replace("ё", "е") };
 
                         var discs = disciplinesList[grIndex].Where(d => discNameVariations.Contains(d.Name)).ToList();
 
@@ -6237,9 +6241,9 @@ namespace UchOtd.Schedule
                 if (facLawM != null) fIds.Add(facLawM.FacultyId);
                 if (facArt != null) fIds.Add(facArt.FacultyId);
 
-                DateTime semesterMin = new DateTime(2100, 1, 1), 
-                    semesterMax = new DateTime(1900, 1, 1), 
-                    sessionMin = new DateTime(2100, 1, 1), 
+                DateTime semesterMin = new DateTime(2100, 1, 1),
+                    semesterMax = new DateTime(1900, 1, 1),
+                    sessionMin = new DateTime(2100, 1, 1),
                     sessionMax = new DateTime(1900, 1, 1);
 
                 for (int i = 0; i < fIds.Count; i++)
@@ -6416,7 +6420,7 @@ namespace UchOtd.Schedule
                         .Distinct()
                         .ToList();
                 var HaveSchool = false;
-                var small = new List<string> {"1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 ", "10 ", "11 "};
+                var small = new List<string> { "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 ", "10 ", "11 " };
                 for (int j = 0; j < groupNames.Count; j++)
                 {
                     for (int k = 0; k < small.Count; k++)
@@ -6434,16 +6438,16 @@ namespace UchOtd.Schedule
                     }
                 }
 
-                if (!HaveSchool)
-                {
-                    Invoke((MethodInvoker)delegate
-                    {
-                        status.Text = (i + 1) + " / " + teachers.Count + " - " + teachers[i].FIO + " пропуск";
-                        // runs on UI thread
-                    });
+                //if (!HaveSchool)
+                //{
+                //    Invoke((MethodInvoker)delegate
+                //    {
+                //        status.Text = (i + 1) + " / " + teachers.Count + " - " + teachers[i].FIO + " пропуск";
+                //        // runs on UI thread
+                //    });
 
-                    continue;
-                }
+                //    continue;
+                //}
 
                 List<Lesson> teacherLessons;
 
@@ -6474,25 +6478,19 @@ namespace UchOtd.Schedule
                             continue;
                         }
 
-                        var ChapGroups = new List<string> {"1"};
-                        var Groups40 = new List<string> { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" };
 
+                        var Groups40 = new List<string> { "1", "2", "3", "4", "5", "6", "7" };
+
+                        var l1GroupStart = lesson1.TeacherForDiscipline.Discipline.StudentGroup.Name.Split(' ')[0];
                         var lesson1Length = 80;
-                        if (ChapGroups.Contains(lesson1.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
-                        {
-                            lesson1Length = 30;
-                        }
-                        if (Groups40.Contains(lesson1.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
+                        if (Groups40.Contains(l1GroupStart))
                         {
                             lesson1Length = 40;
                         }
 
+                        var l2GroupStart = lesson2.TeacherForDiscipline.Discipline.StudentGroup.Name.Split(' ')[0];
                         var lesson2Length = 80;
-                        if (ChapGroups.Contains(lesson2.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
-                        {
-                            lesson2Length = 30;
-                        }
-                        if (Groups40.Contains(lesson2.TeacherForDiscipline.Discipline.StudentGroup.Name[0].ToString()))
+                        if (Groups40.Contains(l2GroupStart))
                         {
                             lesson2Length = 40;
                         }
@@ -6588,10 +6586,10 @@ namespace UchOtd.Schedule
                     //MessageBox.Show(theCol.ToString() + " " + theRow.ToString());
                     dropDow = dow;
 
-                    //var groupName = groupList.Text;
-                    //var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
+                    var groupName = groupList.Text;
+                    var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
                     // var auds = Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList();
-                    var building = Repo.Buildings.GetBuilding(1);
+                    //var building = Repo.Buildings.GetBuilding(1);
                     List<int> weekFilterList = null;
                     if (getWeekFilter(WeekFilter, out weekFilterList)) return;
 
@@ -6631,7 +6629,7 @@ namespace UchOtd.Schedule
                     //    var timeString = ds[theRow].Time;
                     //    ringTo = RingFromTimeString(timeString);
                     //}
-                    
+
                     //if (getWeekFilter(WeekFilter, out weekFilterList)) return;
 
                     //if ((dowFrom == dowTo) && (ringIdFrom == ringTo.RingId))
@@ -6693,7 +6691,7 @@ namespace UchOtd.Schedule
                 var cFrom = cf.GetCalendarFromDowAndWeek(dowFrom, week);
                 var cTo = cf.GetCalendarFromDowAndWeek(dowTo, week);
 
-                var groupIds = StudentGroupIdsFromGroupId(((StudentGroup) groupList.SelectedItem).StudentGroupId);
+                var groupIds = StudentGroupIdsFromGroupId(((StudentGroup)groupList.SelectedItem).StudentGroupId);
 
                 var lessons = Repo.Lessons.GetFiltredLessons(l => l.State == 1 &&
                                                                   l.Calendar.CalendarId == cFrom.CalendarId &&
@@ -6800,7 +6798,7 @@ namespace UchOtd.Schedule
         {
             if (e.Button == MouseButtons.Left && e.Clicks == 1)
             {
-                var source = (List<GroupTableView>) ScheduleView.DataSource;
+                var source = (List<GroupTableView>)ScheduleView.DataSource;
                 var timeString = source[e.RowIndex].Time;
                 var ring = RingFromTimeString(timeString);
                 var ringId = -1;
@@ -6861,14 +6859,14 @@ namespace UchOtd.Schedule
                             if (lessons[j].Auditorium.Building.BuildingId !=
                                 lessons[j - 1].Auditorium.Building.BuildingId)
                             {
-                                var b1 = Repo.Buildings.Get(lessons[j-1].Auditorium.Building.BuildingId);
+                                var b1 = Repo.Buildings.Get(lessons[j - 1].Auditorium.Building.BuildingId);
                                 var b2 = Repo.Buildings.Get(lessons[j].Auditorium.Building.BuildingId);
 
                                 var t1 = lessons[j - 1].Ring.Time.ToString("HH:mm");
                                 var t2 = lessons[j].Ring.Time.ToString("HH:mm");
 
-                                TextFileUtilities.WriteString("TeacherTransitions.txt", 
-                                    teacher.FIO + "\t" + t1 + "\t" + b1.Name + "\t" + t2 + "\t" + b2.Name );
+                                TextFileUtilities.WriteString("TeacherTransitions.txt",
+                                    teacher.FIO + "\t" + t1 + "\t" + b1.Name + "\t" + t2 + "\t" + b2.Name);
                             }
                         }
                     }
@@ -6891,7 +6889,7 @@ namespace UchOtd.Schedule
         private void ElevenTwelveWeek_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "3-4";
+            WeekFilter.Text = "11-12";
         }
 
         private async void неточности811ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6946,15 +6944,15 @@ namespace UchOtd.Schedule
                         }
 
                         var hours1213 = Repo.CommonFunctions.GetTfdHours(tefd.TeacherForDisciplineId, false, true,
-                            new List<int> {12, 13});
+                            new List<int> { 12, 13 });
 
                         if (discipline.AuditoriumHoursPerWeek * 2 != hours1213)
                         {
-                            TextFileUtilities.WriteString("Hours-8-11.txt", 
-                                group.Name + "\t" + 
-                                tefd.Teacher.FIO + "\t" + 
-                                tefd.Discipline.Name + "\t" + 
-                                tefd.Discipline.AuditoriumHoursPerWeek + "\t" + 
+                            TextFileUtilities.WriteString("Hours-8-11.txt",
+                                group.Name + "\t" +
+                                tefd.Teacher.FIO + "\t" +
+                                tefd.Discipline.Name + "\t" +
+                                tefd.Discipline.AuditoriumHoursPerWeek + "\t" +
                                 hours1213);
                         }
                     }
@@ -6987,13 +6985,13 @@ namespace UchOtd.Schedule
         private void week16_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "3";
+            WeekFilter.Text = "11";
         }
 
         private void week17_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "4";
+            WeekFilter.Text = "12";
         }
 
         private async void BitrixScheduleExport_Click(object sender, EventArgs e)
@@ -7024,12 +7022,12 @@ namespace UchOtd.Schedule
 
             var facultyDowIds = new Dictionary<int, List<int>>();
 
-            for (int i = 0; i < faculties.Count; i++)            
+            for (int i = 0; i < faculties.Count; i++)
             {
                 var faculty = faculties[i];
 
                 facultyDowIds.Add(faculty.FacultyId, new List<int> { 1, 2, 3, 4, 5, 6 });
-                
+
             }
 
             var fileName = BasePath + "Расписание (17-18-1).docx";
@@ -7040,7 +7038,7 @@ namespace UchOtd.Schedule
                 _cToken = _tokenSource.Token;
 
                 await Task.Run(() => WordExport.ExportCustomSchedule(Repo, facultyDowIds,
-                    fileName, true, true, 90, 6, SchoolHeader, false, false, new List<int> { }, false, _cToken, null), _cToken);
+                    fileName, true, true, 90, 6, SchoolHeader, false, false, new List<int> { }, false, _cToken, null, false), _cToken);
             }
             catch (OperationCanceledException exception)
             {
@@ -7055,7 +7053,7 @@ namespace UchOtd.Schedule
 
         private void GoogleCalendarExport_Click(object sender, EventArgs e)
         {
-            Task.Run(() => { 
+            Task.Run(() => {
                 var service = GoogleCalendarService.InitService(GoogleCalendarService.NUCredentials);
 
                 //var studentGroup = Repo.StudentGroups
@@ -7124,7 +7122,7 @@ namespace UchOtd.Schedule
         private void restoreA0718OriginalDbsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Task.Run(() => {
-                var dbNames = new Dictionary<string, string> { 
+                var dbNames = new Dictionary<string, string> {
                     { "S16171A0718", "Schedule16171"},
                     { "S16172A0718", "Schedule16172"},
                     { "S17181A0718", "Schedule17181"},
@@ -7205,7 +7203,7 @@ namespace UchOtd.Schedule
                     "S17181A0718",
                     "S17182A0718"
                 };
-                
+
                 await Task.Run(() =>
                 {
                     List<string> facultyNames = new List<string>
@@ -7253,7 +7251,7 @@ namespace UchOtd.Schedule
                                                ".docx";
 
                                 WordExport.ExportCustomSchedule(repo, choice, filename, true, true, 90, 6, false, false,
-                                    false, null, false, _cToken, null);
+                                    false, null, false, _cToken, null, false);
 
                                 scheduleFilenames.Add(filename);
                             }
@@ -7282,7 +7280,7 @@ namespace UchOtd.Schedule
                     "S17181A0718",
                     "S17182A0718"
                 };
-                
+
 
                 await Task.Run(() =>
                 {
@@ -7329,7 +7327,7 @@ namespace UchOtd.Schedule
                                                dbNames[semIndex] +
                                                ".docx";
 
-                                WordExport.ExportCustomSessionSchedule(repo, new List<int> {faculty.FacultyId},
+                                WordExport.ExportCustomSessionSchedule(repo, new List<int> { faculty.FacultyId },
                                     filename,
                                     true, true, false, groupsRestriction);
 
@@ -7357,7 +7355,7 @@ namespace UchOtd.Schedule
                 "S17181A0718",
                 "S17182A0718"
             };
-            
+
             await Task.Run(() =>
             {
                 var facultyNames = new Dictionary<string, string>()
@@ -7431,7 +7429,7 @@ namespace UchOtd.Schedule
                                        "; User ID=sa;Password=ghjuhfvvf; multipleactiveresultsets=True";
 
                 var repo = new ScheduleRepository(connectionString);
-                
+
                 var faculty = repo.Faculties.GetFirstFiltredFaculty(f => f.Name.Contains(facultyName));
 
                 if (faculty == null)
@@ -7444,7 +7442,7 @@ namespace UchOtd.Schedule
                         .GetFiltredGroupsInFaculty(gif => gif.Faculty.FacultyId == faculty.FacultyId)
                         .Select(gif => gif.StudentGroup)
                         .ToList();
-                
+
                 for (int i = 0; i < groups.Count; i++)
                 {
                     var studentGroup = groups[i];
@@ -7506,7 +7504,7 @@ namespace UchOtd.Schedule
                 var disciplineName = orderedDiscipliens[i];
                 var auds = result[disciplineName].OrderBy(n => n).ToList();
                 TextFileUtilities.WriteString(filename, disciplineName);
-                var audsString = auds.Count == 0 ? "" : auds.Aggregate((x,y) => x + "@" + y);
+                var audsString = auds.Count == 0 ? "" : auds.Aggregate((x, y) => x + "@" + y);
                 TextFileUtilities.WriteString(filename, audsString);
             }
         }
@@ -7536,7 +7534,7 @@ namespace UchOtd.Schedule
                     WordExport.ExportAAAuditorium(facultyPair,
                         @"D:\Github\Export\11-06-18\",
                         @"D:\Github\Export\AuditoriumDescriptions.txt",
-                        @"D:\GitHub\Export\", 
+                        @"D:\GitHub\Export\",
                         false, true, true);
                 }
             });
@@ -7576,6 +7574,12 @@ namespace UchOtd.Schedule
         {
             var qaf = new QuickAdd(Repo);
             qaf.Show();
+        }
+
+        private void RunAuditoriumCollisionsLog_Click(object sender, EventArgs e)
+        {
+            var aclForm = new AuditoriumCollisionsLog(Repo);
+            aclForm.Show();
         }
 
         public void ShowStatus(string statusText)

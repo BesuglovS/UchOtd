@@ -177,10 +177,12 @@ namespace Schedule.Repositories.Repositories.Main
                 if (high.Contains(num))
                 {
                     var Jar = context.Buildings.FirstOrDefault(b => b.Name.Contains("Ярмарочная"));
+                    /*
                     if (groupName[groupName.Length - 1] == 'У' || groupName[groupName.Length - 1] == 'Т')
                     {
                         return Jar;
                     }
+                    */
 
                     return Mol;
                 }
