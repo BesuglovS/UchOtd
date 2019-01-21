@@ -26,14 +26,16 @@ namespace UchOtd.Forms
         private readonly ScheduleRepository _repo;
         private readonly List<int> _weeks;
         private readonly int _dow;
+        private readonly bool _shift;
 
-        public ChooseRingAndAud(ScheduleRepository repo, MainEditForm mef, Ring ring, Building building, List<int> weeks, int dow)
+        public ChooseRingAndAud(ScheduleRepository repo, MainEditForm mef, Ring ring, Building building, List<int> weeks, int dow, bool shift)
         {
             _repo = repo;
             var rings = _repo.Rings.GetAllRings();
             _rings = RingView.RingsToView(rings.OrderBy(r => r.Time.TimeOfDay).ToList());
             _weeks = weeks;
             _dow = dow;
+            _shift = shift;
             _mef = mef;
             _ring = ring;
             _building = building;
@@ -123,7 +125,7 @@ namespace UchOtd.Forms
             var aView = (AudFreeView) audsList.SelectedItem;
             var aud = _repo.Auditoriums.Get(aView.AuditoriumId);
 
-            _mef.ringsChosen(rIndexes, aud);
+            _mef.ringsChosen(rIndexes, aud, _shift);
 
             Close();
         }

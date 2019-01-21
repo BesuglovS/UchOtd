@@ -140,7 +140,7 @@ namespace UchOtd.Schedule
                 var dow = cell.ColumnIndex;
 
                 List<int> weekFilterList = null;
-                if (getWeekFilter(WeekFilter, out weekFilterList)) return;
+                if (!getWeekFilter(WeekFilter, out weekFilterList)) return;
 
                 var cf = new CommonFunctions(Repo) { ConnectionString = Repo.GetConnectionString() };
                 var calendarIds = new List<int>();
@@ -326,7 +326,7 @@ namespace UchOtd.Schedule
                 List<int> weekFilterList = null;
                 if (isWeekFilered)
                 {
-                    if (getWeekFilter(WeekFilter, out weekFilterList)) return;
+                    if (!getWeekFilter(WeekFilter, out weekFilterList)) return;
                 }
 
                 var onlyFutureDates = OnlyFutureDatesExportInWord.Checked;
@@ -365,7 +365,7 @@ namespace UchOtd.Schedule
         private bool getWeekFilter(ComboBox weekList, out List<int> weekFilterList)
         {
             var text = weekList.Text;
-            return getWeeksFromString(out weekFilterList, text);
+            return NUDS.Core.Utilities.getWeeksFromString(out weekFilterList, text);
         }
 
         private static bool getWeeksFromString(out List<int> weekFilterList, string text)
@@ -2055,7 +2055,7 @@ namespace UchOtd.Schedule
             List<int> weekFilterList = null;
             if (wordExportWeekFiltered.Checked)
             {
-                if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+                if (!getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
             }
 
             WordExport.ExportTwoSchedulePages(
@@ -2069,7 +2069,7 @@ namespace UchOtd.Schedule
             List<int> weekFilterList = null;
             if (wordExportWeekFiltered.Checked)
             {
-                if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+                if (!getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
             }
 
             WordExport.ExportTwoDaysInPageFacultySchedule(
@@ -3163,7 +3163,7 @@ namespace UchOtd.Schedule
                 List<int> weekFilterList = null;
                 if (wordWeekFiltered)
                 {
-                    if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+                    if (!getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
                 }
 
                 try
@@ -3204,7 +3204,7 @@ namespace UchOtd.Schedule
                 List<int> weekFilterList = null;
                 if (wordWeekFiltered)
                 {
-                    if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+                    if (!getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
                 }
 
                 try
@@ -3259,7 +3259,7 @@ namespace UchOtd.Schedule
             List<int> weekFilterList = null;
             if (weekFilteredF)
             {
-                if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+                if (!getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
             }
 
             if (OnePageGroupScheduleWordExport.Text == "Экспорт в Word - одна группа")
@@ -3351,7 +3351,7 @@ namespace UchOtd.Schedule
                 List<int> weekFilterList = null;
                 if (wordWeekFiltered)
                 {
-                    if (getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
+                    if (!getWeekFilter(WordExportWeekFilter, out weekFilterList)) return;
                 }
 
 
@@ -6589,11 +6589,17 @@ namespace UchOtd.Schedule
                     var groupName = groupList.Text;
                     var building = Repo.Buildings.GetBuildingFromGroupName(groupName);
                     // var auds = Repo.Auditoriums.FindAll(a => a.Building.BuildingId == building.BuildingId).ToList();
-                    //var building = Repo.Buildings.GetBuilding(1);
+                    // var building = Repo.Buildings.GetBuilding(1);
                     List<int> weekFilterList = null;
-                    if (getWeekFilter(WeekFilter, out weekFilterList)) return;
+                    if (!getWeekFilter(WeekFilter, out weekFilterList)) return;
 
-                    var rForm = new ChooseRingAndAud(Repo, this, ring, building, weekFilterList, dropDow);
+                    var shift = false;
+                    if ((e.KeyState & 4) == 4)
+                    {
+                        shift = true;
+                    }
+
+                    var rForm = new ChooseRingAndAud(Repo, this, ring, building, weekFilterList, dropDow, shift);
                     rForm.Show(this);
                     break;
                 case "lesson":
@@ -6810,7 +6816,7 @@ namespace UchOtd.Schedule
                 var eprst = 999;
 
                 List<int> weekFilterList = null;
-                if (getWeekFilter(WeekFilter, out weekFilterList)) return;
+                if (!getWeekFilter(WeekFilter, out weekFilterList)) return;
 
                 ScheduleView.DoDragDrop("lesson:" + ringId + ":" + dow, DragDropEffects.Copy);
             }
@@ -7540,10 +7546,10 @@ namespace UchOtd.Schedule
             });
         }
 
-        public void ringsChosen(List<int> ringIds, Auditorium aud)
+        public void ringsChosen(List<int> ringIds, Auditorium aud, bool _shift)
         {
             List<int> weekFilterList = null;
-            if (getWeekFilter(WeekFilter, out weekFilterList)) return;
+            if (!getWeekFilter(WeekFilter, out weekFilterList)) return;
 
             var cf = new CommonFunctions(Repo);
             cf.ConnectionString = Repo.GetConnectionString();
@@ -7560,9 +7566,28 @@ namespace UchOtd.Schedule
                 {
                     var ring = Repo.Rings.Get(ringId);
 
-                    //var newLesson = new Lesson(tefd, c, ring, Repo.Auditoriums.getFreeAud(c.CalendarId, ringId, Repo.Buildings.GetBuildingFromGroupName(groupName).BuildingId));
-                    var newLesson = new Lesson(tefd, c, ring, aud);
-                    newLesson.State = 1;
+                    var groupId = (int)groupList.SelectedValue;
+                    var groupsIds = Utilities.StudentGroupIdsFromGroupId(Repo, groupId);
+
+                    if (!_shift)
+                    {
+                        var groupCalendarLessons = Repo.Lessons.GetFiltredLessons(l =>
+                            l.State == 1 &&
+                            l.Calendar.CalendarId == c.CalendarId &&
+                            groupsIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId) &&
+                            l.Ring.RingId == ring.RingId
+                        );
+
+                        foreach (var lesson in groupCalendarLessons)
+                        {
+                            Repo.Lessons.RemoveLesson(lesson.LessonId);
+                        }
+                    }
+
+                    var newLesson = new Lesson(tefd, c, ring, aud)
+                    {
+                        State = 1
+                    };
                     Repo.Lessons.AddLesson(newLesson);
                 }
             }
