@@ -61,6 +61,11 @@ namespace UchOtd.Forms
             await Task.Run(() => { 
                 RunCheck();
             });
+
+            Invoke((MethodInvoker)delegate
+            {
+                StatusLabel.Text = "Готово";
+            });
         }
 
         private void RunCheck()
@@ -124,9 +129,9 @@ namespace UchOtd.Forms
                             var audId = alPair.Key;
                             var audLessons = alPair.Value;
 
-                            for (int k = 0; k < audLessons.Count - 2; k++)
+                            for (int k = 0; k < audLessons.Count - 1; k++)
                             {
-                                for (int l = k + 1; l < audLessons.Count - 1; l++)
+                                for (int l = k + 1; l < audLessons.Count; l++)
                                 {
                                     var l1 = audLessons[k];
                                     var l2 = audLessons[l];
@@ -160,6 +165,11 @@ namespace UchOtd.Forms
                             }
                         }
                     }
+
+                    Invoke((MethodInvoker)delegate
+                    {
+                        StatusLabel.Text = "Неделя " + week + " День недели " + dow + " готово";
+                    });
                 }
             }
 

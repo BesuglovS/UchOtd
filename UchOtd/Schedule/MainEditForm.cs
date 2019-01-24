@@ -6398,8 +6398,6 @@ namespace UchOtd.Schedule
 
         private void CheckTeacherCollisions(List<int> weekFilter)
         {
-
-
             TextFileUtilities.CreateOrEmptyFile("TeacherCollisions.txt");
 
             var teachers = Repo.Teachers.GetAllTeachers().OrderBy(t => t.FIO).ToList();
@@ -6410,7 +6408,7 @@ namespace UchOtd.Schedule
 
             for (int i = 0; i < teachers.Count; i++)
             {
-                var pairs = new List<Tuple<int, int>>();
+                var pairs = new List<Tuple<Lesson, Lesson>>();
                 var teacher = teachers[i];
 
                 var groupNames =
@@ -6466,61 +6464,76 @@ namespace UchOtd.Schedule
                                                             l.TeacherForDiscipline.Teacher.TeacherId == teacher.TeacherId);
                 }
 
-                for (int j = 0; j < teacherLessons.Count - 1; j++)
+                
+
+                var teacherLessonsByCalendarId = teacherLessons
+                    .GroupBy(l => l.Calendar.CalendarId)                    
+                    .ToDictionary(l => l.Key, l => l.ToList());
+
+                var CalendarsDict = Repo.Calendars.GetAllCalendars().ToDictionary(c => c.CalendarId, c => c.Date);
+
+                var CalendarKeys = teacherLessonsByCalendarId.Keys.ToList().OrderBy(cid => CalendarsDict[cid]).ToList();
+
+                for (int ci = 0; ci < CalendarKeys.Count; ci++)
                 {
-                    for (int k = j + 1; k < teacherLessons.Count; k++)
+                    var calendarId = CalendarKeys[ci];
+                    var teacherCalendarLessons = teacherLessonsByCalendarId[calendarId];
+
+                    for (int j = 0; j < teacherCalendarLessons.Count - 1; j++)
                     {
-                        // Use list[j] and list[k]
-                        var lesson1 = teacherLessons[j];
-                        var lesson2 = teacherLessons[k];
-                        if (lesson1.Calendar.CalendarId != lesson2.Calendar.CalendarId)
+                        for (int k = j + 1; k < teacherCalendarLessons.Count; k++)
                         {
-                            continue;
-                        }
+                            // Use list[j] and list[k]
+                            var lesson1 = teacherCalendarLessons[j];
+                            var lesson2 = teacherCalendarLessons[k];
+                            if (lesson1.Calendar.CalendarId != lesson2.Calendar.CalendarId)
+                            {
+                                continue;
+                            }
 
 
-                        var Groups40 = new List<string> { "1", "2", "3", "4", "5", "6", "7" };
+                            var Groups40 = new List<string> { "1", "2", "3", "4", "5", "6", "7" };
 
-                        var l1GroupStart = lesson1.TeacherForDiscipline.Discipline.StudentGroup.Name.Split(' ')[0];
-                        var lesson1Length = 80;
-                        if (Groups40.Contains(l1GroupStart))
-                        {
-                            lesson1Length = 40;
-                        }
+                            var l1GroupStart = lesson1.TeacherForDiscipline.Discipline.StudentGroup.Name.Split(' ')[0];
+                            var lesson1Length = 80;
+                            if (Groups40.Contains(l1GroupStart))
+                            {
+                                lesson1Length = 40;
+                            }
 
-                        var l2GroupStart = lesson2.TeacherForDiscipline.Discipline.StudentGroup.Name.Split(' ')[0];
-                        var lesson2Length = 80;
-                        if (Groups40.Contains(l2GroupStart))
-                        {
-                            lesson2Length = 40;
-                        }
+                            var l2GroupStart = lesson2.TeacherForDiscipline.Discipline.StudentGroup.Name.Split(' ')[0];
+                            var lesson2Length = 80;
+                            if (Groups40.Contains(l2GroupStart))
+                            {
+                                lesson2Length = 40;
+                            }
 
-                        var time1Start = lesson1.Ring.Time.TimeOfDay;
-                        var time1End = time1Start.Add(new TimeSpan(0, 0, lesson1Length, 0));
-                        var time2Start = lesson2.Ring.Time.TimeOfDay;
-                        var time2End = time2Start.Add(new TimeSpan(0, 0, lesson2Length, 0));
+                            var time1Start = lesson1.Ring.Time.TimeOfDay;
+                            var time1End = time1Start.Add(new TimeSpan(0, 0, lesson1Length, 0));
+                            var time2Start = lesson2.Ring.Time.TimeOfDay;
+                            var time2End = time2Start.Add(new TimeSpan(0, 0, lesson2Length, 0));
 
-                        if (time1Start < time2End && time2Start < time1End)
-                        {
-                            pairs.Add(Tuple.Create(j, k));
+                            if (time1Start < time2End && time2Start < time1End)
+                            {
+                                pairs.Add(Tuple.Create(lesson1, lesson2));
+                            }
                         }
                     }
-                }
+                }                
 
                 foreach (var pair in pairs)
                 {
                     TextFileUtilities.WriteString("TeacherCollisions.txt",
-                        DateTime.Now.ToString("dd.MM.yyyy HH:mm - ") +
-                        teacherLessons[pair.Item1].TeacherForDiscipline.Teacher.FIO + "\t" + Environment.NewLine +
-                        teacherLessons[pair.Item1].Calendar.Date.ToString("dd.MM.yyyy") + "\t" + Constants.DowLocal[(int)teacherLessons[pair.Item1].Calendar.Date.DayOfWeek] + "\t" + Environment.NewLine +
-                        teacherLessons[pair.Item1].TeacherForDiscipline.Discipline.Name + "\t" +
-                        teacherLessons[pair.Item1].TeacherForDiscipline.Discipline.StudentGroup.Name + "\t" +
-                        teacherLessons[pair.Item1].Ring.Time.ToString("HH:mm") + "\t" +
-                        teacherLessons[pair.Item1].Auditorium.Name + "\t" + Environment.NewLine +
-                        teacherLessons[pair.Item2].TeacherForDiscipline.Discipline.Name + "\t" +
-                        teacherLessons[pair.Item2].TeacherForDiscipline.Discipline.StudentGroup.Name + "\t" +
-                        teacherLessons[pair.Item2].Ring.Time.ToString("HH:mm") + "\t" +
-                        teacherLessons[pair.Item2].Auditorium.Name + Environment.NewLine);
+                        pair.Item1.TeacherForDiscipline.Teacher.FIO + "\t" + Environment.NewLine +
+                        pair.Item1.Calendar.Date.ToString("dd.MM.yyyy") + "\t" + Constants.DowLocal[(int)pair.Item1.Calendar.Date.DayOfWeek] + "\t" + Environment.NewLine +
+                        pair.Item1.TeacherForDiscipline.Discipline.Name + "\t" +
+                        pair.Item1.TeacherForDiscipline.Discipline.StudentGroup.Name + "\t" +
+                        pair.Item1.Ring.Time.ToString("HH:mm") + "\t" +
+                        pair.Item1.Auditorium.Name + "\t" + Environment.NewLine +
+                        pair.Item2.TeacherForDiscipline.Discipline.Name + "\t" +
+                        pair.Item2.TeacherForDiscipline.Discipline.StudentGroup.Name + "\t" +
+                        pair.Item2.Ring.Time.ToString("HH:mm") + "\t" +
+                        pair.Item2.Auditorium.Name + Environment.NewLine);
                 }
 
                 Invoke((MethodInvoker)delegate
@@ -6529,6 +6542,12 @@ namespace UchOtd.Schedule
                     // runs on UI thread
                 });
             }
+
+            Invoke((MethodInvoker)delegate
+            {
+                status.Text = "Готово";
+                // runs on UI thread
+            });
 
             var eprst = 999;
         }
