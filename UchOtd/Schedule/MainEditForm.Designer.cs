@@ -34,11 +34,14 @@ namespace UchOtd.Schedule
         {
             this.components = new System.ComponentModel.Container();
             this.controlsPanel = new System.Windows.Forms.Panel();
-            this.week17 = new System.Windows.Forms.Button();
-            this.week16 = new System.Windows.Forms.Button();
+            this.bothWeeks = new System.Windows.Forms.TextBox();
+            this.evenWeek = new System.Windows.Forms.TextBox();
+            this.oddWeek = new System.Windows.Forms.TextBox();
+            this.evenWeekButton = new System.Windows.Forms.Button();
+            this.oddWeekButton = new System.Windows.Forms.Button();
             this.FontSmaller = new System.Windows.Forms.Button();
             this.FontBigger = new System.Windows.Forms.Button();
-            this.ElevenTwelveWeek = new System.Windows.Forms.Button();
+            this.bothWeeksButton = new System.Windows.Forms.Button();
             this.semester = new System.Windows.Forms.ComboBox();
             this.changeSemesterDb = new System.Windows.Forms.Button();
             this.siteToUpload = new System.Windows.Forms.ComboBox();
@@ -179,6 +182,7 @@ namespace UchOtd.Schedule
             this.убратьГруппыИностранныхЯзыковИзНазванийДисциплинToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.графикПроцессаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.проверитьКоллизииПреподавателейToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RunAuditoriumCollisionsLog = new System.Windows.Forms.ToolStripMenuItem();
             this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.расписаниеПереходовМеждуКорпусамиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.неточности811ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -194,7 +198,6 @@ namespace UchOtd.Schedule
             this.ScheduleView = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editSchedule = new System.Windows.Forms.ToolStripMenuItem();
-            this.RunAuditoriumCollisionsLog = new System.Windows.Forms.ToolStripMenuItem();
             this.controlsPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.viewPanel.SuspendLayout();
@@ -205,11 +208,14 @@ namespace UchOtd.Schedule
             // 
             // controlsPanel
             // 
-            this.controlsPanel.Controls.Add(this.week17);
-            this.controlsPanel.Controls.Add(this.week16);
+            this.controlsPanel.Controls.Add(this.bothWeeks);
+            this.controlsPanel.Controls.Add(this.evenWeek);
+            this.controlsPanel.Controls.Add(this.oddWeek);
+            this.controlsPanel.Controls.Add(this.evenWeekButton);
+            this.controlsPanel.Controls.Add(this.oddWeekButton);
             this.controlsPanel.Controls.Add(this.FontSmaller);
             this.controlsPanel.Controls.Add(this.FontBigger);
-            this.controlsPanel.Controls.Add(this.ElevenTwelveWeek);
+            this.controlsPanel.Controls.Add(this.bothWeeksButton);
             this.controlsPanel.Controls.Add(this.semester);
             this.controlsPanel.Controls.Add(this.changeSemesterDb);
             this.controlsPanel.Controls.Add(this.siteToUpload);
@@ -261,29 +267,51 @@ namespace UchOtd.Schedule
             this.controlsPanel.Size = new System.Drawing.Size(971, 196);
             this.controlsPanel.TabIndex = 0;
             // 
-            // week17
+            // bothWeeks
             // 
-            this.week17.Location = new System.Drawing.Point(238, 165);
-            this.week17.Name = "week17";
-            this.week17.Size = new System.Drawing.Size(29, 21);
-            this.week17.TabIndex = 76;
-            this.week17.Text = "12";
-            this.week17.UseVisualStyleBackColor = true;
-            this.week17.Click += new System.EventHandler(this.week17_Click);
+            this.bothWeeks.Location = new System.Drawing.Point(294, 164);
+            this.bothWeeks.Name = "bothWeeks";
+            this.bothWeeks.Size = new System.Drawing.Size(32, 20);
+            this.bothWeeks.TabIndex = 79;
+            this.bothWeeks.TextChanged += new System.EventHandler(this.bothWeeks_TextChanged);
             // 
-            // week16
+            // evenWeek
             // 
-            this.week16.Location = new System.Drawing.Point(203, 165);
-            this.week16.Name = "week16";
-            this.week16.Size = new System.Drawing.Size(29, 21);
-            this.week16.TabIndex = 75;
-            this.week16.Text = "11";
-            this.week16.UseVisualStyleBackColor = true;
-            this.week16.Click += new System.EventHandler(this.week16_Click);
+            this.evenWeek.Location = new System.Drawing.Point(221, 165);
+            this.evenWeek.Name = "evenWeek";
+            this.evenWeek.Size = new System.Drawing.Size(32, 20);
+            this.evenWeek.TabIndex = 78;
+            this.evenWeek.TextChanged += new System.EventHandler(this.evenWeek_TextChanged);
+            // 
+            // oddWeek
+            // 
+            this.oddWeek.Location = new System.Drawing.Point(148, 165);
+            this.oddWeek.Name = "oddWeek";
+            this.oddWeek.Size = new System.Drawing.Size(32, 20);
+            this.oddWeek.TabIndex = 77;
+            this.oddWeek.TextChanged += new System.EventHandler(this.oddWeek_TextChanged);
+            // 
+            // evenWeekButton
+            // 
+            this.evenWeekButton.Location = new System.Drawing.Point(259, 164);
+            this.evenWeekButton.Name = "evenWeekButton";
+            this.evenWeekButton.Size = new System.Drawing.Size(29, 21);
+            this.evenWeekButton.TabIndex = 76;
+            this.evenWeekButton.UseVisualStyleBackColor = true;
+            this.evenWeekButton.Click += new System.EventHandler(this.evenWeekButton_Click);
+            // 
+            // oddWeekButton
+            // 
+            this.oddWeekButton.Location = new System.Drawing.Point(186, 164);
+            this.oddWeekButton.Name = "oddWeekButton";
+            this.oddWeekButton.Size = new System.Drawing.Size(29, 21);
+            this.oddWeekButton.TabIndex = 75;
+            this.oddWeekButton.UseVisualStyleBackColor = true;
+            this.oddWeekButton.Click += new System.EventHandler(this.oddWeekButton_Click);
             // 
             // FontSmaller
             // 
-            this.FontSmaller.Location = new System.Drawing.Point(280, 165);
+            this.FontSmaller.Location = new System.Drawing.Point(390, 165);
             this.FontSmaller.Name = "FontSmaller";
             this.FontSmaller.Size = new System.Drawing.Size(58, 21);
             this.FontSmaller.TabIndex = 74;
@@ -293,7 +321,7 @@ namespace UchOtd.Schedule
             // 
             // FontBigger
             // 
-            this.FontBigger.Location = new System.Drawing.Point(344, 165);
+            this.FontBigger.Location = new System.Drawing.Point(454, 165);
             this.FontBigger.Name = "FontBigger";
             this.FontBigger.Size = new System.Drawing.Size(63, 21);
             this.FontBigger.TabIndex = 73;
@@ -301,15 +329,15 @@ namespace UchOtd.Schedule
             this.FontBigger.UseVisualStyleBackColor = true;
             this.FontBigger.Click += new System.EventHandler(this.FontBigger_Click);
             // 
-            // ElevenTwelveWeek
+            // bothWeeksButton
             // 
-            this.ElevenTwelveWeek.Location = new System.Drawing.Point(148, 165);
-            this.ElevenTwelveWeek.Name = "ElevenTwelveWeek";
-            this.ElevenTwelveWeek.Size = new System.Drawing.Size(49, 21);
-            this.ElevenTwelveWeek.TabIndex = 72;
-            this.ElevenTwelveWeek.Text = "11-12";
-            this.ElevenTwelveWeek.UseVisualStyleBackColor = true;
-            this.ElevenTwelveWeek.Click += new System.EventHandler(this.ElevenTwelveWeek_Click);
+            this.bothWeeksButton.Location = new System.Drawing.Point(332, 164);
+            this.bothWeeksButton.Name = "bothWeeksButton";
+            this.bothWeeksButton.Size = new System.Drawing.Size(49, 21);
+            this.bothWeeksButton.TabIndex = 72;
+            this.bothWeeksButton.Text = "11-12";
+            this.bothWeeksButton.UseVisualStyleBackColor = true;
+            this.bothWeeksButton.Click += new System.EventHandler(this.bothWeekButton_Click);
             // 
             // semester
             // 
@@ -1505,6 +1533,13 @@ namespace UchOtd.Schedule
             this.проверитьКоллизииПреподавателейToolStripMenuItem.Text = "Проверить коллизии преподавателей";
             this.проверитьКоллизииПреподавателейToolStripMenuItem.Click += new System.EventHandler(this.проверитьКоллизииПреподавателейToolStripMenuItem_Click);
             // 
+            // RunAuditoriumCollisionsLog
+            // 
+            this.RunAuditoriumCollisionsLog.Name = "RunAuditoriumCollisionsLog";
+            this.RunAuditoriumCollisionsLog.Size = new System.Drawing.Size(451, 22);
+            this.RunAuditoriumCollisionsLog.Text = "Проверить коллизии аудиторий";
+            this.RunAuditoriumCollisionsLog.Click += new System.EventHandler(this.RunAuditoriumCollisionsLog_Click);
+            // 
             // копироватьРасписаниеНаДеньНеделюToolStripMenuItem
             // 
             this.копироватьРасписаниеНаДеньНеделюToolStripMenuItem.Name = "копироватьРасписаниеНаДеньНеделюToolStripMenuItem";
@@ -1629,13 +1664,6 @@ namespace UchOtd.Schedule
             this.editSchedule.Size = new System.Drawing.Size(133, 22);
             this.editSchedule.Text = "Аудитория";
             this.editSchedule.Click += new System.EventHandler(this.editSchedule_Click);
-            // 
-            // RunAuditoriumCollisionsLog
-            // 
-            this.RunAuditoriumCollisionsLog.Name = "RunAuditoriumCollisionsLog";
-            this.RunAuditoriumCollisionsLog.Size = new System.Drawing.Size(451, 22);
-            this.RunAuditoriumCollisionsLog.Text = "Проверить коллизии аудиторий";
-            this.RunAuditoriumCollisionsLog.Click += new System.EventHandler(this.RunAuditoriumCollisionsLog_Click);
             // 
             // MainEditForm
             // 
@@ -1810,13 +1838,13 @@ namespace UchOtd.Schedule
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem editSchedule;
         private ToolStripMenuItem расписаниеПереходовМеждуКорпусамиToolStripMenuItem;
-        private Button ElevenTwelveWeek;
+        private Button bothWeeksButton;
         private ToolStripMenuItem неточности811ToolStripMenuItem;
         private ToolStripMenuItem освободитьМестоВРасписанииToolStripMenuItem;
         private Button FontSmaller;
         private Button FontBigger;
-        private Button week17;
-        private Button week16;
+        private Button evenWeekButton;
+        private Button oddWeekButton;
         private ToolStripMenuItem googleCalendarToolStripMenuItem;
         private ToolStripMenuItem GoogleCalendarExport;
         private ToolStripMenuItem очиститьКаледнарьToolStripMenuItem;
@@ -1830,6 +1858,9 @@ namespace UchOtd.Schedule
         private ToolStripMenuItem перевестиАудиторииВФорматООПToolStripMenuItem;
         private ToolStripMenuItem быстроДобавитьЗанятияToolStripMenuItem;
         private ToolStripMenuItem RunAuditoriumCollisionsLog;
+        private TextBox bothWeeks;
+        private TextBox evenWeek;
+        private TextBox oddWeek;
     }
 }
 

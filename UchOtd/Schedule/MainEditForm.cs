@@ -6911,12 +6911,6 @@ namespace UchOtd.Schedule
             });
         }
 
-        private void ElevenTwelveWeek_Click(object sender, EventArgs e)
-        {
-            weekFiltered.Checked = true;
-            WeekFilter.Text = "11-12";
-        }
-
         private async void неточности811ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TextFileUtilities.CreateOrEmptyFile("Hours-8-11.txt");
@@ -7007,16 +7001,23 @@ namespace UchOtd.Schedule
             ScheduleView.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", ScheduleView.DefaultCellStyle.Font.Size + 0.5f, GraphicsUnit.Pixel);
         }
 
-        private void week16_Click(object sender, EventArgs e)
+        private void oddWeekButton_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "11";
+            WeekFilter.Text = oddWeekButton.Text;
         }
 
-        private void week17_Click(object sender, EventArgs e)
+        private void evenWeekButton_Click(object sender, EventArgs e)
         {
             weekFiltered.Checked = true;
-            WeekFilter.Text = "12";
+            WeekFilter.Text = evenWeekButton.Text;
+        }
+
+
+        private void bothWeekButton_Click(object sender, EventArgs e)
+        {
+            weekFiltered.Checked = true;
+            WeekFilter.Text = bothWeeksButton.Text;
         }
 
         private async void BitrixScheduleExport_Click(object sender, EventArgs e)
@@ -7624,6 +7625,21 @@ namespace UchOtd.Schedule
         {
             var aclForm = new AuditoriumCollisionsLog(Repo);
             aclForm.Show();
+        }
+
+        private void oddWeek_TextChanged(object sender, EventArgs e)
+        {
+            oddWeekButton.Text = oddWeek.Text;
+        }
+
+        private void evenWeek_TextChanged(object sender, EventArgs e)
+        {
+            evenWeekButton.Text = evenWeek.Text;
+        }
+
+        private void bothWeeks_TextChanged(object sender, EventArgs e)
+        {
+            bothWeeksButton.Text = bothWeeks.Text;
         }
 
         public void ShowStatus(string statusText)

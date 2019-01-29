@@ -154,12 +154,30 @@ namespace UchOtd.Forms
                                             l.Calendar.CalendarId == calendarPair.Key.CalendarId &&
                                             groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
 
+                var day2Lessons = _repo
+                    .Lessons
+                    .GetFiltredLessons(l => l.State == 1 &&
+                                            l.Calendar.CalendarId == calendarPair.Value.CalendarId &&
+                                            groupIds.Contains(l.TeacherForDiscipline.Discipline.StudentGroup.StudentGroupId));
+
                 foreach (var lesson in dayLessons)
                 {
-                    var newLesson = new Lesson(lesson.TeacherForDiscipline, calendarPair.Value, lesson.Ring, lesson.Auditorium);
-                    newLesson.State = 1;
+                    var lessonExists = day2Lessons.Count(l => 
+                        l.State == 1 &&
+                        l.Ring.RingId == lesson.Ring.RingId &&
+                        l.TeacherForDiscipline.TeacherForDisciplineId == lesson.TeacherForDiscipline.TeacherForDisciplineId &&
+                        l.Auditorium.AuditoriumId == lesson.Auditorium.AuditoriumId
+                    ) != 0;
 
-                    _repo.Lessons.AddLesson(newLesson);
+                    if (!lessonExists)
+                    {
+                        var newLesson = new Lesson(lesson.TeacherForDiscipline, calendarPair.Value, lesson.Ring, lesson.Auditorium)
+                        {
+                            State = 1
+                        };
+
+                        _repo.Lessons.AddLesson(newLesson);
+                    }                    
                 }
 
                 Invoke((MethodInvoker)delegate
